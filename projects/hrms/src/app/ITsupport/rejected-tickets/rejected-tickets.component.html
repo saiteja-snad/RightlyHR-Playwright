@@ -3,74 +3,83 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-          placeholder="{{ 'Search by ticket ID / ticket priority / subject / requester / department / team / assignee' | translate }}" aria-label="Username" aria-describedby="basic-addon1">
+          placeholder="Search by ticket ID / ticket priority / subject / requester / department / team / assignee" aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
         @if(!dataloading){
-        <table class="w-100">
-            <thead>
-                <th>{{ 'Ticket ID' | translate }}</th>
-                <th>{{ 'Ticket Priority' | translate }}</th>
-                <th>{{ 'Subject' | translate }}</th>
-                <th>{{ 'Requester' | translate }}</th>
-                <th>{{ 'Requested Date' | translate }}</th>
-                <th>{{ 'Department' | translate }}</th>
-                <th>{{ 'Team' | translate }}</th>
-                <th>{{ 'Assignee' | translate }}</th>
-                <th>{{ 'Status' | translate }}</th>
-                <th>{{ 'Updated Date' | translate }}</th>
-                @if(rbac.allowedToAccess('Rejected Tickets Tab.update')){
-                <th>{{ 'Action' | translate }}</th>
-                }
-            </thead>
-            <tbody>
-                <ng-container *ngIf="(tickets | itsupport: searchValue) as filteredTickets">
-                    <tr *ngFor="let ticket of filteredTickets">
-                        <td>{{ticket.id}}</td>
-                        <td>
-                            <ul class="mb-0">
-                                <li [ngClass]="{
-                                    'high': ticket.priority === 'High',
-                                    'medium': ticket.priority === 'Medium',
-                                    'low': ticket.priority === 'Low',
-                                    'urgent': ticket.priority === 'Urgent'
-                                }">
-                                    <b>{{ticket.priority || '-'}}</b>
+        <p-table #dt [value]="tickets | itsupport: searchValue" [tableStyle]="{'width': '100%'}" [customSort]="true"
+            (sortFunction)="customSort($event)">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="id">Ticket ID <p-sortIcon field="id" /></th>
+                    <th pSortableColumn="priority">Ticket Priority <p-sortIcon field="priority" /></th>
+                    <th pSortableColumn="subject">Subject <p-sortIcon field="subject" /></th>
+                    <th pSortableColumn="employeeName">Requester <p-sortIcon field="employeeName" /></th>
+                    <th pSortableColumn="createdAt">Requested Date <p-sortIcon field="createdAt" /></th>
+                    <th pSortableColumn="departmentName">Department <p-sortIcon field="departmentName" /></th>
+                    <th pSortableColumn="subdepartmentName">Team <p-sortIcon field="subdepartmentName" /></th>
+                    <th pSortableColumn="assigneeName">Assignee <p-sortIcon field="assigneeName" /></th>
+                    <th pSortableColumn="ticketStatus">Status <p-sortIcon field="ticketStatus" /></th>
+                    <th pSortableColumn="updatedAt">Updated Date <p-sortIcon field="updatedAt" /></th>
+                    @if(rbac.allowedToAccess('Rejected Tickets Tab.update')){
+                    <th>Action</th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-ticket>
+                <tr>
+                    <td>{{ticket.id}}</td>
+                    <td>
+                        <ul class="mb-0">
+                            <li [ngClass]="{
+                                'high': ticket.priority === 'High',
+                                'medium': ticket.priority === 'Medium',
+                                'low': ticket.priority === 'Low',
+                                'urgent': ticket.priority === 'Urgent'
+                            }">
+                                <b>{{ticket.priority || '-'}}</b>
+                            </li>
+                        </ul>
+                    </td>
+                    <td>{{ticket.subject || '-'}}</td>
+                    <td>{{ticket.employeeName || '-'}}</td>
+                    <td>{{ticket.createdAt | dateformat}} </td>
+                    <td>{{ticket.departmentName || '-'}}</td>
+                    <td>{{ticket.subdepartmentName || '-'}}</td>
+                    <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
+                    <td>{{ticket.ticketStatus || '-'}}</td>
+                    <td>{{ticket.updatedAt | dateformat}}</td>
+                    @if(rbac.allowedToAccess('Rejected Tickets Tab.update')){
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li (click)="openModal(rejecttickets,ticket)">
+                                    <a class="dropdown-item">
+                                        <app-settings-update-icon /> {{'Update'|translate}}
+                                    </a>
                                 </li>
                             </ul>
-                        </td>
-                        <td>{{ticket.subject || '-'}}</td>
-                        <td>{{ticket.employeeName || '-'}}</td>
-                        <td>{{ticket.createdAt | dateformat}} </td>
-                        <td>{{ticket.departmentName || '-'}}</td>
-                        <td>{{ticket.subdepartmentName || '-'}}</td>
-                        <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
-                        <td>{{ticket.ticketStatus || '-'}}</td>
-                        <td>{{ticket.updatedAt | dateformat}}</td>
-                        @if(rbac.allowedToAccess('Rejected Tickets Tab.update')){
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li (click)="openModal(rejecttickets,ticket)">
-                                        <a class="dropdown-item">
-                                             <i class="bi bi-trash3 me-2"></i>{{ 'Update' | translate }}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                        }
-                    </tr>
-                    <tr *ngIf="filteredTickets.length === 0">
-                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
-                    </tr>
-                </ng-container>
-            </tbody>
-        </table>
+                        </div>
+                    </td>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+            
+                <tr>
+                    <td [attr.colspan]="rbac.allowedToAccess('Rejected Tickets Tab.update') ? 11 : 10" class="text-center">
+                        <div class="wrapper d-flex align-items-center position-relative w-100">
+                            <app-no-data-found />
+                        </div>
+            
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
         }
 
         @else {
@@ -83,7 +92,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">{{ 'Rejected Ticket' | translate }}</p>
+                <p class="popup-heading mb-0">Rejected Ticket</p>
             </div>
         </div>
 
@@ -95,7 +104,7 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="ticketRaisedFor" name="employee" optionLabel="label"
-                                optionValue="label" [placeholder]="'Please select' | translate" formControlName="employee"
+                                optionValue="label" placeholder="Please select" formControlName="employee"
                                 class="custom-select w-100">
                             </p-select>
                         </div>
@@ -109,7 +118,7 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="name"
-                                [placeholder]="'Please enter employee name' | translate" onkeydown="return false;" />
+                                placeholder="Please enter employeename" onkeydown="return false;" />
                         </div>
                         <div *ngIf="itSupportForm.get('name')?.invalid && itSupportForm.get('name')?.touched">
                             <div class="error-msg">{{'Employee is required' | translate}}</div>
@@ -123,7 +132,7 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="email"
-                                [placeholder]="'Please enter email' | translate" onkeydown="return false;" />
+                                placeholder="Please enter email" onkeydown="return false;" />
 
                         </div>
                         <div *ngIf="itSupportForm.get('email')?.invalid && itSupportForm.get('email')?.touched">
@@ -136,7 +145,7 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="number" class="form-control custom-input" formControlName="phoneNumber"
-                                [placeholder]="'Please enter phonenumber' | translate" onkeydown="return false;" />
+                                placeholder="Please enter phonenumber" onkeydown="return false;" />
 
                         </div>
                         <div
@@ -152,7 +161,7 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="deskdetails"
-                                [placeholder]="'Please enter Deskdetails' | translate" onkeydown="return false;" />
+                                placeholder="Please enter Deskdetails" onkeydown="return false;" />
 
                         </div>
                         <div
@@ -162,10 +171,10 @@
 
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{ 'Department Impacted' | translate }}<span
+                        <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="department"
-                            [placeholder]="'Please enter department' | translate" onkeydown="return false;" />
+                            placeholder="Please enter department" onkeydown="return false;" />
 
                         <div
                             *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
@@ -176,10 +185,10 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{ 'Team Impacted' | translate }}<span
+                        <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="team"
-                            [placeholder]="'Please enter department' | translate" onkeydown="return false;" />
+                            placeholder="Please enter department" onkeydown="return false;" />
                         <div *ngIf="itSupportForm.get('team')?.invalid && itSupportForm.get('team')?.touched">
                             <div class="error-msg">{{'Team is required' | translate}}</div>
                         </div>
@@ -189,7 +198,7 @@
                         <label class="form-label custom-label mb-2">{{'Category' | translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="category"
-                            [placeholder]="'Please enter category' | translate" onkeydown="return false;" />
+                            placeholder="Please enter category" onkeydown="return false;" />
                         <div *ngIf="itSupportForm.get('category')?.invalid && itSupportForm.get('category')?.touched">
                             <div class="error-msg">{{'Category is required' | translate}}</div>
                         </div>
@@ -201,7 +210,7 @@
                         <label class="form-label custom-label mb-2">{{'Sub-Category' | translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="subcategory"
-                            [placeholder]="'Please enter subcategory' | translate" onkeydown="return false;" />
+                            placeholder="Please enter subcategory" onkeydown="return false;" />
                         <div *ngIf="itSupportForm.get('subcategory')?.invalid && itSupportForm.get('subcategory')?.touched">
                             <div class="error-msg">{{'Sub-Category is required' | translate}}</div>
                         </div>
@@ -211,14 +220,14 @@
                                 class="text-danger">*</span></label>
 
                         <input type="text" class="form-control custom-input" formControlName="priority"
-                            [placeholder]="'Please enter department' | translate" onkeydown="return false;" />
+                            placeholder="Please enter department" onkeydown="return false;" />
 
                         <div *ngIf="itSupportForm.get('priority')?.invalid && itSupportForm.get('priority')?.touched">
                             <div class="error-msg">{{'Priority is required' | translate}}</div>
                         </div>
 
                     </div>
-                 
+
                 </div>
 
                 <div class="row">
@@ -227,7 +236,7 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="subject"
-                                [placeholder]="'Please enter subject' | translate" />
+                                placeholder="Please enter subject" />
                         </div>
                         <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
                             <div class="error-msg">{{'Subject is required' | translate}}</div>
@@ -239,7 +248,7 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="status" optionLabel="label" optionValue=""
-                                [placeholder]="'Please select status' | translate" formControlName="ticketStatus"
+                                placeholder="Please select status" formControlName="ticketStatus"
                                 class="custom-select w-100">
                             </p-select>
                         </div>
@@ -249,7 +258,7 @@
                             <div class="error-msg">{{'Status is required' | translate}}</div>
                         </div>
                     </div>
-                    
+
 
                 </div>
 
@@ -259,7 +268,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="allEmployees" [filter]="true" filterBy="firstName"
                                 optionLabel="fullName" (onChange)="assigneeDetails($event.value)"
-                                [placeholder]="'Please select employee' | translate" formControlName="assignedto"
+                                placeholder="Please select employee" formControlName="assignedto"
                                 class="custom-select w-100" [dataKey]="'fusionEmpId'">
                                 <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{
                                     emp.lastName
@@ -278,7 +287,7 @@
                         <label class="form-label custom-label mb-2">{{'Description'| translate}}<span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="description"
-                            [placeholder]="'Please enter description' | translate"></textarea>
+                            placeholder="Please enter description"></textarea>
                         <div
                             *ngIf="itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
                             <div class="error-msg">{{'Description is required' | translate}}</div>
@@ -288,7 +297,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Comments'| translate}}</label>
                         <textarea class="form-control custom-input" formControlName="comments" pattern="^\S.*"
-                            [placeholder]="'Please enter comments' | translate"></textarea>
+                            placeholder="Please enter comments"></textarea>
                         <div *ngIf="itSupportForm.get('comments')?.errors?.['pattern']">
                             <div class="error-msg">{{'Comments is required' | translate}}</div>
                         </div>
@@ -297,11 +306,11 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmationModal(confirmationpopup)">{{ 'Cancel' | translate }}</button>
+                        (click)="openConfirmationModal(confirmationpopup)">{{'Cancel'}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">
-                            {{ 'Update' | translate }}
+                            {{'Update' | translate}}
                         </span>
                         <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
                         </div>
@@ -316,15 +325,15 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{ 'Are you sure you want to cancel?' | translate }}</p>
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
 
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-                {{ 'No' | translate }}
+                No
             </button>
             <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
-                {{ 'Yes' | translate }}
+                Yes
             </button>
         </div>
     </div>

@@ -32,26 +32,21 @@
 
   <div class="custom-table-content">
     @if(!isLoading){
-    <table id="leaveReportTable" class="w-100">
-      <thead>
-          <th class="text-center">Employee ID</th>
-          <th>Employee Name</th>
-          <th>Department</th>
-          <th>Team Manager</th>
-          <th>Location</th>
-          <th>Sub Location</th>
-          <th>Shift</th>
-          <th class="text-center">Utilization Count</th>
-          <th class="text-center">Total Duration (HH:MM)</th>
-      </thead>
-      <tbody>
-        @if (!filteredPermissionData || filteredPermissionData.length === 0) {
+    <p-table #permissionTable [value]="filteredPermissionData" [tableStyle]="{'width': '100%'} "[customSort]="true" (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
         <tr>
-          <app-no-data-found />
+          <th pSortableColumn="fusionEmpId" class="text-center">{{ 'Employee ID' | translate }} <p-sortIcon field="fusionEmpId" /></th>
+          <th pSortableColumn="employeeName">{{ 'Employee Name' | translate }} <p-sortIcon field="employeeName" /></th>
+          <th pSortableColumn="department">{{ 'Department' | translate }} <p-sortIcon field="department" /></th>
+          <th pSortableColumn="teamManager">{{ 'Team Manager' | translate }} <p-sortIcon field="teamManager" /></th>
+          <th pSortableColumn="location">{{ 'Location' | translate }} <p-sortIcon field="location" /></th>
+          <th pSortableColumn="subLocation">{{ 'Sub Location' | translate }} <p-sortIcon field="subLocation" /></th>
+          <th pSortableColumn="shift">{{ 'Shift' | translate }} <p-sortIcon field="shift" /></th>
+          <th pSortableColumn="utilizedCount" class="text-center">{{ 'Utilization Count' | translate }} <p-sortIcon field="utilizedCount" /></th>
+          <th pSortableColumn="totalDuration" class="text-center">{{ 'Total Duration (HH:MM)' | translate }} <p-sortIcon field="totalDuration" /></th>
         </tr>
-        }
-        @else {
-        @for (record of filteredPermissionData; track $index) {
+      </ng-template>
+      <ng-template pTemplate="body" let-record>
         <tr>
           <td class="text-center">{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
@@ -61,12 +56,19 @@
           <td>{{ record.subLocation ?? '-' }}</td>
           <td>{{ record.shift ?? '-' }}</td>
           <td class="text-center">{{ record.utilizedCount ?? '-' }}</td>
-          <td class="text-center">{{record.totalDuration ?? '-' }}</td>
+          <td class="text-center">{{ record.totalDuration ?? '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="9">
+            <div class="wrapper">
+              <app-no-data-found />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else {
     <app-data-loader-content />

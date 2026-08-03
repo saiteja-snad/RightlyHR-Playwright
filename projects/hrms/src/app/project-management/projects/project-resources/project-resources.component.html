@@ -40,41 +40,44 @@
           'has-data': resourcesData.length > 0,
           'has-selection': selectedResources.length > 0
         }">
-        @if (!loading) {
-        <table class="w-100">
-          <thead>
-            <tr>
-              <th style="width: 50px; text-align: center">
-                <input type="checkbox" [checked]="
+          @if (!loading) {
+          <p-table #resourcesTable
+            [value]="getFilteredResources()"
+            [customSort]="true"
+            (onSort)="customSort($event)"
+            [sortField]="currentUIField"
+            [sortOrder]="currentSortOrder">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width: 50px; text-align: center">
+                  <input type="checkbox" [checked]="
                       resourcesData.length > 0 &&
                       selectedResources.length > 0 &&
                       selectedResources.length === resourcesData.length
                     " [disabled]="resourcesData.length === 0" (change)="toggleAll($event)" />
-              </th>
-              <th class="text-center">Profile</th>
-              <th>Name</th>
-              <th class="text-center">Phases / Milestones</th>
-              <th class="text-center">Role</th>
-              <th class="text-center">Start Date</th>
-              <th class="text-center">End Date</th>
-              <th class="text-center">Allocated Hours</th>
-              <th>Timesheet Approval Authority</th>
-              <th class="text-center">Status</th>
+                </th>
+                <th class="text-center">Profile</th>
+                <th pSortableColumn="employeeName">Name <p-sortIcon field="employeeName" /></th>
+                <th class="text-center" pSortableColumn="phaseName">Phases / Milestones <p-sortIcon field="phaseName" /></th>
+                <th class="text-center" pSortableColumn="role">Role <p-sortIcon field="role" /></th>
+                <th class="text-center" pSortableColumn="startDate">Start Date <p-sortIcon field="startDate" /></th>
+                <th class="text-center" pSortableColumn="endDate">End Date <p-sortIcon field="endDate" /></th>
+                <th class="text-center" pSortableColumn="allocatedHours">Allocated Hours <p-sortIcon field="allocatedHours" /></th>
+                <th pSortableColumn="authorityName">Timesheet Approval Authority <p-sortIcon field="authorityName" /></th>
+                <th class="text-center">Status</th>
 
-              @if (
-              !selectedResources.length &&
-              (rbac.allowedToAccess("Resources Tab.update") ||
-              rbac.allowedToAccess("Resources Tab.delete")) &&
-              inactiveStatus !== "inactive"
-              ) {
-              <th class="text-center">Action</th>
-              }
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
-              <tr *ngFor="let data of resourcesData">
-                <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
+                @if (
+                !selectedResources.length &&
+                (rbac.allowedToAccess("Resources Tab.update") ||
+                rbac.allowedToAccess("Resources Tab.delete")) &&
+                inactiveStatus !== "inactive"
+                ) {
+                <th class="text-center">Action</th>
+                }
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-data>
+              <tr>
                 <td style="text-align: center">
                   <input type="checkbox" [checked]="selectedResources.includes(data)"
                     (change)="onRowSelect(data, $event)" />
@@ -105,10 +108,10 @@
                     <span>{{ (data?.status | titlecase) || "-" }}</span>
 
                     <ng-container *ngIf="
-                          data?.reason &&
-                            data.status?.toLowerCase() !== 'active';
-                          else noStatusReason
-                        ">
+                        data?.reason &&
+                          data.status?.toLowerCase() !== 'active';
+                        else noStatusReason
+                      ">
                       <span type="button" [ngbPopover]="statusReasonPopover">
                         <app-info-icon />
                       </span>
@@ -126,10 +129,10 @@
                 inactiveStatus !== "inactive"
                 ) {
                 <td class="text-center" *ngIf="
-                        !selectedResources.length &&
-                          data.status.toLowerCase() !== 'released';
-                        else noActions
-                      ">
+                      !selectedResources.length &&
+                        data.status.toLowerCase() !== 'released';
+                      else noActions
+                    ">
                   <div class="dropdown">
                     <a data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="bi bi-three-dots-vertical"></i>
@@ -137,8 +140,8 @@
 
                     <ul class="dropdown-menu custom-dropdown-menu">
                       <li *ngFor="
-                              let action of getActionsByStatus(data.status)
-                            ">
+                            let action of getActionsByStatus(data.status)
+                          ">
                         <a class="dropdown-item" (click)="handleAction(action, data)">
                           <i class="bi me-2" [ngClass]="getActionIcon(action)"></i>
                           {{ action }}
@@ -150,32 +153,36 @@
                 <ng-template #noActions></ng-template>
                 }
               </tr>
-            </ng-container>
-            <ng-template #noDataTemplate>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
               <tr>
-                <app-no-data-found />
+                <td [attr.colspan]="11">
+                  <app-no-data-found />
+                </td>
               </tr>
             </ng-template>
-          </tbody>
-        </table>
-        }
-        @else {
-        <app-data-loader-content />
-        }
-      </div>
-      <!-- Pagination -->
-      <div class="pagination-content" *ngIf="resourcesData.length > 0">
-        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-          <div class="d-flex align-items-center gap-3 p-2">
-            <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-              (ngModelChange)="onPageSizeChange($event)">
-              <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-              </option>
-            </select>
-            <span class="pagination-label text-nowrap">
-              Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
-              (+first + +rows) }} of {{ collectionSize }}
-            </span>
+          </p-table>
+          }
+          @else {
+          <app-data-loader-content />
+          }
+        </div>
+        <!-- Pagination -->
+        <div class="pagination-content" *ngIf="resourcesData.length > 0">
+          <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+              <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                (ngModelChange)="onPageSizeChange($event)">
+                <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                </option>
+              </select>
+              <span class="pagination-label text-nowrap">
+                Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                (+first + +rows) }} of {{ collectionSize }}
+              </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+              (onPageChange)="onPageChange($event)"></p-paginator>
           </div>
           <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
             (onPageChange)="onPageChange($event)"></p-paginator>
@@ -184,7 +191,6 @@
 
     </div>
   </div>
-</div>
 
 <!--Update Popup-->
 <ng-template #updateResourcemodal let-modal>

@@ -61,73 +61,80 @@
 
       <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients'), 'has-data': projectsData.length > 0}">
         @if (!loading) {
-        <table class="w-100">
-          <thead>
-            @if(!isActive('/project-management/clients')){
-            <th>Client Name</th>
-            }
-            <th>Project Name</th>
-            <th class="text-center">Project Code</th>
-            <!-- <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Effective Date</th>
-                        <th>Kickoff Date</th> -->
-            <th class="text-center">Project Type</th>
-            <th>Department</th>
-            <!-- <th>Status</th> -->
-            @if(( rbac.allowedToAccess('Project Details Tab.delete')) &&
-            inactiveClientStatus!=='inactive'){
-            <th class="text-center">{{"Action" | translate}}</th>
-            }
-          </thead>
-          <tbody>
-            <ng-container *ngIf="projectsData.length > 0; else noDataTemplate">
-                <tr *ngFor="let project of projectsData; let i = index">
-                  @if(!isActive('/project-management/clients')){
-                  <td>{{ project.client.clientName }}</td>
-                  }
-                  <td>
-                    <a class="data-nav-btn" (click)="navigateView(project.projectId)">{{ project.projectName }}</a>
-                  </td>
-                  <td class="d-flex  justify-content-center">
-                    <div class="timesheet-chip" [style.color]="project?.meta?.graphData?.color"
-                      [style.background]="getLighterColor(project?.meta?.graphData?.color) ">
-                      <b>{{project?.meta?.graphData?.code || '-' }}</b>
-                    </div>
-                  </td>
-                  <!-- <td>{{ project.startDate | dateformat }}</td>
-                                        <td>{{ project.endDate | dateformat }}</td>
-                                        <td>{{ project.effectiveDate | dateformat }}</td>
-                                        <td>{{ project.kickoffDate | dateformat }}</td> -->
-                  <td class="text-center">{{ project.projectType }}</td>
-                  <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
-                  <!-- <td>{{ project.status }}</td> -->
-                  @if((rbac.allowedToAccess('Project Details Tab.delete')) &&
-                  inactiveClientStatus!=='inactive'){
-                  <td class="text-center">
-                    <div class="dropdown">
-                      <a data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-three-dots-vertical"></i>
+        <p-table [value]="projectsData" [customSort]="true" (onSort)="customSort($event)" [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+          <ng-template pTemplate="header">
+            <tr>
+              @if(!isActive('/project-management/clients')){
+              <th pSortableColumn="clientName">
+                Client Name
+                <p-sortIcon field="clientName" />
+              </th>
+              }
+              <th pSortableColumn="projectName">
+                Project Name
+                <p-sortIcon field="projectName" />
+              </th>
+              <th class="text-center" pSortableColumn="code">
+                Project Code
+                <p-sortIcon field="code" />
+              </th>
+              <th class="text-center" pSortableColumn="projectType">
+                Project Type
+                <p-sortIcon field="projectType" />
+              </th>
+              <th pSortableColumn="departmentName">
+                Department
+                <p-sortIcon field="departmentName" />
+              </th>
+              @if(( rbac.allowedToAccess('Project Details Tab.delete')) &&
+              inactiveClientStatus!=='inactive'){
+              <th class="text-center">{{"Action" | translate}}</th>
+              }
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-project let-i="rowIndex">
+            <tr>
+              @if(!isActive('/project-management/clients')){
+              <td>{{ project.client.clientName }}</td>
+              }
+              <td>
+                <a class="data-nav-btn" (click)="navigateView(project.projectId)">{{ project.projectName }}</a>
+              </td>
+              <td class="d-flex justify-content-center">
+                <div class="timesheet-chip" [style.color]="project?.meta?.graphData?.color"
+                  [style.background]="getLighterColor(project?.meta?.graphData?.color)">
+                  <b>{{project?.meta?.graphData?.code || '-' }}</b>
+                </div>
+              </td>
+              <td class="text-center">{{ project.projectType }}</td>
+              <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
+              @if((rbac.allowedToAccess('Project Details Tab.delete')) &&
+              inactiveClientStatus!=='inactive'){
+              <td class="text-center">
+                <div class="dropdown">
+                  <a data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </a>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openModalstatus(statuschanges,project)">
+                      <a class="dropdown-item">
+                        <i class="bi bi-check-circle me-2"></i>Active
                       </a>
-                      <ul class="dropdown-menu custom-dropdown-menu">
-                        <li (click)="openModalstatus(statuschanges,project)">
-                          <a class="dropdown-item">
-                            <i class="bi bi-check-circle me-2"></i>Active
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </td>
-                  }
-                </tr>
-            </ng-container>
-            <ng-template #noDataTemplate>
-              <tr>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+              }
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="!isActive('/project-management/clients') ? 6 : 5">
                 <app-no-data-found />
-              </tr>
-            </ng-template>
-          </tbody>
-        </table>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

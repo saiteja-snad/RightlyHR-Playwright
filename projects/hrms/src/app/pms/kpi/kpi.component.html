@@ -41,22 +41,20 @@
   <!-- Table -->
   @if (!dataload) {
   <div class="custom-table-content w-100">
-    <table class="w-100">
-      <thead>
+    <p-table #kpiTable [value]="filteredDetails" [customSort]="true" (onSort)="customSort($event)"
+        [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+      <ng-template pTemplate="header">
         <tr>
-          <th>{{ 'KPI Title' | translate }}</th>
+          <th pSortableColumn="kpiName">{{ 'KPI Title' | translate }} <p-sortIcon field="kpiName" /></th>
           <th class="text-center">{{ 'Description' | translate }}</th>
-          <th class="text-center">{{ 'Unit of Measurement' | translate }}</th>
-          <!-- <th class="text-center">{{ 'Target' | translate }}</th> -->
-          <th class="text-center">{{ 'Status' | translate }}</th>
+          <th pSortableColumn="targetType" class="text-center">{{ 'Unit of Measurement' | translate }} <p-sortIcon field="targetType" /></th>
+          <th pSortableColumn="status" class="text-center">{{ 'Status' | translate }} <p-sortIcon field="status" /></th>
           @if (hasAnyActionPermission()) {
           <th class="text-center">{{ 'Action' | translate }}</th>
           }
         </tr>
-      </thead>
-      <tbody>
-        @if (filteredDetails.length > 0) {
-        @for (kpi of filteredDetails; track kpi.kpiId) {
+      </ng-template>
+      <ng-template pTemplate="body" let-kpi>
         <tr>
           <td class="fw-medium">{{ kpi.kpiName }}</td>
           <td class="text-center">
@@ -67,7 +65,6 @@
             <ng-template #noDescription>NA</ng-template>
           </td>
           <td class="text-center">{{ kpi.targetType || '-' }}</td>
-          <!-- <td class="text-center">{{ kpi.targetValue || '-' }}</td> -->
           <td class="text-center">
             <span class="kpi-status" [ngClass]="getStatusClass(kpi.status)">
               {{ kpi.status || '-' }}
@@ -80,67 +77,44 @@
                 <i class="bi bi-three-dots-vertical text-muted"></i>
               </span>
               <ul class="dropdown-menu custom-dropdown-menu">
-
-                <!-- UPDATE -->
                 @if(rbac.allowedToAccess('KPI.update')){
                 @if (canUpdate(kpi.status)) {
                 <li class="dropdown-item" (click)="onUpdate(kpi, createKpiModal)">
-                  <a class="dropdown-custom-btn">
-                    <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
-                  </a>
+                  <a class="dropdown-custom-btn"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
                 </li>
                 }
                 }
-
-                <!-- ACTIVATE -->
                 @if(rbac.allowedToAccess('KPI.update')){
                 @if (canActivate(kpi.status)) {
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'Active')">
-                  <a class="dropdown-custom-btn text-success">
-                    <i class="bi bi-check-circle me-2"></i>{{ 'Active' | translate }}
-                  </a>
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' | translate }}</a>
                 </li>
                 }
                 }
-
-                <!-- INACTIVE -->
                 @if(rbac.allowedToAccess('KPI.delete')){
                 @if (canInactivate(kpi.status)) {
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'Inactive')">
-                  <a class="dropdown-custom-btn text-warning">
-                    <i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}
-                  </a>
+                  <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}</a>
                 </li>
                 }
                 }
-
-                <!-- HOLD -->
                 @if(rbac.allowedToAccess('KPI.update')){
                 @if (canHold(kpi.status)) {
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'On Hold')">
-                  <a class="dropdown-custom-btn text-secondary">
-                    <i class="bi bi-pause-circle me-2"></i>{{ 'Hold' | translate }}
-                  </a>
+                  <a class="dropdown-custom-btn text-secondary"><i class="bi bi-pause-circle me-2"></i>{{ 'Hold' | translate }}</a>
                 </li>
                 }
                 }
-
               </ul>
-
             </div>
           </td>
           }
         </tr>
-        }
-        } @else {
-        <tr>
-          <td colspan="6" class="text-center py-4">
-            <app-no-data-found />
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="5" class="text-center py-4"><app-no-data-found /></td></tr>
+      </ng-template>
+    </p-table>
   </div>
 
   <!-- Pagination -->

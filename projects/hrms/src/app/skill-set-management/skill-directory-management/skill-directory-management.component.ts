@@ -26,13 +26,14 @@ import { SummaryCard } from '../../Interfaces/skill-dashboard.model';
 import { environment } from '../../../environments/environment';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { SkeletonModule } from 'primeng/skeleton';
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-skill-directory-management',
   standalone: true,
   imports: [TabsModule, Chip, RouterModule, DatePicker, CalendarModule, FormsModule, CommonModule, ProfileIconComponent, SkeletonModule,
     DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, PaginatorModule, NgbPopoverModule, ModuleInformationComponent,
-    ModuleInfoIconComponent, TranslateModule, SkillSetMainTabsComponent],
+    ModuleInfoIconComponent, TranslateModule, SkillSetMainTabsComponent, TableModule],
   templateUrl: './skill-directory-management.component.html',
   styleUrl: './skill-directory-management.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -63,6 +64,10 @@ export class SkillDirectoryManagementComponent {
   ];
   searchQuery: string = '';
   resourceSearchQuery: string = '';
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
+  @ViewChild('skillDirectoryTable') skillDirectoryTable!: Table;
   totalCount!: number;
   monthEndDate!: Date;
   selectedStatus: string = 'All Status';
@@ -337,6 +342,11 @@ export class SkillDirectoryManagementComponent {
     if (this.searchQuery?.trim()) {
       params.searchQuery = this.searchQuery.trim();
     }
+
+    const sortBy = this.currentSortField && this.currentSortOrder !== 0 ? this.currentSortField : undefined;
+    const sortOrder = this.currentSortOrder === 1 ? 'asc' : this.currentSortOrder === -1 ? 'desc' : undefined;
+    if (sortBy) params.sortBy = sortBy;
+    if (sortOrder) params.sortOrder = sortOrder;
 
     this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params).subscribe({
       next: (res: any) => {
@@ -736,5 +746,40 @@ export class SkillDirectoryManagementComponent {
   }
   trackByIndex(index: number) {
     return index;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    if (
+      this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      if (this.skillDirectoryTable) {
+        this.skillDirectoryTable.sortField = '';
+        this.skillDirectoryTable.sortOrder = 0;
+      }
+      this.page = 1;
+      this.first = 0;
+      this.getEmployeeSkills();
+      return;
+    }
+
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
+    this.page = 1;
+    this.first = 0;
+    this.getEmployeeSkills();
   }
 }

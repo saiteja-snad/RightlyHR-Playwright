@@ -25,92 +25,99 @@
       </ng-container>
 
       <ng-template #maincontent>
-        <div class="custom-table-content" [ngClass]="{'has-data': phaseData.length > 0}">
-          <table class="w-100">
-            <thead>
-              <th>Project Name</th>
-              <th>Phase / Milestone Name</th>
-              <th class="text-center">Start Date</th>
-              <th class="text-center">End Date</th>
-              <th class="text-center">Kickoff Date</th>
-              <th class="text-center">Effective Date</th>
-              <th class="text-center">Allocated Hours</th>
-              <th>Timesheet Approval Authority</th>
-              <th class="text-center">Phase / Milestone Description</th>
-              <th class="text-center">Status</th>
-              @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project PhasesTab.delete'))
-              && inactiveStatus !== 'inactive'){
-              <th class="text-center">{{"Action" | translate}}</th>
-              }
-            </thead>
-            <tbody>
-              <ng-container *ngIf="(phaseData?.length ?? 0) > 0; else noDataTemplate">
-                <tr *ngFor="let data of phaseData">
-                  <td>{{ data?.project?.projectName || '-' }}</td>
-                  <td class="data-nav-btn"><a style="cursor:pointer" class="text-primary" (click)="handleResourceManagement(data)">{{ data?.phaseName || '-' }}</a></td>
-                  <td class="text-center">{{ data?.startDate | dateformat }}</td>
-                  <td class="text-center">{{ data?.endDate | dateformat }}</td>
-                  <td class="text-center">{{ data?.kickoffDate | dateformat }}</td>
-                  <td class="text-center">{{ data?.effectiveDate | dateformat }}</td>
-                  <td class="text-center">{{ data?.allocatedHours || '-' }}</td>
-                  <td>{{ data?.pendingApprovalAuthority?.name || '-'}}</td>
-                  <td class="text-center">
-                    <div>
-                      <div *ngIf="data?.description; else noReason" type="button" [ngbPopover]="requestedComments">
-                        <app-info-icon />
-                      </div>
-                      <ng-template #requestedComments>
-                        <p class="mb-0">{{ data?.description }}</p>
-                      </ng-template>
-                      <ng-template #noReason>
-                        <span>-</span>
-                      </ng-template>
+        <div class="custom-table-content">
+          <p-table #phasesTable [value]="phaseData" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="project.projectName">Project Name <p-sortIcon field="project.projectName" /></th>
+                <th class="text-center" pSortableColumn="phaseName">Phase / Milestone Name <p-sortIcon field="phaseName" /></th>
+                <th class="text-center" pSortableColumn="startDate">Start Date <p-sortIcon field="startDate" /></th>
+                <th class="text-center" pSortableColumn="endDate">End Date <p-sortIcon field="endDate" /></th>
+                <th class="text-center" pSortableColumn="kickoffDate">Kickoff Date <p-sortIcon field="kickoffDate" /></th>
+                <th class="text-center" pSortableColumn="effectiveDate">Effective Date <p-sortIcon field="effectiveDate" /></th>
+                <th class="text-center" pSortableColumn="allocatedHours">Allocated Hours <p-sortIcon field="allocatedHours" /></th>
+                <th pSortableColumn="pendingApprovalAuthority.name">Timesheet Approval Authority <p-sortIcon field="pendingApprovalAuthority.name" /></th>
+                <th class="text-center">Phase / Milestone Description</th>
+                <th class="text-center" pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+                @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project
+                PhasesTab.delete'))
+                && inactiveStatus !== 'inactive'){
+                <th class="text-center">{{"Action" | translate}}</th>
+                }
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-data>
+              <tr>
+                <td>{{ data?.project?.projectName || '-' }}</td>
+                <td class="text-center">{{ data?.phaseName || '-' }}</td>
+                <td class="text-center">{{ data?.startDate | dateformat }}</td>
+                <td class="text-center">{{ data?.endDate | dateformat }}</td>
+                <td class="text-center">{{ data?.kickoffDate | dateformat }}</td>
+                <td class="text-center">{{ data?.effectiveDate | dateformat }}</td>
+                <td class="text-center">{{ data?.allocatedHours || '-' }}</td>
+                <td>{{ data?.pendingApprovalAuthority?.name || '-'}}</td>
+                <td class="text-center">
+                  <div>
+                    <div *ngIf="data?.description; else noReason" type="button" [ngbPopover]="requestedComments">
+                      <app-info-icon />
                     </div>
-                  </td>
-                  <td class="text-center">
-                    <div>
-                      <span>{{ formatStatus(data?.status) || '-' }}</span>
-                      <ng-container
-                        *ngIf="data.reason && data.status?.toLowerCase() !== 'in progress'; else noStatusReason">
-                        <span type="button" [ngbPopover]="statusReasonPopover">
-                          <app-info-icon />
-                        </span>
-                      </ng-container>
-                      <ng-template #noStatusReason></ng-template>
-                    </div>
-                    <ng-template #statusReasonPopover>
-                      <p class="mb-0">{{ data.reason }}</p>
+                    <ng-template #requestedComments>
+                      <p class="mb-0">{{ data?.description }}</p>
                     </ng-template>
-                  </td>
-                  @if((rbac.allowedToAccess('Project Phases Tab.update'))
-                  && inactiveStatus !== 'inactive'){
-                  <td class="text-center" *ngIf="data.status.toLowerCase() !== 'closed'; else noActions">
-                    <div class="dropdown">
-                      <a data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-three-dots-vertical"></i>
-                      </a>
-                      <ul class="dropdown-menu custom-dropdown-menu">
-                        <li *ngFor="let action of getActionsByStatus(data.status)">
-                          <a class="dropdown-item" (click)="handleAction(action, data)">
-                            <i class="bi me-2" [ngClass]="getActionIcon(action)"></i> {{ action }}
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </td>
-                  <ng-template #noActions>
-                    <td class="text-center text-muted">-</td>
+                    <ng-template #noReason>
+                      <span>-</span>
+                    </ng-template>
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div>
+                    <span>{{ formatStatus(data?.status) || '-' }}</span>
+                    <ng-container
+                      *ngIf="data.reason && data.status?.toLowerCase() !== 'in progress'; else noStatusReason">
+                      <span type="button" [ngbPopover]="statusReasonPopover">
+                        <app-info-icon />
+                      </span>
+                    </ng-container>
+
+                    <ng-template #noStatusReason></ng-template>
+                  </div>
+
+                  <ng-template #statusReasonPopover>
+                    <p class="mb-0">{{ data.reason }}</p>
                   </ng-template>
-                  }
-                </tr>
-              </ng-container>
-              <ng-template #noDataTemplate>
-                <tr>
+                </td>
+
+                @if((rbac.allowedToAccess('Project Phases Tab.update'))
+                && inactiveStatus !== 'inactive'){
+                <td class="text-center" *ngIf="data.status.toLowerCase() !== 'closed'; else noActions">
+                  <div class="dropdown">
+                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </a>
+                    <ul class="dropdown-menu custom-dropdown-menu">
+                      <li *ngFor="let action of getActionsByStatus(data.status)">
+                        <a class="dropdown-item" (click)="handleAction(action, data)">
+                          <i class="bi me-2" [ngClass]="getActionIcon(action)"></i> {{
+                          action }}
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+                <ng-template #noActions>
+                  <td class="text-center text-muted">-</td>
+                </ng-template>
+                }
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="11">
                   <app-no-data-found />
-                </tr>
-              </ng-template>
-            </tbody>
-          </table>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
         </div>
 
         <!-- Pagination -->

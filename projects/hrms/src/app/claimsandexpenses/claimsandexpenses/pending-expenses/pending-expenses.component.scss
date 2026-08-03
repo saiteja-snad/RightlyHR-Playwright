@@ -128,3 +128,10 @@ input[type=checkbox] {
     height: 70dvh;
     justify-content: center;
 }
+.p-iconfield .p-inputtext:not(:last-child) {
+    font-size: 12px !important;
+}
+.p-icon {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+}

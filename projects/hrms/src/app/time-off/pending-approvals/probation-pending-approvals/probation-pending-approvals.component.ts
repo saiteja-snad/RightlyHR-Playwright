@@ -24,9 +24,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
-import { SignalsService } from '../../../services/signals.service';
-import { TableModule } from 'primeng/table';
-import { Table } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, NgbPopoverModule,
@@ -37,12 +35,8 @@ import { Table } from 'primeng/table';
 })
 
 export class ProbationPendingApprovalsComponent {
-  @ViewChild('probationTable') probationTable!: Table;
   subscription!: Subscription;
   probationDetails = [] as any;
-  originalProbationData = [] as any; // Store original unsorted data
-  currentSortField: string = '';
-  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   probationExtensionDuration!: number;
   probationExtensionTimes!: number;
   searchValue: any;
@@ -65,10 +59,14 @@ export class ProbationPendingApprovalsComponent {
   @ViewChild('assessmentForm') assessmentForm!: NgbModal;
   @ViewChild('commentspopup') commentspopup!: NgbModal;
   selectedLeaveStatus: any;
-totalCount:any;
-  constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService, 
-    private authService: AuthService, private openModalService: OpenModalService, 
-    private signalService: SignalsService,
+  totalCount: any;
+  originalProbationDetails: any[] = [];
+  currentSortField: 'fusionEmployeeId' | 'employeeName' | 'probationStartDate' | 'probationEndDate' | '' = '';
+  currentSortOrder = 0;
+  @ViewChild('probationTable') probationTable!: Table;
+
+  constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService,
+    private authService: AuthService, private openModalService: OpenModalService,
     public formsValidation: FormValidationsService) { }
 
   openModal(content: any) {
@@ -112,114 +110,20 @@ totalCount:any;
       next: (data: any) => {
         this.loading = false;
         this.probationDetails = data.data.filter(
-          (item: any) =>
-            item.approvalHeader.status != 'Processed' &&
-            item.approvalHeader.status != 'Rejected'
+          (item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected'
         );
-        this.originalProbationData = [...this.probationDetails]; // Store original data
-        // this.filterPendingApprovalsByModule();
-      },
-      error: (reason) => {
-        console.log(reason)
-        this.loading = false;
-      },
-    });
-  }
-
-  getFilteredAndSortedProbationDetails(): any[] {
-    const search = this.searchValue?.toLowerCase() ?? '';
-    let probationData = [...this.probationDetails];
-
-    if (search) {
-      probationData = probationData.filter(item =>
-        item.entity?.employeeName?.toLowerCase().includes(search)
-      );
-    }
-
-    return probationData;
-  }
-
-  customSort(event: any): void {
-    const field = event.field;
-    
-    // Track current sort state for the clicked field
-    if (this.currentSortField === field) {
-      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
-      if (this.currentSortOrder === 1) {
-        // Currently ascending, change to descending
-        this.currentSortOrder = -1;
-        event.order = -1;
-      } else if (this.currentSortOrder === -1) {
-        // Currently descending, reset to original order
-        this.probationDetails = [...this.originalProbationData];
+        this.originalProbationDetails = [...this.probationDetails];
         this.currentSortField = '';
         this.currentSortOrder = 0;
         if (this.probationTable) {
           this.probationTable.reset();
         }
-        return;
-      } else {
-        // Currently reset, change to ascending
-        this.currentSortOrder = 1;
-        event.order = 1;
-      }
-    } else {
-      // New field clicked - start with ascending
-      this.currentSortField = field;
-      this.currentSortOrder = 1;
-      event.order = 1;
-    }
-
-    event.data.sort((a: any, b: any) => {
-      let val1: any;
-      let val2: any;
-
-      // Handle specific field mappings
-      switch (field) {
-        case 'fusionEmployeeId':
-          val1 = a.entity?.fusionEmployeeId;
-          val2 = b.entity?.fusionEmployeeId;
-          break;
-        case 'employeeName':
-          val1 = a.entity?.employeeName;
-          val2 = b.entity?.employeeName;
-          break;
-        case 'probationStartDate':
-          val1 = a.entity?.probationStartDate;
-          val2 = b.entity?.probationStartDate;
-          break;
-        case 'probationEndDate':
-          val1 = a.entity?.probationEndDate;
-          val2 = b.entity?.probationEndDate;
-          break;
-        default:
-          val1 = a[field];
-          val2 = b[field];
-      }
-
-      // Handle date sorting
-      if (field === 'probationStartDate' || field === 'probationEndDate') {
-        const date1 = val1 ? new Date(val1) : new Date(0);
-        const date2 = val2 ? new Date(val2) : new Date(0);
-        return event.order * (date1.getTime() - date2.getTime());
-      }
-
-      // Handle Employee ID sorting (alphanumeric)
-      if (field === 'fusionEmployeeId') {
-        return event.order * String(val1 ?? '').localeCompare(
-          String(val2 ?? ''),
-          undefined,
-          {
-            numeric: true,
-            sensitivity: 'base'
-          }
-        );
-      }
-
-      // Handle string sorting for all other fields
-      val1 = String(val1 ?? '').trim();
-      val2 = String(val2 ?? '').trim();
-      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+        // this.filterPendingApprovalsByModule();
+      },
+      error: (reason) => {
+        console.log(reason);
+        this.loading = false;
+      },
     });
   }
 
@@ -293,6 +197,7 @@ totalCount:any;
 
   setData(value: any) {
     localStorage.setItem('formdata', JSON.stringify(value) || '{}');
+    localStorage.setItem('IsFromOnBehalfOfProbation', 'false');
   }
 
   getProbationExtendDays() {
@@ -438,6 +343,59 @@ totalCount:any;
   // }
 
   jsonData = {} as any;
+
+  customSort(event: any): void {
+    const field = String(event.field ?? '') as typeof this.currentSortField;
+    const nextOrder = event.order === 1 ? 1 : -1;
+
+    if (!field) {
+      return;
+    }
+
+    if (this.currentSortField === field && this.currentSortOrder === -1 && nextOrder === 1) {
+      this.probationDetails = [...this.originalProbationDetails];
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      if (this.probationTable) {
+        this.probationTable.reset();
+      }
+      return;
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = nextOrder;
+    }
+
+    event.data.sort((a: any, b: any) =>
+      this.currentSortOrder * this.compareValues(this.getSortValue(a, field), this.getSortValue(b, field), field)
+    );
+  }
+
+  private getSortValue(item: any, field: typeof this.currentSortField): any {
+    switch (field) {
+      case 'fusionEmployeeId':
+        return item?.entity?.fusionEmployeeId;
+      case 'employeeName':
+        return item?.entity?.employeeName;
+      case 'probationStartDate':
+        return item?.entity?.probationStartDate;
+      case 'probationEndDate':
+        return item?.entity?.probationEndDate;
+      default:
+        return '';
+    }
+  }
+
+  private compareValues(first: any, second: any, field: typeof this.currentSortField): number {
+    if (field === 'probationStartDate' || field === 'probationEndDate') {
+      return (Date.parse(first ?? '') || 0) - (Date.parse(second ?? '') || 0);
+    }
+
+    return String(first ?? '').localeCompare(String(second ?? ''), undefined, {
+      numeric: true,
+      sensitivity: 'base'
+    });
+  }
+
   handleProcess(f: NgForm) {
     this.openModalService.openLoaderModal('Processing....')
     let successMessage = '';
@@ -494,9 +452,6 @@ totalCount:any;
         this.modalService.dismissAll();
         this.openModalService.openSuccessModal(successMessage);
         this.getAllPendingApprovals();
-        this.getApprovalStatusCounts();
-        this.signalService.probationDetailsTriggerSignal()
-        this.http.setnewprobationDetails()
       },
       error: (reason: any) => {
         this.openModalService.openErrorModal(reason.error.message);
@@ -504,19 +459,20 @@ totalCount:any;
       complete: () => {
         this.getAllPendingApprovals();
         this.getApprovalStatusCounts();
-          this.http.setnewprobationDetails()
       },
     });
   }
- getApprovalStatusCounts() {
-      let loggedInUser = this.authService.getToken();
+
+  getApprovalStatusCounts() {
+    let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.ProbationrequestmoduleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
-   //Map counts to tabs
+      this.http.updatePendingApprovalCounts(this.totalCount);
+      //Map counts to tabs
     });
   }
+
   reset() {
     this.modalService.dismissAll();
     this.clearApproveData();

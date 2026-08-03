@@ -116,17 +116,14 @@ export class InactiveEmployeesComponent implements OnInit, OnDestroy {
           } else {
             // Unknown format, fallback to original API
             console.log('Unknown paginated format, trying original API');
-            this.fallbackToOriginalAPI();
             return;
           }
         } else if (Array.isArray(data)) {
           // Direct array response from paginated endpoint (shouldn't happen but handle it)
           console.log('Paginated API returned direct array');
-          this.fallbackToOriginalAPI();
           return;
         } else {
           console.log('Unexpected paginated API response format, trying original API');
-          this.fallbackToOriginalAPI();
           return;
         }
         this.loader = false;
@@ -136,25 +133,6 @@ export class InactiveEmployeesComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         console.error('Paginated API Error:', err);
         console.log('Fallback to original API due to error');
-        this.fallbackToOriginalAPI();
-      }
-    });
-  }
-
-  private fallbackToOriginalAPI(): void {
-    // Fallback to original API if paginated fails
-    const status = 'Inactive';
-    this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
-      next: (data: any) => {
-        this.InActive = data as Iinactive[];
-        this.filteredInActive = [...this.InActive];
-        this.collectionSize = this.InActive.length;
-        this.loader = false;
-        console.log('Fallback API - Loaded:', this.InActive.length, 'records');
-      },
-      error: (reason: any) => {
-        console.log(reason);
-        this.loader = false;
       }
     });
   }

@@ -1544,58 +1544,102 @@ export class AvailableAssetsListComponent {
   customSort(event: any): void {
     const field = event.field;
     
-    // Track current sort state for the clicked field
+    this.updateSortState(field, event);
+    if (this.currentSortOrder === 0) return; // Reset case handled in updateSortState
+
+    event.data.sort((a: any, b: any) => this.compareValues(a, b, field, event.order));
+  }
+
+  private updateSortState(field: string, event: any): void {
     if (this.currentSortField === field) {
-      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
-      if (this.currentSortOrder === 1) {
-        // Currently ascending, change to descending
-        this.currentSortOrder = -1;
-        event.order = -1;
-      } else if (this.currentSortOrder === -1) {
-        // Currently descending, reset to original order
-        const currentAssets = this.assetslist.value;
-        this.assetslist.next([...this.originalAssets]);
-        this.currentSortField = '';
-        this.currentSortOrder = 0;
-        if (this.availableAssetsTable) {
-          this.availableAssetsTable.reset();
-        }
+      this.currentSortOrder = this.getNextSortOrder();
+      if (this.currentSortOrder === 0) {
+        this.resetToOriginalOrder();
         return;
-      } else {
-        // Currently reset, change to ascending
-        this.currentSortOrder = 1;
-        event.order = 1;
       }
     } else {
-      // New field clicked - start with ascending
       this.currentSortField = field;
       this.currentSortOrder = 1;
-      event.order = 1;
     }
+    event.order = this.currentSortOrder;
+  }
 
-    event.data.sort((a: any, b: any) => {
-      let val1: any;
-      let val2: any;
+  private getNextSortOrder(): number {
+    return this.currentSortOrder === 1 ? -1 : this.currentSortOrder === -1 ? 0 : 1;
+  }
 
-      // Handle direct fields
-      val1 = a[field];
-      val2 = b[field];
+  private resetToOriginalOrder(): void {
+    this.assetslist.next([...this.originalAssets]);
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
+    if (this.availableAssetsTable) {
+      this.availableAssetsTable.reset();
+    }
+  }
 
-      // Handle date sorting
-      if (['purchaseDate'].includes(field)) {
-        const date1 = val1 ? new Date(val1) : new Date(0);
-        const date2 = val2 ? new Date(val2) : new Date(0);
-        return event.order * (date1.getTime() - date2.getTime());
-      }
+  private compareValues(a: any, b: any, field: string, order: number): number {
+    const [val1, val2] = this.extractFieldValues(a, b, field);
+    
+    const dateFields = ['purchaseDate', 'allocatedDate'];
+    const numericFields = ['serialNumber', 'assetModel'];
+    
+    if (dateFields.includes(field)) {
+      return this.compareDates(val1, val2, order);
+    }
+    
+    if (numericFields.includes(field)) {
+      return this.compareNumericStrings(val1, val2, order);
+    }
+    
+    return this.compareStrings(val1, val2, order);
+  }
 
-      // Handle string sorting for all other fields
-      val1 = String(val1 ?? '').trim();
-      val2 = String(val2 ?? '').trim();
-      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+  private extractFieldValues(a: any, b: any, field: string): [any, any] {
+    const fieldExtractors: { [key: string]: (item: any) => any } = {
+      assignedEmployeeName: (item) => {
+        const assignedTo = item.assignedTo || {};
+        return `${assignedTo.firstName || ''} ${assignedTo.middleName || ''} ${assignedTo.lastName || ''}`.trim();
+      },
+      assetIdName: (item) => item.assignedTo?.assetIdName || ''
+    };
+
+    const extractor = fieldExtractors[field];
+    return extractor ? [extractor(a), extractor(b)] : [a[field], b[field]];
+  }
+
+  private compareDates(val1: any, val2: any, order: number): number {
+    const date1 = val1 ? new Date(val1) : new Date(0);
+    const date2 = val2 ? new Date(val2) : new Date(0);
+    return order * (date1.getTime() - date2.getTime());
+  }
+
+  private compareNumericStrings(val1: any, val2: any, order: number): number {
+    const str1 = String(val1 ?? '').trim();
+    const str2 = String(val2 ?? '').trim();
+    
+    const isNum1 = /^\d+$/.test(str1);
+    const isNum2 = /^\d+$/.test(str2);
+    
+    if (isNum1 && isNum2) {
+      return order * (parseInt(str1) - parseInt(str2));
+    }
+    
+    if (isNum1 !== isNum2) {
+      return order * (isNum1 ? -1 : 1); // Numeric values first
+    }
+    
+    return order * str1.localeCompare(str2, undefined, { 
+      numeric: true, 
+      sensitivity: 'base' 
     });
   }
 
-  resetAllFilters() {
+  private compareStrings(val1: any, val2: any, order: number): number {
+    const str1 = String(val1 ?? '').trim();
+    const str2 = String(val2 ?? '').trim();
+    return order * str1.localeCompare(str2, undefined, { sensitivity: 'base' });
+  }
+   resetAllFilters() {
     this.http.setavilableAssetCount(null);
     this.http.setallocatedAssetCount(null);
     this.http.setundermatinaceAssetCount(null);
@@ -1603,7 +1647,7 @@ export class AvailableAssetsListComponent {
     this.http.setblockAssetCount(null);
   }
 
-  ngOnDestroy(): void {
+   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     if (this.subscription) {

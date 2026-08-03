@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
@@ -20,6 +20,8 @@ import { combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import dayjs from 'dayjs'
 import { ModuleInfoIconComponent } from '../../../../icons/module-info-icon/module-info-icon.component';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-client-timesheet-summary',
   imports: [
@@ -32,13 +34,15 @@ import { ModuleInfoIconComponent } from '../../../../icons/module-info-icon/modu
     ChartModule,
     NoDataFoundComponent,
     SkeletonModule,
-    ModuleInfoIconComponent
+    ModuleInfoIconComponent,
+    TableModule
   ],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
+  @ViewChild('projectSummaryTable') projectSummaryTable!: Table;
   statusOptions = [
     { label: 'Not Started', value: 'Not Started' },
     { label: 'On Track', value: 'On Track' },
@@ -66,6 +70,7 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
   burndownData: any;
   burndownOptions: any;
   projectSummeryData: any;
+  originalProjectSummeryData: any[] = [];
   datepickerForm!: FormGroup;
   projectsDataDrown: Project[] = [];
   clientsId!: any;
@@ -110,6 +115,8 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
   selectedProjectIds : number[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(
     private http: HttpService,
@@ -317,10 +324,12 @@ ngOnInit() {
         next: (res: any) => {
           this.projectsummaryLoader = false;
           this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
+          this.originalProjectSummeryData = [...this.projectSummeryData];
         },
         error: (err) => {
           this.projectsummaryLoader = false;
           this.projectSummeryData = [];
+          this.originalProjectSummeryData = [];
           console.error(
             'Error fetching project-wise resource count chart:',
             err
@@ -1265,6 +1274,69 @@ ngOnInit() {
     if (!datasets?.length) return false;
     const data = datasets[0]?.data;
     return Array.isArray(data) && data.some((value) => value > 0);
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.projectSummeryData = [...this.originalProjectSummeryData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.projectSummaryTable) {
+          this.projectSummaryTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, use PrimeNG's order
+        this.currentSortOrder = event.order;
+      }
+    } else {
+      // New field clicked - use PrimeNG's default order
+      this.currentSortField = field;
+      this.currentSortOrder = event.order;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'project.projectName') {
+        // Handle nested project name
+        val1 = String(a?.project?.projectName ?? '').trim();
+        val2 = String(b?.project?.projectName ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'projectColor.graphData.code') {
+        // Handle nested project code
+        val1 = String(a?.projectColor?.graphData?.code ?? '').trim();
+        val2 = String(b?.projectColor?.graphData?.code ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'loggedHoursHHMM') {
+        // Handle time format HH:MM - convert to minutes for proper sorting
+        const parseTime = (time: string): number => {
+          if (!time) return 0;
+          const parts = time.split(':');
+          if (parts.length !== 2) return 0;
+          return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        };
+        val1 = parseTime(a[field] ?? '0:00');
+        val2 = parseTime(b[field] ?? '0:00');
+        return event.order * (val1 - val2);
+      } else {
+        // Default string comparison
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
   }
 
   ngOnDestroy(): void {

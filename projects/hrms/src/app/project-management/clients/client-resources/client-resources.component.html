@@ -30,8 +30,13 @@
     'has-selection': selectedResources.length > 0
   }">
       @if (!loading) {
-      <table class="w-100">
-        <thead>
+      <p-table #clientResourcesTable
+        [value]="resourcesData"
+        [customSort]="true"
+        (onSort)="customSort($event)"
+        [sortField]="currentUIField"
+        [sortOrder]="currentSortOrder">
+        <ng-template pTemplate="header">
           <tr>
             <th style="width: 50px; text-align: center">
               <input type="checkbox" [checked]="
@@ -40,20 +45,16 @@
                     selectedResources.length === resourcesData.length
                   " [disabled]="resourcesData.length === 0" (change)="toggleAll($event)" />
             </th>
-            <!-- <th>Employee ID</th> -->
             <th class="text-center">Profile</th>
-            <th>Name</th>
-            <th class="text-center">Phases / Milestones</th>
-            <th class="text-center">Project Code</th>
-            <!-- <th>Designation</th> -->
-            <th class="text-center">Role</th>
-            <!-- <th>Email</th>
-                    <th>Phone Number</th> -->
-            <th>Project Assigned</th>
-            <th class="text-center">Start Date</th>
-            <th class="text-center">End Date</th>
-            <th class="text-center">Allocated Hours</th>
-            <th>Timesheet Approval Authority</th>
+            <th pSortableColumn="employeeName">Name <p-sortIcon field="employeeName" /></th>
+            <th pSortableColumn="phaseName" class="text-center">Phases / Milestones <p-sortIcon field="phaseName" /></th>
+            <th pSortableColumn="projectCode" class="text-center">Project Code <p-sortIcon field="projectCode" /></th>
+            <th pSortableColumn="role" class="text-center">Role <p-sortIcon field="role" /></th>
+            <th pSortableColumn="projectName">Project Assigned <p-sortIcon field="projectName" /></th>
+            <th pSortableColumn="startDate" class="text-center">Start Date <p-sortIcon field="startDate" /></th>
+            <th pSortableColumn="endDate" class="text-center">End Date <p-sortIcon field="endDate" /></th>
+            <th pSortableColumn="allocatedHours" class="text-center">Allocated Hours <p-sortIcon field="allocatedHours" /></th>
+            <th pSortableColumn="timesheetApprovalAuthority">Timesheet Approval Authority <p-sortIcon field="timesheetApprovalAuthority" /></th>
             <th class="text-center">Status</th>
             @if (
             !multiSelect &&
@@ -64,90 +65,86 @@
             <th class="text-center">{{ "Action" | translate }}</th>
             }
           </tr>
-        </thead>
-        <tbody>
-          <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
-            <tr *ngFor="let data of resourcesData">
-              <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
-              <td style="text-align: center">
-                <input type="checkbox" [checked]="isSelected(data)" (change)="onRowSelect(data, $event)" />
-              </td>
-              <td class="text-center">
-                <img *ngIf="data.employee?.profileUrl; else defaultProfile"
-                  [src]="getImageUrl(data.employee.profileUrl)" alt="Profile" class="client-image" />
-                <ng-template #defaultProfile>
-                  <app-profile-icon [iconWidth]="'35'" [iconHeight]="'35'"></app-profile-icon>
-                </ng-template>
-              </td>
-              <td>{{ data?.employee?.name || "-" }}</td>
-              <td class="text-center">{{ data?.phase?.phaseName || "-" }}</td>
-              <td class="text-center">
-                {{ data?.project?.meta?.graphData?.code || "-" }}
-              </td>
-              <!-- <td>{{ data?.employee?.designation || '-' }}</td> -->
-              <td class="text-center">{{ data?.role || "-" }}</td>
-              <!-- <td>{{ data?.employee?.workMail || '-' }}</td>
-                            <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td> -->
-              <td>{{ data?.project?.projectName || "-" }}</td>
-              <td class="text-center">
-                {{ data?.startDate ? (data.startDate | dateformat) : "-" }}
-              </td>
-              <td class="text-center">
-                {{ data?.endDate ? (data.endDate | dateformat) : "-" }}
-              </td>
-              <td class="text-center">{{ data?.allocatedHours || "-" }}</td>
-              <td>{{ data?.pendingApprovalAuthority?.name || "-" }}</td>
-              <td class="text-center">
-                <div>
-                  <span>{{ (data?.status | titlecase) || "-" }}</span>
-                  <ng-container *ngIf="
-                        data?.reason && data.status?.toLowerCase() !== 'active';
-                        else noStatusReason
-                      ">
-                    <span type="button" [ngbPopover]="statusReasonPopover">
-                      <app-info-icon />
-                    </span>
-                  </ng-container>
-                  <ng-template #noStatusReason></ng-template>
-                </div>
-                <ng-template #statusReasonPopover>
-                  <p class="mb-0">{{ data.reason }}</p>
-                </ng-template>
-              </td>
-              @if (
-              (rbac.allowedToAccess("Client Resources.update") ||
-              rbac.allowedToAccess("Client Resources.delete")) &&
-              this.inactiveClientStatus !== "inactive"
-              ) {
-              <td class="text-center" *ngIf="
-                      !multiSelect && data.status.toLowerCase() !== 'released';
-                      else noActions
+        </ng-template>
+        <ng-template pTemplate="body" let-data>
+          <tr>
+            <td style="text-align: center">
+              <input type="checkbox" [checked]="isSelected(data)" (change)="onRowSelect(data, $event)" />
+            </td>
+            <td class="text-center">
+              <img *ngIf="data.employee?.profileUrl; else defaultProfile"
+                [src]="getImageUrl(data.employee.profileUrl)" alt="Profile" class="client-image" />
+              <ng-template #defaultProfile>
+                <app-profile-icon [iconWidth]="'35'" [iconHeight]="'35'"></app-profile-icon>
+              </ng-template>
+            </td>
+            <td>{{ data?.employee?.name || "-" }}</td>
+            <td class="text-center">{{ data?.phase?.phaseName || "-" }}</td>
+            <td class="text-center">
+              {{ data?.project?.meta?.graphData?.code || "-" }}
+            </td>
+            <td class="text-center">{{ data?.role || "-" }}</td>
+            <td>{{ data?.project?.projectName || "-" }}</td>
+            <td class="text-center">
+              {{ data?.startDate ? (data.startDate | dateformat) : "-" }}
+            </td>
+            <td class="text-center">
+              {{ data?.endDate ? (data.endDate | dateformat) : "-" }}
+            </td>
+            <td class="text-center">{{ data?.allocatedHours || "-" }}</td>
+            <td>{{ data?.pendingApprovalAuthority?.name || "-" }}</td>
+            <td class="text-center">
+              <div>
+                <span>{{ (data?.status | titlecase) || "-" }}</span>
+                <ng-container *ngIf="
+                      data?.reason && data.status?.toLowerCase() !== 'active';
+                      else noStatusReason
                     ">
-                <div class="dropdown" *ngIf="!multiSelect">
-                  <a data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </a>
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    <li *ngFor="let action of getActionsByStatus(data.status)">
-                      <a class="dropdown-item" (click)="handleAction(action, data)">
-                        <i class="bi me-2" [ngClass]="getActionIcon(action)"></i>
-                        {{ action }}
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              <ng-template #noActions></ng-template>
-              }
-            </tr>
-          </ng-container>
-          <ng-template #noDataTemplate>
-            <tr>
+                  <span type="button" [ngbPopover]="statusReasonPopover">
+                    <app-info-icon />
+                  </span>
+                </ng-container>
+                <ng-template #noStatusReason></ng-template>
+              </div>
+              <ng-template #statusReasonPopover>
+                <p class="mb-0">{{ data.reason }}</p>
+              </ng-template>
+            </td>
+            @if (
+            (rbac.allowedToAccess("Client Resources.update") ||
+            rbac.allowedToAccess("Client Resources.delete")) &&
+            this.inactiveClientStatus !== "inactive"
+            ) {
+            <td class="text-center" *ngIf="
+                    !multiSelect && data.status.toLowerCase() !== 'released';
+                    else noActions
+                  ">
+              <div class="dropdown" *ngIf="!multiSelect">
+                <a data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li *ngFor="let action of getActionsByStatus(data.status)">
+                    <a class="dropdown-item" (click)="handleAction(action, data)">
+                      <i class="bi me-2" [ngClass]="getActionIcon(action)"></i>
+                      {{ action }}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+            <ng-template #noActions></ng-template>
+            }
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete') ? 13 : 12">
               <app-no-data-found />
-            </tr>
-          </ng-template>
-        </tbody>
-      </table>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
       } @else {
       <app-data-loader-content />
       }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { KraKpiManagementLayoutComponent } from '../kra-kpi-management-layout/kra-kpi-management-layout.component';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,6 +17,7 @@ import { ChartModule } from 'primeng/chart';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { PaginatorModule } from 'primeng/paginator';
 import { Subscription } from 'rxjs';
+import { Table, TableModule } from 'primeng/table';
 
 interface DashboardResponse {
   summary: {
@@ -65,6 +66,7 @@ interface DashboardResponse {
     ChartModule,
     NoDataFoundComponent,
     PaginatorModule,
+    TableModule,
   ],
   templateUrl: './kra-kpi-dashboard.component.html',
   styleUrl: './kra-kpi-dashboard.component.scss',
@@ -97,6 +99,10 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
 
   searchText = '';
   reviewCycleOptions: { label: string; value: string }[] = [];
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
+  @ViewChild('dashboardTable') dashboardTable!: Table;
 
 
 
@@ -164,12 +170,17 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
     }
 
     if (employeeId !== undefined && employeeId !== null) {
-      params.employeeId = employeeId.toString(); // ← THIS IS THE KEY FIX
+      params.employeeId = employeeId.toString();
     }
 
     if (this.selectedReviewCycleId) {
-      params.reviewCycleId = this.selectedReviewCycleId; // already a string
+      params.reviewCycleId = this.selectedReviewCycleId;
     }
+
+    const sortBy = this.currentSortField && this.currentSortOrder !== 0 ? this.currentSortField : undefined;
+    const sortOrder = this.currentSortOrder === 1 ? 'asc' : this.currentSortOrder === -1 ? 'desc' : undefined;
+    if (sortBy) params.sortBy = sortBy;
+    if (sortOrder) params.sortOrder = sortOrder;
 
     if (this.dashboardSubscription) {
       this.dashboardSubscription.unsubscribe();
@@ -507,6 +518,41 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
     if (value >= 70) return 'bg-success';
     if (value >= 30) return 'bg-warning';
     return 'bg-danger';
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    if (
+      this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      if (this.dashboardTable) {
+        this.dashboardTable.sortField = '';
+        this.dashboardTable.sortOrder = 0;
+      }
+      this.page = 1;
+      this.first = 0;
+      this.loadDashboardData(this.selectedEmployeeId || undefined);
+      return;
+    }
+
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
+    this.page = 1;
+    this.first = 0;
+    this.loadDashboardData(this.selectedEmployeeId || undefined);
   }
 
     getStatusClass(status: string) {

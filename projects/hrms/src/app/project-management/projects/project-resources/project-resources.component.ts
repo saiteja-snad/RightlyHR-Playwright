@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild,ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators, FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,18 +23,23 @@ import { ProjectResourceTabComponent } from '../../../shared/project-management-
 import { environment } from '../../../../environments/environment';
 import { ProfileIconComponent } from "../../../icons/profile-icon/profile-icon.component";
 import { PaginatorModule } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-project-resources',
   imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe,
     Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, NgbPopover, ProjectResourceTabComponent,
-    ProfileIconComponent, PaginatorModule],
+    ProfileIconComponent, PaginatorModule,TableModule],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss',
 })
 
 export class ProjectResourcesComponent implements OnInit, OnDestroy {
+  @ViewChild('resourcesTable') resourcesTable!: Table;
+  
   searchValue: string = '';
   resourcesData = [] as IResource[];
+  filteredResources = [] as IResource[];
   resourcestartdate: any;
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
@@ -97,13 +102,20 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   selectedResource: any;
   resourceName: any;
   spinnerLoader = false;
+    // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  currentUIField: string = ''; // Track the UI field name for visual state
+
+  // Search debounce
+  private searchTimeout: any;
   phaseAllocatedHoursForUpdate: number | null = null;
   phaseUsedHoursForUpdate: number | null = null;
   errorMessage: any;
 
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal, 
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
-    public formValidation: FormValidationsService) { }
+    public formValidation: FormValidationsService,private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.initializeForms();
@@ -137,9 +149,18 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
           this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
         }
       });
-    this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.getResourceData(parseInt(this.projectId), undefined, false, this.searchValue);
-    });
+    this.http.resourceDetailesadded$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.getResourceData(
+          parseInt(this.projectId),
+          undefined,
+          false,
+          this.searchValue,
+          this.page,
+          this.pageSize
+        );
+      });
     this.updateResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
     });
@@ -149,11 +170,42 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.ExtendDateForm();
   }
 
-  onSearchChange() {
-    clearTimeout(this.searchTimeout);
+  onSearchTextChange(): void {
+    // Clear previous timeout
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+    
+    // Debounce search to avoid too many API calls
     this.searchTimeout = setTimeout(() => {
       this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
-    }, 300);
+    }, 500); // 500ms delay
+  }
+
+  onSearchChange(): void {
+    this.page = 1;
+    this.first = 0;
+    // Reset sorting when searching
+    this.currentSortField = '';
+    this.currentUIField = '';
+    this.currentSortOrder = 0;
+    if (this.resourcesTable) {
+      this.resourcesTable.reset();
+    }
+    this.onSearchTextChange();
+  }
+
+  clearSearch(): void {
+    this.searchValue = '';
+    this.page = 1;
+    this.first = 0;
+    this.currentSortField = '';
+    this.currentUIField = '';
+    this.currentSortOrder = 0;
+    if (this.resourcesTable) {
+      this.resourcesTable.reset();
+    }
+    this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
   }
 
   selectedResources: any[] = [];
@@ -249,8 +301,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     this.selectedResources = [];
   }
-  
-  private searchTimeout: any;
   selectedRoleId: number = 0;
   selectedEntityRefId: number = 0;
   onRoleChange(selectedValue: any) {
@@ -427,25 +477,89 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   }
 
 
-  onPageSizeChange(newPageSize: number) {
+  onPageChange(event: any): void {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.selectedResources = [];
+    // Keep current sorting when changing pages
+    this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+  }
+
+  onPageSizeChange(newPageSize: number): void {
     this.pageSize = newPageSize;
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
     this.selectedResources = [];
+    // Keep current sorting when changing page size
     this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
   }
 
-  onPageChange(event: any) {
-    this.page = event.page + 1;
-    this.pageSize = event.rows;
-    this.first = event.first;
-    this.selectedResources = [];
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+
+    // Map UI field to backend field
+    const backendFieldMap: { [key: string]: string } = {
+      employeeName: 'name',
+      phaseName: 'phaseName',
+      role: 'role',
+      startDate: 'startDate',
+      endDate: 'endDate',
+      allocatedHours: 'allocatedHours',
+      authorityName: 'authorityName',
+      status: 'status'
+    };
+
+    const nextSortField = backendFieldMap[field] || field;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    // Prevent duplicate API calls
+    if (
+      this.currentSortField === nextSortField &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = '';
+        this.currentSortOrder = 0;
+        if (this.resourcesTable) {
+          this.resourcesTable.sortField = '';
+          this.resourcesTable.sortOrder = 0;
+        }
+        this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
+        return;
+      }
+    }
+
+    // Set new sort state
+    this.currentUIField = field;
+    this.currentSortField = nextSortField;
+    this.currentSortOrder = order;
+
     this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
   }
 
-  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false, 
-    searchTerm?: string, pageNumber?: any, pageSize?: any) {
+  getFilteredResources(): IResource[] {
+    return this.filteredResources;
+  }
+  getResourceData(
+    projectId: number,
+    phaseId?: number,
+    isPopupCall: boolean = false,
+    searchTerm?: string,
+    pageNumber?: any,
+    pageSize?: any 
+  ) {
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
@@ -459,8 +573,14 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       params.phaseId = phaseId;
     }
 
-    if (searchTerm) {
-      params.searchTerm = searchTerm;
+    if (searchTerm && searchTerm.trim()) {
+      params.searchTerm = searchTerm.trim();
+    }
+
+    // Add sorting parameters
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      params.sortBy = this.currentSortField;
+      params.sortOrder = this.currentSortOrder === 1 ? 'asc' : 'desc';
     }
 
     if (this.selectedRoleIds?.length > 0 && !isPopupCall) {
@@ -475,11 +595,16 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       params.timesheetApprovalAuthorityIds = this.selectedAuthorityIds.join(',');
     }
       this.loader = true;
+    console.log('API Call Parameters:', params);
+    this.loading = true;
+
     this.subscription = this.http
       .getDataIncludeParams('ProjectResource', params)
       .subscribe({
         next: (data: any) => {
           this.loader = false;
+          console.log('API Response:', data);
+        
           this.collectionSize = data?.pagination?.totalRecords || 0;
             // NORMAL CALL - UPDATE TABLE DATA
             this.loading = false;
@@ -565,6 +690,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
           authorityControl?.enable();
           } else {
             // NORMAL CALL - UPDATE TABLE DATA
+            this.filteredResources = [...this.resourcesData];
+
             this.resoucesDropDownData = this.resourcesData
               .filter((r) => r.employee.id)
               .map((r) => ({
@@ -573,6 +700,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
               }));
             this.defaultPendingAuthorityId =
               this.resourcesData[0]?.pendingApprovalAuthority?.id ?? null;
+            
+            console.log('Processed data - Resources:', this.resourcesData.length, 'Total:', this.collectionSize);
           }
           const authorityControl =
             this.updateResourceForm.get('resourceAuthority');
@@ -588,10 +717,19 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
               authorityControl?.patchValue(this.defaultPendingAuthorityId);
             }
           }
+          
+          this.loading = false;
         },
         error: (reason: any) => {
-          console.error(reason);
+          console.error('API Error:', reason);
+          this.loading = false;
+          this.resourcesData = [];
+          this.filteredResources = [];
+          this.collectionSize = 0;
         },
+        complete: () => {
+          this.loading = false;
+        }
       });
   }
 
@@ -1230,6 +1368,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
     }
   }
 }

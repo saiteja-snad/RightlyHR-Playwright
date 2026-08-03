@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, BehaviorSubject, takeUntil } from 'rxjs';
+import moment from 'moment';
 import { environment } from '../../../../../environments/environment';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { AttendanceRequest, ICategoryDetails } from '../../../../Interfaces/timoff-model';
@@ -665,8 +666,8 @@ getApprovalStatusCounts() {
 
       // Handle date sorting
       if (field === 'attendanceRequestStartTime' || field === 'attendanceRequestAppliedDate') {
-        const date1 = val1 ? new Date(val1).getTime() : 0;
-        const date2 = val2 ? new Date(val2).getTime() : 0;
+        const date1 = val1 ? moment(val1).startOf('day').valueOf() : 0;
+        const date2 = val2 ? moment(val2).startOf('day').valueOf() : 0;
         return event.order * (date1 - date2);
       }
 

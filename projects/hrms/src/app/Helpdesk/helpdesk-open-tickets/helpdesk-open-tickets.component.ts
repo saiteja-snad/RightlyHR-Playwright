@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
@@ -23,15 +23,17 @@ import { HelpdeskPipe } from "../../Pipes/helpdesk.pipe";
 import { environment } from '../../../environments/environment';
 import { Paginator } from "primeng/paginator";
 import { HelpdeskStatusUpdate } from '../helpdesk-model';
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-helpdesk-open-tickets',
-  imports: [CommonModule, Select, RouterModule, NgbPopoverModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, DataLoaderContentComponent, SettingsUpdateIconComponent, ProfileIconComponent, InfoIconComponent, HelpdeskPipe, Paginator],
+  imports: [CommonModule, Select, RouterModule, NgbPopoverModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, DataLoaderContentComponent, SettingsUpdateIconComponent, ProfileIconComponent, InfoIconComponent, HelpdeskPipe, Paginator, TableModule],
   templateUrl: './helpdesk-open-tickets.component.html',
   styleUrl: './helpdesk-open-tickets.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class HelpdeskOpenTicketsComponent {
+  @ViewChild('dt') dt!: Table;
   subscription!: Subscription;
   searchValue!: string;
   empinfo = {} as Ipersonal;
@@ -74,6 +76,19 @@ export class HelpdeskOpenTicketsComponent {
   ];
   searchSubject = new Subject<string>();
   destroy$ = new Subject<boolean>();
+  sortField = '';
+  sortOrder = '';
+  tableSortField = '';
+  tableSortOrder = -1;
+  readonly sortFieldMap: Record<string, string> = {
+    id: 'id',
+    employeeName: 'employeeName',
+    createdDate: 'createdDate',
+    category: 'category',
+    subcategory: 'subcategory',
+    status: 'status',
+    priority: 'priority'
+  };
   constructor(
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
@@ -144,6 +159,35 @@ export class HelpdeskOpenTicketsComponent {
     this.getemployedeshdata(this.page, this.pageSize);
 
   }
+
+  onSort(event: any) {
+    const field = String(event.field ?? '');
+    const nextField = this.sortFieldMap[field] ?? field;
+    const nextOrder = event.order === 1 ? 'asc' : 'desc';
+
+    if (this.sortField === nextField && this.sortOrder === 'desc' && event.order === 1) {
+      this.dt.reset();
+      this.sortField = '';
+      this.sortOrder = '';
+      this.tableSortField = '';
+      this.tableSortOrder = 1;
+      this.page = 1;
+      this.first = 0;
+      this.getemployedeshdata();
+      return;
+    }
+
+    if (this.sortField === nextField && this.sortOrder === nextOrder) return;
+
+    this.sortField = nextField;
+    this.sortOrder = nextOrder;
+    this.tableSortField = field;
+    this.tableSortOrder = event.order;
+    this.page = 1;
+    this.first = 0;
+    this.getemployedeshdata();
+  }
+
   // open the offcanvas with selected ticket details and also set the editable values for status and assignee
   openEnd(ticket: any) {
     if (!this.rbac.allowedToAccess('Support Helpdesk Queries Tab.update')) return;
@@ -182,9 +226,11 @@ export class HelpdeskOpenTicketsComponent {
     this.dataloader = true;
     let EmpId = parseInt(this.empinfo.employeeId);
     let url = `HelpDeskQueries/AssignedTo/${EmpId}?pageNumber=${this.page}&pageSize=${this.pageSize}&status=open`;
+    const sortQuery = this.sortField && this.sortOrder ? `&Sorts=${this.sortField}:${this.sortOrder}` : '';
     if (this.searchValue && this.searchValue.trim() !== '') {
       url += `&search=${this.searchValue}`;
     }
+    url += sortQuery;
     this.subscription = this.http.getData(url).subscribe({
       next: (response: any) => {
         this.dataloader = false;

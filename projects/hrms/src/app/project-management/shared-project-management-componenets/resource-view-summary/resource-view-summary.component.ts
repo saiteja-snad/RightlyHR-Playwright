@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RbacService } from '../../../services/rbac.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -24,16 +24,19 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 import { combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-resource-view-summary',
   imports: [ReactiveFormsModule, ChartModule, ModuleInfoIconComponent, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
-    DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, Paginator, SkeletonModule],
+    DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, Paginator, SkeletonModule, TableModule],
   templateUrl: './resource-view-summary.component.html',
   styleUrl: './resource-view-summary.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
+  @ViewChild('resourceSummaryTable') resourceSummaryTable!: Table;
   empdata = {} as any;
   resourceDataids = {} as any;
   teamSummaryData: TimeTrackingData[] = [];
@@ -106,6 +109,11 @@ export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
   selectedDepartmentIds: number[] = [];
 selectedResourceRoles: number[] = [];
 selectedResourcePhases: number[] = [];
+
+  // sorting variables
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
+  currentUIField: string = '';
 
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService) { }
 
@@ -219,6 +227,11 @@ private refreshData() {
     if (deptIds.length > 0) url += `&departmentIds=${deptIds.join(',')}`;
   if (roleIds.length > 0) url += `&roleIds=${roleIds.join(',')}`;
   if (phaseIds.length > 0) url += `&phaseIds=${phaseIds.join(',')}`;
+
+    // Add sorting parameters
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      url += `&sortBy=${this.currentSortField}&sortOrder=${this.currentSortOrder === 1 ? 'asc' : 'desc'}`;
+    }
 
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -568,6 +581,57 @@ estimatedActualChart() {
     const h = Math.floor(hours);
     const m = Math.round((hours - h) * 60);
     return `${h}:${m.toString().padStart(2, '0')}`;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+
+    // Map UI field to backend field if needed
+    const backendFieldMap: { [key: string]: string } = {
+      date: 'date',
+      phaseName: 'phaseName',
+      loggedHours: 'totalLoggedHours',
+      approverName: 'approverName',
+      taskName: 'taskName',
+      status: 'status'
+    };
+
+    const nextSortField = backendFieldMap[field] || field;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    // Prevent duplicate API calls
+    if (
+      this.currentSortField === nextSortField &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    // Handle three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = '';
+        this.currentSortOrder = 0;
+        if (this.resourceSummaryTable) {
+          this.resourceSummaryTable.sortField = '';
+          this.resourceSummaryTable.sortOrder = 0;
+        }
+        this.getProjectSummary();
+        return;
+      }
+    }
+
+    // Set new sort state
+    this.currentUIField = field;
+    this.currentSortField = nextSortField;
+    this.currentSortOrder = order;
+
+    this.getProjectSummary();
   }
 
   get totalPercent(): number {

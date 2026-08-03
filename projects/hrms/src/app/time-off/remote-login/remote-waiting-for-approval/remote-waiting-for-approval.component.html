@@ -18,10 +18,60 @@
         Reject
       </button>
     </div>
-
-  </div>
+     </div>
 
   }
+
+  <div class="custom-table-content ">
+    @if(!dataLoad){
+    <p-table #remoteRequestsTable [value]="approvedRemotes" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="workedDate">{{'Worked Date' | translate}} <p-sortIcon field="workedDate" /></th>
+          <th pSortableColumn="availed">{{'Availed' | translate}} <p-sortIcon field="availed" /></th>
+          <th class="text-center">{{'Reason' | translate}}</th>
+          <th pSortableColumn="appliedDate">{{'Applied Date '|translate}} <p-sortIcon field="appliedDate" /></th>
+          <th class="text-center">{{'Status'|translate}}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-remoteRequest>
+        <tr>
+          <td>{{ remoteRequest.startTime ? (remoteRequest.startTime | dateformat) : ' -' }}</td>
+          <td [ngSwitch]="remoteRequest.durationType">
+            <span *ngSwitchCase="1">First Half</span>
+            <span *ngSwitchCase="3">Second Half</span>
+            <span *ngSwitchCase="2">Full Day</span>
+            <span *ngSwitchDefault>-</span>
+          </td>
+          <td class="text-center">
+            <div class="mt-2" *ngIf="remoteRequest.requestedComments;else res">
+              <a type="button" [ngbPopover]="reason">
+                <app-info-icon />
+              </a>
+              <ng-template #reason> 
+                <p class="mb-0">{{remoteRequest.requestedComments}}</p>
+              </ng-template>
+            </div>
+            <ng-template #res>-</ng-template>
+          </td>
+          <td>{{ remoteRequest.requestedDate | dateformat }}</td>
+          <td class="text-center">{{ remoteRequest.status }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <div class="wrapper">
+          <tr>
+            <td colspan="5">
+              <app-no-data-found />
+            </td>
+          </tr>
+        </div>
+      </ng-template>
+    </p-table>
+    }@else{<app-data-loader-content />}
+ 
   <div class="custom-table-content "></div>
   @if(!dataLoad){
   <div class="custom-p-multi-select-table">

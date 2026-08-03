@@ -155,9 +155,15 @@ export class ProjectInfoComponent implements OnInit, OnDestroy {
       let val1: any;
       let val2: any;
 
-      // Handle direct fields
-      val1 = a[field];
-      val2 = b[field];
+      // Handle nested field paths and special cases
+      if (field === 'projectCode') {
+        val1 = a.meta?.graphData?.code;
+        val2 = b.meta?.graphData?.code;
+      } else {
+        // Handle direct fields
+        val1 = a[field];
+        val2 = b[field];
+      }
 
       // Handle numeric fields
       if (['totalHours', 'loggedHours', 'pendingHours'].includes(field)) {

@@ -1,49 +1,55 @@
 <div class="custom-component-right-content">
     <div class="custom-table-content">
         @if (!loading) {
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Resource Name</th>
-                    <th class="text-center">Role</th>
-                    <th class="text-center">Department</th>
-                    <th class="text-center">Phases / Milestones</th>
-                    <th class="text-center">Total Logged Hours</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if(projectEmployeeDetails?.length > 0){
-                <tr *ngFor="let project of projectEmployeeDetails; let i = index">
-                    <td>
-                        <a class="data-nav-btn" (click)="navigateView(project?.employee?.id)">
-                            {{ project?.employee?.name }}
-                        </a>
-                    </td>
-                    <td class="text-center">
-                        @if(project?.roles) {
-                        <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
-                            <p-chip *ngFor="let role of project?.roles.split(',')" [label]="role.trim()" />
-                        </div>
-                        } @else { - }
-                    </td>
-                    <td class="text-center">
-                        @if(project?.departments) {
-                        <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
-                            <p-chip *ngFor="let dept of project?.departments.split(',')" [label]="dept.trim()" />
-                        </div>
-                        } @else { - }
-                    </td>
-                    <td class="text-center">
-                        <a class="data-nav-btn" (click)="project?.phasesCount !== 0 && openModal(project, summaryforlogs)">
-                            {{ project?.phasesCount ?? 0 }}</a>
-                    </td>
-                    <td class="text-center">{{ project?.totalLoggedHoursHHMM ?? '-' }}</td>
-                </tr>
-                }@else {
+        <p-table #detailedTimesheetTable
+          [value]="getFilteredEmployeeDetails()"
+          [customSort]="true"
+          (onSort)="customSort($event)">
+          <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="employeeName">Resource Name <p-sortIcon field="employeeName" /></th>
+                <th class="text-center" pSortableColumn="roles">Role <p-sortIcon field="roles" /></th>
+                <th class="text-center" pSortableColumn="departments">Department <p-sortIcon field="departments" /></th>
+                <th class="text-center" pSortableColumn="phasesCount">Phases / Milestones <p-sortIcon field="phasesCount" /></th>
+                <th class="text-center" pSortableColumn="totalLoggedHoursHHMM">Total Logged Hours <p-sortIcon field="totalLoggedHoursHHMM" /></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-project>
+            <tr>
+                <td>
+                    <a class="data-nav-btn" (click)="navigateView(project?.employee?.id)">
+                        {{ project?.employee?.name }}
+                    </a>
+                </td>
+                <td class="text-center">
+                    @if(project?.roles) {
+                    <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
+                        <p-chip *ngFor="let role of project?.roles.split(',')" [label]="role.trim()" />
+                    </div>
+                    } @else { - }
+                </td>
+                <td class="text-center">
+                    @if(project?.departments) {
+                    <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
+                        <p-chip *ngFor="let dept of project?.departments.split(',')" [label]="dept.trim()" />
+                    </div>
+                    } @else { - }
+                </td>
+                <td class="text-center">
+                    <a class="data-nav-btn" (click)="project?.phasesCount !== 0 && openModal(project, summaryforlogs)">
+                        {{ project?.phasesCount ?? 0 }}</a>
+                </td>
+                <td class="text-center">{{ project?.totalLoggedHoursHHMM ?? '-' }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="5">
                 <app-no-data-found />
-                }
-            </tbody>
-        </table>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />
@@ -64,33 +70,43 @@
         <div class="custom-main-popup-content">
             <div class="popup-table-wrapper">
                 <div class="popup-table-scroll-container">
-                    <table class="popup-table">
-                        <thead>
-                            <tr>
-                                <th>Phase / Milestone</th>
-                                <th>Role</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th> Hours Spent</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let entry of selectedEntries">
-                                <td>{{ entry?.phaseName ?? '-' }}</td>
-                                <td class="resoure-role-text" >{{entry?.resourceRole ?? '-'}}</td>
-                                <td>{{ entry?.resourceStartDate ? (entry?.resourceStartDate | dateformat) : '-' }}</td>
-                                <td>{{ entry?.resourceEndDate ? (entry?.resourceEndDate | dateformat) : '-' }}</td>
-                                <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
-                                <td [ngClass]="{
-                                    'active': entry?.resourceStatus?.toLowerCase() === 'active',
-                                    'released': entry?.resourceStatus?.toLowerCase() === 'released',
-                                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'}">
-                                    <b> {{entry?.resourceStatus ?? '-' }}</b>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <p-table #modalTimesheetTable
+                      [value]="getFilteredModalEntries()"
+                      [customSort]="true"
+                      (onSort)="customSortModal($event)">
+                      <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="phaseName">Phase / Milestone <p-sortIcon field="phaseName" /></th>
+                            <th pSortableColumn="resourceRole">Role <p-sortIcon field="resourceRole" /></th>
+                            <th pSortableColumn="resourceStartDate">Start Date <p-sortIcon field="resourceStartDate" /></th>
+                            <th pSortableColumn="resourceEndDate">End Date <p-sortIcon field="resourceEndDate" /></th>
+                            <th pSortableColumn="loggedHoursHHMM">Hours Spent <p-sortIcon field="loggedHoursHHMM" /></th>
+                            <th pSortableColumn="resourceStatus">Status <p-sortIcon field="resourceStatus" /></th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-entry>
+                        <tr>
+                            <td>{{ entry?.phaseName ?? '-' }}</td>
+                            <td class="resoure-role-text" >{{entry?.resourceRole ?? '-'}}</td>
+                            <td>{{ entry?.resourceStartDate ? (entry?.resourceStartDate | dateformat) : '-' }}</td>
+                            <td>{{ entry?.resourceEndDate ? (entry?.resourceEndDate | dateformat) : '-' }}</td>
+                            <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
+                            <td [ngClass]="{
+                                'active': entry?.resourceStatus?.toLowerCase() === 'active',
+                                'released': entry?.resourceStatus?.toLowerCase() === 'released',
+                                'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'}">
+                                <b> {{entry?.resourceStatus ?? '-' }}</b>
+                            </td>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="emptymessage">
+                        <tr>
+                          <td [attr.colspan]="6">
+                            <app-no-data-found />
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
                 </div>
                 <!-- <div class="popup-table-footer">{{"Logged Hours" | translate}}: <b>8:00hrs</b></div> -->
             </div>

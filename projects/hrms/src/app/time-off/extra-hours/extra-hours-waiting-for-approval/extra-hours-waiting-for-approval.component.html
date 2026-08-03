@@ -23,56 +23,49 @@
   }
   <div class="custom-table-content">
     @if(!dataLoad){
-    <div class="custom-p-multi-select-table">
-      <p-table #extraHoursWaitingTable [value]="waitingForApprovalPerimisions" [(selection)]="selectedProducts"
-        (selectionChange)="selectCheck($event)" dataKey="id" [customSort]="true" (sortFunction)="customSort($event)"
-        [sortMode]="'single'">
-        <ng-template pTemplate="header">
-          <tr>
-            <th style="width:4rem">
+<div class="custom-p-multi-select-table">
+<p-table #extraHoursWaitingTable [value]="waitingForApprovalPerimisions" [(selection)]="selectedProducts" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:4rem">
               @if(showMultiSelectAndSearch()){
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               }
             </th>
-            <th pSortableColumn="createdDate">{{'Requested Date' | translate}} <p-sortIcon
-                field="createdDate"></p-sortIcon></th>
-            <th pSortableColumn="requestedDate">{{'Worked Date' | translate}} <p-sortIcon
-                field="requestedDate"></p-sortIcon></th>
-            <th pSortableColumn="duration">{{'Duration(In Hrs)' | translate}} <p-sortIcon field="duration"></p-sortIcon>
-            </th>
-            <th class="text-center" pSortableColumn="notes">{{'Description' | translate}} <p-sortIcon
-                field="notes"></p-sortIcon></th>
-            <th class="text-center" pSortableColumn="status">{{'Status' | translate}} <p-sortIcon
-                field="status"></p-sortIcon></th>
-            @if(selectedProducts.length == 0){
+          <th pSortableColumn="createdDate">{{'Requested Date' | translate}} <p-sortIcon field="createdDate"></p-sortIcon></th>
+          <th pSortableColumn="requestedDate">{{'Worked Date' | translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
+          <th pSortableColumn="duration">{{'Duration(In Hrs)' | translate}} <p-sortIcon field="duration"></p-sortIcon></th>
+          <th class="text-center">{{'Description' | translate}}</th>
+          <th  class="text-center">{{'Status' | translate}}</th>
+          @if(selectedProducts.length == 0){
             <th class="text-center">
               Action
             </th>
-            }
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-permissionRequest>
-          <tr>
-            <td style="width:4rem">
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-permissionRequest>
+        <tr>
+          <td style="width:4rem">
               @if(canApprove(permissionRequest)){
               <p-tableCheckbox [value]="permissionRequest"></p-tableCheckbox>
               }
             </td>
-            <td>{{permissionRequest.createdDate | dateformat}}</td>
-            <td>{{permissionRequest.requestedDate | dateformat}}</td>
-            <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-            <td class="text-center">
-              <div>
-                <a type="button" [ngbPopover]="reason">
-                  <app-info-icon />
-                </a>
-                <ng-template #reason>
-                  <p class="mb-0">{{permissionRequest.notes}}</p>
-                </ng-template>
-              </div>
-            </td>
-            <td class="text-center">{{permissionRequest.status}}</td>
-            @if(selectedProducts.length == 0){
+          <td>{{permissionRequest.createdDate | dateformat}}</td>
+          <td>{{permissionRequest.requestedDate | dateformat}}</td>
+          <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
+          <td  class="text-center">
+            <div>
+              <a type="button" [ngbPopover]="reason">
+                <app-info-icon />
+              </a>
+              <ng-template #reason>
+                <p class="mb-0">{{permissionRequest.notes}}</p>
+              </ng-template>
+            </div>
+          </td>
+          <td class="text-center">{{permissionRequest.status}}</td>
+          @if(selectedProducts.length == 0){
             <td class="text-center">
 
               @if(canApprove(permissionRequest)){
@@ -108,8 +101,8 @@
 
             </td>
             }
-          </tr>
-        </ng-template>
+        </tr>
+      </ng-template>
         <ng-template pTemplate="emptymessage">
           <div class="wrapper">
             <tr>

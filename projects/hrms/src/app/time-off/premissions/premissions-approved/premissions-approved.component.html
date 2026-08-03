@@ -7,10 +7,10 @@
               <th pSortableColumn="createdDate">{{'Requested Date'| translate}} <p-sortIcon field="createdDate"></p-sortIcon></th>
               <th pSortableColumn="requestedDate">{{'Permission Date'| translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
               <th pSortableColumn="duration">Duration(In<span class="text-lowercase"> hrs)</span> <p-sortIcon field="duration"></p-sortIcon></th> 
-              <th class="text-center" pSortableColumn="notes">{{'Reason'| translate}} <p-sortIcon field="notes"></p-sortIcon></th>
+              <th class="text-center">{{'Reason'| translate}}</th>
               <th class="text-center">{{'Approver Comments'| translate}}</th>
               <th pSortableColumn="type">{{'Permission Type'| translate}} <p-sortIcon field="type"></p-sortIcon></th>
-              <th pSortableColumn="status">{{'Status'| translate}} <p-sortIcon field="status"></p-sortIcon></th>
+              <th >{{'Status'| translate}}</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-permissionRequest>
@@ -43,7 +43,7 @@
               <td class="text-center">-</td>
               }
               <td>{{permissionRequest.type}}</td>
-              <td>{{permissionRequest.status}}</td>
+              <td class="text-center">{{permissionRequest.status}}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">

@@ -39,17 +39,17 @@
 
     <ng-template #maincontent>
         <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <th>Employee Name</th>
-                    <th>Leaves</th>
-                    <th>WFH</th>
-                    <th>Permissions</th>
-                    <th>Regularization</th>
-                </thead>
-                <tbody>
-                    @if(filteredTeamLeaveSummary.length > 0) {
-                    @for (employee of filteredTeamLeaveSummary; track employee.employeeId) {
+            <p-table #dt [value]="filteredTeamLeaveSummary" [tableStyle]="{'width': '100%'}" (onSort)="onSortChange($event)" [customSort]="true" (sortFunction)="customSort($event)">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="employeeName">Employee Name <p-sortIcon field="employeeName" /></th>
+                        <th pSortableColumn="leavesCount">Leaves <p-sortIcon field="leavesCount" /></th>
+                        <th pSortableColumn="wfhCount">WFH <p-sortIcon field="wfhCount" /></th>
+                        <th pSortableColumn="permissionsDuration">Permissions <p-sortIcon field="permissionsDuration" /></th>
+                        <th pSortableColumn="regularizationDuration">Regularization <p-sortIcon field="regularizationDuration" /></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-employee>
                     <tr>
                         <td>{{ employee.employeeName }} ({{employee.fusionEmpId}})</td>
                         <td>
@@ -74,8 +74,7 @@
                                 (click)="openPopup(permissionModal, employee, 'permissions')">
                                 {{ calculateDuration(employee.permissions)}} Hr(s)
                             </span>
-                            <ng-template #noPermission>{{ calculateDuration(employee.permissions)}}
-                                Hr(s)</ng-template>
+                            <ng-template #noPermission>{{ calculateDuration(employee.permissions)}} Hr(s)</ng-template>
                         </td>
                         <td>
                             <span [ngClass]="{ 'clickable-text': calculateDuration(employee.regularization) > 0 }"
@@ -83,18 +82,16 @@
                                 (click)="openPopup(permissionModal, employee, 'regularization')">
                                 {{ calculateDuration(employee.regularization)}} Hr(s)
                             </span>
-                            <ng-template #noRegularization>{{ calculateDuration(employee.regularization)}}
-                                Hr(s)</ng-template>
+                            <ng-template #noRegularization>{{ calculateDuration(employee.regularization)}} Hr(s)</ng-template>
                         </td>
                     </tr>
-                    }
-                    }@else {
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
                     <tr>
-                        <app-no-data-found />
+                        <td colspan="5" class="text-center"><div class="wrapper"><app-no-data-found /></div></td>
                     </tr>
-                    }
-                </tbody>
-            </table>
+                </ng-template>
+            </p-table>
         </div>
     </ng-template>
 </div>

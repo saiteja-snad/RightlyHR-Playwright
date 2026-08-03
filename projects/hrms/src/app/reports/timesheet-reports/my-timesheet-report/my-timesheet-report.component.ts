@@ -1,8 +1,7 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { AuthService } from '../../../services/auth.service';
-import { ReportsService } from '../../../services/reports/reports.service';
 import { HttpService } from '../../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RbacService } from '../../../services/rbac.service';
@@ -14,7 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import { filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { ClientData } from '../../../clients.model';
 import { TimesheetReportTabsComponent } from '../../../shared/reports-tabs/timesheet-report-tabs/timesheet-report-tabs.component';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -23,15 +22,18 @@ import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { HttpResponse } from '@angular/common/http';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-my-timesheet-report',
-  imports: [DatePicker, NgbPopoverModule, MultiSelectModule, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+  imports: [DatePicker, NgbPopoverModule, MultiSelectModule, TableModule, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
   templateUrl: './my-timesheet-report.component.html',
   styleUrl: './my-timesheet-report.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class MyTimesheetReportComponent implements OnInit, OnDestroy {
+  @ViewChild('dt') table!: Table;
+  
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -76,18 +78,91 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   getEmployeeInfo = [] as any;
   isDistinct = true;
   tastType: any[] = [];
+  
+  // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  currentUIField: string | null = null; // Track the UI field name for visual state
+  suppressNextPageChange = false;
+  
+  // Sort field mapping for server-side sorting
+  readonly sortFieldMap: Record<string, string> = {
+    date: 'date',
+    client: 'client',
+    project: 'project',
+    phase: 'phase',
+    taskType: 'taskType',
+    hoursWorked: 'hoursWorked',
+    billableStatus: 'billableStatus',
+    submittedDate: 'submittedDate',
+    approvalStatus: 'approvalStatus'
+  };
+
+  // Method to handle column header clicks
+  onColumnSort(field: string): void {
+    const backendField = this.sortFieldMap[field] || field;
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === 0) {
+        // Currently no sort, set to ascending
+        this.currentSortOrder = 1;
+        this.currentSortField = backendField;
+        this.currentUIField = field;
+      } else if (this.currentSortOrder === 1) {
+        // Currently ascending, set to descending
+        this.currentSortOrder = -1;
+        this.currentSortField = backendField;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = null as any;
+        this.currentSortOrder = 0;
+        
+        // Manually reset PrimeNG table sort state
+        if (this.table) {
+          this.table.reset();
+        }
+        
+        // Reset to first page and reload data without sorting
+        this.page = 1;
+        this.first = 0;
+        this.generatemytimesheetReport(this.page, this.pageSize, true, true);
+        return;
+      }
+    } else {
+      // Different field clicked - start with ascending
+      this.currentUIField = field;
+      this.currentSortField = backendField;
+      this.currentSortOrder = 1; // Always start with ascending for new field
+    }
+
+    // Reset to first page when sorting changes
+    this.page = 1;
+    this.first = 0;
+    
+    // Call generate to refresh data with new sorting
+    this.generatemytimesheetReport(this.page, this.pageSize, true, true);
+  }
 
 
   constructor(
     public authService: AuthService,
-    private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
     public rbac: RbacService,
     public readonly router: Router,
     private conformationPopup: OpenModalService,
     private offcanvasService: NgbOffcanvas,
+    private cdr: ChangeDetectorRef,
   ) { }
+
+  customSort(event: any): void {
+    // This method is kept for compatibility but does nothing
+    // We handle sorting through onColumnSort instead
+    return;
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -96,6 +171,8 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     this.getResourceData();
     this.getTaskType();
   }
+
+
 
   getTaskType() {
   this.subscription = this.http.getData('TaskType').subscribe({
@@ -152,6 +229,29 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     this.MyTimesheetReportForm.get('phases')?.disable();
     this.MyTimesheetReportForm.get('taskId')?.setValue(null);
     this.collectionSize = 0;
+    
+    // Reset sorting arrows and pagination - use null and 0 for proper reset
+    this.currentSortField = '';
+    this.currentUIField = null;
+    this.currentSortOrder = 0;
+    
+    // Reset pagination to first page
+    this.page = 1;
+    this.first = 0;
+    
+    // Reset the table sort state
+    if (this.table) {
+      this.table.reset();
+    }
+    
+    // Prevent suppression of next page change to ensure proper reset
+    this.suppressNextPageChange = false;
+    
+    // Reset disabled button state
+    this.disableBtn = false;
+    
+    // Close the offcanvas after clearing
+    this.closeCanvas();
   }
 
   toggleFilters(content: TemplateRef<any>) {
@@ -177,6 +277,11 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     this.generatemytimesheetReport(this.page, this.pageSize);
   }
   onPageChange(event: any) {
+    if (this.suppressNextPageChange && event?.page === 0 && event?.first === 0) {
+      this.suppressNextPageChange = false;
+      return;
+    }
+    this.suppressNextPageChange = false;
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
@@ -385,11 +490,10 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     const isTaskSelected = taskId != null && taskId != '';
     return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasphase || isTaskSelected);
   }
-// payload for generate the data
+  // payload for generate the data
   buildTimesheetReportParams() {
     const formValue = this.MyTimesheetReportForm.value;
     console.log(formValue);
-    const employeeId = this.empinfo?.employeeId || 0;
     // format date as MM/dd/yyyy
     const formatDate = (date: Date | null) => {
       if (!date) return null;
@@ -427,7 +531,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     }
     return params;
   }
-// generate api
+  // generate api
   generatemytimesheetReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false) {
     if (this.MyTimesheetReportForm.invalid) return;
     // Only reset pagination when explicitly requested
@@ -438,7 +542,11 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     if (showLoader) this.spinnerLoader1 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+    
+    // Add sorting to the query string
+    const sortQuery = this.currentSortField && this.currentSortOrder !== 0 ? `&Sorts=${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}` : '';
+    
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}${sortQuery}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.spinnerLoader1 = false;
         this.offcanvasService.dismiss();
@@ -466,13 +574,17 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
       },
     });
   }
-// export api
+  // export api
   exportmytimesheetreport() {
     if (this.MyTimesheetReportForm.invalid) return;
     this.spinnerLoader2 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
+    
+    // Add sorting to export as well
+    const sortQuery = this.currentSortField && this.currentSortOrder !== 0 ? `&Sorts=${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}` : '';
+    
+    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}${sortQuery}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
         this.spinnerLoader2 = false;
         // Extract filename from Content-Disposition

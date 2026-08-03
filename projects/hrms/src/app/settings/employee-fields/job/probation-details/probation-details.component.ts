@@ -12,18 +12,22 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
-import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
-import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-probation-details',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, DataLoaderContentComponent,SettingsDeleteIconComponent, SettingsUpdateIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, DataLoaderContentComponent, TableModule],
   templateUrl: './probation-details.component.html',
   styleUrl: './probation-details.component.scss'
 })
 export class ProbationDetailsComponent {
+  @ViewChild('probationTable') probationTable!: Table;
   subscription!: Subscription;
   getProbationconfigValues = [] as any;
   ProbationDetails = [] as any;
+  originalProbationData = [] as any; // Store original unsorted data
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   loader = false;
   isEditMode = false;
   selectedId: number | null = null;
@@ -78,6 +82,7 @@ export class ProbationDetailsComponent {
         next: (data: any) => {
           this.loader = false;
           this.ProbationDetails = data;
+          this.originalProbationData = [...this.ProbationDetails]; // Store original data
         },
       error: (err: any) => {
         // console.log(err);
@@ -223,6 +228,70 @@ export class ProbationDetailsComponent {
     this.AddForm.reset();
     this.isEditMode = false;
     this.selectedId = null;
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.ProbationDetails = [...this.originalProbationData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.probationTable) {
+          this.probationTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle specific field mappings
+      switch (field) {
+        case 'value':
+          val1 = a.value;
+          val2 = b.value;
+          break;
+        case 'noOfDays':
+          val1 = a.noOfDays;
+          val2 = b.noOfDays;
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle numeric sorting for noOfDays
+      if (field === 'noOfDays') {
+        const num1 = parseInt(val1) || 0;
+        const num2 = parseInt(val2) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
   }
 
   ngOnDestroy(): void {

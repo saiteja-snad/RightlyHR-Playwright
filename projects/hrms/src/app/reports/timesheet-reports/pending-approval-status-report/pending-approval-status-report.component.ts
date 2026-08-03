@@ -1,6 +1,6 @@
 
 
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { AuthService } from '../../../services/auth.service';
@@ -24,15 +24,18 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpResponse } from '@angular/common/http';
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-pending-approval-status-report',
-  imports: [DatePicker, CommonModule, NgbPopoverModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+  imports: [DatePicker, CommonModule, NgbPopoverModule, MultiSelectModule, TableModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
   templateUrl: './pending-approval-status-report.component.html',
   styleUrl: './pending-approval-status-report.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
+  @ViewChild('dt') table!: Table;
+  
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -80,6 +83,74 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     { label: 200, value: 200 }
   ];
   today: Date = new Date();
+  
+  // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  currentUIField: string | null = null; // Track the UI field name for visual state
+  suppressNextPageChange = false;
+  
+  // Sort field mapping for server-side sorting
+  readonly sortFieldMap: Record<string, string> = {
+    entryDate: 'entryDate',
+    fusionEmpId: 'fusionEmpId',
+    employee: 'employee',
+    client: 'client',
+    project: 'project',
+    phaseName: 'phaseName',
+    billable: 'billable',
+    taskType: 'taskType',
+    status: 'status',
+    timeSheetSubmittedDate: 'timeSheetSubmittedDate'
+  };
+
+  // Method to handle column header clicks
+  onColumnSort(field: string): void {
+    const backendField = this.sortFieldMap[field] || field;
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === 0) {
+        // Currently no sort, set to ascending
+        this.currentSortOrder = 1;
+        this.currentSortField = backendField;
+        this.currentUIField = field;
+      } else if (this.currentSortOrder === 1) {
+        // Currently ascending, set to descending
+        this.currentSortOrder = -1;
+        this.currentSortField = backendField;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = null;
+        this.currentSortOrder = 0;
+        
+        // Manually reset PrimeNG table sort state
+        if (this.table) {
+          this.table.reset();
+        }
+        
+        // Reset to first page and reload data without sorting
+        this.page = 1;
+        this.first = 0;
+        this.generatependingapprovalReport(this.page, this.pageSize, true, true);
+        return;
+      }
+    } else {
+      // Different field clicked - start with ascending
+      this.currentUIField = field;
+      this.currentSortField = backendField;
+      this.currentSortOrder = 1; // Always start with ascending for new field
+    }
+
+    // Reset to first page when sorting changes
+    this.page = 1;
+    this.first = 0;
+    
+    // Call generate to refresh data with new sorting
+    this.generatependingapprovalReport(this.page, this.pageSize, true, true);
+  }
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -90,6 +161,13 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     private offcanvasService: NgbOffcanvas,
   ) { }
+
+  customSort(event: any): void {
+    // This method is kept for compatibility but does nothing
+    // We handle sorting through onColumnSort instead
+    return;
+  }
+
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -178,6 +256,23 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
   this.collectionSize = 0;
   this.disableBtn = false;
 
+  // Reset sorting arrows and pagination - use null and 0 for proper reset
+  this.currentSortField = '';
+  this.currentUIField = null;
+  this.currentSortOrder = 0;
+  
+  // Reset pagination to first page
+  this.page = 1;
+  this.first = 0;
+  
+  // Reset the table sort state
+  if (this.table) {
+    this.table.reset();
+  }
+  
+  // Prevent suppression of next page change to ensure proper reset
+  this.suppressNextPageChange = false;
+
   // Refresh dropdowns
   if (this.rbac.allowedToAccess('Team Timesheet Report - Admin-Approval.view')) {
     this.getClientsData();
@@ -191,6 +286,9 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
   // Mark clean
   this.PendingApprovalReportForm.markAsPristine();
   this.PendingApprovalReportForm.markAsUntouched();
+
+  // Close the offcanvas after clearing
+  this.closeCanvas();
 }
 
 
@@ -207,6 +305,11 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
   }
 
   onPageChange(event: any) {
+    if (this.suppressNextPageChange && event?.page === 0 && event?.first === 0) {
+      this.suppressNextPageChange = false;
+      return;
+    }
+    this.suppressNextPageChange = false;
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
@@ -746,7 +849,11 @@ removeDuplicatePhases(list: any[]) {
     if (showLoader) this.spinnerLoader1 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+    
+    // Add sorting to the query string
+    const sortQuery = this.currentSortField && this.currentSortOrder !== 0 ? `&Sorts=${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}` : '';
+    
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}${sortQuery}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.spinnerLoader1 = false;
         this.offcanvasService.dismiss();
@@ -780,8 +887,12 @@ removeDuplicatePhases(list: any[]) {
     this.spinnerLoader2 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
+    
+    // Add sorting to export as well
+    const sortQuery = this.currentSortField && this.currentSortOrder !== 0 ? `&Sorts=${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}` : '';
+    
     this.http.downloadTimesheetReport(
-      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
+      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}${sortQuery}`
     ).subscribe({
       next: (response: HttpResponse<Blob>) => {
         this.spinnerLoader2 = false;

@@ -17,11 +17,10 @@ import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { OpenModalService } from '../../services/open-modal.service';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
-import { TableModule, Table } from 'primeng/table';
-import { DocumentViewIconComponent } from "../../icons/document-view-icon/document-view-icon.component";
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent, ModuleInfoIconComponent, TableModule, DocumentViewIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent,ModuleInfoIconComponent, TableModule],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })
@@ -40,21 +39,28 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
   selectedYear: number = this.currentYear;
   years: { label: string; value: number }[] = [];
   loading = false
-  documentLoading = false
   filteredpolicy: any = []
   orgPolicyItemsArray: any[] = [];
+  EduViewURL: any;
+  EduImageUrl: any;
+  attachmentUrl: any;
+  item: any;
+  showViewDetailsModal = false;
+  isViewingAttachment = false;
+  shouldOpenModal = false;
   viewPolicyname!: string;
+  ackCheckboxChecked: any;
   selectedItem: any;
-  
-  // PrimeNG table selection properties
-  selectedPolicyItems: any[] = [];
-  bulkAcknowledging = false;
-
-  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
-  @ViewChild('dt') table!: Table;
+  policySortField: 'policyName' | 'policyDescription' | '' = '';
+  policySortOrder: 0 | 1 | -1 = 0;
+  private originalPolicyItemsArray: any[] = [];
+  @ViewChild('dt') dt!: Table;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location,
     private sanitizer: DomSanitizer, public readonly router: Router, private confirmation: OpenModalService) { }
+
+  // @ViewChild('viewattamchment') private viewattamchment!: TemplateRef<any>;
+  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   ngOnInit(): void {
     this.selectedYear = this.currentYear;
     this.policiesform = this.fb.group({
@@ -62,8 +68,6 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
     });
     this.policiesform.get('selectedYear')?.valueChanges.subscribe((year: number) => {
       this.selectedYear = year;
-      // Clear selections when year changes
-      this.selectedPolicyItems = [];
       this.getpolicys(this.jobshiftdetials);
     });
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
@@ -94,115 +98,51 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  isAcknowledgeButtonDisabled(): boolean {
-    return this.ackForm.invalid || this.loading;
-  }
-
-  closeModal(): void {
-    this.modalService.dismissAll();
-    this.ExpenseViewURL = null;
-    this.ExpenseImageUrl = null;
-  }
-
-  shouldShowAcknowledgeFooter(): boolean {
-    return this.selectedItem?.requiresAcknowledgment && !this.selectedItem?.acknowledged;
-  }
-
-  // PrimeNG table selection handling
-  onSelectionChange(selectedItems: any[]) {
-    // Update selection state and filter out invalid selections
-    if (!selectedItems || selectedItems.length === 0) {
-      this.selectedPolicyItems = [];
-      this.sortPolicyItems();
-      return;
-    }
-
-    // Only keep policies that require acknowledgment and are not yet acknowledged
-    const validSelections = selectedItems.filter(item => 
-      item.requiresAcknowledgment && !item.acknowledged
-    );
-
-    // Update the selection to only include valid items
-    this.selectedPolicyItems = [...validSelections];
-
-    // Sort the array to bring selected items to the top
-    this.sortPolicyItems();
-
-    // If some items were filtered out, update the table selection to match
-    if (validSelections.length !== selectedItems.length && this.table) {
-      setTimeout(() => {
-        this.table.selection = validSelections;
-      });
-    }
-  }
-
-  // Method to sort policy items with selected items at the top
-  private sortPolicyItems() {
-    if (!this.orgPolicyItemsArray || this.orgPolicyItemsArray.length === 0) {
-      return;
-    }
-
-    // Get selected item IDs for quick lookup
-    const selectedIds = new Set(this.selectedPolicyItems.map(item => item.id));
-
-    // Sort the array: selected items first, then non-selected items
-    this.orgPolicyItemsArray = this.orgPolicyItemsArray.sort((a, b) => {
-      const aIsSelected = selectedIds.has(a.id);
-      const bIsSelected = selectedIds.has(b.id);
-
-      // If both are selected or both are not selected, maintain original order
-      if (aIsSelected === bIsSelected) {
-        return 0;
-      }
-
-      // Selected items come first (return -1 for a if a is selected and b is not)
-      return aIsSelected ? -1 : 1;
-    });
-  }
-
-  isCheckboxDisabled(item: any): boolean {
-    // Disable checkbox if policy doesn't require acknowledgment or is already acknowledged
-    return !item.requiresAcknowledgment || item.acknowledged;
-  }
-
-  // Get count of policies that require acknowledgment and are not yet acknowledged
-  get pendingAcknowledgmentCount(): number {
-    if (!this.orgPolicyItemsArray || this.orgPolicyItemsArray.length === 0) {
-      return 0;
-    }
-    return this.orgPolicyItemsArray.filter(item => 
-      item.requiresAcknowledgment && !item.acknowledged
-    ).length;
-  }
-
-  // Get count of currently selected valid policies (for acknowledgment)
-  get validSelectedCount(): number {
-    if (!this.selectedPolicyItems || this.selectedPolicyItems.length === 0) {
-      return 0;
-    }
-    return this.selectedPolicyItems.filter(policy => 
-      policy.requiresAcknowledgment && !policy.acknowledged
-    ).length;
-  }
-
-  // Check if individual acknowledge buttons should be disabled (when multi-select is active)
-  isIndividualAcknowledgeDisabled(): boolean {
-    return this.selectedPolicyItems && this.selectedPolicyItems.length > 0;
-  }
-
-  // Check if header checkbox should be disabled (when no records need acknowledgment)
-  isHeaderCheckboxDisabled(): boolean {
-    return this.pendingAcknowledgmentCount === 0;
+  openupdateModal(content: any) {
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
   openModal(content: any) {
     this.modalService.open(this.viewattamchment, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
   }
 
+  private handleImage(url: string) {
+    const baseUrl = this.location.normalize('/');
+    const imageUrl = `${baseUrl}${url}`;
+    this.EduImageUrl = `${environment.viewUrl}${imageUrl}`;
+    // Log imageUrl to console
+  }
+
+  private handlePDF(url: string) {
+    // Assuming NgxDocViewerModule supports PDFs directly
+    const baseUrl = this.location.normalize('/');
+    const pdfUrl = `${baseUrl}${url}`;
+    this.EduViewURL = `${environment.viewUrl}${pdfUrl}`;
+  }
+
+  onViewClick(policyAttachment: string) {
+    this.shouldOpenModal = true;
+    this.EduImageUrl = '';
+    this.EduViewURL = '';
+    this.ackCheckboxChecked = false;
+    const isImage = /\.(jpg|jpeg|png)$/i.test(policyAttachment);
+    const isPDF = policyAttachment.toLowerCase().endsWith('.pdf');
+    this.modalService.dismissAll();
+    if (isImage) {
+      this.handleImage(policyAttachment);
+    } else if (isPDF) {
+      this.handlePDF(policyAttachment);
+    } else {
+      console.log(`Unsupported file type: ${policyAttachment}`);
+      return;
+    }
+    this.openModal(this.viewattamchment);
+  }
+
   onViewAttachement(url: any, name: any, selectedItem: any) {
     this.viewPolicyname = name;
     this.selectedItem = selectedItem;
-    this.documentLoading = true;
+    this.ackCheckboxChecked = false;
     const lowerUrl = url?.toLowerCase();
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
@@ -211,35 +151,28 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
           const objectURL = URL.createObjectURL(blob);
           this.ExpenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
           this.ExpenseViewURL = null;
-          this.modalService.dismissAll();
-          this.openModal(this.viewattamchment);
+          this.toggleViewModal();
           this.ackForm.reset({ acknowledged: false });
-          this.documentLoading = false;
         },
-        error: (err) => {
-          console.error('Error downloading image:', err);
-          this.documentLoading = false;
-        }
+        error: (err) => console.error('Error downloading image:', err),
       });
     } else if (lowerUrl?.endsWith('pdf')) {
       this.ExpenseImageUrl = null;
-      this.ExpenseViewURL = `${environment.viewUrl}${url}`;
-      this.modalService.dismissAll();
-      this.openModal(this.viewattamchment);
+      this.ExpenseViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModal();
       this.ackForm.reset({ acknowledged: false });
-      setTimeout(() => {
-        this.documentLoading = false;
-      }, 1000);
     } else {
+      // fallback for other types if needed
       this.ExpenseImageUrl = null;
       this.ExpenseViewURL = `${environment.viewUrl}${url}`;
-      this.modalService.dismissAll();
-      this.openModal(this.viewattamchment);
+      this.toggleViewModal();
       this.ackForm.reset({ acknowledged: false });
-      setTimeout(() => {
-        this.documentLoading = false;
-      }, 1000);
     }
+  }
+
+  toggleViewModal() {
+    this.modalService.dismissAll();
+    this.openModal(this.viewattamchment);
   }
 
   getjobDetails() {
@@ -267,20 +200,17 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
         this.Policies = response;
         this.filteredpolicy = response.map((policy: any) => policy.orgPolicyItems);
         this.orgPolicyItemsArray = [].concat(...this.filteredpolicy);
-        
-        // Clear selections when new data is loaded and reset table selection
-        this.selectedPolicyItems = [];
-        if (this.table) {
-          this.table.selection = [];
-        }
-        
-        // Sort items initially to maintain consistent ordering
-        this.sortPolicyItems();
-        
+        this.originalPolicyItemsArray = [...this.orgPolicyItemsArray];
+        this.policySortField = '';
+        this.policySortOrder = 0;
         console.log(this.orgPolicyItemsArray);
       },
-      error: () => {
+      error: (reason: any) => {
         this.loading = false;
+        this.orgPolicyItemsArray = [];
+        this.originalPolicyItemsArray = [];
+        this.policySortField = '';
+        this.policySortOrder = 0;
       },
       complete: () => {
         this.loading = false;
@@ -288,16 +218,46 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
     });
   }
 
+  customSort(event: any): void {
+    const field = event.field;
+    if (this.policySortField === field) {
+      if (this.policySortOrder === 1) {
+        this.policySortOrder = -1;
+        event.order = -1;
+      } else if (this.policySortOrder === -1) {
+        this.orgPolicyItemsArray = [...this.originalPolicyItemsArray];
+        this.policySortField = '';
+        this.policySortOrder = 0;
+        if (this.dt) {
+          this.dt.reset();
+        }
+        return;
+      } else {
+        this.policySortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.policySortField = field;
+      this.policySortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      const v1 = String(a?.[field] ?? '').trim();
+      const v2 = String(b?.[field] ?? '').trim();
+      return event.order * v1.localeCompare(v2, undefined, { sensitivity: 'base' });
+    });
+  }
+
   postacknowledgement(selectedItem: any) {
-    let data = [{
+    let data = {
       orgPolicyItemId: selectedItem.id,
       employeeId: this.empinfo.employeeId,
       acknowledged: true,
       acknowledgedDate: new Date(),
       source: "Web"
-    }]
+    }
     console.log(data);
-    this.loading = true;
     this.subscription = this.http.postdata('OrgPolicyAcknowledgment', data).subscribe({
       next: (response: any) => {
         console.log(response);
@@ -309,87 +269,15 @@ export class CompanypoliciesComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
         }, 2000);
         selectedItem.acknowledged = true;
-        
-        // Clear selections and reset sorting when individual acknowledgment is completed
-        this.selectedPolicyItems = [];
-        this.sortPolicyItems();
-        
         this.getjobDetails();
       },
-      error: (reason: any) => {
-        console.log(reason);
-        this.loading = false;
-      }
+      error: (reason: any) => console.log(reason)
     });
-  }
-
-  bulkAcknowledgePolicies() {
-    if (!this.selectedPolicyItems || this.selectedPolicyItems.length === 0) {
-      this.confirmation.openErrorModal('Please select at least one policy to acknowledge');
-      return;
-    }
-
-    // Double-check: Only process policies that require acknowledgment and are not yet acknowledged
-    const validPoliciesForAcknowledgment = this.selectedPolicyItems.filter(policy => 
-      policy.requiresAcknowledgment && !policy.acknowledged
-    );
-
-    if (validPoliciesForAcknowledgment.length === 0) {
-      this.confirmation.openErrorModal('No valid policies selected for acknowledgment');
-      this.selectedPolicyItems = []; // Clear invalid selections
-      return;
-    }
-
-    this.bulkAcknowledging = true;
-    
-    // Create array payload for only valid policies that require acknowledgment
-    const acknowledgmentData = validPoliciesForAcknowledgment.map(policy => ({
-      orgPolicyItemId: policy.id,
-      employeeId: this.empinfo.employeeId,
-      acknowledged: true,
-      acknowledgedDate: new Date(),
-      source: "Web"
-    }));
-
-    console.log('Bulk acknowledgment payload (filtered array):', acknowledgmentData);
-    console.log('Valid policies count:', validPoliciesForAcknowledgment.length);
-
-    // Send array to the same single endpoint
-    this.subscription = this.http.postdata('OrgPolicyAcknowledgment', acknowledgmentData).subscribe({
-      next: (response: any) => {
-        console.log(response);
-        // Update selectedPolicyItems to reflect only the valid ones that were processed
-        this.selectedPolicyItems = validPoliciesForAcknowledgment;
-        this.handleBulkAcknowledgmentSuccess();
-      },
-      error: (reason: any) => {
-        console.log('Error:', reason);
-        this.bulkAcknowledging = false;
-        this.confirmation.openErrorModal('Failed to acknowledge policies. Please try again.');
-      }
-    });
-  }
-
-  private handleBulkAcknowledgmentSuccess() {
-    this.bulkAcknowledging = false;
-    // this.confirmation.openSuccessModal(`${this.selectedPolicyItems.length} policies acknowledged successfully`);
-    this.confirmation.openSuccessModal(`Policies acknowledged successfully`);
-    
-    // Update the acknowledged status for selected policies
-    this.selectedPolicyItems.forEach(policy => {
-      policy.acknowledged = true;
-    });
-    
-    this.selectedPolicyItems = [];
-    // Reset sorting when selections are cleared
-    this.sortPolicyItems();
-    this.getjobDetails();
   }
 
   ngOnDestroy(): void {
     if (this.subscription) {
-      this.subscription.unsubscribe();
+      this.subscription.unsubscribe()
     }
-    this.selectedPolicyItems = [];
   }
 }

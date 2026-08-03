@@ -29,31 +29,52 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <table id="leaveReportTable" class="w-100">
-      <thead>
-
-        <th>{{'Employee ID' | translate}}</th>
-        <th>{{'Employee Name' | translate}}</th>
-        <th>{{'Department' | translate}}</th>
-        <th>{{'Role' | translate}}</th>
-        <!-- <th>Designation</th> -->
-        <th>{{'Project Assigned' | translate}}</th>
-        <th>{{'Phase/Milestone' | translate}}</th>
-        <th class="text-center">{{'Project Start Date' | translate}}</th>
-        <th class="text-center">{{'Project End Date' | translate}}</th>
-        <!-- <th>Allocated To</th> -->
-        <th class="text-center">{{'Available From' | translate}}</th>
-      </thead>
-      <tbody>
-        @if (!filteredResourceAvailabilityRecord || filteredResourceAvailabilityRecord.length === 0) {
+    <p-table #dt
+             [value]="filteredResourceAvailabilityRecord" 
+             [tableStyle]="{'width': '100%'}"
+             [sortField]="currentUIField"
+             [sortOrder]="currentSortOrder">
+      <ng-template pTemplate="header">
         <tr>
-          <td colspan="9" class="text-center">
-            <app-no-data-found />
-          </td>
+          <th class="sortable-column" (click)="onColumnSort('fusionEmpId')">
+            {{'Employee ID' | translate}}
+            <p-sortIcon field="fusionEmpId" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('employeeName')">
+            {{'Employee Name' | translate}}
+            <p-sortIcon field="employeeName" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('department')">
+            {{'Department' | translate}}
+            <p-sortIcon field="department" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('designation')">
+            {{'Role' | translate}}
+            <p-sortIcon field="designation" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('projectAssigned')">
+            {{'Project Assigned' | translate}}
+            <p-sortIcon field="projectAssigned" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('phaseName')">
+            {{'Phase/Milestone' | translate}}
+            <p-sortIcon field="phaseName" />
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('projectStartDate')">
+            {{'Project Start Date' | translate}}
+            <p-sortIcon field="projectStartDate" />
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('projectEndDate')">
+            {{'Project End Date' | translate}}
+            <p-sortIcon field="projectEndDate" />
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('availableFrom')">
+            {{'Available From' | translate}}
+            <p-sortIcon field="availableFrom" />
+          </th>
         </tr>
-        }
-        @else {
-        @for (record of filteredResourceAvailabilityRecord; track $index) {
+      </ng-template>
+      <ng-template pTemplate="body" let-record>
         <tr>
           <td>{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
@@ -65,13 +86,15 @@
           <td class="text-center">{{ record.projectEndDate ? (record.projectEndDate | date) : '-' }}</td>
           <td class="text-center">{{ record.availableFrom ? (record.availableFrom | date) : '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-
-
-
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="9" class="text-center">
+            <app-no-data-found />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else{
     <app-data-loader-content />

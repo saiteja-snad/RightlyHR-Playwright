@@ -7,66 +7,59 @@
         <div class="phase-right-content">
             <div class="custom-table-content">
                 @if (!loading) {
-                <table class="w-100">
-                    <thead>
-                        <th>Document Type</th>
-                        <th>Created Date</th>
-                        <!-- <th>File Name</th> -->
-                        <th>Attachment</th>
-                        <th class="text-center">Download</th>
-                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) 
-                        && inactiveStatus !== 'inactive' ){
-                        <th class="text-center">{{"Action" | translate}}</th>
-                        }
-                    </thead>
-                    <tbody>
-                        <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
-                            <tr *ngFor="let data of documentdata">
-                                <td>{{data.documentType}}</td>
-                                <td>{{data.createdAt | dateformat}}</td>
-                                <!-- <td>{{data.documentName}}</td> -->
-                                <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
-                                <td class="text-center">
-                                    <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">
-                                        <app-download-icon />
-                                    </span>
-                                    <ng-template #noData>-</ng-template>
-                                </td>
-                                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete'))
-                                && inactiveStatus !== 'inactive' ){
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </a>
-                                        <ul class="dropdown-menu custom-dropdown-menu">
-                                            <!-- @if(rbac.allowedToAccess('Documents Tab.update')){
-                                    <li>
-                                        <a class="dropdown-item" (click)="openModal(updateDocumentmodal, data, 'lg')">
-                                            <i class="bi bi-pencil me-2"></i>Update
-                                        </a>
-                                    </li>
-                                    } -->
-                                            @if(rbac.allowedToAccess('Documents Tab.delete')){
-                                            <li (click)="openModal(deleteconformation, data,'m')">
-                                                <a class="dropdown-item">
-                                                    <i class="bi bi-slash-circle me-2"></i>Archive
-                                                </a>
-                                            </li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </td>
-                                }
-                            </tr>
-                        </ng-container>
-                        <ng-template #noDataTemplate>
-                            <tr>
+                <p-table #documentsTable [value]="documentdata" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="documentType">Document Type <p-sortIcon field="documentType" /></th>
+                            <th pSortableColumn="createdAt">Created Date <p-sortIcon field="createdAt" /></th>
+                            <th pSortableColumn="attachment">Attachment <p-sortIcon field="attachment" /></th>
+                            <th class="text-center">Download</th>
+                            @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) 
+                            && inactiveStatus !== 'inactive' ){
+                            <th class="text-center">{{"Action" | translate}}</th>
+                            }
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-data>
+                        <tr>
+                            <td>{{data.documentType}}</td>
+                            <td>{{data.createdAt | dateformat}}</td>
+                            <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
+                            <td class="text-center">
+                                <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">
+                                    <app-download-icon />
+                                </span>
+                                <ng-template #noData>-</ng-template>
+                            </td>
+                            @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete'))
+                            && inactiveStatus !== 'inactive' ){
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        @if(rbac.allowedToAccess('Documents Tab.delete')){
+                                        <li (click)="openModal(deleteconformation, data,'m')">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-slash-circle me-2"></i>Archive
+                                            </a>
+                                        </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </td>
+                            }
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="inactiveStatus !== 'inactive' ? 5 : 4">
                                 <app-no-data-found />
-                            </tr>
-                        </ng-template>
-                    </tbody>
-                </table>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
                 }
                 @else {
                 <app-data-loader-content />

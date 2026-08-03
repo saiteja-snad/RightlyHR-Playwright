@@ -54,7 +54,8 @@ page = 1;
   options = [
     { label: 100, value: 100 },
     { label: 200, value: 200 },
-    { label: 300, value: 300 },
+    { label: 300, value: 300 }
+
   ];
 
   // Search debounce

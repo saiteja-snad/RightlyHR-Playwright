@@ -122,10 +122,14 @@
     border: 1px solid #ff8000 !important;
     color: #ff8000 !important;
 }
-
 th,
 td {
     text-align: center !important;
+}
+
+.wrapper {
+    height: 70dvh;
+    justify-content: center;
 }
 
 .frequency-chip {
@@ -199,14 +203,4 @@ td {
     .custom-table-content {
         height: calc(100dvh - 14rem) !important;
     }
-}
-
-th,
-td {
-    text-align: center !important;
-}
-
-.wrapper {
-    height: 70dvh;
-    justify-content: center;
 }

@@ -9,6 +9,7 @@ import { CreateComponent } from './create/create.component';
 import { UpdateComponent } from './update/update.component';
 import { ViewComponent } from './view/view.component';
 import { PaginatorModule } from 'primeng/paginator';
+import { Table, TableModule } from 'primeng/table';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
@@ -27,6 +28,7 @@ import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibilit
     FormsModule,
     NgbPopoverModule,
     PaginatorModule,
+    TableModule,
     TranslateModule,
     DataLoaderContentComponent,
     NoDataFoundComponent,
@@ -58,12 +60,16 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   rows = 50;
   collectionSize = 0;
   first = 0;
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
   options = [
     { label: 50, value: 50 },
     { label: 100, value: 100 },
     { label: 150, value: 150 },
     { label: 200, value: 200 }
   ];
+  @ViewChild('reviewCycleTable') reviewCycleTable!: Table;
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   @ViewChild('confirmation') confirmation: any;
 
@@ -186,8 +192,45 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     });
   }
 
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    // Prevent duplicate API calls
+    if (
+      this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    // Cycle: asc → desc → reset
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      if (this.reviewCycleTable) {
+        this.reviewCycleTable.sortField = '';
+        this.reviewCycleTable.sortOrder = 0;
+      }
+      this.page = 1;
+      this.first = 0;
+      this.getAllReviewCyclesList(this.page, this.pageSize);
+      return;
+    }
+
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
+    this.page = 1;
+    this.first = 0;
+    this.getAllReviewCyclesList(this.page, this.pageSize);
+  }
+
   getAllReviewCyclesList(pagenum: number, pagesize: number): void {
-    const params: { page: number; pageSize: number; searchQuery?: string } = {
+    const params: { page: number; pageSize: number; searchQuery?: string; sortBy?: string; sortOrder?: string } = {
       page: pagenum,
       pageSize: pagesize,
     };
@@ -196,12 +239,17 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       params.searchQuery = this.searchText;
     }
 
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      params.sortBy = this.currentSortField;
+      params.sortOrder = this.currentSortOrder === 1 ? 'asc' : 'desc';
+    }
+
     this.dataload = true;
     this.subscription = this.http.getpagentiontData('reviewCycleHeader', params).subscribe({
       next: (data: any) => {
         this.collectionSize = data.totalCount;
         this.reviewCyclesList = data.items || [];
-        this.filteredDetails = this.reviewCyclesList;
+        this.filteredDetails = [...this.reviewCyclesList];
         if (this.searchText) {
           this.filterDetails();
         }

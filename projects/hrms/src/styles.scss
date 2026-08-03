@@ -3652,6 +3652,9 @@ input[type=number]::-webkit-outer-spin-button {
 }
 // PrimeNG Table Styling for Leave Carry Forward Report
 .custom-table-content .p-datatable {
+    width: 100%;
+    height: calc(96dvh - 10rem);
+    
     .p-datatable-table {
         width: 100%;
         min-width: max-content;

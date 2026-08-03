@@ -28,65 +28,57 @@
 
     <div class="custom-table-content">
         @if(!dataload){
-        <table class="w-100">
-            <thead>
+        <p-table #familyTable [value]="familydata" [tableStyle]="{'width': '100%'}" (onSort)="onSortChange($event)" [customSort]="true" (sortFunction)="customSort($event)">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{ "Employee ID" }}</th>
-                    <th>{{ "First Name" }}</th>
-                    <th>{{ "Middle Name" }}</th>
-                    <th>{{ "Last Name" }}</th>
-                    <th>{{ "Work Email" }}</th>
-                    <th>{{ "Employee Status" }}</th>
-                    <th>{{ "Name" }}</th>
-                    <th>{{ "Relation" }}</th>
-                    <th>{{ "Date of Birth" }}</th>
-                    <th>{{ "Dependent" }}</th>
+                    <th pSortableColumn="employeeId" class="text-center">{{ "Employee ID" | translate }} <p-sortIcon field="employeeId" /></th>
+                    <th pSortableColumn="firstName">{{ "First Name" | translate }} <p-sortIcon field="firstName" /></th>
+                    <th pSortableColumn="middleName">{{ "Middle Name" | translate }} <p-sortIcon field="middleName" /></th>
+                    <th pSortableColumn="lastName">{{ "Last Name" | translate }} <p-sortIcon field="lastName" /></th>
+                    <th pSortableColumn="workEmail">{{ "Work Email" | translate }} <p-sortIcon field="workEmail" /></th>
+                    <th pSortableColumn="empStatus">{{ "Employee Status" | translate }} <p-sortIcon field="empStatus" /></th>
+                    <th>{{ "Name" | translate }}</th>
+                    <th>{{ "Relation" | translate }}</th>
+                    <th>{{ "Date of Birth" | translate }}</th>
+                    <th class="text-center">{{ "Dependent" | translate }}</th>
                 </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="familydata.length > 0; else noData">
-                    @for(row of familydata; track row){
-                   <tr>
-                        <td>{{ row.employeeId || "-" }}</td>
-                        <td>{{ row.firstName || "-" }}</td>
-                        <td>{{ row.middleName || "-" }}</td>
-                        <td>{{ row.lastName || "-" }}</td>
-                        <td>{{ row.workEmail || "-" }}</td>
-                        <td>{{ row.empStatus || "-" }}</td>
-                        <!-- Family Member Name(s) -->
-                        <td>
-                            <div class="mb-3" *ngFor="let member of row.familyMembers">
-                                {{ member.memberName || "-" }}
-                            </div>
-                        </td>
-                        <!-- Family Member Relation(s) -->
-                        <td>
-                            <div class="mb-3" *ngFor="let member of row.familyMembers">
-                                {{ member.relation || "-" }}
-                            </div>
-                        </td>
-                        <!-- Family Member DOB(s) -->
-                        <td>
-                            <div class="mb-3" *ngFor="let member of row.familyMembers">
-                                {{ member.memberDateOfBirth | dateformat }}
-                            </div>
-                        </td>
-                        <!-- Family Member Dependent(s) -->
-                        <td>
-                            <div class="mb-3" *ngFor="let member of row.familyMembers">
-                                {{ member.dependent || "-" }}
-                            </div>
-                        </td>
-                    </tr>
-                    }
-                </ng-container>
-                <ng-template #noData>
-                    <tr>
-                        <app-no-data-found />
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td class="text-center">{{ row.employeeId || "-" }}</td>
+                    <td>{{ row.firstName || "-" }}</td>
+                    <td>{{ row.middleName || "-" }}</td>
+                    <td>{{ row.lastName || "-" }}</td>
+                    <td>{{ row.workEmail || "-" }}</td>
+                    <td>{{ row.empStatus || "-" }}</td>
+                    <td>
+                        <div class="mb-3" *ngFor="let member of row.familyMembers">
+                            {{ member.memberName || "-" }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="mb-3" *ngFor="let member of row.familyMembers">
+                            {{ member.relation || "-" }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="mb-3" *ngFor="let member of row.familyMembers">
+                            {{ member.memberDateOfBirth | dateformat }}
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <div class="mb-3" *ngFor="let member of row.familyMembers">
+                            {{ member.dependent || "-" }}
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="10" class="text-center"><div class="wrapper"><app-no-data-found /></div></td>
+                </tr>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

@@ -15,14 +15,18 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { environment } from '../../../../environments/environment';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
+import { ViewChild } from '@angular/core';
 @Component({
   selector: 'app-onboarding-requests',
-  imports: [DateformatPipe, CommonModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent],
+  imports: [DateformatPipe, CommonModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, TableModule],
   templateUrl: './onboarding-requests.component.html',
   styleUrl: './onboarding-requests.component.scss'
 })
 
 export class OnboardingRequestsComponent {
+  @ViewChild('onboardingTable') onboardingTable!: Table;
   empdata = {} as any;
   dynamicData=new BehaviorSubject<any>([]);
   currentdateformate!: string
@@ -47,6 +51,11 @@ export class OnboardingRequestsComponent {
   imgurl!: string;
   isEditing: boolean = false;
   totalCount: any;
+  
+  // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  originalOnboardData: any[] = [];
 
   constructor(private authService: AuthService, private router: Router, private http: HttpService, 
     private conformationPopup: OpenModalService,private modalService: NgbModal,public rbac:RbacService) {
@@ -165,6 +174,7 @@ export class OnboardingRequestsComponent {
     this.subscription = this.http.getData(`onboardRequest/getbyemployeeId?Id=${EmployeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
+        this.originalOnboardData = [...data]; // Store original data
         this.dynamicData.next(data);
 
         let filtereddata = this.getSeparationDetails.some((ele: any) => {
@@ -357,5 +367,101 @@ getApprovalStatusCounts() {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
+  }
+
+  sortOnboardData(field: string): void {
+    const currentData = this.dynamicData.value;
+    
+    // Determine sort order
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Reset to original order
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        this.dynamicData.next([...this.originalOnboardData]);
+        return;
+      } else {
+        this.currentSortOrder = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+    }
+
+    // Sort the data
+    const sortedData = [...currentData].sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'requestedDate' || field === 'trainingStartDate' || field === 'trainingEndDate' || field === 'extendedDate') {
+        val1 = new Date(a[field] ?? 0).getTime();
+        val2 = new Date(b[field] ?? 0).getTime();
+        return this.currentSortOrder * (val1 - val2);
+      } else {
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return this.currentSortOrder * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
+
+    this.dynamicData.next(sortedData);
+  }
+
+  getSortIcon(field: string): string {
+    if (this.currentSortField !== field || this.currentSortOrder === 0) {
+      return 'bi-arrow-down-up text-muted'; // Default unsorted icon with muted color
+    }
+    return this.currentSortOrder === 1 ? 'bi-arrow-up text-primary' : 'bi-arrow-down text-primary';
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.dynamicData.next([...this.originalOnboardData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.onboardingTable) {
+          this.onboardingTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'requestedDate' || field === 'trainingStartDate' || field === 'trainingEndDate' || field === 'extendedDate') {
+        val1 = new Date(a[field] ?? 0).getTime();
+        val2 = new Date(b[field] ?? 0).getTime();
+        return event.order * (val1 - val2);
+      } else {
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
   }
 }

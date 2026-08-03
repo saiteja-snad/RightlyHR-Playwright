@@ -135,47 +135,52 @@
 
     <div class="custom-table-content">
         @if (!isLoading) {
-        <table id="expenseReportTable" class="w-100">
-            <thead>
+        <p-table #expenseTable [value]="filteredleaveRecord" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{ 'Employee ID' | translate }}</th>
-                    <th>{{ 'Employee Name' | translate }}</th>
-                    <th>{{ 'Department' | translate }}</th>
-                    <th>{{ 'Team Manager' | translate }}</th>
-                    <th>{{ 'Expense Applied Date' | translate }}</th>
-                    <th>{{ 'Expense Title' | translate}}</th>
-                    <th class="text-center">{{ 'Total Amount (INR)' | translate}}</th>
-                    <th>{{ 'Status' | translate}}</th>
+                    <th pSortableColumn="fusionEmpId">{{ 'Employee ID' | translate }} <p-sortIcon field="fusionEmpId" /></th>
+                    <th pSortableColumn="employeeName">{{ 'Employee Name' | translate }} <p-sortIcon field="employeeName" /></th>
+                    <th pSortableColumn="department">{{ 'Department' | translate }} <p-sortIcon field="department" /></th>
+                    <th pSortableColumn="teamManagerName">{{ 'Team Manager' | translate }} <p-sortIcon field="teamManagerName" /></th>
+                    <th pSortableColumn="appliedDate">{{ 'Expense Applied Date' | translate }} <p-sortIcon field="appliedDate" /></th>
+                    <th pSortableColumn="expenseTitle">{{ 'Expense Title' | translate }} <p-sortIcon field="expenseTitle" /></th>
+                    <th pSortableColumn="totalAmount" class="text-center">{{ 'Total Amount (USD)' | translate }} <p-sortIcon field="totalAmount" /></th>
+                    <th pSortableColumn="expensesStatus">{{ 'Status' | translate }} <p-sortIcon field="expensesStatus" /></th>
                     <th>{{ 'Details' | translate }}</th>
                 </tr>
-            </thead>
-            @if (!filteredleaveRecord || filteredleaveRecord.length === 0 ) {
-            <tr>
-                <app-no-data-found />
-            </tr>
-            } @else {
-            @for(record of filteredleaveRecord; track $index) {
-            @if(record.expenseId) {
-            <tr>
-                <td>{{ record.fusionEmpId ?? '-' }}</td>
-                <td>{{ record.employeeName ?? '-' }}</td>
-                <td>{{ record.department ?? '-' }}</td>
-                <td>{{ record.teamManagerName ?? '-' }}</td>
-                <td class="text-nowrap">{{ record.appliedDate ? (record.appliedDate | dateformat) : '-' }}</td>
-                <td>{{ record.expenseTitle ?? '-'}}</td>
-                <td class="text-center"><span *ngIf="record.totalAmount" class="me-1">₹</span>{{( record.totalAmount | number:'1.2-2') ?? '-'}}</td>
-                <td>{{ record.expensesStatus ?? '-' }}</td>
-                <td class="text-start cursor">
-                    <ng-container *ngIf="record.expensesItems?.length; else noDetails">
-                        <u class="clickable-text" (click)="openExpenseDetails(record)">View Details</u>
-                    </ng-container>
-                    <ng-template #noDetails>-</ng-template>
-                </td>
-            </tr>
-            }
-            }
-            }
-        </table>
+            </ng-template>
+            <ng-template pTemplate="body" let-record>
+                @if(record.expenseId) {
+                <tr>
+                    <td>{{ record.fusionEmpId ?? '-' }}</td>
+                    <td>{{ record.employeeName ?? '-' }}</td>
+                    <td>{{ record.department ?? '-' }}</td>
+                    <td>{{ record.teamManagerName ?? '-' }}</td>
+                    <td class="text-nowrap">
+                        {{ record.appliedDate ? (record.appliedDate | dateformat) : '-' }}
+                    </td>
+                    <td>{{ record.expenseTitle ?? '-' }}</td>
+                    <td class="text-center"><span *ngIf="record.totalAmount" class="me-1">$</span>{{ (record.totalAmount | number:'1.2-2') ?? '-' }}</td>
+                    <td>{{ record.expensesStatus ?? '-' }}</td>
+                    <td class="text-start cursor">
+                        <ng-container *ngIf="record.expensesItems?.length; else noDetails">
+                            <u class="clickable-text" (click)="openExpenseDetails(record)">View Details</u>
+                        </ng-container>
+                        <ng-template #noDetails>-</ng-template>
+                    </td>
+                </tr>
+                }
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="9">
+                        <div class="wrapper">
+                            <app-no-data-found />
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
         } @else {
         <app-data-loader-content />
         }

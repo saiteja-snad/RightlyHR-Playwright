@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
@@ -20,10 +20,11 @@ import { DatePicker } from 'primeng/datepicker';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-exit-feedback-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent, TranslateModule, MultiSelectModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent, TranslateModule, MultiSelectModule,TableModule],
   templateUrl: './exit-feedback-reports.component.html',
   styleUrl: './exit-feedback-reports.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -52,7 +53,11 @@ export class ExitFeedbackReportsComponent implements OnInit, OnDestroy {
   { label: 'Termination', value: 'Termination' },
   { label: 'Abscond', value: 'Abscond' }
 ];
+ @ViewChild('exitTable') table!: Table;
 
+currentSortField: string = '';
+currentSortOrder: number = 0;
+originalExitFeedbackData: any[] = [];
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -274,6 +279,7 @@ export class ExitFeedbackReportsComponent implements OnInit, OnDestroy {
         } else {
           this.filteredExitFeedbackData = response ? [response] : [];
         }
+        this.originalExitFeedbackData = [...this.filteredExitFeedbackData];
         this.spinnerLoader1 = false;
         console.log('Final filtered data:', this.filteredExitFeedbackData);
          // Close offcanvas after generating report
@@ -463,7 +469,82 @@ export class ExitFeedbackReportsComponent implements OnInit, OnDestroy {
         error: (err) => console.log(err),
       });
   }
+  customSort(event: any): void {
 
+    const field = event.field;
+
+    // ASC -> DESC -> RESET
+    if (this.currentSortField === field) {
+
+      if (this.currentSortOrder === 1) {
+
+        this.currentSortOrder = -1;
+        event.order = -1;
+
+      } else if (this.currentSortOrder === -1) {
+
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+
+        // Restore original data order
+        this.filteredExitFeedbackData = [
+          ...this.originalExitFeedbackData
+        ];
+
+        if (this.table) {
+          this.table.reset();
+        }
+
+        return;
+
+      }
+
+    } else {
+
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+
+    }
+
+
+    event.data.sort((a: any, b: any) => {
+
+      let val1 = a[field];
+      let val2 = b[field];
+
+
+      // Employee ID
+      if (field === 'fusionEmpId') {
+
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+
+        return event.order * (num1 - num2);
+      }
+
+
+      // Last Working Day
+      if (field === 'lastWorkingDay') {
+
+        const date1 = new Date(val1).getTime();
+        const date2 = new Date(val2).getTime();
+
+        return event.order * (date1 - date2);
+      }
+
+
+      // Default string sorting
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+
+      return event.order * val1.localeCompare(val2, undefined, {
+        sensitivity: 'base'
+      });
+
+    });
+
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

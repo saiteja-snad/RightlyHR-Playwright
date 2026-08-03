@@ -15,33 +15,45 @@
                 </div>
                 <div class="custom-table-content project-summary-table">
                     @if( projectResourceSummaryData.length > 0){
-                    <table class="w-100">
-                        <thead>
-                            <th>{{'Phase/Milestone'|translate}}</th>
-                            <th>{{'Resource Name'|translate}}</th>
-                            <th>{{'Role'|translate}}</th>
-                            <th class="text-center">{{'Hours Utilized'|translate}}</th>
+                    <p-table #resourceSummaryTable
+                      [value]="getFilteredResourceSummary()"
+                      [customSort]="true"
+                      (onSort)="customSort($event)">
+                      <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="phase">{{'Phase/Milestone'|translate}} <p-sortIcon field="phase" /></th>
+                            <th pSortableColumn="employeeName">{{'Resource Name'|translate}} <p-sortIcon field="employeeName" /></th>
+                            <th pSortableColumn="projectRole">{{'Role'|translate}} <p-sortIcon field="projectRole" /></th>
+                            <th class="text-center" pSortableColumn="utilizationPercent">{{'Hours Utilized'|translate}} <p-sortIcon field="utilizationPercent" /></th>
                             <th class="text-center">{{'total Hours'|translate}}</th>
-                            <th class="text-center">{{'Utilization (%)'|translate}}</th>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let roles of projectResourceSummaryData">
-                                <td>{{roles?.phase || "-"}}</td>
-                                <td>{{roles?.employeeName}}</td>
-                                <td>{{roles?.projectRole}}</td>
-                                <td class="text-center">
-                                    <div class="progress-wrapper">
-                                        <div class="progress-bar" [ngStyle]="{width: roles?.utilizationPercent + '%',
-                                            backgroundColor: getProgressColor(roles?.utilizationPercent)}"></div>
-                                    </div>
-                                </td>
-                                <td class="text-center"><span
-                                        class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}}
-                                    Hrs</td>
-                                <td class="logged-hrs text-center">{{roles.utilizationPercent}} %</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                            <th class="text-center" pSortableColumn="utilizationPercent">{{'Utilization (%)'|translate}} <p-sortIcon field="utilizationPercent" /></th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-roles>
+                        <tr>
+                            <td>{{roles?.phase || "-"}}</td>
+                            <td>{{roles?.employeeName}}</td>
+                            <td>{{roles?.projectRole}}</td>
+                            <td class="text-center">
+                                <div class="progress-wrapper">
+                                    <div class="progress-bar" [ngStyle]="{width: roles?.utilizationPercent + '%',
+                                        backgroundColor: getProgressColor(roles?.utilizationPercent)}"></div>
+                                </div>
+                            </td>
+                            <td class="text-center"><span
+                                    class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}}
+                                Hrs</td>
+                            <td class="logged-hrs text-center">{{roles.utilizationPercent}} %</td>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="emptymessage">
+                        <tr>
+                          <td [attr.colspan]="6">
+                            <app-no-data-found />
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
                     } @else {
                     <tr>
                         <app-no-data-found />

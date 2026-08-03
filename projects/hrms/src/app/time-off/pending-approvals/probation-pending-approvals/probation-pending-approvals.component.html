@@ -8,13 +8,14 @@
 
     <div class="custom-table-content">
         @if(!loading){
-        <p-table #probationTable [value]="getFilteredAndSortedProbationDetails()" [tableStyle]="{'min-width': '50rem'}" [customSort]="true" (sortFunction)="customSort($event)">
+        <p-table #probationTable [value]="probationDetails | probationdetails: searchValue"
+            [tableStyle]="{'width': '100%', 'min-width': '70rem'}" [customSort]="true" (sortFunction)="customSort($event)">
             <ng-template pTemplate="header">
                 <tr>
-                    <th pSortableColumn="fusionEmployeeId">{{'Employee ID' | translate}}<p-sortIcon field="fusionEmployeeId" /></th>
-                    <th pSortableColumn="employeeName">{{'Employee Name' | translate}}<p-sortIcon field="employeeName" /></th>
-                    <th pSortableColumn="probationStartDate" class="text-center">{{'Probation Start Date' | translate}}<p-sortIcon field="probationStartDate" /></th>
-                    <th pSortableColumn="probationEndDate" class="text-center">{{'Probation End Date' | translate}}<p-sortIcon field="probationEndDate" /></th>
+                    <th pSortableColumn="fusionEmployeeId">{{'Employee ID' | translate}} <p-sortIcon field="fusionEmployeeId" /></th>
+                    <th pSortableColumn="employeeName">{{'Employee Name' | translate}} <p-sortIcon field="employeeName" /></th>
+                    <th class="text-center" pSortableColumn="probationStartDate">{{'Probation Start Date' | translate}} <p-sortIcon field="probationStartDate" /></th>
+                    <th class="text-center" pSortableColumn="probationEndDate">{{'Probation End Date' | translate}} <p-sortIcon field="probationEndDate" /></th>
                     <th class="text-center">{{'Approved History' | translate}}</th>
                     @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
                     <th class="text-center">{{'Action' | translate}}</th>
@@ -23,49 +24,51 @@
             </ng-template>
             <ng-template pTemplate="body" let-item>
                 <tr>
-                    <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
-                    <td>{{item.entity?.employeeName ?? '-'}}</td>
-                    <td class="text-center text-nowrap">{{item.entity?.probationStartDate ?? '-' | dateformat}}</td>
-                    <td class="text-center text-nowrap">{{item.entity?.probationEndDate ?? '-' | dateformat}}</td>
-                    <td class="text-center">
-                        @if(item.entity?.prApproverComments.length>0){
-                        <div (click)="handleData(item)" (click)="approverComments(item.entity?.prApproverComments)">
-                            <app-info-icon />
-                        </div>
+                        <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
+                        <td>{{item.entity?.employeeName ?? '-'}}</td>
+                        <td class="text-center">{{item.entity?.probationStartDate ?? '-' | dateformat}}</td>
+                        <td class="text-center">{{item.entity?.probationEndDate ?? '-' | dateformat}}</td>
+                        <td class="text-center">
+                            <div *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
+                                <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
+                                <div (click)="handleData(item)" (click)="approverComments(item.entity?.prApproverComments)">
+                                    <app-info-icon />
+                                </div>
+                                <!-- </div> -->
+                            </div>
+                            <ng-template #approvercomments>-</ng-template>
+                        </td>
+                        @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
+                        <td class="text-center">
+                            <div>
+                                @if(rbac.allowedToAccess('Probation Details.update') ) {
+                                <button class="custom-btn btn-primary" (click)="handleRequests(item,ProbationProcess);
+                                getComments(item.entity?.prApproverComments)" *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage">
+                                {{'Process' | translate}}</button>
+                                }
+                                @if(rbac.allowedToAccess('Probation Details.update') ) {
+                                <button class="custom-btn btn-primary" *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
+                                [routerLink]="['/pending-approvals/assessmentform']" (click)="setData(item)">{{'Assessment form' | translate}}</button>
+                                }
+                            </div>
+                        </td>
                         }
-                        @else{-}
-                    </td>
-                    @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
-                    <td class="text-center">
-                        <div>
-                            @if(rbac.allowedToAccess('Probation Details.update') ) {
-                            <button class="custom-btn btn-primary" (click)="handleRequests(item,ProbationProcess);
-                            getComments(item.entity?.prApproverComments)" *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage">
-                            {{'Process' | translate}}</button>
-                            }
-                            @if(rbac.allowedToAccess('Probation Details.update') ) {
-                            <button class="custom-btn btn-primary" *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
-                            [routerLink]="['/pending-approvals/assessmentform']" (click)="setData(item)">{{'Assessment form' | translate}}</button>
-                            }
-                        </div>
-                    </td>
-                    }
                 </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
-                <div class="wrapper">
-                    <tr>
-                        <td colspan="6">
+                <tr>
+                    <td [attr.colspan]="(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) ? 6 : 5" class="text-center">
+                        <div class="wrapper d-flex align-items-center position-relative w-100">
                             <app-no-data-found />
-                        </td>
-                    </tr>
-                </div>
+                        </div>
+                    </td>
+                </tr>
             </ng-template>
         </p-table>
-        }
-        @else{
+    }
+    @else{
         <app-data-loader-content />
-        }
+    }
     </div>
 </div>
 

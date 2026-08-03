@@ -227,37 +227,28 @@
             <!--table content-->
             @if (!dataload) {
             <div class="custom-table-content w-100">
-              <table class="w-100">
-                <thead>
+              <p-table #dashboardTable [value]="teamKpiData" [customSort]="true" (onSort)="customSort($event)"
+                  [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+                <ng-template pTemplate="header">
                   <tr>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th class="text-center">{{'Department' | translate}}</th>
-                    <th class="text-center">{{'Role' | translate}}</th>
+                    <th pSortableColumn="employeeName">{{'Employee Name' | translate}} <p-sortIcon field="employeeName" /></th>
+                    <th pSortableColumn="department" class="text-center">{{'Department' | translate}} <p-sortIcon field="department" /></th>
+                    <th pSortableColumn="role" class="text-center">{{'Role' | translate}} <p-sortIcon field="role" /></th>
                     <th class="text-center">{{'KRA\'s' | translate}}</th>
-                    <th class="text-center">{{'Overall Score' | translate}}</th>
+                    <th pSortableColumn="overallScore" class="text-center">{{'Overall Score' | translate}} <p-sortIcon field="overallScore" /></th>
                   </tr>
-                </thead>
-                <tbody>
-                  @if (teamKpiData.length > 0) {
-                  @for (item of teamKpiData; track item.employeeId) {
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
                   <tr>
-                    <td>
-                      {{ item.employeeName }}
-                    </td>
-                    <td class="text-center">
-                      {{ item.department || 'N/A' }}
-                    </td>
-                    <td class="text-center">
-                      {{ item.role || 'N/A' }}
-                    </td>
+                    <td>{{ item.employeeName }}</td>
+                    <td class="text-center">{{ item.department || 'N/A' }}</td>
+                    <td class="text-center">{{ item.role || 'N/A' }}</td>
                     <td class="text-center employee-bold">
                       <span *ngIf="item.kraCount > 0" class="clickable"
                         (click)="openKraPopup(item.employeeId, item.employeeName, kraPopupModal)">
                         {{ item.kraCount }}
                       </span>
-                      <span *ngIf="item.kraCount === 0" class="text-muted">
-                        {{ item.kraCount }}
-                      </span>
+                      <span *ngIf="item.kraCount === 0" class="text-muted">{{ item.kraCount }}</span>
                     </td>
                     <td class="text-center">
                       <div class="progress-wrapper">
@@ -266,22 +257,15 @@
                             [ngClass]="getProgressClass(item.overallScore || 0)" aria-valuemin="0" aria-valuemax="100">
                           </div>
                         </div>
-                        <small class="fw-semibold">
-                          {{ item.overallScore || 0 }}%
-                        </small>
+                        <small class="fw-semibold">{{ item.overallScore || 0 }}%</small>
                       </div>
                     </td>
                   </tr>
-                  }
-                  } @else {
-                  <tr>
-                    <td colspan="5" class="text-center py-4" style="height: 200px; vertical-align: middle;">
-                      <app-no-data-found />
-                    </td>
-                  </tr>
-                  }
-                </tbody>
-              </table>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr><td colspan="5" class="text-center py-4" style="height: 200px; vertical-align: middle;"><app-no-data-found /></td></tr>
+                </ng-template>
+              </p-table>
             </div>
 
             <!-- Pagination -->

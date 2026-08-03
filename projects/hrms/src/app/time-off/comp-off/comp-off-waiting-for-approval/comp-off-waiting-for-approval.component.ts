@@ -20,6 +20,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Validators } from '@angular/forms';
+import moment from 'moment';
 @Component({
   selector: 'app-comp-off-waiting-for-approval',
   imports: [
@@ -472,9 +473,9 @@ hasApprovableItems(): boolean {
 
       // Handle date sorting
       if (field === 'startTime' || field === 'requestedDate') {
-        const date1 = val1 ? new Date(val1) : new Date(0);
-        const date2 = val2 ? new Date(val2) : new Date(0);
-        return event.order * (date1.getTime() - date2.getTime());
+        const date1 = val1 ? moment(val1).startOf('day') : moment(0);
+        const date2 = val2 ? moment(val2).startOf('day') : moment(0);
+        return event.order * (date1.valueOf() - date2.valueOf());
       }
 
       // Handle numeric sorting for durationType

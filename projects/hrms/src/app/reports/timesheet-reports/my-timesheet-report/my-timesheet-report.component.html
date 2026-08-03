@@ -2,7 +2,6 @@
   <div class="component-header-content">
     <!-- Header -->
     <app-reports-header />
-
     <form autocomplete="off" [formGroup]="MyTimesheetReportForm" (ngSubmit)="onGenerate()" *ngIf="MyTimesheetReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('My Timesheet Report - Generate.view')){
@@ -11,7 +10,6 @@
           <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
         </button>
         }
-
         <div class="d-flex gap-2 ms-auto">
           @if(rbac.allowedToAccess('My Timesheet Report - Generate.view') && rbac.allowedToAccess('My Timesheet Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportmytimesheetreport()"
@@ -31,70 +29,97 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <table id="leaveReportTable" class="w-100">
-      <thead>
-        <th>{{'Worked Date' | translate}}</th>
-        <th>{{'Client Name' | translate}}</th>
-        <th>{{'Project Name' | translate}}</th>
-        <th>{{'Phase/Milestone' | translate}}</th>
-        <th class="text-center">{{'Task Type' | translate}}</th>
-        <th class="text-center">{{'Description' | translate}}</th>
-        <th class="text-center">{{'Logged Hrs' | translate}}</th>
-        <th class="text-center">{{'Billable/Non-Billable' | translate}}</th>
-        <th>{{'Submitted Date' | translate}}</th>
-        <th class="text-center">{{'Status' | translate}}</th>
-      </thead>
-      <tbody>
-        @if (!filteredmytimesheetRecord || filteredmytimesheetRecord.length === 0) {
+    <p-table #dt
+             [value]="filteredmytimesheetRecord" 
+             [tableStyle]="{'width': '100%'}"
+             [sortField]="currentUIField"
+             [sortOrder]="currentSortOrder">
+      <ng-template pTemplate="header">
         <tr>
-          <td colspan="9"><app-no-data-found /></td>
+          <th class="sortable-column" (click)="onColumnSort('date')">
+            {{'Worked Date' | translate}} 
+            <p-sortIcon field="date" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('client')">
+            {{'Client Name' | translate}} 
+            <p-sortIcon field="client" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('project')">
+            {{'Project Name' | translate}} 
+            <p-sortIcon field="project" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('phase')">
+            {{'Phase/Milestone' | translate}} 
+            <p-sortIcon field="phase" />
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('taskType')">
+            {{'Task Type' | translate}} 
+            <p-sortIcon field="taskType" />
+          </th>
+          <th class="text-center">
+            {{'Description' | translate}}
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('hoursWorked')">
+            {{'Logged Hrs' | translate}} 
+            <p-sortIcon field="hoursWorked" />
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('billableStatus')">
+            {{'Billable/Non-Billable' | translate}} 
+            <p-sortIcon field="billableStatus" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('submittedDate')">
+            {{'Submitted Date' | translate}} 
+            <p-sortIcon field="submittedDate" />
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('approvalStatus')">
+            {{'Status' | translate}} 
+            <p-sortIcon field="approvalStatus" />
+          </th>
         </tr>
-        }
-        @else {
-        @for (record of filteredmytimesheetRecord; track $index) {
+      </ng-template>
+      
+      <ng-template pTemplate="body" let-record>
         <tr>
           <td>{{ record.date ? (record.date | date) : '-' }}</td>
           <td>{{ record.client ?? '-' }}</td>
           <td>{{ record.project ?? '-' }}</td>
           <td>{{ record.phase ?? '-' }}</td>
-          <td class="text-center">
-            {{ record.taskType || '-' }}</td>
+          <td class="text-center">{{ record.taskType || '-' }}</td>
           <td class="text-center">
             <div>
-              <!-- Show info icon if description is present -->
-              <ng-container
-                *ngIf="record.description && record.description.trim() !== '' && record.description.trim() !== '-'; else noDescription">
+              <ng-container *ngIf="record.description && record.description.trim() !== '' && record.description.trim() !== '-'; else noDescription">
                 <div [ngbPopover]="popContent">
                   <app-info-icon />
                 </div>
               </ng-container>
-
-              <!-- Fallback when no description -->
               <ng-template #noDescription>
                 <div>-</div>
               </ng-template>
-
-              <!-- Popover content -->
-              <ng-template #popContent>
-                {{ record.description }}
-              </ng-template>
+              <ng-template #popContent>{{ record.description }}</ng-template>
             </div>
           </td>
-          <!-- <td>{{ record.description ?? '-' }}</td> -->
-          <td class="text-center">{{ record.hoursWorked ?? '-' }}</td>
-          <td class="text-center">{{ record.billableStatus ?? '-' }}</td>
+          <td class="text-center">{{ record.hoursWorked ? record.hoursWorked : '-' }}</td>
+          <td class="text-center">{{ record.billableStatus ? record.billableStatus : '-' }}</td>
           <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
-          <td class="text-center">{{ record.approvalStatus ?? '-' }}</td>
+          <td class="text-center">{{ record.approvalStatus ? record.approvalStatus : '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-    </table>
-    }
-    @else{
+      </ng-template>
+      
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="10"> 
+            <div class="wrapper">
+              <app-no-data-found />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    }@else{
     <app-data-loader-content />
     }
   </div>
+
   @if(collectionSize > 0){
   <div class="pagination-content">
     <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
@@ -120,28 +145,40 @@
   <div class="custom-filter-container">
     <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
       <p class="filter-header m-0">{{'Filters' | translate}}</p>
-      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      <a (click)="closeCanvas()">
+        <img src="icons/close.png" alt="Close Icon" class="close-icon">
+      </a>
     </div>
-
     <div class="offcanvas-filter-content">
       <form autocomplete="off" [formGroup]="MyTimesheetReportForm"
         (ngSubmit)="onGenerate()" *ngIf="MyTimesheetReportForm">
-
+        
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range' | translate}}</label>
           <div class="custom-date-range-picker">
-            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+            <p-datepicker formControlName="dateRange" 
+                         [placeholder]="'Please select date range'" 
+                         selectionMode="range"
+                         [showIcon]="true" 
+                         [readonlyInput]="true" 
+                         [maxDate]="today" />
           </div>
         </div>
-        
+
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Client' | translate}}</label>
           <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
-              formControlName="client" class="form-select custom-select" placeholder="Please select client"
-               filterPlaceHolder="Search client" [resetFilterOnHide]="true" 
-              [maxSelectedLabels]="1" (onChange)="getAllActiveProjects($event)">
+            <p-multiSelect [options]="clientDropdownList" 
+                          optionLabel="label" 
+                          optionValue="value" 
+                          [filter]="true"
+                          formControlName="client" 
+                          class="form-select custom-select" 
+                          placeholder="Please select client"
+                          filterPlaceHolder="Search client" 
+                          [resetFilterOnHide]="true" 
+                          [maxSelectedLabels]="1" 
+                          (onChange)="getAllActiveProjects($event)">
             </p-multiSelect>
           </div>
         </div>
@@ -150,10 +187,16 @@
           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Project' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="filteredProjects?.length ? filteredProjects : projectsData"
-              optionLabel="displayprojectName" [maxSelectedLabels]="1" optionValue="projectId" [filter]="true"
-              formControlName="project" placeholder="Please select project" class="form-select custom-select"
-              filterPlaceHolder="Search project" [resetFilterOnHide]="true" 
-              (onChange)="onProjectChange($event)">
+                          optionLabel="displayprojectName" 
+                          [maxSelectedLabels]="1" 
+                          optionValue="projectId" 
+                          [filter]="true"
+                          formControlName="project" 
+                          placeholder="Please select project" 
+                          class="form-select custom-select"
+                          filterPlaceHolder="Search project" 
+                          [resetFilterOnHide]="true" 
+                          (onChange)="onProjectChange($event)">
             </p-multiSelect>
           </div>
         </div>
@@ -161,18 +204,31 @@
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Phases' | translate}}</label>
           <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true"
-              [maxSelectedLabels]="1" [resetFilterOnHide]="true" filterBy="phaseName" formControlName="phases"
-              filterPlaceHolder="Search phases" 
-              placeholder="Please select phases" class="form-select custom-select">
+            <p-multiSelect [options]="phasesData" 
+                          optionLabel="label" 
+                          optionValue="phaseId" 
+                          [filter]="true"
+                          [maxSelectedLabels]="1" 
+                          [resetFilterOnHide]="true" 
+                          filterBy="phaseName" 
+                          formControlName="phases"
+                          filterPlaceHolder="Search phases" 
+                          placeholder="Please select phases" 
+                          class="form-select custom-select">
             </p-multiSelect>
           </div>
         </div>
+
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Task Type' | translate}}</label>
           <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="tastType" optionLabel="taskTypeName" filterBy="taskTypeName" formControlName="taskId"
-              placeholder="Please select task type" filterPlaceHolder="Search task type"  class="form-select custom-select"  >
+            <p-multiSelect [options]="tastType" 
+                          optionLabel="taskTypeName" 
+                          filterBy="taskTypeName" 
+                          formControlName="taskId"
+                          placeholder="Please select task type" 
+                          filterPlaceHolder="Search task type"  
+                          class="form-select custom-select">
             </p-multiSelect>
           </div>
         </div>
@@ -180,8 +236,12 @@
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Billable/Non-Billable' | translate}}</label>
           <div class="custom-p-select-content">
-            <p-select [options]="BillableOptions" optionLabel="key" filterBy="key" formControlName="billable"
-              placeholder="Please select billable/non-billable" class="form-select custom-select"  >
+            <p-select [options]="BillableOptions" 
+                     optionLabel="key" 
+                     filterBy="key" 
+                     formControlName="billable"
+                     placeholder="Please select billable/non-billable" 
+                     class="form-select custom-select">
             </p-select>
           </div>
         </div>
@@ -189,9 +249,15 @@
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Status' | translate}}</label>
           <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="TimesheetStatus" [filter]="true" optionLabel="key" filterBy="key"
-              filterPlaceHolder="Search status" [resetFilterOnHide]="true" 
-              formControlName="status" placeholder="Please select status" class="form-select custom-select">
+            <p-multiSelect [options]="TimesheetStatus" 
+                          [filter]="true" 
+                          optionLabel="key" 
+                          filterBy="key"
+                          filterPlaceHolder="Search status" 
+                          [resetFilterOnHide]="true" 
+                          formControlName="status" 
+                          placeholder="Please select status" 
+                          class="form-select custom-select">
             </p-multiSelect>
           </div>
         </div>
@@ -199,9 +265,9 @@
         <div class="d-flex offcanvas-footer-content gap-3">
           @if(isFilterApplied() || filteredmytimesheetRecord.length > 0){
           <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()" [disabled]="spinnerLoader1">
-            {{'Clear All' | translate}}</button>
+            {{'Clear All' | translate}}
+          </button>
           }
-
           @if(rbac.allowedToAccess('My Timesheet Report - Generate.view')){
           <button type="submit" class="custom-btn btn-primary w-100" [disabled]="!isFilterApplied() || isLeaveGenerateDisabled">
             @if(spinnerLoader1){

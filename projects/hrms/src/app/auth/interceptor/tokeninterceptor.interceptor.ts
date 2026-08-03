@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, filter, Observable, switchMap, take, throwError } from 'rxjs';
 import { JwtService } from '../jwt/jwt.service';
 import { AuthService } from '../../services/auth.service';
+import { TenantService } from '../../services/tenant.service';
 
 @Injectable()
 export class TokeninterceptorsInterceptor implements HttpInterceptor {
@@ -14,14 +15,33 @@ export class TokeninterceptorsInterceptor implements HttpInterceptor {
   constructor(
     private router: Router,
     private jwtService: JwtService,
-    private http: AuthService
+    private http: AuthService,
+    private tenantService: TenantService
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = localStorage.getItem("accessToken");
+    const domain = this.tenantService.currentDomain;
+    const tenantId = this.tenantService.currentTenantId;
 
-    //  Skip token handling for login or refresh endpoints
-    if (request.url.includes('/api/v2/Auth/login') || request.url.includes('/api/v2/Auth/refresh') || request.url.includes('v2/Auth/social')) {
+    // Attach domain and tenantId headers to all API requests
+    const headers: Record<string, string> = {};
+    if (domain) headers['X-Tenant-Domain'] = domain;
+    if (tenantId) headers['X-Tenant-Id'] = tenantId;
+    if (Object.keys(headers).length) {
+      request = request.clone({ setHeaders: headers });
+    }
+
+    //  Skip token handling for login, refresh, social, or domain verification endpoints
+    const url = request.url.toLowerCase();
+    if (
+      url.includes('/api/v2/auth/login') ||
+      url.includes('/api/v2/auth/refresh') ||
+      url.includes('v2/auth/social') ||
+      url.includes('v2/auth/register') ||
+      url.includes('/api/auth/') ||
+      url.includes('tenant/verify-domain')
+    ) {
       return next.handle(request);
     }
     

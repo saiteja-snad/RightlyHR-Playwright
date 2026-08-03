@@ -50,22 +50,21 @@
   <!-- Table -->
   @if (!dataload) {
   <div class="custom-table-content w-100">
-    <table class="w-100">
-      <thead>
+    <p-table #kraTable [value]="filteredDetails" [customSort]="true" (onSort)="customSort($event)"
+        [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+      <ng-template pTemplate="header">
         <tr>
-          <th>{{ 'KRA Category' | translate }}</th>
-          <th class="text-center">{{ 'KRA Title' | translate }}</th>
+          <th pSortableColumn="kraCategoryName">{{ 'KRA Category' | translate }} <p-sortIcon field="kraCategoryName" /></th>
+          <th pSortableColumn="kraName" class="text-center">{{ 'KRA Title' | translate }} <p-sortIcon field="kraName" /></th>
           <th class="text-center">{{ 'Description' | translate }}</th>
           <th class="text-center">{{ 'Attachment' | translate }}</th>
-          <th class="text-center">{{ 'Status' | translate }}</th>
+          <th pSortableColumn="status" class="text-center">{{ 'Status' | translate }} <p-sortIcon field="status" /></th>
           @if (hasAnyActionPermission()) {
           <th class="text-center">{{ 'Action' | translate }}</th>
           }
         </tr>
-      </thead>
-      <tbody>
-        @if (filteredDetails.length > 0) {
-        @for (kra of filteredDetails; track kra.kraId) {
+      </ng-template>
+      <ng-template pTemplate="body" let-kra>
         <tr>
           <td>{{ kra.kraCategoryName }}</td>
           <td class="text-center">{{ kra.kraName }}</td>
@@ -79,7 +78,6 @@
           <td class="text-center">
             @if (kra.documentUrl) {
             <div class="d-flex justify-content-center gap-2">
-              <!-- View -->
               <a class="download-text cursor-pointer" *ngIf="isViewableFile(kra.documentUrl)"
                 (click)="onAttachmentClick(kra.documentUrl, $event)">
                 <app-document-view-icon />
@@ -89,13 +87,11 @@
             NA
             }
           </td>
-
           <td class="text-center">
             <span class="kra-status" [ngClass]="getStatusClass(kra.status)">
               {{ kra.status }}
             </span>
           </td>
-          <!-- Inside the table row, replace the entire <td> for Action with this: -->
           @if (hasAnyActionPermission()) {
           <td class="text-center">
             <div class="dropdown">
@@ -103,8 +99,6 @@
                 <i class="bi bi-three-dots-vertical"></i>
               </span>
               <ul class="dropdown-menu custom-dropdown-menu">
-
-                <!-- Created Status -->
                 @if (kra.status === 'Created') {
                 @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="onUpdate(kra)">
@@ -112,12 +106,9 @@
                 </li>
                 }
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
-                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' |
-                    translate }}</a>
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' | translate }}</a>
                 </li>
                 }
-
-                <!-- Active Status -->
                 @else if (kra.status === 'Active') {
                 @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="onUpdate(kra)">
@@ -126,58 +117,44 @@
                 }
                 @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'On Hold')">
-                  <a class="dropdown-custom-btn text-info"><i class="bi bi-pause-circle me-2"></i>{{ 'Hold' | translate
-                    }}</a>
+                  <a class="dropdown-custom-btn text-info"><i class="bi bi-pause-circle me-2"></i>{{ 'Hold' | translate }}</a>
                 </li>
                 }
                 @if(rbac.allowedToAccess('KRA.delete')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Inactive')">
-                  <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' |
-                    translate }}</a>
+                  <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}</a>
                 </li>
                 }
                 }
-
-                <!-- On Hold Status -->
                 @else if (kra.status === 'On Hold') {
                 @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
-                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' |
-                    translate }}</a>
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' | translate }}</a>
                 </li>
                 }
                 @if(rbac.allowedToAccess('KRA.delete')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Inactive')">
-                  <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' |
-                    translate }}</a>
+                  <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}</a>
                 </li>
                 }
                 }
-
                 @else if (kra.status === 'Inactive') {
                 @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
-                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' |
-                    translate }}</a>
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' | translate }}</a>
                 </li>
                 }
                 }
-
               </ul>
             </div>
           </td>
           }
         </tr>
-        }
-        } @else {
-        <tr>
-          <td colspan="7" class="text-center py-4">
-            <app-no-data-found />
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="6" class="text-center py-4"><app-no-data-found /></td></tr>
+      </ng-template>
+    </p-table>
   </div>
 
   <!-- Pagination -->

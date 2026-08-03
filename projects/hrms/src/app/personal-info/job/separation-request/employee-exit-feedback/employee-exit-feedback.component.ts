@@ -13,23 +13,26 @@ import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-f
 import { IExitFeedback } from './exitfeedback-interface';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DownloadIconComponent } from '../../../../icons/download-icon/download-icon.component';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-employee-exit-feedback',
-  imports: [CommonModule, SeparationSubTabsComponent, MyinfoSeparationSubTabsComponent, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, RouterModule, ReactiveFormsModule, Select,DownloadIconComponent],
+  imports: [CommonModule, SeparationSubTabsComponent, MyinfoSeparationSubTabsComponent, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, RouterModule, ReactiveFormsModule, DownloadIconComponent, TableModule],
   templateUrl: './employee-exit-feedback.component.html',
   styleUrl: './employee-exit-feedback.component.scss'
 })
 export class EmployeeExitFeedbackComponent {
 
+  @ViewChild('exitFeedbackTable') exitFeedbackTable!: Table;
   isDataLoaded = false;
   empinfo = {} as Ipersonal;
   empdata = {} as Ipersonal;
   exitfeedbackdata = new BehaviorSubject<IExitFeedback[]>([]);
+  originalExitFeedbackData: IExitFeedback[] = [];
   subscription!: Subscription;
   initiateForm!: FormGroup;
   availableForms: any[] = [];
@@ -38,6 +41,8 @@ export class EmployeeExitFeedbackComponent {
   @ViewChild('initiateModal') initiateModal!: TemplateRef<any>;
   @ViewChild('documentViewModal') documentViewModal!: TemplateRef<any>;
   documentViewUrl: SafeResourceUrl | null = null;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   
   constructor(
     private router: Router,
@@ -93,7 +98,9 @@ export class EmployeeExitFeedbackComponent {
         next: (res: any) => {
           console.log(res)
           if (res) {
-            this.exitfeedbackdata.next(res?.data || []);
+            const data = res?.data || [];
+            this.exitfeedbackdata.next(data);
+            this.originalExitFeedbackData = [...data];
             this.isDataLoaded = false;
           }
         },
@@ -101,6 +108,76 @@ export class EmployeeExitFeedbackComponent {
           this.isDataLoaded = false;
         },
       });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.exitfeedbackdata.next([...this.originalExitFeedbackData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.exitFeedbackTable) {
+          this.exitFeedbackTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    // Get current data
+    const currentData = this.exitfeedbackdata.value;
+
+    if (!currentData || currentData.length === 0) {
+      return;
+    }
+
+    // Perform sorting
+    const sortedData = [...currentData].sort((a: any, b: any) => {
+      let valueA = this.getNestedProperty(a, field);
+      let valueB = this.getNestedProperty(b, field);
+
+      // Handle null/undefined values
+      if (valueA == null && valueB == null) return 0;
+      if (valueA == null) return event.order;
+      if (valueB == null) return -event.order;
+
+      // Date handling
+      if (field === 'initiatedAt' || field === 'lastWorkingDate' || field.toLowerCase().includes('date')) {
+        valueA = new Date(valueA).getTime();
+        valueB = new Date(valueB).getTime();
+        return event.order * (valueA - valueB);
+      }
+
+      // String comparison
+      valueA = String(valueA).toLowerCase().trim();
+      valueB = String(valueB).toLowerCase().trim();
+      
+      return event.order * valueA.localeCompare(valueB, undefined, { sensitivity: 'base' });
+    });
+
+    // Update the data
+    this.exitfeedbackdata.next(sortedData);
+  }
+
+  private getNestedProperty(obj: any, path: string): any {
+    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
   }
 
   openForm(item: IExitFeedback): void {

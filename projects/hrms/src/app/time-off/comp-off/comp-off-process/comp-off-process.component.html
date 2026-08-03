@@ -6,9 +6,9 @@
         <tr>
           <th pSortableColumn="startTime">{{'Worked Date'| translate}} <p-sortIcon field="startTime"></p-sortIcon></th>
           <th pSortableColumn="durationType">{{'Availed'| translate}} <p-sortIcon field="durationType"></p-sortIcon></th>
-          <th class="text-center" pSortableColumn="requestedComments">{{'Reason'| translate}} <p-sortIcon field="requestedComments"></p-sortIcon></th>
+          <th class="text-center">{{'Reason'| translate}} </th>
           <th pSortableColumn="requestedDate">{{'Applied Date'| translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
-          <th pSortableColumn="status">{{'Status'| translate}} <p-sortIcon field="status"></p-sortIcon></th>
+          <th class="text-center">{{'Status'| translate}}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-compOffRequest>
@@ -35,7 +35,7 @@
             </div>
           </td>
           <td>{{ compOffRequest.requestedDate | dateformat }}</td>
-          <td>{{ compOffRequest.status }}</td>
+          <td class="text-center">{{ compOffRequest.status }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">

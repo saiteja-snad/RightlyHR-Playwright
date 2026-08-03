@@ -24,7 +24,6 @@ import { Output, EventEmitter } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { ProfileIconComponent } from '../../../icons/profile-icon/profile-icon.component';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-
 @Component({
   selector: 'app-resource-creation',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, FormsModule, NgbPopover, SelectModule,
@@ -66,8 +65,12 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
   resourceAuthorityid: any;
   phaseDropdown: any[] = [];
   selectedPhaseId: any;
+  phaseAllocatedHours: { [phaseId: number]: number } = {};
+  phaseUsedHours: { [phaseId: number]: number } = {};
   resourcesData = [] as IResource[];
   resoucesDropDownData = [] as any[];
+  rowAuthorityOptions: Map<number, any[]> = new Map(); // per-row authority options keyed by row index
+  rowExcludedEmployeeIds: Map<number, Set<number>> = new Map(); // per-row excluded employee IDs
   selectedAuthorityId: any;
   selectedRow: number | null = null;
   isAddAttempted = false;
@@ -119,42 +122,31 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     return item.get('id')?.value; // ✅ stable identity
   }
 
-popoverPlacement: 'top' | 'bottom' = 'bottom';
+  popoverPlacement: 'top' | 'bottom' = 'bottom';
 
-openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
-
-  this.cancelEmployeePopoverClose();
-
-  // Close previous popover
-  if (this.currentEmployeePopover && this.currentEmployeePopover !== popover) {
-    this.currentEmployeePopover.close();
-  }
-
-  // Dynamic placement check
-  if (event) {
-
-    const element = event.currentTarget as HTMLElement;
-    const rect = element.getBoundingClientRect();
-
-    const estimatedPopoverHeight = 260;
-
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const spaceAbove = rect.top;
-
-    if (
-      spaceBelow < estimatedPopoverHeight &&
-      spaceAbove > estimatedPopoverHeight
-    ) {
-      this.popoverPlacement = 'top';
-    } else {
-      this.popoverPlacement = 'bottom';
+  openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
+    this.cancelEmployeePopoverClose();
+    // Close previous popover
+    if (this.currentEmployeePopover && this.currentEmployeePopover !== popover) {
+      this.currentEmployeePopover.close();
     }
+    // Dynamic placement check
+    if (event) {
+      const element = event.currentTarget as HTMLElement;
+      const rect = element.getBoundingClientRect();
+      const estimatedPopoverHeight = 260;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      if (spaceBelow < estimatedPopoverHeight && spaceAbove > estimatedPopoverHeight) {
+        this.popoverPlacement = 'top';
+      } else {
+        this.popoverPlacement = 'bottom';
+      }
+    }
+    this.currentEmployeePopover = popover;
+    popover.open();
   }
 
-  this.currentEmployeePopover = popover;
-
-  popover.open();
-}
   closeEmployeePopoverWithDelay(popover?: NgbPopover): void {
     this.cancelEmployeePopoverClose();
     const targetPopover = popover || this.currentEmployeePopover;
@@ -183,21 +175,21 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
       this.popoverCloseTimer = undefined;
     }
   }
+
   avatarClickTimestamp: number = 0;
   requiredArrayValidator = (control: any) => {
     // Skip validation when editing an existing avatar (resourceName is disabled/locked)
     if (this.editingEmployeeId !== null) return null;
     return control.value && control.value.length > 0 ? null : { required: true };
   };
-  @ViewChild('releaseSummary') releaseSummaryModal!: any;
 
+  @ViewChild('releaseSummary') releaseSummaryModal!: any;
   responseSummary = {
     totalRecordCount: 0,
     successRecordsCount: 0,
     failureRecordsCount: 0,
   };
   @Output() employeesChanged = new EventEmitter<any[]>();
-
   get filteredOffcanvasEmployees(): any[] {
     const q = this.offcanvasSearchQuery.trim().toLowerCase();
     return q ? this.selectedEmployees.filter(e => e.fullName?.toLowerCase().includes(q)) : this.selectedEmployees;
@@ -221,28 +213,22 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
   }
 
   deleteOffcanvasEmployee(emp: any): void {
-    const index = this.selectedEmployees.findIndex(
-      (e) => e.employeeId === emp.employeeId
-    );
+    const index = this.selectedEmployees.findIndex((e) => e.employeeId === emp.employeeId);
     if (index > -1) {
       // ✅ Remove from selectedEmployees
       this.selectedEmployees.splice(index, 1);
-
       // ✅ Remove all savedPayloadRows for this employee
       this.savedPayloadRows = this.savedPayloadRows.filter(
         (row) => row.employeeId !== emp.employeeId
       );
-
       // ✅ If we were editing this employee, exit edit mode
       if (this.editingEmployeeId === emp.employeeId) {
         this.editingEmployeeId = null;
         this.highlightedEmployeeId = null;
-
         // Reset form
         this.resources.clear();
         this.resources.push(this.createResourceRow());
       }
-
       this.employeesChanged.emit(this.selectedEmployees);
     }
   }
@@ -267,17 +253,15 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
     this.createResourceForm();
     this.getdatabaedonRoute();
     this.DepartmentList();
-    this.addResourceForm
-      .get('allocatedFrequencyType')
-      ?.valueChanges.subscribe(() => {
-        this.addResourceForm
-          .get('resourceAllocationhrs')
-          ?.updateValueAndValidity();
-      });
+    this.addResourceForm.get('allocatedFrequencyType')?.valueChanges.subscribe(() => {
+      this.addResourceForm.get('resourceAllocationhrs')?.updateValueAndValidity();
+    });
   }
 
-  onResourceChange(event: any) {
+  onResourceChange(event: any, index: number) {
     this.tempSelectedEmployees = event.value || [];
+    // Refresh authority options to include newly selected resources
+    this.refreshRowAuthorityOptions(index);
   }
 
   onRowSave(index: number) {
@@ -286,10 +270,12 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
       row.markAllAsTouched();
       return;
     }
-
+    if (this.isHoursExceeded(index)) {
+      row.get('resourceAllocationhrs')?.markAsTouched();
+      return;
+    }
     const selectedResources: any[] = row.get('resourceName')?.value || [];
     const rowData = row.getRawValue();
-
     const newAssignment = JSON.parse(JSON.stringify({
       phase: rowData.resourcePhase ?? null,
       role: rowData.resourceRole ?? null,
@@ -302,20 +288,13 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
       authority: rowData.resourceAuthority ?? null,
       projectName: rowData.projectName ?? null,
       color: rowData.color || '#000000',
-      resourceAuthority: rowData.resourceAuthority
-        ? (typeof rowData.resourceAuthority === 'object'
-          ? rowData.resourceAuthority.value
-          : rowData.resourceAuthority)
-        : null,
+      resourceAuthority: rowData.resourceAuthority ? (typeof rowData.resourceAuthority === 'object' 
+        ? rowData.resourceAuthority.value : rowData.resourceAuthority) : null,
     }));
 
     // ================= EDIT MODE =================
     if (this.editingEmployeeId !== null) {
-
-      const existingEmp = this.selectedEmployees.find(
-        (e) => e.employeeId === this.editingEmployeeId
-      );
-
+      const existingEmp = this.selectedEmployees.find((e) => e.employeeId === this.editingEmployeeId);
       if (existingEmp) {
         if (existingEmp.assignments[index] !== undefined) {
           existingEmp.assignments[index] = newAssignment;
@@ -327,13 +306,8 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
 
       // ✅ FIX: Update payload using INDEX (not phaseId)
       const updatedPayloadRow = this.buildPayloadRow(newAssignment, this.editingEmployeeId);
-
-      const employeeRows = this.savedPayloadRows
-        .map((r, i) => ({ r, i }))
-        .filter(x => x.r.employeeId === this.editingEmployeeId);
-
+      const employeeRows = this.savedPayloadRows.map((r, i) => ({ r, i })).filter(x => x.r.employeeId === this.editingEmployeeId);
       const payloadIndex = employeeRows[index]?.i;
-
       if (payloadIndex !== undefined) {
         this.savedPayloadRows[payloadIndex] = updatedPayloadRow;
       } else {
@@ -342,17 +316,11 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
 
       // Mark row as saved
       row.patchValue({ saved: true });
-
       // ✅ Check all rows saved
-      const allSaved = this.resources.controls.every(
-        (r) => r.get('saved')?.value === true
-      );
-
+      const allSaved = this.resources.controls.every((r) => r.get('saved')?.value === true);
       if (allSaved) {
-
         this.highlightedEmployeeId = this.editingEmployeeId;
         this.editingEmployeeId = null;
-
         // Reset all rows
         this.resources.controls.forEach((r: any) => {
           r.reset({
@@ -379,7 +347,6 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
         }
 
         const row0 = this.resources.at(0) as FormGroup;
-
         if (!this.isClientFlow) {
           const project = this.projectsDataDrown?.[0];
           if (project) {
@@ -388,18 +355,9 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
               overtimeEligible: project.isOvertimeEligibile ?? false,
               allowweekendWork: project.isWeekendWorkAllowed ?? false,
             });
-
-            project.isBillable
-              ? row0.get('billable')?.enable()
-              : row0.get('billable')?.disable();
-
-            project.isOvertimeEligibile
-              ? row0.get('overtimeEligible')?.enable()
-              : row0.get('overtimeEligible')?.disable();
-
-            project.isWeekendWorkAllowed
-              ? row0.get('allowweekendWork')?.enable()
-              : row0.get('allowweekendWork')?.disable();
+            project.isBillable ? row0.get('billable')?.enable() : row0.get('billable')?.disable();
+            project.isOvertimeEligibile ? row0.get('overtimeEligible')?.enable() : row0.get('overtimeEligible')?.disable();
+            project.isWeekendWorkAllowed ? row0.get('allowweekendWork')?.enable() : row0.get('allowweekendWork')?.disable();
           }
         } else {
           row0.patchValue({
@@ -409,22 +367,15 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
           });
         }
       }
-
       this.employeesChanged.emit(this.selectedEmployees);
       return;
     }
 
     // ================= ADD MODE =================
     this.highlightedEmployeeId = null;
-
     selectedResources.forEach((emp: any) => {
-
       const empId = emp.employeeId;
-
-      const existingEmp = this.selectedEmployees.find(
-        (e) => e.employeeId === empId
-      );
-
+      const existingEmp = this.selectedEmployees.find((e) => e.employeeId === empId);
       if (!existingEmp) {
         this.selectedEmployees.push({
           employeeId: empId,
@@ -437,7 +388,6 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
         existingEmp.assignments.push(JSON.parse(JSON.stringify(newAssignment)));
         existingEmp.count = existingEmp.assignments.length;
       }
-
       this.savedPayloadRows.push(
         this.buildPayloadRow(newAssignment, empId)
       );
@@ -468,18 +418,9 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
           overtimeEligible: project.isOvertimeEligibile ?? false,
           allowweekendWork: project.isWeekendWorkAllowed ?? false,
         });
-
-        project.isBillable
-          ? row.get('billable')?.enable()
-          : row.get('billable')?.disable();
-
-        project.isOvertimeEligibile
-          ? row.get('overtimeEligible')?.enable()
-          : row.get('overtimeEligible')?.disable();
-
-        project.isWeekendWorkAllowed
-          ? row.get('allowweekendWork')?.enable()
-          : row.get('allowweekendWork')?.disable();
+        project.isBillable ? row.get('billable')?.enable() : row.get('billable')?.disable();
+        project.isOvertimeEligibile ? row.get('overtimeEligible')?.enable() : row.get('overtimeEligible')?.disable();
+        project.isWeekendWorkAllowed ? row.get('allowweekendWork')?.enable() : row.get('allowweekendWork')?.disable();
       }
     } else {
       row.patchValue({
@@ -490,7 +431,6 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
     }
 
     row.get('resourceName')?.enable();
-
     this.employeesChanged.emit(this.selectedEmployees);
   }
 
@@ -499,32 +439,21 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
     const today = new Date();
     return {
       entityType: 'project',
-      entityRefId: this.isClientFlow
-        ? (assignment.projectName?.projectId ?? assignment.projectName)
-        : this.projectId,
+      entityRefId: this.isClientFlow ? (assignment.projectName?.projectId ?? assignment.projectName) : this.projectId,
       employeeId,
       startDate: assignment.startDate,
       endDate: assignment.endDate,
       projectRoleId: assignment.role?.value?.roleId ?? assignment.role?.roleId ?? null,
-      projectDepartmentId:
-        assignment.role?.value?.entityReferenceId ??
-        assignment.role?.entityReferenceId ??
-        null,
+      projectDepartmentId: assignment.role?.value?.entityReferenceId ?? assignment.role?.entityReferenceId ?? null,
       allocatedHours: assignment.hours,
       overtimeEligibile: assignment.overtimeEligible,
       billable: assignment.billable,
       weekendWorkAllowed: assignment.allowweekendWork,
-      status: startDate > today ? 'Assigned' : 'Active',
+      status: 'waiting for approval',
       allocatedBy: this.empinfo.employeeId,
-      phaseId:
-        typeof assignment.phase === 'object'
-          ? (assignment.phase?.value ?? null)
-          : (assignment.phase ?? null),
-      pendingApprovalAuthority:
-        assignment.authority?.value ??
-        (typeof assignment.authority === 'number' ? assignment.authority : null) ??
-        this.resourceAuthorityid ??
-        null,
+      phaseId: typeof assignment.phase === 'object' ? (assignment.phase?.value ?? null) : (assignment.phase ?? null),
+      pendingApprovalAuthority: assignment.authority?.value ?? (typeof assignment.authority === 'number' ? assignment.authority : null) ??
+        this.resourceAuthorityid ?? null,
       meta: { graphData: { color: assignment.color || '#000000' } },
     };
   }
@@ -558,40 +487,38 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
         targetRow.get('resourceName')?.disable();
         const projectId = assignment.projectName?.projectId ?? assignment.projectName;
         if (!projectId) return;
-        this.http.getData(`Project?projectId=${projectId}`)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (res: any) => {
-              const project = res?.data?.[0];
-              if (!project) return;
-              const params = { projectId: project.projectId, status: 'yet to start,in progress,extended' };
-              this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe((data: any) => {
-                const phases = data?.data?.map((p: any) => ({
-                  label: p.phaseName, value: p.phaseId,
-                  startDate: p.startDate, endDate: p.endDate,
-                  pendingApprovalAuthority: p.pendingApprovalAuthority?.id,
-                })) || [];
-                const phaseId = typeof assignment.phase === 'object' ? assignment.phase?.value : assignment.phase;
-                const matchedPhase = phases.find((p: any) => p.value === phaseId) ?? null;
-                targetRow.get('resourceName')?.enable();
-                targetRow.patchValue({
-                  projectName: project, projectType: project.projectType,
-                  phaseDropdown: phases,
-                  resourceName: matchedEmployee ? [matchedEmployee] : [],
-                  resourcePhase: matchedPhase,
-                  resourceRole: assignment.role,
-                  resourceAuthority: assignment.authority,
-                  startDate: assignment.startDate, endDate: assignment.endDate,
-                  resourceAllocationhrs: assignment.hours,
-                  billable: assignment.billable,
-                  overtimeEligible: assignment.overtimeEligible,
-                  allowweekendWork: assignment.allowweekendWork,
-                  saved: false,
-                });
-                targetRow.get('resourceName')?.disable();
+        this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+          next: (res: any) => {
+            const project = res?.data?.[0];
+            if (!project) return;
+            const params = { projectId: project.projectId, status: 'yet to start,in progress,extended' };
+            this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe((data: any) => {
+              const phases = data?.data?.map((p: any) => ({
+                label: p.phaseName, value: p.phaseId,
+                startDate: p.startDate, endDate: p.endDate,
+                pendingApprovalAuthority: p.pendingApprovalAuthority?.id,
+              })) || [];
+              const phaseId = typeof assignment.phase === 'object' ? assignment.phase?.value : assignment.phase;
+              const matchedPhase = phases.find((p: any) => p.value === phaseId) ?? null;
+              targetRow.get('resourceName')?.enable();
+              targetRow.patchValue({
+                projectName: project, projectType: project.projectType,
+                phaseDropdown: phases,
+                resourceName: matchedEmployee ? [matchedEmployee] : [],
+                resourcePhase: matchedPhase,
+                resourceRole: assignment.role,
+                resourceAuthority: assignment.authority,
+                startDate: assignment.startDate, endDate: assignment.endDate,
+                resourceAllocationhrs: assignment.hours,
+                billable: assignment.billable,
+                overtimeEligible: assignment.overtimeEligible,
+                allowweekendWork: assignment.allowweekendWork,
+                saved: false,
               });
-            },
-          });
+              targetRow.get('resourceName')?.disable();
+            });
+          },
+        });
       });
     } else {
       // Project flow: patch all non-dropdown fields immediately
@@ -621,16 +548,15 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
     }
   }
 
-    closepopup(content: any) {
+  closepopup(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
   onCancel(event: Event) {
     event.preventDefault();
     event.stopPropagation();
-
     // ✅ Exit edit mode safely
     this.isEditMode = false;
-
     // ✅ Navigate back to resources list
     if (this.router.url.includes('/project-management/clients')) {
       this.router.navigate(['/project-management/clients/details/resources'], {
@@ -642,6 +568,7 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
       });
     }
   }
+
   isRowValid(index: number): boolean {
     const row = this.resources.at(index) as FormGroup;
     return row.valid;
@@ -660,35 +587,33 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
   getJobrole() {
     this.loader = true;
     const departmentParam = this.departmentIds?.join(',') || '';
-    this.subscription = this.http
-      .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
-      .subscribe({
-        next: (response: any) => {
-          this.loader = false;
-          if (response && response.success && Array.isArray(response.data)) {
-            const newDropdown = response.data.map((item: any) => ({
-              label: `${item.roleName}`,
-              value: {
-                roleId: item.id,
-                entityReferenceId: item.entity?.entityReferenceId || 0,
-              },
-            }));
-            // Only replace if not in edit mode to avoid PrimeNG re-render wiping selections
-            if (this.editingEmployeeId === null) {
-              this.projectRoleDropdown = newDropdown;
-            } else {
-              // In edit mode: update array in-place to preserve PrimeNG references
-              this.projectRoleDropdown.length = 0;
-              newDropdown.forEach((item: any) => this.projectRoleDropdown.push(item));
-            }
+    this.subscription = this.http.getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`).subscribe({
+      next: (response: any) => {
+        this.loader = false;
+        if (response && response.success && Array.isArray(response.data)) {
+          const newDropdown = response.data.map((item: any) => ({
+            label: `${item.roleName}`,
+            value: {
+              roleId: item.id,
+              entityReferenceId: item.entity?.entityReferenceId || 0,
+            },
+          }));
+          // Only replace if not in edit mode to avoid PrimeNG re-render wiping selections
+          if (this.editingEmployeeId === null) {
+            this.projectRoleDropdown = newDropdown;
           } else {
-            this.projectRoleDropdown = [];
+            // In edit mode: update array in-place to preserve PrimeNG references
+            this.projectRoleDropdown.length = 0;
+            newDropdown.forEach((item: any) => this.projectRoleDropdown.push(item));
           }
-        },
-        error: () => {
-          this.loader = false;
-        },
-      });
+        } else {
+          this.projectRoleDropdown = [];
+        }
+      },
+      error: () => {
+        this.loader = false;
+      },
+    });
   }
 
   selectedRoleId: number = 0;
@@ -703,9 +628,6 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
   onPhaseChange(selectedValue: any, index: number) {
     const row = this.resources.at(index);
 
-    row.get('startDate')?.setValue(null);
-    row.get('endDate')?.setValue(null);
-
     if (selectedValue?.value) {
       const phase = selectedValue?.value;
       this.resourceAuthorityid = phase?.pendingApprovalAuthority ?? null;
@@ -713,23 +635,38 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
       this.projectStartDate = phase.startDate ?? null;
       this.projectEndDate = phase.endDate ?? null;
 
-      // Update row-level authority control
-      const resourceAuthorityControl = row.get('resourceAuthority');
-      if (resourceAuthorityControl) {
-        resourceAuthorityControl.patchValue(null);
-        resourceAuthorityControl.enable();
-      }
+      row.get('startDate')?.setValue(phase.startDate ? this.formatDateToLocal(phase.startDate) : null);
+      row.get('endDate')?.setValue(phase.endDate ? this.formatDateToLocal(phase.endDate) : null);
+      row.get('resourceAuthority')?.setValue(null);
+      row.get('resourceAuthority')?.enable();
 
-      // Get projectId: client flow reads from row's projectName, project flow uses this.projectId
-      const projectId = this.isClientFlow
-        ? (row.get('projectName')?.value?.projectId ?? null)
-        : this.projectId;
-
+      const projectId = this.isClientFlow ? (row.get('projectName')?.value?.projectId ?? null) : this.projectId;
       const phaseId = phase.value;
-
       if (projectId && phaseId) {
-        this.getResourceData(projectId, phaseId);
+        this.getResourceData(projectId, phaseId, index);
+        this.getPhaseUsedHours(phaseId);
       }
+
+      if (phase.value && phase.allocatedHours != null) {
+        this.phaseAllocatedHours[phase.value] = phase.allocatedHours;
+      }
+    } else {
+      row.get('startDate')?.setValue(null);
+      row.get('endDate')?.setValue(null);
+      row.get('resourceAuthority')?.setValue(null);
+      this.rowAuthorityOptions.set(index, []);
+      this.rowExcludedEmployeeIds.set(index, new Set());
+    }
+  }
+
+  // Called whenever resource selection changes — refresh authority options for all rows
+  refreshRowAuthorityOptions(index: number): void {
+    const row = this.resources.at(index);
+    const phase = row.get('resourcePhase')?.value;
+    if (!phase?.value) return;
+    const projectId = this.isClientFlow ? (row.get('projectName')?.value?.projectId ?? null) : this.projectId;
+    if (projectId) {
+      this.getResourceData(projectId, phase.value, index);
     }
   }
 
@@ -837,38 +774,32 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
       endDate: [null, Validators.required],
       resourceAllocationhrs: [null, Validators.required],
       resourcePhase: [null, Validators.required],
-      resourceAuthority: [null],
+      resourceAuthority: [null, Validators.required],
       billable: [false],
       overtimeEligible: [false],
       allowweekendWork: [false],
       phaseDropdown: [[]],
       color: ['#000000'],
       dateError: [false],
-
       saved: [false],
     });
-
     // row.get('startDate')?.valueChanges.subscribe(() => {
     //   this.StartndendDateValidation(row);
     // });
-
     // row.get('endDate')?.valueChanges.subscribe(() => {
     //   this.StartndendDateValidation(row);
     // });
-
     return row;
   }
 
   // resetfrom() {
-  //    this.resources.clear();
-  //       this.resources.push(this.createResourceRow());
+  //  this.resources.clear();
+  //   this.resources.push(this.createResourceRow());
   // }
 
   addResourceRow() {
     this.isAddAttempted = true;
-
     const lastRow = this.resources.at(this.resources.length - 1) as FormGroup;
-
     if (this.isClientFlow) {
       if (lastRow.invalid) {
         lastRow.markAllAsTouched();
@@ -876,20 +807,16 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
       }
     } else {
       const projectControl = this.addResourceForm.get('projectName');
-
       if (!projectControl?.value) {
         projectControl?.markAsTouched();
         return;
       }
-
       if (lastRow.invalid) {
         lastRow.markAllAsTouched();
         return;
       }
     }
-
     const selected = this.tempSelectedEmployees;
-
     // Replace current row's employees — remove unchecked, add newly checked
     const newEmployees = selected.map((emp: any) => ({
       employeeId: emp.employeeId,
@@ -899,13 +826,8 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
 
     // Get employees from previous rows (not current row)
     const previousRowsEmployees = this.selectedEmployees.filter(
-      (e: any) =>
-        !this.tempSelectedEmployees.some(
-          (t: any) => t.employeeId === e.employeeId,
-        ) &&
-        !this.lastRowPreviousSelection?.some(
-          (p: any) => p.employeeId === e.employeeId,
-        ),
+      (e: any) => !this.tempSelectedEmployees.some((t: any) => t.employeeId === e.employeeId,) 
+      && !this.lastRowPreviousSelection?.some((p: any) => p.employeeId === e.employeeId,),
     );
 
     this.selectedEmployees = [...previousRowsEmployees, ...newEmployees];
@@ -928,6 +850,7 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
 
     this.isAddAttempted = false;
   }
+
   addNewResourceRow() {
     this.editingEmployeeId = null;
     this.highlightedEmployeeId = null;
@@ -946,17 +869,13 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
     this.resources.push(newRow);
   }
 
-
   removeResource(index: number) {
-
     if (this.editingEmployeeId !== null) {
-
       const empIndex = this.selectedEmployees.findIndex(
         (e) => e.employeeId === this.editingEmployeeId
       );
 
       const existingEmp = this.selectedEmployees[empIndex];
-
       // ✅ Remove from payload
       let matchCount = 0;
       const payloadIdx = this.savedPayloadRows.findIndex((r) => {
@@ -999,158 +918,125 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
       }
     }
   }
+
   getProjects(projectId: string) {
-    this.http
-      .getData(`Project?projectId=${projectId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.projectsDataDrown = res?.data ?? [];
-          this.projectname = this.projectsDataDrown[0]?.projectName;
-          this.projectColor = this.projectsDataDrown[0]?.meta?.graphData?.color;
-
-          this.departmentIds =
-            this.projectsDataDrown[0]?.departments?.map(
-              (d: any) => d.departmentId,
-            ) || [];
-          // this.addResourceForm.patchValue({
-          //   projectName: this.projectsDataDrown[0]?.projectId,
-          //   projectType: this.projectsDataDrown[0]?.projectType,
-          // });
-
-          this.addResourceForm.patchValue({
-            projectName: this.projectsDataDrown[0]?.projectId,
-            projectType: this.projectsDataDrown[0]?.projectType,
-          });
-          // Only patch rows when NOT in edit mode to avoid overwriting avatar-patched rows
-          if (this.editingEmployeeId === null) {
-            this.resources.controls.forEach((row) => {
-              row.patchValue({
-                overtimeEligible: this.projectsDataDrown[0]?.isOvertimeEligibile,
-                billable: this.projectsDataDrown[0]?.isBillable,
-                allowweekendWork: this.projectsDataDrown[0]?.isWeekendWorkAllowed,
-              });
+    this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsDataDrown = res?.data ?? [];
+        this.projectname = this.projectsDataDrown[0]?.projectName;
+        this.projectColor = this.projectsDataDrown[0]?.meta?.graphData?.color;
+        this.departmentIds = this.projectsDataDrown[0]?.departments?.map((d: any) => d.departmentId,) || [];
+        // this.addResourceForm.patchValue({
+        //   projectName: this.projectsDataDrown[0]?.projectId,
+        //   projectType: this.projectsDataDrown[0]?.projectType,
+        // });
+        this.addResourceForm.patchValue({
+          projectName: this.projectsDataDrown[0]?.projectId,
+          projectType: this.projectsDataDrown[0]?.projectType,
+        });
+        // Only patch rows when NOT in edit mode to avoid overwriting avatar-patched rows
+        if (this.editingEmployeeId === null) {
+          this.resources.controls.forEach((row) => {
+            row.patchValue({
+              overtimeEligible: this.projectsDataDrown[0]?.isOvertimeEligibile,
+              billable: this.projectsDataDrown[0]?.isBillable,
+              allowweekendWork: this.projectsDataDrown[0]?.isWeekendWorkAllowed,
             });
-            this.updateProjectDependentFields(this.projectsDataDrown[0]);
-          }
-          this.getJobrole();
-        },
-        error: (err) => {
-          console.error('Error fetching projects data:', err);
-          this.projectsDataDrown = [];
-        },
-      });
+          });
+          this.updateProjectDependentFields(this.projectsDataDrown[0]);
+        }
+        this.getJobrole();
+      },
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+        this.projectsDataDrown = [];
+      },
+    });
   }
 
   private updateProjectDependentFields(project: any): void {
     if (this.editingEmployeeId !== null) return; // skip during edit mode
     this.resources.controls.forEach((row) => {
-      project.isOvertimeEligibile
-        ? row.get('overtimeEligible')?.enable()
-        : row.get('overtimeEligible')?.disable();
-      project.isBillable
-        ? row.get('billable')?.enable()
-        : row.get('billable')?.disable();
-      project.isWeekendWorkAllowed
-        ? row.get('allowweekendWork')?.enable()
-        : row.get('allowweekendWork')?.disable();
+      project.isOvertimeEligibile ? row.get('overtimeEligible')?.enable() : row.get('overtimeEligible')?.disable();
+      project.isBillable ? row.get('billable')?.enable() : row.get('billable')?.disable();
+      project.isWeekendWorkAllowed ? row.get('allowweekendWork')?.enable() : row.get('allowweekendWork')?.disable();
     });
   }
 
   getclientProjects(clientId: any) {
-    this.http
-      .getData(`Project?clientId=${clientId}&status=Active`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.projectsDataDrown = res?.data ?? [];
-
-          this.projectStartDate = this.projectsDataDrown[0]?.startDate;
-          this.projectEndDate = this.projectsDataDrown[0]?.endDate;
-
-          // ✅ ADD THIS BLOCK
-          // if (this.projectsDataDrown.length > 0) {
-          //   const firstProject = this.projectsDataDrown[0];
-          //   this.selectproject(firstProject.projectId, 0);
-          // }
-        },
-        error: (err) => {
-          console.error('Error fetching projects data:', err);
-          this.projectsDataDrown = [];
-        },
-      });
+    this.http.getData(`Project?clientId=${clientId}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsDataDrown = res?.data ?? [];
+        this.projectStartDate = this.projectsDataDrown[0]?.startDate;
+        this.projectEndDate = this.projectsDataDrown[0]?.endDate;
+        // ✅ ADD THIS BLOCK
+        // if (this.projectsDataDrown.length > 0) {
+        //   const firstProject = this.projectsDataDrown[0];
+        //   this.selectproject(firstProject.projectId, 0);
+        // }
+      },
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+        this.projectsDataDrown = [];
+      },
+    });
   }
 
   selectproject(projectId: any, index: number) {
-    this.http
-      .getData(`Project?projectId=${projectId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          const project = res?.data[0];
+    this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const project = res?.data[0];
+        if (project) {
+          const row = this.resources.at(index);
+          // ✅ set toggles
+          row.patchValue({
+            projectType: project.projectType,
+            overtimeEligible: project.isOvertimeEligibile,
+            billable: project.isBillable,
+            allowweekendWork: project.isWeekendWorkAllowed,
+          });
 
-          if (project) {
-            const row = this.resources.at(index);
+          // ✅ ENABLE/DISABLE
+          project.isOvertimeEligibile ? row.get('overtimeEligible')?.enable() : row.get('overtimeEligible')?.disable();
+          project.isBillable ? row.get('billable')?.enable() : row.get('billable')?.disable();
+          project.isWeekendWorkAllowed ? row.get('allowweekendWork')?.enable() : row.get('allowweekendWork')?.disable();
 
-            // ✅ set toggles
-            row.patchValue({
-              projectType: project.projectType,
-              overtimeEligible: project.isOvertimeEligibile,
-              billable: project.isBillable,
-              allowweekendWork: project.isWeekendWorkAllowed,
-            });
+          // ✅ FETCH PHASES ONLY FOR THIS ROW
+          const params = {
+            projectId: project.projectId,
+            status: 'yet to start,in progress,extended',
+          };
 
-            // ✅ ENABLE/DISABLE
-            project.isOvertimeEligibile
-              ? row.get('overtimeEligible')?.enable()
-              : row.get('overtimeEligible')?.disable();
+          this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe((data: any) => {
+            const phases =
+              data?.data?.map((p: any) => ({
+                label: p.phaseName,
+                value: p.phaseId,
+                startDate: p.startDate,
+                endDate: p.endDate,
+                allocatedHours: p.allocatedHours,
+                pendingApprovalAuthority: p.pendingApprovalAuthority?.id,
+              })) || [];
+            // ✅ ONLY THIS ROW
+            row.get('phaseDropdown')?.setValue(phases);
+          });
 
-            project.isBillable
-              ? row.get('billable')?.enable()
-              : row.get('billable')?.disable();
-
-            project.isWeekendWorkAllowed
-              ? row.get('allowweekendWork')?.enable()
-              : row.get('allowweekendWork')?.disable();
-
-            // ✅ FETCH PHASES ONLY FOR THIS ROW
-            const params = {
-              projectId: project.projectId,
-              status: 'yet to start,in progress,extended',
-            };
-
-            this.http
-              .getDataIncludeParams('ProjectPhases/list', params)
-              .subscribe((data: any) => {
-                const phases =
-                  data?.data?.map((p: any) => ({
-                    label: p.phaseName,
-                    value: p.phaseId,
-                    startDate: p.startDate,
-                    endDate: p.endDate,
-                    pendingApprovalAuthority: p.pendingApprovalAuthority?.id,
-                  })) || [];
-
-                // ✅ ONLY THIS ROW
-                row.get('phaseDropdown')?.setValue(phases);
-              });
-
-            this.getJobrole();
-          }
-        },
-      });
+          this.getJobrole();
+        }
+      },
+    });
   }
+  
   onProjectChange(project: any, index: number) {
     const row = this.resources.at(index);
-
     // 🔥 CLEAR EVERYTHING RELATED TO PROJECT
     row.get('resourcePhase')?.setValue(null);
     row.get('startDate')?.setValue(null);
     row.get('endDate')?.setValue(null);
     row.get('resourceAuthority')?.setValue(null);
-
     this.selectproject(project.projectId, index);
   }
+
   formatDateToLocal(dateString: string) {
     if (dateString) {
       const date = new Date(dateString);
@@ -1164,87 +1050,153 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
 
   getAllActiveEmployees() {
     const statuses: string = 'Active,Trainee Active,Active Contract';
-    this.subscription = this.http
-      .getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`)
-      .subscribe({
-        next: (data: any) => {
-          this.employeeDetails = data.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + '' : ''} ${employee.lastName}`,
-            };
-          });
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`).subscribe({
+      next: (data: any) => {
+        this.employeeDetails = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + '' : ''} ${employee.lastName}`,
+          };
+        });
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
-  getResourceData(projectId: number, phaseId: number) {
+  private readonly ACTIVE_RESOURCE_STATUSES = ['active', 'assigned', 'waiting for approval'];
+
+  getFilteredEmployees(rowIndex: number): any[] {
+    const excluded = this.rowExcludedEmployeeIds.get(rowIndex);
+    if (!excluded || excluded.size === 0) return this.employeeDetails;
+    return this.employeeDetails.filter((e) => !excluded.has(e.employeeId));
+  }
+
+  getResourceData(projectId: number, phaseId: number, rowIndex: number) {
     const params = {
-      status: 'Active',
+      status: 'active,assigned,waiting for approval',
       entityType: 'project',
       entityRefId: projectId,
       phaseId: phaseId,
     };
-    this.subscription = this.http
-      .getDataIncludeParams('ProjectResource', params)
-      .subscribe({
-        next: (data: any) => {
-          if (data?.data?.length > 0) {
-            this.resourcesData = data.data;
-            this.resoucesDropDownData = this.resourcesData
-              .filter((r) => r.employee)
-              .map((r) => ({
-                label: `${r.employee.fusionEmployeeId ? r.employee.fusionEmployeeId + ' - ' : ''}  ${r.employee.name}`,
-                value: r.employee.id,
-              }));
-            if (this.resoucesDropDownData?.length > 0) {
-              this.addResourceForm.get('resourceAuthority')?.enable();
-              this.addResourceForm
-                .get('resourceAuthority')
-                ?.setValidators([Validators.required]);
-            }
-          } else {
-            this.resoucesDropDownData = [];
-            this.addResourceForm.get('resourceAuthority')?.disable();
+    this.http.getDataIncludeParams('ProjectResource', params).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        const existingResources: any[] = data?.data ?? [];
+        const row = this.resources.at(rowIndex);
+        const phase = row.get('resourcePhase')?.value;
+        const phaseAuthorityId: number | null = phase?.pendingApprovalAuthority ?? null;
+
+        // Build excluded employee IDs (active resources in this phase)
+        const activeResources = existingResources.filter((r) =>
+          this.ACTIVE_RESOURCE_STATUSES.includes(r.status?.toLowerCase())
+        );
+        const excludedIds = new Set<number>(activeResources.map((r) => r.employee?.id).filter(Boolean));
+        this.rowExcludedEmployeeIds.set(rowIndex, excludedIds);
+
+        // Build authority options from all existing phase resources
+        const existingOptions: any[] = existingResources
+          .filter((r) => r.employee)
+          .map((r) => ({
+            label: `${r.employee.fusionEmployeeId ? r.employee.fusionEmployeeId + ' - ' : ''}${r.employee.name}`,
+            value: r.employee.id,
+          }));
+
+        // Add currently selected resources in this row (not yet saved)
+        const selectedInRow: any[] = row.get('resourceName')?.value ?? [];
+        const selectedOptions: any[] = selectedInRow.map((emp: any) => ({
+          label: emp.fullName,
+          value: emp.employeeId,
+        }));
+
+        // Merge, deduplicate by value
+        const merged = [...existingOptions];
+        selectedOptions.forEach((opt) => {
+          if (!merged.some((m) => m.value === opt.value)) {
+            merged.push(opt);
           }
-        },
-        error: (reason: any) => {
-          console.error(reason);
-        },
-      });
+        });
+
+        this.rowAuthorityOptions.set(rowIndex, merged);
+
+        // If phase has a pre-configured authority, auto-select it
+        if (phaseAuthorityId) {
+          const matched = merged.find((d) => d.value === phaseAuthorityId);
+          row.get('resourceAuthority')?.setValue(matched ? matched.value : phaseAuthorityId);
+        } else {
+          row.get('resourceAuthority')?.setValue(null);
+        }
+      },
+      error: (reason: any) => {
+        console.error(reason);
+        this.rowAuthorityOptions.set(rowIndex, []);
+        this.rowExcludedEmployeeIds.set(rowIndex, new Set());
+      },
+    });
+  }
+
+  getPhaseUsedHours(phaseId: number): void {
+    const activeStatuses = ['active', 'assigned', 'waiting for approval'];
+    const params = { entityType: 'project', phaseId, status: 'active,assigned,waiting for approval' };
+    this.http.getDataIncludeParams('ProjectResource', params).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        const used = (data?.data || [])
+          .filter((r: any) => activeStatuses.includes(r.status?.toLowerCase()))
+          .reduce((sum: number, r: any) => sum + (Number(r.allocatedHours) || 0), 0);
+        this.phaseUsedHours[phaseId] = used;
+      },
+      error: () => { this.phaseUsedHours[phaseId] = 0; }
+    });
+  }
+
+  getRemainingHours(index: number): number | null {
+    const row = this.resources.at(index);
+    const phase = row.get('resourcePhase')?.value;
+    const phaseId = phase?.value;
+    if (!phaseId) return null;
+    const allocated = this.phaseAllocatedHours[phaseId] ?? phase?.allocatedHours ?? null;
+    if (allocated == null) return null;
+    const used = this.phaseUsedHours[phaseId] ?? 0;
+    // Subtract hours already entered in other rows for the same phase
+    const otherRowsHours = this.resources.controls.reduce((sum, r, i) => {
+      if (i === index) return sum;
+      const rPhaseId = r.get('resourcePhase')?.value?.value;
+      if (rPhaseId === phaseId) return sum + (Number(r.get('resourceAllocationhrs')?.value) || 0);
+      return sum;
+    }, 0);
+    return allocated - used - otherRowsHours;
+  }
+
+  isHoursExceeded(index: number): boolean {
+    const remaining = this.getRemainingHours(index);
+    if (remaining === null) return false;
+    const entered = Number(this.resources.at(index).get('resourceAllocationhrs')?.value) || 0;
+    return entered > 0 && entered > remaining;
   }
 
   onClickEmployee(event: any) {
     this.selectedEmployee = event.value;
     this.addResourceForm.patchValue({
       resourceEmail: this.selectedEmployee.workEmail,
-      resourcePhone: this.selectedEmployee
-        ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''}
-      ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-'
-        : '-',
+      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''}
+      ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-' : '-',
     });
     this.getJobdetails(this.selectedEmployee.employeeId);
   }
 
   getJobdetails(Employee: any) {
-    this.subscription = this.http
-      .getData(`JobDetails/Empname/${Employee}`)
-      .subscribe({
-        next: (data: any) => {
-          const jobRole = Array.isArray(data)
-            ? data[0]?.jobRole
-            : data?.jobRole;
-          this.addResourceForm.patchValue({
-            designation: jobRole,
-          });
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData(`JobDetails/Empname/${Employee}`).subscribe({
+      next: (data: any) => {
+        const jobRole = Array.isArray(data) ? data[0]?.jobRole : data?.jobRole;
+        this.addResourceForm.patchValue({
+          designation: jobRole,
+        });
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   isActive(route: string): boolean {
@@ -1289,8 +1241,6 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
   //       },
   //     },
   //   };
-  //   console.log(payload);
-
   //   this.http.postdata(`ProjectResource`, payload).subscribe({
   //     next: (res) => {
   //       this.modalService.dismissAll();
@@ -1321,16 +1271,13 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
     this.http.postdata(`ProjectResource/multiple`, payload).subscribe({
       next: (res: any) => {
         this.spinnerLoader = false;
-
         const successCount = res?.data?.length || 0;
         const failureCount = totalSelected - successCount;
-
         this.responseSummary = {
           totalRecordCount: totalSelected,
           successRecordsCount: successCount,
           failureRecordsCount: failureCount,
         };
-
         this.modalService.dismissAll();
 
         const modalRef = this.modalService.open(this.releaseSummaryModal, {
@@ -1351,44 +1298,35 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
         this.selectedEmployees = [];
         this.maxVisibleAvatars = 10;
         if (this.router.url.includes('project-management/clients')) {
-          this.router.navigate(
-            ['/project-management/clients/details/resources'],
+          this.router.navigate(['/project-management/clients/details/resources'],
             {
               queryParams: { id: this.clientID },
             },
           );
         } else if (this.router.url.includes('project-management/projects')) {
-          this.router.navigate(
-            ['/project-management/projects/details/resources'],
+          this.router.navigate(['/project-management/projects/details/resources'],
             {
               queryParams: { id: this.projectId },
             },
           );
         }
-
         this.http.setnewresourceDetails();
         this.http.setnewcountfornewresourcecount();
       },
 
       error: (err) => {
         this.spinnerLoader = false;
-
         this.responseSummary = {
           totalRecordCount: totalSelected,
           successRecordsCount: 0,
           failureRecordsCount: totalSelected,
         };
-
         const modalRef = this.modalService.open(this.releaseSummaryModal, {
           centered: true,
           size: 'lg',
         });
-
         setTimeout(() => {
           modalRef.close();
-          // this.conformationPopup.openErrorModal(
-          //   err?.error?.message,
-          // );
         }, 3000);
       },
     });
@@ -1489,8 +1427,6 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
     };
   }
 
-
-
   closeModal() {
     this.modalService.dismissAll();
     this.addResourceForm.reset();
@@ -1501,69 +1437,57 @@ openEmployeePopover(popover: NgbPopover, event?: MouseEvent): void {
       projectId: this.projectId,
       status: 'yet to start,in progress,extended',
     };
-    this.subscription = this.http
-      .getDataIncludeParams('ProjectPhases/list', params)
-      .subscribe({
-        next: (data: any) => {
-          this.phaseData = data?.data || [];
-          this.phaseDropdown = this.phaseData?.map((p) => ({
-            label: p?.phaseName,
-            value: p?.phaseId,
-            projectId: p?.project?.projectId,
-            clientId: p?.project?.clientId,
-            startDate: p?.startDate,
-            endDate: p?.endDate,
-            pendingApprovalAuthority: p?.pendingApprovalAuthority?.id,
-          }));
-          this.spinnerLoader = false;
-        },
-        error: (reason: any) => {
-          this.spinnerLoader = false;
-        },
-      });
+    this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (data: any) => {
+        this.phaseData = data?.data || [];
+        this.phaseDropdown = this.phaseData?.map((p) => ({
+          label: p?.phaseName,
+          value: p?.phaseId,
+          projectId: p?.project?.projectId,
+          clientId: p?.project?.clientId,
+          startDate: p?.startDate,
+          endDate: p?.endDate,
+          allocatedHours: p?.allocatedHours,
+          pendingApprovalAuthority: p?.pendingApprovalAuthority?.id,
+        }));
+        this.spinnerLoader = false;
+      },
+      error: (reason: any) => {
+        this.spinnerLoader = false;
+      },
+    });
   }
-
-
 
   getImageUrl(imagePath: string): string | null {
     if (!imagePath) return '';
-
     if (imagePath.startsWith('http')) {
       return imagePath;
     }
-
     if (imagePath.startsWith('Profilepics/')) {
       return environment.viewUrl + imagePath;
     }
-
-    return (
-      environment.ApiUrl +
-      'EmployeeData/DownloadProfilePic?filename=' +
-      imagePath
-    );
+    return (environment.ApiUrl + 'EmployeeData/DownloadProfilePic?filename=' + imagePath);
   }
 
   getClientsData(clientID: any): void {
-    this.http
-      .getData(`Client/${clientID}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.clientsdata = res?.data || {};
-          this.clientName = this.clientsdata.clientName;
-          this.clientColor = this.clientsdata?.meta?.graphData?.color;
-        },
-        error: (err) => {
-          this.clientsdata = {};
-          console.error('Error fetching clients:', err);
-        },
-      });
+    this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.clientsdata = res?.data || {};
+        this.clientName = this.clientsdata.clientName;
+        this.clientColor = this.clientsdata?.meta?.graphData?.color;
+      },
+      error: (err) => {
+        this.clientsdata = {};
+        console.error('Error fetching clients:', err);
+      },
+    });
   }
 
   isShowClientRoute(): boolean {
     const showPaths = ['/project-management/clients'];
     return showPaths.some((path) => this.router.url.startsWith(path));
   }
+  
   isShowProjectRoute(): boolean {
     const showPaths = ['/project-management/projects'];
     return showPaths.some((path) => this.router.url.startsWith(path));

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -16,18 +16,22 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { IEAV } from '../../../settings/project-management-configurations/models/project-type.modal';
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 import { ClientDocumentsTabsComponent } from "../../../shared/project-management-tabs/client-documents-tabs/client-documents-tabs.component";
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-client-documents',
   imports: [Select, TranslateModule, CommonModule, ReactiveFormsModule, DateformatPipe, DataLoaderContentComponent,
-    NoDataFoundComponent, DownloadIconComponent, ClientDocumentsTabsComponent],
+    NoDataFoundComponent, DownloadIconComponent, ClientDocumentsTabsComponent, TableModule],
   templateUrl: './client-documents.component.html',
   styleUrl: './client-documents.component.scss'
 })
 
 export class ClientDocumentsComponent implements OnInit, OnDestroy {
+  @ViewChild('clientDocumentsTable') clientDocumentsTable!: Table;
   updateDocumentForm!: FormGroup;
   subscription!: Subscription;
   documentdata = [] as any;
+  originalDocumentdata: any[] = [];
   entitytype = 'client';
   loading = false;
   clientID: any;
@@ -40,6 +44,8 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
   displayClientAttachment: string = '';
   documentTypes: IEAV[] = [];
   inactiveClientStatus: any;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private route: ActivatedRoute,
     private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService) { }
@@ -103,6 +109,7 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`Documents/?entityType=client&entityId=${entityId}&status=active`).subscribe({
       next: (data: any) => {
         this.documentdata = data.data;
+        this.originalDocumentdata = [...data.data];
       },
       error: (reason: any) => { }
     });
@@ -357,6 +364,63 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
 
   close() {
     this.modalService.dismissAll();
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.documentdata = [...this.originalDocumentdata];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.clientDocumentsTable) {
+          this.clientDocumentsTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, use PrimeNG's order
+        this.currentSortOrder = event.order;
+      }
+    } else {
+      // New field clicked - use PrimeNG's default order
+      this.currentSortField = field;
+      this.currentSortOrder = event.order;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'createdAt') {
+        // Handle date sorting
+        val1 = new Date(a[field] ?? 0).getTime();
+        val2 = new Date(b[field] ?? 0).getTime();
+        return event.order * (val1 - val2);
+      } else if (field === 'signedCopy') {
+        // Handle signed copy (yes/no)
+        val1 = String(a?.attributes?.[0]?.attributeValue ?? '').toLowerCase();
+        val2 = String(b?.attributes?.[0]?.attributeValue ?? '').toLowerCase();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else if (field === 'attachment') {
+        // Handle attachment (file name from path)
+        val1 = String(a?.documentUrl?.split('/').pop() ?? '').trim();
+        val2 = String(b?.documentUrl?.split('/').pop() ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      } else {
+        // Default string comparison
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
   }
 
   ngOnDestroy() {

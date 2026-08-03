@@ -801,3 +801,43 @@ export const PERFORMANCE_REVIEW_TABS = [
   { route: '/pms/performace-review/myPerformance', permission: 'My Performance Review.view' },
   { route: '/pms/performace-review/team-performance', permission: 'My Team Performance Review.view' },
 ]
+
+export const RECRUITMENT_JOBS_ROUTES = [
+  { route: '/recruitment/jobs/active', permission: 'Active Jobs.view' },
+  { route: '/recruitment/jobs/inactive', permission: 'Inactive Jobs.view'}
+];
+
+export const RECRUITMENT_MAIN_ROUTES = [
+  { route: '/recruitment/jobs', permission: 'Job Openings.view' },
+  { route: '/recruitment/interview-process', permission: 'Interview Review.view' },
+  { route: '/recruitment/recruiter-dashboard', permission: 'Recruiter Dashboard.view'},
+  { route: '/recruitment/recruitment-dashboard', permission: 'Recruitment Dashboard.view'}
+];
+
+export const INTERVIEW_PROCESS_TABS = [
+  { route: '/recruitment/interview-process/active-applicants', permission: 'Active Applicants.view' },
+  { route: '/recruitment/interview-process/screening-completed-applicants', permission: 'Screening Completed Applicants.view' }
+];
+
+export const RECRUITMENT_CONFIGURATION_HIRING_TABS = [
+  { route: '/settings/recruitment-configuration/hiring-pipeline/interview-rounds', permission: 'Active Applicants.view' },
+  { route: '/settings/recruitment-configuration/hiring-pipeline/onhold-reason', permission: 'Screening Completed Applicants.view' },
+  { route: '/settings/recruitment-configuration/hiring-pipeline/reject-reason', permission: 'Active Applicants.view' },
+  { route: '/settings/recruitment-configuration/hiring-pipeline/dropoff-reason', permission: 'Screening Completed Applicants.view' }
+];
+
+export const RECRUITMENT_CONFIGURATION_SOURCE_TABS = [
+  { route: '/settings/recruitment-configuration/source-configuration/sources', permission: 'Active Applicants.view' },
+  { route: '/settings/recruitment-configuration/source-configuration/source-types', permission: 'Screening Completed Applicants.view' },
+];
+
+export const ROLES_AND_PERMISSIONS = [
+  { route: '/settings/roles-permissions/roles', permission: 'Roles.view' },
+  { route: '/settings/roles-permissions/permissions', permission: 'Permissions.view' },
+  { route: '/settings/roles-permissions/role-assignee', permission: 'Assignees.view' },
+];
+
+export const PROJECT_MANAGEMENT_APPROVALS_TABS = [
+  { route: '/pending-approvals/project-management/time-sheets', permission: 'Time Sheet approval Tab.view' },
+  { route: '/pending-approvals/project-management/resource-approvals', permission: 'Resource Approvals.view' },
+]

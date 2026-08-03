@@ -28,32 +28,27 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <table id="leaveReportTable" class="w-100">
-      <thead>
-        <th>{{ 'Employee ID' | translate }}</th>
-        <th>{{ 'Employee Name' | translate }}</th>
-        <th>{{ 'Department' | translate }}</th>
-        <th>{{ 'Team Manager' | translate }}</th>
-        <th>{{ 'Location' | translate }}</th>
-        <th>{{ 'Sub Location' | translate }}</th>
-        <th>{{ 'Shift' | translate }}</th>
-        <th>{{ 'Leave Category' | translate }}</th>
-        <th>{{ 'Leave Start Date' | translate }}</th>
-        <th>{{ 'Leave End Date' | translate }}</th>
-        <th>{{ 'Availed' | translate }}</th>
-        <th>{{ 'Applied Date' | translate }}</th>
-        <th>{{ 'Days' | translate }}</th>
-      </thead>
-      <tbody>
-        @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
+    <p-table #leaveTable [value]="filteredleaveRecord" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
         <tr>
-          <app-no-data-found />
+          <th pSortableColumn="fusionEmpId" class="text-center">{{ 'Employee ID' | translate }} <p-sortIcon field="fusionEmpId" /></th>
+          <th pSortableColumn="employeeName">{{ 'Employee Name' | translate }} <p-sortIcon field="employeeName" /></th>
+          <th pSortableColumn="department">{{ 'Department' | translate }} <p-sortIcon field="department" /></th>
+          <th pSortableColumn="teamManagerName">{{ 'Team Manager' | translate }} <p-sortIcon field="teamManagerName" /></th>
+          <th pSortableColumn="location">{{ 'Location' | translate }} <p-sortIcon field="location" /></th>
+          <th pSortableColumn="subLocation">{{ 'Sub Location' | translate }} <p-sortIcon field="subLocation" /></th>
+          <th pSortableColumn="shift">{{ 'Shift' | translate }} <p-sortIcon field="shift" /></th>
+          <th pSortableColumn="leaveCategoryName">{{ 'Leave Category' | translate }} <p-sortIcon field="leaveCategoryName" /></th>
+          <th pSortableColumn="startdate" class="text-center">{{ 'Leave Start Date' | translate }} <p-sortIcon field="startdate" /></th>
+          <th pSortableColumn="enddate" class="text-center">{{ 'Leave End Date' | translate }} <p-sortIcon field="enddate" /></th>
+          <th pSortableColumn="availed">{{ 'Availed' | translate }} <p-sortIcon field="availed" /></th>
+          <th pSortableColumn="appliedDate" class="text-center">{{ 'Applied Date' | translate }} <p-sortIcon field="appliedDate" /></th>
+          <th pSortableColumn="days" class="text-center">{{ 'Days' | translate }} <p-sortIcon field="days" /></th>
         </tr>
-        }
-        @else {
-        @for (record of filteredleaveRecord; track $index) {
+      </ng-template>
+      <ng-template pTemplate="body" let-record>
         <tr>
-          <td>{{ record.fusionEmpId ?? '-' }}</td>
+          <td class="text-center">{{ record.fusionEmpId || '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
           <td>{{ record.department ?? '-' }}</td>
           <td>{{ record.teamManagerName ?? '-' }}</td>
@@ -61,23 +56,29 @@
           <td>{{ record.subLocation ?? '-' }}</td>
           <td>{{ record.shift ?? '-' }}</td>
           <td>{{ record.leaveCategoryName ?? '-' }}</td>
-          <td class="text-nowrap">{{ record.startdate ? (record.startdate | date) : '-' }}</td>
-          <td class="text-nowrap">{{ record.enddate ? (record.enddate | date) : '-' }}</td>
+          <td class="text-center">{{ record.startdate ? (record.startdate | date) : '-' }}</td>
+          <td class="text-center">{{ record.enddate ? (record.enddate | date) : '-' }}</td>
           <td>{{ record.availed ?? '-'}}</td>
-          <td class="text-nowrap">{{ record.appliedDate ? (record.appliedDate | date) : '-' }}</td>
-          <td>{{ record.days ?? '-' }}</td>
+          <td class="text-center">{{ record.appliedDate ? (record.appliedDate | date) : '-' }}</td>
+          <td class="text-center">{{ record.days ?? '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="13">
+            <div class="wrapper">
+            <app-no-data-found />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else{
     <app-data-loader-content />
     }
   </div>
 </div>
-
 <!-- Filter Offcanvas -->
 <ng-template #filterContent let-offcanvas>
   <div class="custom-filter-container">
@@ -88,7 +89,7 @@
 
     <div class="offcanvas-filter-content">
       <form [formGroup]="LeaveReportForm" (ngSubmit)="onGenerate()">
-        
+
         <!-- Year -->
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Year' | translate}}</label>
@@ -104,7 +105,11 @@
            <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Date Range' | translate}}</label>
            <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date'" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" [minDate]="yearMinDate" [maxDate]="yearMaxDate ?? today" />
+              [showIcon]="true" [readonlyInput]="true" [minDate]="minDate" [maxDate]="maxDate" />
+          </div>
+          <div *ngIf="LeaveReportForm.errors?.['dateRangeOutOfYear'] && (LeaveReportForm.get('dateRange')?.touched || LeaveReportForm.get('dateRange')?.dirty)"
+            class="error-msg">
+            Selected date range must be within the selected year
           </div>
         </div>
         
@@ -169,7 +174,7 @@
             {{'Clear All' | translate}}</button>
            @if(rbac.allowedToAccess('Leave Report - Generate.view')){
           <button type="submit" class="custom-btn btn-primary w-100" 
-            [disabled]="isLeaveGenerateDisabled || spinnerLoader1">
+            [disabled]="isLeaveGenerateDisabled || LeaveReportForm.invalid || spinnerLoader1">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...' | translate}}</span>

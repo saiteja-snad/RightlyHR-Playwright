@@ -17,6 +17,7 @@ import { ItSupportIconComponent } from "../../icons/it-support-icon/it-support-i
 import { GearIconComponent } from "../../icons/gear-icon/gear-icon.component";
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
+import { TenantService } from '../../services/tenant.service';
 @Component({
   selector: 'app-header',
   imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent,
@@ -36,6 +37,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   isloading: boolean = false;
   currentUser: any;
+  companyLogo: string = '';
   @ViewChild('logoutpopup') logoutpopup: any;
 
   constructor(
@@ -48,7 +50,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     private accessNav: AccessNavigationService,
     private fb: FormBuilder,
-    private predefinedThemesService: PredefinedThemesService
+    private predefinedThemesService: PredefinedThemesService,
+    public tenantService: TenantService
   ) { }
 
   ngOnInit(): void {
@@ -62,6 +65,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.http.profliepicadd$.subscribe(() => {
       this.getEmployeeId();
     });
+
+    // Subscribe to logo$ so header reactively gets the logo
+    // If logo not yet set, re-verify domain to fetch it
+    this.subscription = this.tenantService.logo$.subscribe(logo => {
+      this.companyLogo = logo || this.tenantService.currentLogo;
+    });
+    if (!this.tenantService.isLogoLoaded) {
+      this.tenantService.verifyDomain(this.tenantService.currentDomain).subscribe();
+    }
   }
 
   goToAccessibleRoute(actualRoute: string) {

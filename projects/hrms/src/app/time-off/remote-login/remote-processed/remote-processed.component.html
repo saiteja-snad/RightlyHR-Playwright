@@ -1,17 +1,17 @@
 <div class="custom-main-component-container">
-  <div class="custom-table-content ">
+  <div class="custom-table-content">
     @if(!dataLoad){
-    <p-table #remoteProcessedTable [value]="approvedRemotes" [customSort]="true" (sortFunction)="customSort($event)" [tableStyle]="{'width': '100%'}">
+    <p-table #remoteRequestsTable [value]="approvedRemotes" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="startTime">{{'Worked Date' | translate}} <p-sortIcon field="startTime" /></th>
-          <th pSortableColumn="durationType">{{'Availed' | translate}} <p-sortIcon field="durationType" /></th>
-          <th pSortableColumn="requestedComments" class="text-center">{{'Reason' | translate}} <p-sortIcon field="requestedComments" /></th>
-          <th pSortableColumn="requestedDate">{{'Applied Date '|translate}} <p-sortIcon field="requestedDate" /></th>
-          <th pSortableColumn="status">{{'Status'|translate}} <p-sortIcon field="status" /></th>
+          <th pSortableColumn="workedDate">{{'Worked Date' | translate}} <p-sortIcon field="workedDate" /></th>
+          <th pSortableColumn="availed">{{'Availed' | translate}} <p-sortIcon field="availed" /></th>
+          <th class="text-center">{{'Reason' | translate}}</th>
+          <th pSortableColumn="appliedDate">{{'Applied Date '|translate}} <p-sortIcon field="appliedDate" /></th>
+          <th class="text-center">{{'Status'|translate}}</th>
         </tr>
       </ng-template>
-      
+
       <ng-template pTemplate="body" let-remoteRequest>
         <tr>
           <td>{{ remoteRequest.startTime ? (remoteRequest.startTime | dateformat) : ' -' }}</td>
@@ -33,14 +33,14 @@
             <ng-template #res>-</ng-template>
           </td>
           <td>{{ remoteRequest.requestedDate | dateformat }}</td>
-          <td>{{ remoteRequest.status }}</td>
+          <td class="text-center">{{ remoteRequest.status }}</td>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="emptymessage">
         <div class="wrapper">
           <tr>
-            <td colspan="11">
+            <td colspan="5">
               <app-no-data-found />
             </td>
           </tr>

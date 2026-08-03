@@ -13,7 +13,6 @@ import { ICompOff } from '../../comp-off/compoff.modal';
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
@@ -21,6 +20,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { TableModule } from 'primeng/table';
 import { Table } from 'primeng/table';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-remote-waiting-for-approval',
@@ -29,6 +29,7 @@ import { Table } from 'primeng/table';
     FormsModule,
     PaginatorModule,
     DropdownModule,
+    TableModule,
     DateformatPipe,
     TranslateModule,
     ReactiveFormsModule,
@@ -37,8 +38,8 @@ import { Table } from 'primeng/table';
   templateUrl: './remote-waiting-for-approval.component.html',
   styleUrl: './remote-waiting-for-approval.component.scss'
 })
-export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
-  @ViewChild('remoteWaitingTable') remoteWaitingTable!: Table;
+export class RemoteWaitingForApprovalComponent implements OnInit,OnDestroy {
+  @ViewChild('remoteRequestsTable') remoteRequestsTable!: Table;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -48,9 +49,7 @@ export class RemoteWaitingForApprovalComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   dataLoad = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
-  // Sorting properties
-  originalApprovedRemotes = [] as ICompOff[];
+  originalApprovedRemotes = [] as ICompOff[]; // Store original unsorted data
   currentSortField: string = '';
   currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
@@ -214,8 +213,8 @@ hasApprovableItems(): boolean {
           this.selectedProducts = [];
           this.multiSelect = false;
 
-          if (this.remoteWaitingTable) {
-            this.remoteWaitingTable.selection = [];
+          if (this.remoteRequestsTable) {
+            this.remoteRequestsTable.selection = [];
           }
           this.approvedRemotesCount = this.approvedRemotes.length;
         },
@@ -223,7 +222,7 @@ hasApprovableItems(): boolean {
           this.dataLoad = false;
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
-          this.originalApprovedRemotes = [];
+          this.originalApprovedRemotes = []; // Reset original data
         },
       });
   }
@@ -253,15 +252,15 @@ hasApprovableItems(): boolean {
           this.selectedProducts = [];
           this.multiSelect = false;
 
-          if (this.remoteWaitingTable) {
-            this.remoteWaitingTable.selection = [];
+          if (this.remoteRequestsTable) {
+            this.remoteRequestsTable.selection = [];
           }
           this.approvedRemotesCount = this.approvedRemotes.length;
         },
         error: (error) => {
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
-          this.originalApprovedRemotes = [];
+          this.originalApprovedRemotes = []; // Reset original data
         },
       });
   }
@@ -517,8 +516,8 @@ hasApprovableItems(): boolean {
         this.approvedRemotes = [...this.originalApprovedRemotes];
         this.currentSortField = '';
         this.currentSortOrder = 0;
-        if (this.remoteWaitingTable) {
-          this.remoteWaitingTable.reset();
+        if (this.remoteRequestsTable) {
+          this.remoteRequestsTable.reset();
         }
         return;
       } else {
@@ -539,39 +538,49 @@ hasApprovableItems(): boolean {
 
       // Handle different field types
       switch (field) {
-        case 'startTime':
-        case 'requestedDate':
-          val1 = new Date(a[field]).getTime();
-          val2 = new Date(b[field]).getTime();
-          return event.order * (val1 - val2);
-
-        case 'durationType':
-          // Map durationType numbers to sortable values for proper sorting
-          const durationMap: { [key: number]: number } = {
-            1: 1, // First Half
-            2: 3, // Full Day (should come last)
-            3: 2  // Second Half
-          };
-          val1 = durationMap[a[field]] || 0;
-          val2 = durationMap[b[field]] || 0;
-          return event.order * (val1 - val2);
-
+        case 'workedDate':
+          val1 = a.startTime;
+          val2 = b.startTime;
+          break;
+        case 'availed':
+          val1 = a.durationType;
+          val2 = b.durationType;
+          break;
+        case 'reason':
+          val1 = a.requestedComments;
+          val2 = b.requestedComments;
+          break;
+        case 'appliedDate':
+          val1 = a.requestedDate;
+          val2 = b.requestedDate;
+          break;
         case 'status':
-        case 'requestedComments':
+          val1 = a.status;
+          val2 = b.status;
+          break;
         default:
           val1 = a[field];
           val2 = b[field];
-          break;
       }
 
-      // Handle string sorting for non-date/duration fields
-      if (field !== 'startTime' && field !== 'requestedDate' && field !== 'durationType') {
-        val1 = String(val1 ?? '').trim();
-        val2 = String(val2 ?? '').trim();
-        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      // Handle date sorting
+      if (field === 'workedDate' || field === 'appliedDate') {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
       }
 
-      return 0; // Fallback
+      // Handle duration type sorting (numeric)
+      if (field === 'availed') {
+        const num1 = parseInt(val1 || '0', 10);
+        const num2 = parseInt(val2 || '0', 10);
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
     });
   }
 

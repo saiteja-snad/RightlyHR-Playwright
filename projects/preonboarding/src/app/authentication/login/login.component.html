@@ -1,10 +1,16 @@
 <div class="login-main-container">
     <div class="card login-card">
         <div class="text-center">
-           <img src='/logos/rightlyhr-full-logo.png' alt="RightlyHr Logo" class="logo-image">
+           <img [src]="tenantService.currentLogo" alt="Company Logo" class="logo-image">
             <p class="component-header my-4">{{ 'Login to your account' | translate }}</p>
         </div>
         <div class="px-3">
+          @if(domainVerificationStatus === 'verifying') {
+            <div class="d-flex justify-content-center align-items-center mb-4">
+              <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+              <span class="ms-2">Verifying domain...</span>
+            </div>
+          }
             <form autocomplete="off" [formGroup]="loginform" (ngSubmit)="login(loginform)">
                 <div class="mb-3">
                     <label for="name" class="form-label custom-label mb-2">{{ 'Username' | translate }}<span class="text-danger">*</span></label>
@@ -36,7 +42,7 @@
                 </div>
                 <div class="error-msg" *ngIf="wrongCredentials">{{ wrongCredentials }}</div>
                 <div class="pt-3">
-                    <button type="submit" class="custom-btn btn-primary w-100 py-3" [disabled]="loginform.invalid || spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary w-100 py-3" [disabled]="loginform.invalid || spinnerLoader || !isDomainVerified">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{ 'Loading...' | translate }}</span>

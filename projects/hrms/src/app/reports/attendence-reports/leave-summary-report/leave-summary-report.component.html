@@ -27,45 +27,47 @@
 
   <div class="custom-table-content">
     @if(!isLoading){
-    <table id="levsumReportTable" class="w-100">
-      <thead>
-        <th class="text-center">{{ 'Employee ID' | translate }}</th>
-        <th>{{ 'Employee Name' | translate }}</th>
-        <th>{{ 'Department' | translate }}</th>
-        <th>{{ 'Team Manager' | translate }}</th>
-        <th>{{ 'Location' | translate }}</th>
-        <th>{{ 'Sub Location' | translate }}</th>
-        <th>{{ 'Shift' | translate }}</th>
-        <th class="text-center">{{ 'Year' | translate }}</th>
-        <th>{{ 'Month' | translate }}</th>
-        <th>{{ 'Leave Category' | translate }}</th>
-        <th class="text-center">{{ 'Leaves Availed' | translate }}</th>
-      </thead>
-      <tbody>
-        @if (!filterlvsumRecord || filterlvsumRecord.length === 0) {
+    <p-table #leaveSummaryTable [value]="filterlvsumRecord" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
         <tr>
-          <app-no-data-found />
+          <th pSortableColumn="fusionEmpId" class="text-center">{{ 'Employee ID' | translate }} <p-sortIcon field="fusionEmpId" /></th>
+          <th pSortableColumn="employeeName">{{ 'Employee Name' | translate }} <p-sortIcon field="employeeName" /></th>
+          <th pSortableColumn="department">{{ 'Department' | translate }} <p-sortIcon field="department" /></th>
+          <th pSortableColumn="teamManagerName">{{ 'Team Manager' | translate }} <p-sortIcon field="teamManagerName" /></th>
+          <th pSortableColumn="location">{{ 'Location' | translate }} <p-sortIcon field="location" /></th>
+          <th pSortableColumn="subLocation">{{ 'Sub Location' | translate }} <p-sortIcon field="subLocation" /></th>
+          <th pSortableColumn="shift">{{ 'Shift' | translate }} <p-sortIcon field="shift" /></th>
+          <th pSortableColumn="year">{{ 'Year' | translate }} <p-sortIcon field="year" /></th>
+          <th pSortableColumn="monthName">{{ 'Month' | translate }} <p-sortIcon field="monthName" /></th>
+          <th pSortableColumn="leaveCategoryName">{{ 'Leave Category' | translate }} <p-sortIcon field="leaveCategoryName" /></th>
+          <th pSortableColumn="availed" class="text-center">{{ 'Leaves Availed' | translate }} <p-sortIcon field="availed" /></th>
         </tr>
-        }
-        @else {
-        @for (record of filterlvsumRecord; track $index) {
+      </ng-template>
+      <ng-template pTemplate="body" let-record>
         <tr>
-          <td class="text-center">{{ record.fusionEmpId ?? '-' }}</td>
+          <td class="text-center">{{ record.fusionEmpId || '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
           <td>{{ record.department ?? '-' }}</td>
           <td>{{ record.teamManagerName ?? '-' }}</td>
           <td>{{ record.location ?? '-' }}</td>
           <td>{{ record.subLocation ?? '-' }}</td>
           <td>{{ record.shift ?? '-' }}</td>
-          <td class="text-center">{{ record.year ?? '-' }}</td>
+          <td>{{ record.year ?? record.Year ?? '-' }}</td>
           <td>{{ record.monthName ?? '-' }}</td>
           <td>{{ record.leaveCategoryName ?? '-' }}</td>
           <td class="text-center">{{ record.availed ?? '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="10">
+            <div class="wrapper">
+              <app-no-data-found />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else {
     <app-data-loader-content />
@@ -83,16 +85,6 @@
 
     <div class="offcanvas-filter-content">
       <form [formGroup]="lvSummeryReportForm" (ngSubmit)="onGenerate()">
-
-        <!-- Year -->
-        <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Year' | translate}}</label>
-          <div class="custom-p-select-content">
-            <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
-              placeholder="Please select year" class="form-select custom-select">
-            </p-select>
-          </div>
-        </div>
 
         <!-- Leave Category -->
         <div class="mb-3">

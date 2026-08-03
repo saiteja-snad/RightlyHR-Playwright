@@ -9,6 +9,8 @@ import { Carousel } from 'primeng/carousel';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { SignalsService } from '../../services/signals.service';
 import { GoogleSigninButtonModule, SocialAuthService, SocialLoginModule, SocialUser } from '@abacritt/angularx-social-login';
+import { TenantService } from '../../services/tenant.service';
+import { OpenModalService } from '../../services/open-modal.service';
 @Component({
   selector: 'app-login',
   imports: [FormsModule, CommonModule, Carousel, ReactiveFormsModule, GoogleSigninButtonModule],
@@ -35,6 +37,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     { subject: 'Get clarity with detailed reports, visual dashboards, and smart filters. Track what matters most — all in one clean, modern interface.' },
   ];
 
+  // Domain verification
+  domainName: string = '';
+  domainVerificationStatus: 'idle' | 'verifying' | 'verified' | 'invalid' = 'idle';
+  domainErrorMessage: string = '';
+  domainVerificationResponse: any = null;
+
   constructor(
     private http: AuthService,
     private router: Router,
@@ -42,7 +50,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     config: NgbModalConfig, private modalService: NgbModal,
     public formsValidation: FormValidationsService,
-    public signal: SignalsService
+    public signal: SignalsService,
+    public tenantService: TenantService,
+    private openModalService: OpenModalService
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -56,6 +66,58 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.returnUrl = this.activatedRoute.snapshot.queryParamMap.get("returnUrl");
     this.intialiseForm();
+
+    // Use ActivatedRoute to reliably read ?domain= param in Angular
+    const domainFromRoute = this.activatedRoute.snapshot.queryParamMap.get('domain') || '';
+    if (domainFromRoute) {
+      localStorage.setItem('tenantDomain', domainFromRoute);
+    }
+    this.initDomainVerification();
+  }
+
+  /**
+   * Reads the domain from URL query params (?domain=snad) and verifies via API.
+   * If domain is missing from URL or invalid, shows error on login page.
+   */
+  private initDomainVerification(): void {
+    const domain = this.tenantService.getDomainFromHostname();
+    if (domain) {
+      this.domainName = domain;
+      this.domainVerificationStatus = 'verifying';
+      this.tenantService.verifyDomain(domain).subscribe({
+        next: (response: any) => {
+          this.domainVerificationResponse = response;
+          if (response && response.isValid !== false) {
+            this.domainVerificationStatus = 'verified';
+            this.domainErrorMessage = '';
+          } else {
+            this.domainVerificationStatus = 'invalid';
+            this.domainErrorMessage = 'Domain does not exist.';
+            this.openModalService.openErrorModal(this.domainErrorMessage);
+          }
+        },
+        error: (err) => {
+          this.domainVerificationStatus = 'invalid';
+          this.domainVerificationResponse = null;
+          this.domainErrorMessage = err?.error?.message || 'Domain does not exist.';
+          this.openModalService.openErrorModal(this.domainErrorMessage);
+        }
+      });
+    } else {
+      this.domainVerificationStatus = 'invalid';
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      this.domainErrorMessage = isLocal
+        ? 'Domain not found.'
+        : 'Invalid tenant URL. Please use the format: snad.rightlyhr.com';
+      setTimeout(() => this.openModalService.openErrorModal(this.domainErrorMessage));
+    }
+  }
+
+  /**
+   * Returns true if the domain is verified and login form can be used.
+   */
+  get isDomainVerified(): boolean {
+    return this.domainVerificationStatus === 'verified';
   }
 
   openmodel(content: any) {
@@ -112,6 +174,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       const payload = {
         email: loginData.email,
         password: loginData.password,
+        domain: this.domainName || this.tenantService.currentDomain,
         deviceName,
         ipAddress,
         userAgent: navigator.userAgent

@@ -19,31 +19,14 @@ import { RbacService } from '../../services/rbac.service';
 import { Select } from 'primeng/select';
 import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
-
-
-
 import { CommonModule } from '@angular/common';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { ProjectManagementApprovalTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/project-management-approval-tabs/project-management-approval-tabs.component";
 @Component({
   selector: 'app-pending-approvals',
-  imports: [
-    RouterModule,
-    TranslateModule,
-    ModuleInformationComponent,
-    NgbPopoverModule,
-    MultiSelectModule,
-    ReactiveFormsModule,
-    DatePicker,
-    TranslateModule,
-    TimeoffApprovalTabsComponent,
-    ContractorApprovalTabsComponent,
-    SeparationApprovalTabsComponent,
-    OnboardingApprovalTabsComponent,
-    CommonModule,
-    Select,
-    ModuleInfoIconComponent,
-    ApplicablePoliciesTriggerComponent
-  ],
+  imports: [RouterModule, TranslateModule, ModuleInformationComponent, NgbPopoverModule, MultiSelectModule, ReactiveFormsModule,
+    DatePicker, TranslateModule, TimeoffApprovalTabsComponent, ContractorApprovalTabsComponent, SeparationApprovalTabsComponent,
+    OnboardingApprovalTabsComponent, CommonModule, Select, ModuleInfoIconComponent, ApplicablePoliciesTriggerComponent, ProjectManagementApprovalTabsComponent],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -89,10 +72,13 @@ export class PendingApprovalsComponent implements OnInit {
     this.updateModuleInfo();
     this.setupNavigationReset();
     this.updateModuleInfo();
+    this.ComponentnameDisplay();
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.ComponentnameDisplay();
+    });
     this.initiateUpdateModuleInfo();
     this.getResourceDetailsByManagerId();
     this.getAllActiveProjects();
-
     this.datepickerForm.valueChanges.subscribe(() => {
       this.isSubmitEnabled = this.isAnyFieldSelected();
     });
@@ -104,18 +90,20 @@ export class PendingApprovalsComponent implements OnInit {
         this.loadMyTeamEmployees();
       }
     }
-  this.getTaskType();
+    this.getTaskType();
   }
-getTaskType() {
-  this.subscription = this.http.getData('TaskType').subscribe({
-    next: (res: any) => {
-      this.tastType =res
-    },
-    error: (error:any) => {
-      console.log(error);
-    }
-  });
-}
+
+  getTaskType() {
+    this.subscription = this.http.getData('TaskType').subscribe({
+      next: (res: any) => {
+        this.tastType = res
+      },
+      error: (error: any) => {
+        console.log(error);
+      }
+    });
+  }
+
   initiateUpdateModuleInfo() {
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
@@ -154,7 +142,7 @@ getTaskType() {
   navigate() {
     if (this.http.getIsFromOnBehalfOfProbation()) {
       this.router.navigate(['/on-behalf-of/on-behalf-of-approvals/time-off']);
-    }else{
+    } else {
       this.router.navigate(['/pending-approvals/on-boarding/probation-request']);
     }
     
@@ -335,7 +323,7 @@ getTaskType() {
     this.datepickerForm.get('phaseId')?.disable();
     this.datepickerForm.get('resourceId')?.reset();
     this.datepickerForm.get('resourceId')?.disable();
-     this.datepickerForm.get('taskId')?.reset();
+    this.datepickerForm.get('taskId')?.reset();
     this.datepickerForm.get('taskId')?.disable();
     this.projectsData = [];
     this.employeeData = [];
@@ -359,7 +347,20 @@ getTaskType() {
     this.getResourceDetailsByManagerId();
     this.getAllActiveProjects();
   }
-
+  ComponentnameDisplay() {
+    const url = this.router.url;
+    const routeToNameMap: { [key: string]: string } = {
+      '/pending-approvals/time-off/leaves': 'Leaves',
+      '/pending-approvals/time-off/wfh': 'WFH',
+      '/pending-approvals/time-off/remote': 'Remote Login',
+      '/pending-approvals/time-off/comp-off': 'Comp-off',
+      '/pending-approvals/time-off/permissions': 'Permissions',
+      '/pending-approvals/time-off/regularization-request': 'Regularizations',
+      '/pending-approvals/time-off/extra-hours-request': 'Extra Hours',
+    };
+    const matched = Object.entries(routeToNameMap).find(([route]) => url.startsWith(route));
+    this.componentName = matched ? matched[1] : '';
+  }
   // route based hide of content
   isTimeOffRoute(): boolean {
     const currentUrl = this.router.url;
@@ -403,6 +404,21 @@ getTaskType() {
     return currentUrl.startsWith('/pending-approvals/kra-kpi');
   }
 
+  isImpersonationUsersRoute(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.startsWith('/pending-approvals/impersonation-users');
+  }
+
+  isRecruitmentRoute(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.startsWith('/pending-approvals/recruitment');
+  }
+
+  isProjectManagementRoute(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.startsWith('/pending-approvals/project-management');
+  }
+
   get applicablePoliciesModuleKey(): string {
     return this.applicablePoliciesKeys.PENDING_APPROVALS_TIME_OFF.moduleKey;
   }
@@ -432,7 +448,7 @@ getTaskType() {
       return this.applicablePoliciesKeys.PENDING_APPROVALS_EXPENSES.subModuleKey;
     }
 
-    if (this.router.url === '/pending-approvals/time-sheets') {
+    if (this.isProjectManagementRoute()) {
       return this.applicablePoliciesKeys.PENDING_APPROVALS_TIMESHEETS.subModuleKey;
     }
 
@@ -446,7 +462,6 @@ getTaskType() {
 
     return '';
   }
-
 
   loadMyTeamEmployees(): void {
     const employeeId = this.empinfo?.employeeId;
@@ -506,18 +521,12 @@ getTaskType() {
   }
 
   toggleFilters(content: TemplateRef<any>) {
-    this.offcanvasService.open(content, {
-      position: 'end',
-      backdrop: 'static',
-      keyboard: false,
-    });
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
 
   closeCanvas() {
     this.offcanvasService.dismiss();
   }
-
-
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

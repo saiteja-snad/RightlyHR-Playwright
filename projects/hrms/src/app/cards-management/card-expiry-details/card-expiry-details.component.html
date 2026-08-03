@@ -10,7 +10,8 @@
     <div class="custom-table-content">
         @if (!loader) {
         <p-table #cardExpiryTable [value]="getFilteredAndSortedCardDetails()" [customSort]="true" (sortFunction)="customSort($event)"
-                 styleClass="custom-table" [tableStyle]="{'min-width': '50rem'}">
+                  [scrollable]="true"
+         scrollHeight="calc(100dvh - 15rem)">
             <ng-template pTemplate="header">
                 <tr>
                     <th pSortableColumn="issuedDate">

@@ -115,22 +115,22 @@
   </ng-template>
 
   <div class="custom-table-content">
-    @if(!isLoading){
-    <table id="wfhReportTable" class="content w-100">
-      <thead>
-        <th class="text-center">Employee ID</th>
-        <th>Employee Name</th>
-        <th>Department</th>
-        <th>Team Manager</th>
-        <th>Location</th>
-        <th>Sub Location</th>
-        <th>Shift</th>
-        <th class="text-center">Worked Date</th>
-        <th class="text-center">Availed</th>
-      </thead>
-      <tbody>
-        @if (filteredRemoteRecord && filteredRemoteRecord.length > 0) {
-        @for (record of filteredRemoteRecord; track record) {
+    <app-data-loader-content *ngIf="isLoading" />
+    <p-table #remoteTable [hidden]="isLoading" [value]="filteredRemoteRecord" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="fusionEmpId" class="text-center">Employee ID <p-sortIcon field="fusionEmpId" /></th>
+          <th pSortableColumn="employeeName">Employee Name <p-sortIcon field="employeeName" /></th>
+          <th pSortableColumn="department">Department <p-sortIcon field="department" /></th>
+          <th pSortableColumn="teamManagerName">Team Manager <p-sortIcon field="teamManagerName" /></th>
+          <th pSortableColumn="location">Location <p-sortIcon field="location" /></th>
+          <th pSortableColumn="subLocation">Sub Location <p-sortIcon field="subLocation" /></th>
+          <th pSortableColumn="shift">Shift <p-sortIcon field="shift" /></th>
+          <th pSortableColumn="worked_Date" class="text-center">Worked Date <p-sortIcon field="worked_Date" /></th>
+          <th pSortableColumn="duration" class="text-center">Availed <p-sortIcon field="duration" /></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-record>
         <tr>
           <td class="text-center">{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
@@ -139,22 +139,13 @@
           <td>{{ record.location ?? '-' }}</td>
           <td>{{ record.subLocation ?? '-' }}</td>
           <td>{{ record.shift ?? '-' }}</td>
-          <td class="text-center">
-            {{ record.worked_Date ? (record.worked_Date | date) : '-' }}
-          </td>
+          <td class="text-center">{{ record.worked_Date ? (record.worked_Date | date) : '-' }}</td>
           <td class="text-center">{{ record.duration ?? '-' }}</td>
         </tr>
-        }
-        } @else {
-        <tr>
-          <app-no-data-found />
-        </tr>
-        }
-      </tbody>
-    </table>
-    }
-    @else {
-    <app-data-loader-content />
-    }
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr><td colspan="9"><div class="wrapper"><app-no-data-found /></div></td></tr>
+      </ng-template>
+    </p-table>
   </div>
 </div>

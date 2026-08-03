@@ -37,15 +37,23 @@
 
                 <div class="custom-table-content project-summary-table">
                     @if( projectSummeryData.length > 0){
-                    <table class="w-100">
-                        <thead>
-                            <th>{{'Project Name'|translate}}</th>
-                            <th class="text-center">{{'Project Code'|translate}}</th>
-                            <th class="text-center">{{'Total Hours'|translate}}</th>
-                            <th class="text-center">{{'Status'|translate}}</th>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let roles of projectSummeryData">
+                    <p-table 
+                        #projectSummaryTable
+                        [value]="projectSummeryData" 
+                        [tableStyle]="{'width': '100%'}"
+                        [customSort]="true"
+                        (sortFunction)="customSort($event)"
+                        [sortMode]="'single'">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="project.projectName">{{'Project Name'|translate}} <p-sortIcon field="project.projectName" /></th>
+                                <th pSortableColumn="projectColor.graphData.code" class="text-center">{{'Project Code'|translate}} <p-sortIcon field="projectColor.graphData.code" /></th>
+                                <th class="text-center">{{'Total Hours'|translate}}</th>
+                                <th pSortableColumn="status" class="text-center">{{'Status'|translate}} <p-sortIcon field="status" /></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-roles>
+                            <tr>
                                 <td class="project-name">{{roles.project.projectName}}</td>
                                 <td class="text-center">{{ roles.projectColor?.graphData?.code || '-' }}</td>
                                 <td class="text-center"><span class="logged-hrs">{{roles.loggedHoursHHMM}}</span>/{{roles.allocatedHours}}hrs</td>
@@ -53,8 +61,15 @@
                                     <span class="status-badge" [ngClass]="getStatusClass(roles.status)">{{ roles.status }}</span>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="4">
+                                    <app-no-data-found />
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
                     } @else {
                     <tr>
                         <app-no-data-found />

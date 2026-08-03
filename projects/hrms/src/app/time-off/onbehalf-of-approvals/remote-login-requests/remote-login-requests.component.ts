@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } 
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject, BehaviorSubject, takeUntil } from 'rxjs';
+import moment from 'moment';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { environment } from '../../../../environments/environment';
 import { IJob } from '../../../Interfaces/letters-model';
@@ -314,8 +315,8 @@ export class RemoteLoginRequestsComponent {
 
       // Handle date fields
       if (field.includes('Date') || field.includes('Time')) {
-        aValue = aValue ? new Date(aValue).getTime() : 0;
-        bValue = bValue ? new Date(bValue).getTime() : 0;
+        aValue = aValue ? moment(aValue).startOf('day').valueOf() : 0;
+        bValue = bValue ? moment(bValue).startOf('day').valueOf() : 0;
       }
       // Handle string fields
       else if (typeof aValue === 'string' && typeof bValue === 'string') {

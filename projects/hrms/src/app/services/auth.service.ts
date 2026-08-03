@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable,Inject, signal } from '@angular/core';
+import { Injectable,Inject, signal, Injector } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { OAuthService, TokenResponse } from 'angular-oauth2-oidc';
 import { microsoftAuthConfig } from '../auth/auth.config';
@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
 import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
+import { TenantService } from './tenant.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -22,6 +23,7 @@ export class AuthService {
     private modalService: NgbModal,
     private oauthService: OAuthService,
     private socialService: SocialAuthService,
+    private injector: Injector,
   ) { 
     this.socialService.authState.subscribe((user:any) => {
       this.socialUser = user;
@@ -32,7 +34,9 @@ export class AuthService {
     });
   }
 
-  ApiUrl = environment.ApiUrl;
+  get ApiUrl(): string {
+    return this.injector.get(TenantService).currentApiUrl;
+  }
 
 
   login(url: string, data: any) {
@@ -132,9 +136,19 @@ export class AuthService {
     const token = tokenString ? JSON.parse(tokenString) : null;
 
     const completeLogout = () => {
+      const tenantService = this.injector.get(TenantService);
+      const domain = tenantService.currentDomain;
+      tenantService.reset();
+      // Preserve tenant data across logout
+      const tenantDomain = localStorage.getItem('tenantDomain');
+      const tenantLogo = localStorage.getItem('tenantLogo');
+      const tenantId = localStorage.getItem('tenantId');
       sessionStorage.clear();
       localStorage.clear();
-      this.router.navigate(['/login']);
+      if (tenantDomain) localStorage.setItem('tenantDomain', tenantDomain);
+      if (tenantLogo) localStorage.setItem('tenantLogo', tenantLogo);
+      if (tenantId) localStorage.setItem('tenantId', tenantId);
+      this.router.navigate(['/login'], domain ? { queryParams: { domain } } : {});
     };
 
     if (!token?.refreshToken) {
@@ -241,49 +255,63 @@ export class AuthService {
   onLogout() {
     const tokenString = localStorage.getItem("currentUser");
     const token = tokenString ? JSON.parse(tokenString) : null;
+    const tenantService = this.injector.get(TenantService);
+    const domain = tenantService.currentDomain;
+    const tenantDomain = localStorage.getItem('tenantDomain');
+    const tenantLogo = localStorage.getItem('tenantLogo');
+    const tenantId = localStorage.getItem('tenantId');
+    const accessToken = token?.accessToken || localStorage.getItem('accessToken') || '';
 
-    if (!token || !token.refreshToken) {
+    const navigateToLogin = () => {
       localStorage.clear();
       sessionStorage.clear();
-      this.router.navigate(['/login']);
+      if (tenantDomain) localStorage.setItem('tenantDomain', tenantDomain);
+      if (tenantLogo) localStorage.setItem('tenantLogo', tenantLogo);
+      if (tenantId) localStorage.setItem('tenantId', tenantId);
+      this.router.navigate(['/login'], domain ? { queryParams: { domain } } : {});
+    };
+
+    if (!token?.refreshToken && !accessToken) {
+      navigateToLogin();
+      return;
     }
 
-    const payload = {
-      refreshToken: token.refreshToken
-    }
+    const payload: Record<string, string> = {};
+    if (token?.refreshToken) payload['refreshToken'] = token.refreshToken;
+    if (accessToken) payload['accessToken'] = accessToken;
+    if (domain) payload['domain'] = domain;
 
     this.postData(`v2/Auth/logout`, payload).subscribe({
-      next: (res : any) => {
+      next: () => {
         this.modalService.dismissAll();
-        sessionStorage.clear();
-        localStorage.clear();
-        this.router.navigate(['/login']);
+        navigateToLogin();
       },
-      error: (err :any) => {
-        localStorage.clear();
-        sessionStorage.clear();
-        this.router.navigate(['/login']);
-      }
+      error: () => navigateToLogin()
     });
   }
 
   refreshToken() {
     const tokenString = localStorage.getItem("currentUser");
     const token = tokenString ? JSON.parse(tokenString) : null;
+    const tenantService = this.injector.get(TenantService);
+    const domain = tenantService.currentDomain;
 
     if (!token || !token.refreshToken) {
       localStorage.clear();
       sessionStorage.clear();
       this.logout();
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login'], domain ? { queryParams: { domain } } : {});
+      return throwError(() => new Error('No refresh token available'));
     }
 
-    const payload = {
+    const payload: Record<string, string> = {
       accessToken: token.accessToken,
       refreshToken: token.refreshToken,
       deviceName: this.getDeviceName(),
       loginType: token.loginType
     };
+    // Optional fallback when token database_key is unavailable
+    if (domain) payload['domain'] = domain;
 
     return this.http.post<any>(`${this.ApiUrl}v2/Auth/refresh`, payload).pipe(
       map((res) => {
@@ -294,7 +322,7 @@ export class AuthService {
       }),
       catchError((error) => {
         this.logout();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/login'], domain ? { queryParams: { domain } } : {});
         return throwError(() => error);
       })
     );

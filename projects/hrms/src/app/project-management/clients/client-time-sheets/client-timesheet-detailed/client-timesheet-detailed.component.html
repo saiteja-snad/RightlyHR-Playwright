@@ -14,14 +14,19 @@
 
                     <p-accordion-content>
                         <div class="custom-p-multi-select-table custom-accordian-table">
-                            <p-table [value]="project?.groupedResources">
+                            <p-table 
+                                #resourceTable
+                                [value]="project?.groupedResources"
+                                [customSort]="true"
+                                (sortFunction)="customSort($event, i)"
+                                [sortMode]="'single'">
                                 <ng-template pTemplate="header">
                                     <tr>
-                                        <th>Resource Name</th>
-                                        <th class="text-center">Role</th>
-                                        <th class="text-center">Department</th>
-                                        <th class="text-center">Phases / Milestones</th>
-                                        <th class="text-center">Total Logged Hours</th>
+                                        <th pSortableColumn="employee.name">Resource Name <p-sortIcon field="employee.name" /></th>
+                                        <th pSortableColumn="roles" class="text-center">Role <p-sortIcon field="roles" /></th>
+                                        <th pSortableColumn="departments" class="text-center">Department <p-sortIcon field="departments" /></th>
+                                        <th pSortableColumn="phasesCount" class="text-center">Phases / Milestones <p-sortIcon field="phasesCount" /></th>
+                                        <th pSortableColumn="totalLoggedHoursHHMM" class="text-center">Total Logged Hours <p-sortIcon field="totalLoggedHoursHHMM" /></th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-entry>

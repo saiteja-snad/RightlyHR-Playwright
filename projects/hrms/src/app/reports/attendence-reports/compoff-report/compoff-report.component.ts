@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Table } from 'primeng/table';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
@@ -22,6 +23,7 @@ import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-compoff-report',
@@ -35,7 +37,8 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
     TranslateModule,
     ReactiveFormsModule, NoDataFoundComponent,
     DataLoaderContentComponent,
-    ReportsHeaderComponent
+    ReportsHeaderComponent,
+    TableModule
   ],
   templateUrl: './compoff-report.component.html',
   styleUrl: './compoff-report.component.scss',
@@ -43,6 +46,7 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 })
 
 export class CompoffReportComponent implements OnInit, OnDestroy {
+  @ViewChild('compoffTable') compoffTable!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
@@ -58,6 +62,9 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   getEmployeeInfo = [] as any;
   localeOptions: any;
   today: Date = new Date();
+  originalFilteredCompoffRecord: any[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -312,6 +319,9 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     this.reportsService.getcompOffReports(request).subscribe({
       next: (response: any) => {
         this.filteredCompoffRecord = response ?? [];
+        this.originalFilteredCompoffRecord = [...this.filteredCompoffRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
       error: (error) => {
         this.spinnerLoader1 = false;
@@ -331,122 +341,85 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
 
   exportToExcelYearly(): void {
     this.spinnerLoader2 = true;
-    setTimeout(() => {
-      // Define header mappings
-      const HEADER_MAPPINGS: { [key: string]: string } = {
-        fusionEmpId: 'EMPLOYEE ID',
-        employeeName: 'EMPLOYEE NAME',
-        department: 'DEPARTMENT',
-        teamManagerName: 'TEAM MANAGER',
-        location: 'LOCATION',
-        subLocation: 'SUB LOCATION',
-        shift: 'SHIFT',
-        worked_Date: 'WORKED DATE',
-        entitlementDays: 'ENTITLED DAYS',
-        duration: 'AVAILED'
-      };
 
-      // Define new sequence
-      const NEW_SEQUENCE: string[] = [
-        'EMPLOYEE ID',
-        'EMPLOYEE NAME',
-        'DEPARTMENT',
-        'TEAM MANAGER',
-        'LOCATION',
-        'SUB LOCATION',
-        'SHIFT',
-        'WORKED DATE',
-        'ENTITLED DAYS',
-        'AVAILED'
-      ];
+    const dataToExport = this.compoffTable?.filteredValue ?? this.compoffTable?.value ?? this.filteredCompoffRecord;
 
-      // Function to format date in MMM DD YYYY format
-      const formatDate = (dateString: string): string => {
-        return dayjs(dateString).format('MMM DD, YYYY');
-      };
+    const HEADER_MAPPINGS: { [key: string]: string } = {
+      fusionEmpId: 'EMPLOYEE ID',
+      employeeName: 'EMPLOYEE NAME',
+      department: 'DEPARTMENT',
+      teamManagerName: 'TEAM MANAGER',
+      location: 'LOCATION',
+      subLocation: 'SUB LOCATION',
+      shift: 'SHIFT',
+      worked_Date: 'WORKED DATE',
+      entitlementDays: 'ENTITLED DAYS',
+      duration: 'AVAILED'
+    };
 
-      // Modify data with renamed headers and new sequence
-      const modifiedData = this.filteredCompoffRecord.map(record => {
-        const modifiedRecord: any = {};
-        NEW_SEQUENCE.forEach(columnName => {
-          const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
-          if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-            if (originalColumnName === 'worked_Date') {
-              modifiedRecord[columnName] = formatDate(record[originalColumnName]);
-            } else {
-              modifiedRecord[columnName] = record[originalColumnName];
-            }
-          } else {
-            modifiedRecord[columnName] = '';
-          }
-        });
-        return modifiedRecord;
+    const NEW_SEQUENCE: string[] = [
+      'EMPLOYEE ID', 'EMPLOYEE NAME', 'DEPARTMENT', 'TEAM MANAGER',
+      'LOCATION', 'SUB LOCATION', 'SHIFT', 'WORKED DATE', 'ENTITLED DAYS', 'AVAILED'
+    ];
+
+    const normalizeCell = (key: string, value: any) => {
+      if (key === 'worked_Date') return value ? dayjs(value).format('MMM DD, YYYY') : '-';
+      if (value === null || value === undefined) return '-';
+      if (typeof value === 'string') return value.trim().length > 0 ? value.trim() : '-';
+      return value;
+    };
+
+    const modifiedData = dataToExport.map((record: any) => {
+      const row: any = {};
+      NEW_SEQUENCE.forEach(col => {
+        const originalKey = Object.keys(HEADER_MAPPINGS).find(k => HEADER_MAPPINGS[k] === col);
+        row[col] = originalKey && record.hasOwnProperty(originalKey) ? normalizeCell(originalKey, record[originalKey]) : '-';
       });
+      return row;
+    });
 
-      // Create a new empty worksheet
-      const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
+    if (modifiedData.length === 0) {
+      const emptyRow: any = {};
+      NEW_SEQUENCE.forEach(col => { emptyRow[col] = '-'; });
+      modifiedData.push(emptyRow);
+    }
 
-      // Merge cells for WFH Report row from A1 to I1
-      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([]);
 
-      // Add WFH Report row
-      XLSX.utils.sheet_add_aoa(ws, [['COMP OFF REPORT']], { origin: 'A1' });
+    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+    XLSX.utils.sheet_add_aoa(ws, [['COMP OFF REPORT']], { origin: 'A1' });
+    ws['A1'].s = { font: { bold: true, sz: 16 }, alignment: { horizontal: 'center', vertical: 'center' } };
 
-      // Add data rows (Headers will be automatically generated at A2)
-      XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A2' });
-
-      // Apply styles to WFH Report row
-      const wfhReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      wfhReportCell.s = { 
-        font: { bold: true, sz: 14, color: { rgb: "000000" } }, 
-        alignment: { horizontal: 'center', vertical: 'center' }
+    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
+    NEW_SEQUENCE.forEach((_, index) => {
+      const cellRef = XLSX.utils.encode_cell({ r: 1, c: index });
+      ws[cellRef].s = {
+        font: { bold: true },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }
       };
-      // Explicitly set row height
-      if (!ws['!rows']) ws['!rows'] = [];
-      ws['!rows'][0] = { hpt: 25 };
-      ws['A1'] = wfhReportCell; // Assign the styled cell back to the worksheet
+    });
 
-      // Apply styles to column headers
-      NEW_SEQUENCE.forEach((columnName, index) => {
-        const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-        const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-        cell.s = { 
-          font: { bold: true }, 
-          alignment: { horizontal: 'center' }
-        };
-        ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
-      });
-
-      // Apply styles to data rows
-      modifiedData.forEach((record, rowIndex) => {
-        NEW_SEQUENCE.forEach((columnName, colIndex) => {
-          const cellAddress = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
-          const cell = ws[cellAddress] || { t: '', v: '' };
-          cell.s = {
-            alignment: { horizontal: 'center', vertical: 'center' }
-          };
-          ws[cellAddress] = cell;
-        });
-      });
-
-      // Adjust column width to fit data
-      NEW_SEQUENCE.forEach((columnName, index) => {
-        let columnWidth = this.getColumnWidth(modifiedData, columnName);
-
-        if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'APPLIED DATE' || columnName === 'SUB LOCATION') {
-          columnWidth += 5; // Increase width by 5
+    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
+    modifiedData.forEach((_: any, rowIndex: number) => {
+      NEW_SEQUENCE.forEach((_, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
+        if (ws[cellRef]) {
+          ws[cellRef].s = { alignment: { horizontal: 'center', vertical: 'center' } };
         }
-        ws['!cols'] = ws['!cols'] || [];
-        ws['!cols'][index] = { wch: columnWidth };
       });
+    });
 
-      // Generate Excel file and trigger download
-      const wb: XLSX.WorkBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Comp Off Report');
-      const fileName = `Comp Off Report - ${dayjs().format('MMM DD YYYY')}.xlsx`;
-      XLSX.writeFile(wb, fileName);
-      this.spinnerLoader2 = false;
-    }, 100);
+    ws['!autofilter'] = { ref: `A2:${XLSX.utils.encode_col(NEW_SEQUENCE.length - 1)}2` };
+    ws['!cols'] = NEW_SEQUENCE.map(col => ({
+      wch: Math.max(col.length, ...modifiedData.map((r: any) => String(r[col] ?? '').length)) + 2
+    }));
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Comp Off Report');
+    const formattedDate = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '');
+    XLSX.writeFile(wb, `Comp Off Report - ${formattedDate}.xlsx`);
+    this.spinnerLoader2 = false;
   }
 
   getColumnWidth(data: any[], columnName: string): number {
@@ -493,7 +466,43 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
         },
       });
   }
+customSort(event: any): void {
+    const field = event.field;
 
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredCompoffRecord = [...this.originalFilteredCompoffRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.compoffTable) this.compoffTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
   navigation() {
     this.router.navigate(['/reports']);
   }

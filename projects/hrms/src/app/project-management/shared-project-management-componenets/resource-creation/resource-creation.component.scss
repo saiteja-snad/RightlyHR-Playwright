@@ -266,6 +266,8 @@
     font-weight: 600;
     color: var(--primary-color, #3b82f6);
     margin-bottom: 0.25rem;
+      text-decoration: none;
+    
   }
 
   .project-role {
@@ -291,11 +293,6 @@
 .avatar-wrapper.avatar-editing {
   box-shadow: 0 0 0 3px var(--primary-color);
   border-radius: 50%;
-}
-
-.project-name {
-  font-size: var(--fontsize12);
-  font-weight: 600;
 }
 
 .avatar-badge {
@@ -392,4 +389,11 @@
 .close-icon {
   width: 2rem;
   height: 2rem;
+}
+
+
+.p-iconfield .p-inputtext:not(:last-child) {
+  padding-inline-end: calc((var(--p-form-field-padding-x) * 2) + var(--p-icon-size));
+  /* CONTAIN-INTRINSIC-BLOCK-SIZE: AUTO 100PX; */
+  border-color: #e5e7eb !important;
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, TemplateRef, ViewEncapsulation, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ChartModule } from 'primeng/chart';
 import { CardModule } from 'primeng/card';
@@ -22,18 +22,20 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabsModule } from 'primeng/tabs';
+import { TableModule, Table } from 'primeng/table';
 import moment from 'moment';
 @Component({
   selector: 'app-skillset-dashboard',
   imports: [CommonModule, ChartModule, RouterModule, CardModule, SidebarModule, ProfileIconComponent, ModuleInfoIconComponent,
     NoDataFoundComponent, Chip, FormsModule, MultiSelectModule, NgbPopoverModule, ModuleInformationComponent, SkeletonModule,
-    TranslateModule, SkillSetMainTabsComponent, TabsModule],
+    TranslateModule, SkillSetMainTabsComponent, TabsModule, TableModule],
   templateUrl: './skillset-dashboard.component.html',
   styleUrl: './skillset-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class SkillsetDashboardComponent {
+  @ViewChild('skillTable') skillTable!: Table;
   imageUrl: any;
   empinfo: any = {};
   subscription!: Subscription;
@@ -54,6 +56,7 @@ export class SkillsetDashboardComponent {
   skillProficiencyCounts: SkillProficiencyCount[] = [];
   deptCounts: DepartmentCount[] = [];
   skillSummaryList: SkillSummary[] = [];
+  originalSkillSummaryList: SkillSummary[] = []; // Store original unsorted data
   noDataFound: boolean = false;
   selectedSkillName: string = '';
   employeeList: EmployeeSkill[] = [];
@@ -64,6 +67,8 @@ export class SkillsetDashboardComponent {
   selectedSkills: string[] = ['All Skills'];
   MySkills: any[] = [];
   totalCount!: number;
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   //moduleinfo
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
@@ -201,6 +206,9 @@ export class SkillsetDashboardComponent {
       }
     }
     this.prevSelectedProficiency = [...this.selectedStatus];
+    // Reset sorting when filters change
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
     // Your existing graph calls
     this.skilllevelGraph();
     this.skillByDepartmentGraph();
@@ -516,9 +524,11 @@ export class SkillsetDashboardComponent {
         this.isloading = false;
         if (res?.success && Array.isArray(res.data) && res.data.length) {
           this.skillSummaryList = res.data as SkillSummary[];
+          this.originalSkillSummaryList = [...this.skillSummaryList]; // Store original data
           this.noDataFound = false;
         } else {
           this.skillSummaryList = [];
+          this.originalSkillSummaryList = [];
           this.noDataFound = false;
         }
       },
@@ -526,6 +536,7 @@ export class SkillsetDashboardComponent {
         console.error('Error fetching skill summary table:', err);
         this.isloading = false;
         this.skillSummaryList = [];
+        this.originalSkillSummaryList = [];
         this.noDataFound = false;
       }
     });
@@ -619,6 +630,9 @@ export class SkillsetDashboardComponent {
       this.selectedStatus = ['All Proficiencies'];
       this.selectedSkills = ['All Skills'];
       this.searchQuery = '';
+      // Reset sorting
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
       this.skilllevelGraph();
       this.skillByDepartmentGraph();
       this.getSkillSetTableData();
@@ -627,6 +641,9 @@ export class SkillsetDashboardComponent {
       this.selectedStatus = ['All Proficiencies'];
       this.selectedSkills = ['All Skills'];
       this.searchQuery = '';
+      // Reset sorting
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
     }
   }
 
@@ -648,6 +665,9 @@ export class SkillsetDashboardComponent {
       }
     }
     this.prevSelected = [...this.selectedSkills];
+    // Reset sorting when filters change
+    this.currentSortField = '';
+    this.currentSortOrder = 0;
     this.skilllevelGraph();
     this.skillByDepartmentGraph();
     this.getSkillSetTableData();
@@ -755,7 +775,78 @@ export class SkillsetDashboardComponent {
       });
   }
 
+  getFilteredAndSortedSkills(): SkillSummary[] {
+    return this.skillSummaryList;
+  }
 
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.skillSummaryList = [...this.originalSkillSummaryList];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.skillTable) {
+          this.skillTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      // Handle skill fields
+      switch (field) {
+        case 'skillName':
+          val1 = a.skillName;
+          val2 = b.skillName;
+          break;
+        case 'skillCount':
+          val1 = a.skillCount;
+          val2 = b.skillCount;
+          break;
+        case 'totalProficiency':
+          // For proficiency, we can sort by total count across all proficiency levels
+          val1 = Object.values(a.proficiencyCounts || {}).reduce((sum: number, count: any) => sum + (parseInt(count) || 0), 0);
+          val2 = Object.values(b.proficiencyCounts || {}).reduce((sum: number, count: any) => sum + (parseInt(count) || 0), 0);
+          break;
+        default:
+          val1 = a[field];
+          val2 = b[field];
+      }
+
+      // Handle numeric sorting for skill count and proficiency totals
+      if (['skillCount', 'totalProficiency'].includes(field)) {
+        const num1 = parseFloat(val1) || 0;
+        const num2 = parseFloat(val2) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for skill names
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
 
 
   openModal(content: TemplateRef<any>, emp: any) {

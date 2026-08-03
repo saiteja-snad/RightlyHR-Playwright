@@ -1,30 +1,23 @@
 <div class="custom-accordians">
-     <div class="d-flex justify-content-between align-items-center mb-3 ms-4">
-                <div class="d-flex align-items-center gap-2" *ngIf="timesheetData.length > 0">
-                    <input #globalCheckbox type="checkbox" [checked]="areAllDaysSelected()"
-                        [indeterminate]="isGlobalIndeterminate()"
-                        (change)="toggleSelectAllDays(globalCheckbox.checked)" />
-                    <label class="form-label custom-label m-0"><b>{{'Select All' | translate}}</b></label>
-                </div>
-                <div *ngIf="(selectedEntries?.length ?? 0) > 0 && !showhideaction">
-                    <button class="custom-btn btn-primary-approve me-2"
-                        (click)="openModalforsummary(selectedEntries,summaryforrecords,'Processed')">{{'Approve' | translate}}</button>
-                    <button class="custom-btn btn-primary-reject" (click)="openModalforsummary(selectedEntries,summaryforrecords,'Rejected')">{{'Reject' | translate}}</button>
-                </div>
-            </div>  
-            <div *ngIf="areAllDaysSelected()&&showBulkSelectionBanner && (selectedEntries?.length ?? 0) > 0" class="bulk-selection-banner mb-3 ms-4 me-4">
-                <span>All <b>{{currentPageItemCount}}</b> {{'requests across' | translate}} <b>{{timesheetData.length}}</b> {{'records on this page are selected.' | translate}}</span>
-                <a *ngIf="totalrequestRecordCount > currentPageItemCount" (click)="selectAllPages()" class="select-all-link">{{'Select all' | translate}} <b>{{totalrequestRecordCount}}</b> requests across <b>{{collectionSize}}</b> records</a>
-            </div>
-            
-            <div *ngIf="areAllDaysSelected() &&allPagesSelected && (selectedEntries?.length ?? 0) > 0" class="bulk-selection-banner mb-3 ms-4 me-4">
-                <span>All <b>{{selectedEntries.length}}</b> {{'requests across' | translate}} <b>{{collectionSize}}</b> {{'records are selected.' | translate}}</span>
-                <a (click)="clearAllSelection()" class="select-all-link">{{'Clear selection' | translate}}</a>
-            </div>
-    <div class="custom-accordian-data-content" [ngClass]="{ 'select-all-active': areAllDaysSelected() }">
+    <div class="custom-accordian-data-content">
         @if(!dataload){
         @if(timesheetData.length > 0){
         <p-accordion>
+     <div class="d-flex justify-content-between align-items-center mb-3 ms-4">
+                <div class="d-flex align-items-center gap-2">
+                    <input #globalCheckbox type="checkbox" [checked]="areAllDaysSelected()"
+                        [indeterminate]="isGlobalIndeterminate()" (change)="toggleSelectAllDays(globalCheckbox.checked)" />
+                    <label class="form-label custom-label m-0"><b>Select All</b></label>
+                </div>
+                <div *ngIf="(selectedEntries?.length ?? 0) > 0 && !showhideaction">
+                    @if(rbac.allowedToAccess('Timesheet Approvals.update')){
+                    <button class="custom-btn btn-primary-approve me-2" (click)="bulkApprove(approverPopup)">Approve</button>
+                    }
+                    @if(rbac.allowedToAccess('Timesheet Approvals.delete')){
+                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+                    }
+                </div>
+            </div>  
             <p-accordion-panel *ngFor="let day of timesheetData; let i = index" [value]="i">
                 <p-accordion-header>
                     <div class="d-flex align-items-center gap-3">
@@ -36,21 +29,23 @@
                 </p-accordion-header>
                 <p-accordion-content>
                     <div class="custom-p-multi-select-table custom-accordian-table">
-                        <p-table [value]="day.entries" dataKey="id" [(selection)]="selectedMap[i]"
+                        <p-table #dayTable [value]="day.entries" dataKey="id" [(selection)]="selectedMap[i]"
                             (onRowSelect)="onRowSelect(i, $event)" (onRowUnselect)="onRowUnselect(i, $event)"
                             [tableStyle]="{'min-width': '50rem'}">
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th style="width: 4rem"></th>
-                                    <th>{{ 'Resource Name' | translate }}</th>
-                                    <th>{{ 'Client Name' | translate }}</th>
-                                    <th>{{ 'Project Name' | translate }}</th>
-                                    <th>{{ 'Phase/Milestone' | translate }}</th>
-                                    <th>{{'Task Type' | translate}}</th>
-                                    <th>{{ 'Total Hours' | translate }}</th>
+                                    <th class="text-nowrap">{{ 'Resource Name' | translate }}</th>
+                                    <th class="text-nowrap">{{ 'Client Name' | translate }}</th>
+                                    <th class="text-nowrap">{{ 'Project Name' | translate }}</th>
+                                    <th class="text-nowrap">{{ 'Phase/Milestone' | translate }}</th>
+                                    <th class="text-nowrap">{{'Task Type' | translate}}</th> 
                                     <th class="text-center">{{ 'Description' | translate }}</th>
+                                    <th class="text-nowrap">{{ 'Total Hours' | translate }}</th>
+                                     @if(rbac.allowedToAccess('Timesheet Approvals.update') || rbac.allowedToAccess('Timesheet Approvals.delete')) {
                                     @if(showhideaction){
                                     <th class="text-center">{{ 'Actions' | translate }}</th>
+                                    }
                                     }
                                 </tr>
                             </ng-template>
@@ -63,44 +58,38 @@
                                     <td>{{ entry.clientName || '-' }}</td>
                                     <td>{{ entry.projectName || '-' }}</td>
                                     <td>{{ entry.phaseName || '-' }}</td>
-                                    <td>{{ entry.taskName || '-' }}</td>
-                                    <td>{{ entry.totalHours || '-' }}</td>
+                                     <td>{{ entry.taskName || '-' }}</td>
                                     <td class="text-center">
                                         <ng-container *ngIf="entry?.description; else noEntries">
                                             <a type="button" [ngbPopover]="descTpl">
                                                 <app-info-icon></app-info-icon>
                                             </a>
-
                                             <ng-template #descTpl>
                                                 <p class="mb-0">{{ entry.description }}</p>
                                             </ng-template>
                                         </ng-container>
-
                                         <ng-template #noEntries>
                                             -
                                         </ng-template>
-
                                     </td>
+                                    <td>{{ entry.totalHours || '-' }}</td>
+                                    @if(rbac.allowedToAccess('Timesheet Approvals.update') || rbac.allowedToAccess('Timesheet Approvals.delete')) {
                                     @if(showhideaction){
-                                    <td class="text-center">
-                                        <div class="dropdown">
-                                            <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
-                                                <i class="bi bi-three-dots-vertical"></i>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-3">
+                                            @if(rbac.allowedToAccess('Timesheet Approvals.update')){
+                                            <a (click)="openModal(approverPopup, entry, 'Processed')">
+                                                <img src="/icons/check-approve-icon.png" class="action-img" alt="Approve" />
                                             </a>
-                                            <ul class="dropdown-menu custom-dropdown-menu">
-                                                <li>
-                                                    <a class="dropdown-item" (click)="openModal(approverPopup, entry, 'Processed')">
-                                                        <i class="bi bi-check-circle me-2"></i>{{ 'Approve' | translate }}
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" (click)="openModal(rejectPopup, entry, 'Rejected')">
-                                                        <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
-                                                    </a>
-                                                </li>
-                                            </ul>
+                                            }
+                                            @if(rbac.allowedToAccess('Timesheet Approvals.delete')){
+                                            <a (click)="openModal(rejectPopup, entry, 'Rejected')">
+                                                <img src="/icons/cancel-circle.png" class="action-img" alt="Reject" />
+                                            </a>
+                                            }
                                         </div>
                                     </td>
+                                    }
                                     }
                                 </tr>
                             </ng-template>
@@ -134,7 +123,7 @@
     </div>
 </div>
 
-@if(collectionSize > 0 && !allPagesSelected){
+@if(collectionSize > 0){
 <div class="pagination-content">
     <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
         <div class="d-flex align-items-center gap-3 p-2">
@@ -174,32 +163,23 @@
                         (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">{{ timeSheetApproveForm.get('comments')?.value?.length || 0 }}/250
                     </div>
-                    <div class="error-msg"
-                        *ngIf="timeSheetApproveForm.get('comments')?.touched && timeSheetApproveForm.get('comments')?.invalid">
-                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['required']">Approver Comments is
-                            required</div>
-                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['maxlength']">
-                            Approver Comments exceed 250 characters
-                        </div>
+                    <div class="error-msg" *ngIf="timeSheetApproveForm.get('comments')?.touched && timeSheetApproveForm.get('comments')?.invalid">
+                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['required']">Approver Comments is required</div>
+                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['maxlength']">Approver Comments exceed 250 characters</div>
                     </div>
                 </div>
             </div>
-              <!-- <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+              <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                 <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
-                    (click)="onStatusApproveSelect('approved')">
-                    Approved
-                </button>
-            </div> -->
+                    (click)="onStatusApproveSelect('approved')">Approved</button>
+            </div>
             <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()"
-                    [disabled]="spinnerLoader">
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">
                     {{'Cancel' | translate }}</button>
-                <button type="submit" class="custom-btn btn-primary"
-                    [disabled]="timeSheetApproveForm.invalid || spinnerLoader">
+                <button type="submit" class="custom-btn btn-primary" [disabled]="timeSheetApproveForm.invalid || spinnerLoader">
                     <ng-container *ngIf="spinnerLoader; else approveText">
                         <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status"
-                                aria-hidden="true"></span>
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
                             <span>{{ 'Loading...' }}</span>
                         </div>
                     </ng-container>
@@ -242,12 +222,10 @@
                     </div>
                 </div>
             </div>
-                <!-- <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                 <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
-                    (click)="onStatusRejectSelect('reject')">
-                    Rejected
-                </button>
-            </div> -->
+                    (click)="onStatusRejectSelect('reject')">Rejected</button>
+            </div>
             <div class="custom-modal-footer">
                 <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()"
                     [disabled]="spinnerLoader">
@@ -276,6 +254,11 @@
             <div>
                 <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
             </div>
+            <div>
+                <a>
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"  (click)="modal.dismiss()">
+                </a>
+            </div>
         </div>
         <div class="custom-main-popup-content custom-accordians">
             <div class="popup-table-wrapper">
@@ -298,85 +281,6 @@
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
-</ng-template>
-<!--Summary-->
-<ng-template #summaryforrecords let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-poup-header-content popup-header-border">
-            <div>
-                <p class="popup-heading mb-0">{{'Timesheet Approval Summary' | translate}}</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
-        </div>
-        <div class="custom-main-popup-content">
-            <div class="popup-table-wrapper">
-                <div class="popup-table-scroll-container">
-                    <table class="popup-table">
-                        <thead>
-                            <tr>
-                                <th>{{'Project Name' | translate}}</th>
-                                <th>{{'Phase' | translate}}</th>
-                                <th>{{'Employee Name' | translate}}</th>
-                                <th style="width: 65px;">{{'#Days' | translate}}</th>
-                                <th style="width: 65px;">{{'Duration' | translate}}</th>
-                                <th style="width: 65px;">{{'Exclude' | translate}}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let entry of selectedSummaryEntries">
-                            
-                                <!-- Project -->
-                                <td class="text-break" *ngIf="entry.showProject" [attr.rowspan]="entry.projectRowSpan">
-                                    {{entry.projectName || '-'}}
-                                </td>
-                            
-                                <!-- Phase -->
-                                <td *ngIf="entry.showPhase" [attr.rowspan]="entry.phaseRowSpan">
-                                    {{entry.phaseName ||'-'}}
-                                </td>
-                            
-                                <!-- Employee -->
-                                <td>
-                                    {{entry.employeeName || '-'}}
-                                </td>
-                            
-                                <!-- Number of Days -->
-                                <td class="text-center">
-                                    {{entry.numberOfDays || '-'}}
-                                </td>
-                            
-                                <!-- Hours -->
-                                <td class="text-center">
-                                    {{entry.hours || '-'}}
-                                </td>
-                            
-                                <!-- Exclude -->
-                                <td class="text-center">
-                                    <div class="form-check form-switch d-flex justify-content-center">
-                                        <input class="form-check-input" type="checkbox" [checked]="entry.exclude"
-                                            (change)="toggleExclude(entry,$event)">
-                                    </div>
-                                </td>
-                            
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- <div class="popup-table-footer">{{"Logged Hours" | translate}}: <b>8:00hrs</b></div> -->
-            </div>
-        </div>
-        <div class="d-flex justify-content-end align-items-center gap-3 p-3 popup-footer-border">
-            <!-- <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' | translate}}</button> -->
-             @if(requestType === 'Processed'){
-            <button type="button" class="custom-btn btn-primary" [disabled]="filteresdata" (click)="openModal(approverPopup, this.selectedEntries, requestType)">{{'Submit' | translate}}</button>
-            }@else if(requestType === 'Rejected'){
-           <button type="button" class="custom-btn btn-primary" [disabled]="filteresdata" (click)="openModal(rejectPopup, this.selectedEntries, requestType)">{{'Submit' | translate}}</button>
-
-             }
         </div>
     </div>
 </ng-template>

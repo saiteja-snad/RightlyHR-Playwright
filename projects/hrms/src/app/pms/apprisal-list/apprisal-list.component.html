@@ -155,37 +155,27 @@
             [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" aria-label="Username">
     </div>
 
-    <!-- Data Loader -->
-    <ng-container *ngIf="dataload; else maincontent">
-        <ng-template #loadingSpinner>
-            <div class="custom-compoent-data-loader">
-                <app-data-loader-content />
-            </div>
-        </ng-template>
-        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
-
-    <!-- Content -->
-    <ng-template #maincontent>
-        <div class="custom-table-content" [ngClass]="{'has-data': filteredEmployees.length > 0}">
-            <table class="w-100">
-                <thead>
+    <div class="custom-table-content" [ngClass]="{'has-data': filteredEmployees.length > 0}">
+        @if(!dataload){
+        <p-table #appraisalTable [value]="filteredEmployees" [customSort]="true" (onSort)="customSort($event)"
+            [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+                <ng-template pTemplate="header">
                     <tr>
                         <th *ngIf="filteredEmployees.length > 0">
                             <input class="form-check-input" type="checkbox" (change)="onHeaderCheckboxChange($event)"
                                 id="flexCheckDefaultHeader">
                         </th>
-                        <th>{{'Employee ID' | translate}}</th>
-                        <th>{{'Employee Name' | translate}}</th>
-                        <th>{{'Review Cycle Name' | translate}}</th>
-                        <th>{{'Department' | translate}}</th>
-                        <th>{{'Team' | translate}}</th>
-                        <th>{{'Location' | translate}}</th>
-                        <th>{{'Sub Location' | translate}}</th>
+                        <th pSortableColumn="reviewEmployeeFusionId">{{'Employee ID' | translate}} <p-sortIcon field="reviewEmployeeFusionId" /></th>
+                        <th pSortableColumn="reviewEmployeeIdName">{{'Employee Name' | translate}} <p-sortIcon field="reviewEmployeeIdName" /></th>
+                        <th pSortableColumn="reviewCycleHeaderIdName">{{'Review Cycle Name' | translate}} <p-sortIcon field="reviewCycleHeaderIdName" /></th>
+                        <th pSortableColumn="departmentName">{{'Department' | translate}} <p-sortIcon field="departmentName" /></th>
+                        <th pSortableColumn="subDepartmentName">{{'Team' | translate}} <p-sortIcon field="subDepartmentName" /></th>
+                        <th pSortableColumn="locationName">{{'Location' | translate}} <p-sortIcon field="locationName" /></th>
+                        <th pSortableColumn="subLocationName">{{'Sub Location' | translate}} <p-sortIcon field="subLocationName" /></th>
                         <th>{{'Promoted' | translate}}</th>
-                        <th>{{'Review Template Name' | translate}}</th>
-                        <th>{{'Status' | translate}}</th>
-                        <th>{{'Final Rating' | translate}}</th>
+                        <th pSortableColumn="reviewTemplateName">{{'Review Template Name' | translate}} <p-sortIcon field="reviewTemplateName" /></th>
+                        <th pSortableColumn="status">{{'Status' | translate}} <p-sortIcon field="status" /></th>
+                        <th pSortableColumn="overallRating">{{'Final Rating' | translate}} <p-sortIcon field="overallRating" /></th>
                         @if(rbac.allowedToAccess('Employee List Hold.view') || rbac.allowedToAccess('Assign Review
                         Template(Employee).view')
                         || rbac.allowedToAccess('Update Review Template.view') ||
@@ -203,10 +193,9 @@
                         <th class="text-center">{{'Action' | translate}}</th>
                         }
                     </tr>
-                </thead>
-                <tbody>
-                    <ng-container *ngIf="filteredEmployees.length > 0; else noDataTemplate">
-                        <tr *ngFor="let employee of filteredEmployees">
+                </ng-template>
+                <ng-template pTemplate="body" let-employee>
+                    <tr>
                             <td>
                                 <input class="form-check-input" type="checkbox" [(ngModel)]="employee.selected"
                                     (change)="onCheckboxChange($event, employee.id)"
@@ -391,34 +380,33 @@
                             <!--}-->
                             }
                         </tr>
-                    </ng-container>
-
-                    <ng-template #noDataTemplate>
-                        <app-no-data-found />
-                    </ng-template>
-                </tbody>
-            </table>
-        </div>
-
-        @if(filteredEmployees.length > 0){
-        <div class="pagination-content">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                <div class="d-flex align-items-center gap-3 p-2">
-                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onPageSizeChange($event)">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
-                    </select>
-                    <span class="pagination-label text-nowrap">
-                        Showing {{ +first + 1 }} - {{ (+first + +rows) > totalRecords ? totalRecords : (+first +
-                        + rows) }} of {{ totalRecords }}
-                    </span>
-                </div>
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-            </div>
-        </div>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="13"><app-no-data-found /></td></tr>
+                </ng-template>
+            </p-table>
+        }@else{
+        <app-data-loader-content />
         }
-    </ng-template>
+    </div>
+
+    @if(filteredEmployees.length > 0){
+    <div class="pagination-content">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onPageSizeChange($event)">
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+                </select>
+                <span class="pagination-label text-nowrap">
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > totalRecords ? totalRecords : (+first + +rows) }} of {{ totalRecords }}
+                </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+        </div>
+    </div>
+    }
 </div>
 
 <!-- Hold Confirmation Modal -->

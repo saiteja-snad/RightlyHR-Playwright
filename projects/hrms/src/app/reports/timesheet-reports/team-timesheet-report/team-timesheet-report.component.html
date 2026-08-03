@@ -29,37 +29,69 @@
 
   <div class="custom-table-content">
     @if (!isLoading) {
-    <table id="leaveReportTable" class="w-100">
-      <thead>
-        <th class="text-center">{{'Worked Date' | translate}}</th>
-        <!-- <th>Employee ID</th> -->
-
-        <th>{{'Client Name' | translate}}</th>
-        <th>{{'Project Name' | translate}}</th>
-        <th>{{'Phase/Milestone' | translate}}</th>
-        <th>{{'Employee ID' | translate}}</th>
-        <th>{{'Employee Name' | translate}}</th>
-        <th class="text-center">{{'Task Type' | translate}}</th>
-        <th class="text-center">{{'Description' | translate}}</th>
-        <th class="text-center">{{'Logged Hrs' | translate}}</th>
-        <th class="text-center">{{'Billable/Non-Billable' | translate}}</th>
-        <th class="text-center">{{'Status' | translate}}</th>
-        <th class="text-center">{{'Submitted Date' | translate}}</th>
-        <th>{{'Approved By' | translate}}</th>
-      </thead>
-      <tbody>
-        @if (!filteredtimesheetsummeryRecord || filteredtimesheetsummeryRecord.length === 0) {
+    <p-table #dt
+             [value]="filteredtimesheetsummeryRecord" 
+             [tableStyle]="{'width': '100%'}"
+             [sortField]="currentUIField"
+             [sortOrder]="currentSortOrder">
+      <ng-template pTemplate="header">
         <tr>
-          <td colspan="10" class="text-center">
-            <app-no-data-found />
-          </td>
+          <th class="sortable-column text-center" (click)="onColumnSort('date')">
+            {{'Worked Date' | translate}} 
+            <p-sortIcon field="date" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('client')">
+            {{'Client Name' | translate}} 
+            <p-sortIcon field="client" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('project')">
+            {{'Project Name' | translate}} 
+            <p-sortIcon field="project" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('phase')">
+            {{'Phase/Milestone' | translate}} 
+            <p-sortIcon field="phase" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('fusionEmpId')">
+            {{'Employee ID' | translate}} 
+            <p-sortIcon field="fusionEmpId" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('employee')">
+            {{'Employee Name' | translate}} 
+            <p-sortIcon field="employee" />
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('taskType')">
+            {{'Task Type' | translate}} 
+            <p-sortIcon field="taskType" />
+          </th>
+          <th class="text-center">
+            {{'Description' | translate}}
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('hoursWorked')">
+            {{'Logged Hrs' | translate}} 
+            <p-sortIcon field="hoursWorked" />
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('billableStatus')">
+            {{'Billable/Non-Billable' | translate}} 
+            <p-sortIcon field="billableStatus" />
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('approvalStatus')">
+            {{'Status' | translate}} 
+            <p-sortIcon field="approvalStatus" />
+          </th>
+          <th class="sortable-column text-center" (click)="onColumnSort('timeSheetSubmittedDate')">
+            {{'Submitted Date' | translate}} 
+            <p-sortIcon field="timeSheetSubmittedDate" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('approvedBy')">
+            {{'Approved By' | translate}} 
+            <p-sortIcon field="approvedBy" />
+          </th>
         </tr>
-        }
-        @else {
-        @for (record of filteredtimesheetsummeryRecord; track $index) {
+      </ng-template>
+      <ng-template pTemplate="body" let-record>
         <tr>
           <td class="text-center">{{ record.date ? (record.date | date) : '-' }}</td>
-          <!-- <td>{{ record.fusionEmpId ?? '-' }}</td> -->
           <td>{{ record.client ?? '-' }}</td>
           <td>{{ record.project ?? '-' }}</td>
           <td>{{ record.phase ?? '-' }}</td>
@@ -93,10 +125,15 @@
           <td class="text-center">{{ record.timeSheetSubmittedDate ? (record.timeSheetSubmittedDate | date) : '-' }}</td>
           <td>{{ record.approvedBy ?? '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="13" class="text-center">
+            <app-no-data-found />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else{
     <app-data-loader-content />

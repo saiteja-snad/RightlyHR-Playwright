@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Table } from 'primeng/table';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
@@ -18,6 +19,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-inactive-employee-report',
@@ -32,13 +34,15 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
     ReactiveFormsModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    ReportsHeaderComponent
+    ReportsHeaderComponent,
+    TableModule
   ],
   templateUrl: './inactive-employee-report.component.html',
   styleUrl: './inactive-employee-report.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
+  @ViewChild('inactiveTable') inactiveTable!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   private readonly destroy$ = new Subject<void>();
@@ -54,6 +58,9 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
   disableBtn = false;
   uniqueLeaveCategory: any[] = [];
   employeeMultiSelectOptions: any[] = [];
+  originalFilteredInactiveRecord: any[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
 
   years = [
     { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
@@ -242,6 +249,9 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     this.reportsService.getInactiveReportsV2(request).subscribe({
       next: (data: any) => {
         this.filteredInactiveRecord = data ?? [];
+        this.originalFilteredInactiveRecord = [...this.filteredInactiveRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
         this.spinnerLoader1 = false;
         this.isLoading = false;
         this.disableBtn = false;
@@ -279,9 +289,10 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
   }
 
   exportToExcelInactive(): void {
-    // Define header mappings
     this.spinnerLoader2 = true;
-    setTimeout(() => {
+
+    const dataToExport = this.inactiveTable?.filteredValue ?? this.inactiveTable?.value ?? this.filteredInactiveRecord;
+
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -298,7 +309,6 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       balance: 'BALANCE'
     };
 
-    // Define new sequence
     const NEW_SEQUENCE: string[] = [
       'EMPLOYEE ID',
       'EMPLOYEE NAME',
@@ -315,80 +325,63 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       'BALANCE'
     ];
 
-    // Modify data with renamed headers and new sequence
-    const modifiedData = this.filteredInactiveRecord.map(record => {
-      const modifiedRecord: any = {};
-      NEW_SEQUENCE.forEach(columnName => {
-        const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
-        if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-           modifiedRecord[columnName] = record[originalColumnName];
-        } else {
-          modifiedRecord[columnName] = '';
+    const normalizeCell = (value: any) => {
+      if (value === null || value === undefined) return '-';
+      if (typeof value === 'string') return value.trim().length > 0 ? value.trim() : '-';
+      return value;
+    };
+
+    const modifiedData = dataToExport.map((record: any) => {
+      const row: any = {};
+      NEW_SEQUENCE.forEach(col => {
+        const originalKey = Object.keys(HEADER_MAPPINGS).find(k => HEADER_MAPPINGS[k] === col);
+        row[col] = originalKey && record.hasOwnProperty(originalKey) ? normalizeCell(record[originalKey]) : '-';
+      });
+      return row;
+    });
+
+    if (modifiedData.length === 0) {
+      const emptyRow: any = {};
+      NEW_SEQUENCE.forEach(col => { emptyRow[col] = '-'; });
+      modifiedData.push(emptyRow);
+    }
+
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([]);
+
+    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+    XLSX.utils.sheet_add_aoa(ws, [['INACTIVE EMPLOYEE LEAVE SUMMARY REPORT']], { origin: 'A1' });
+    ws['A1'].s = { font: { bold: true, sz: 16 }, alignment: { horizontal: 'center', vertical: 'center' } };
+
+    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
+    NEW_SEQUENCE.forEach((_, index) => {
+      const cellRef = XLSX.utils.encode_cell({ r: 1, c: index });
+      ws[cellRef].s = {
+        font: { bold: true },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }
+      };
+    });
+
+    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
+    modifiedData.forEach((_: any, rowIndex: number) => {
+      NEW_SEQUENCE.forEach((_, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
+        if (ws[cellRef]) {
+          ws[cellRef].s = { alignment: { horizontal: 'center', vertical: 'center' } };
         }
       });
-      return modifiedRecord;
     });
 
-    // Create a new empty worksheet
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
+    ws['!autofilter'] = { ref: `A2:${XLSX.utils.encode_col(NEW_SEQUENCE.length - 1)}2` };
+    ws['!cols'] = NEW_SEQUENCE.map(col => ({
+      wch: Math.max(col.length, ...modifiedData.map((r: any) => String(r[col] ?? '').length)) + 2
+    }));
 
-    // Merge cells for Report row
-    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
-
-    // Add Report row
-    XLSX.utils.sheet_add_aoa(ws, [['INACTIVE EMPLOYEE LEAVE SUMMARY REPORT']], { origin: 'A1' });
-
-    // Add header row
-    const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName] || columnName);
-    XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
-
-    // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
-
-    // Apply styles to Report row
-    const wfhReportCell = ws['A1'] || { t: '', v: '' }; 
-    wfhReportCell.s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'center' } };
-    ws['A1'] = wfhReportCell;
-
-    // Apply styles to column headers
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-      const cell = ws[cellAddress] || { t: '', v: '' }; 
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' } };
-      ws[cellAddress] = cell; 
-    });
-
-     // Apply middle alignment to all data cells
-     modifiedData.forEach((_, rowIndex) => {
-        NEW_SEQUENCE.forEach((_, colIndex) => {
-          const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
-          if (ws[cellRef]) {
-            ws[cellRef].s = {
-              alignment: { horizontal: 'center', vertical: 'center' }
-            };
-          }
-        });
-      });
-
-    // Adjust column width to fit data
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      let columnWidth = this.getColumnWidth(modifiedData, columnName);
-
-      if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'SUB LOCATION') {
-        columnWidth += 5; // Increase width by 5
-      }
-      ws['!cols'] = ws['!cols'] || [];
-      ws['!cols'][index] = { wch: columnWidth };
-    });
-
-    // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Inactive Emp Leave Summary');
-    const today = new Date();
-    const filenameDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(',', '');
-    XLSX.writeFile(wb, `Inactive Employee Leave Summary Report - ${filenameDate}.xlsx`);
+    const formattedDate = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '');
+    XLSX.writeFile(wb, `Inactive Employee Leave Summary Report - ${formattedDate}.xlsx`);
     this.spinnerLoader2 = false;
-    }, 100);
   }
 
   getColumnWidth(data: any[], columnName: string): number {
@@ -405,7 +398,52 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
   navigation() {
     this.router.navigate(['/reports']);
   }
+customSort(event: any): void {
+    const field = event.field;
 
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredInactiveRecord = [...this.originalFilteredInactiveRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.inactiveTable) this.inactiveTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+      // Balance
+      // Numeric fields
+      if (field === 'entitled' || field === 'availed' || field === 'balance') {
+
+        val1 = Number(a[field] || 0);
+        val2 = Number(b[field] || 0);
+
+        return event.order * (val1 - val2);
+      }
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

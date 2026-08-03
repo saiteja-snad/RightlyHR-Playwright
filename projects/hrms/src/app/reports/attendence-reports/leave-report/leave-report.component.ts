@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
@@ -22,28 +22,29 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
 import { DatePicker } from 'primeng/datepicker';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-leave-report',
   imports: [DatePicker, CommonModule, FormsModule, DropdownModule, SelectModule, MultiSelectModule, TranslateModule, ReactiveFormsModule, 
-    NoDataFoundComponent, DataLoaderContentComponent,TranslateModule, ReportsHeaderComponent],
+    NoDataFoundComponent, DataLoaderContentComponent,TranslateModule, ReportsHeaderComponent, TableModule],
   templateUrl: './leave-report.component.html',
   styleUrl: './leave-report.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class LeaveReportComponent implements OnInit, OnDestroy {
+  @ViewChild('leaveTable') leaveTable!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   private readonly destroy$ = new Subject<void>();
-  private readonly currentYear = new Date().getFullYear();
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
   filteredleaveRecord: any[] = [];
   employeeiddetails: any[] = [];
   employeeMultiSelectOptions: any[] = [];
   teamdetails = [] as any[];
-  years: { label: string; value: number }[] = [];
   selectedWfhManager: string | null = null;
   selectedMonth: string | null = null;
   selectedLeave: string | null = null;
@@ -58,8 +59,16 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   disableBtn = false;
   getEmployeeInfo = [] as any;
   today: Date = new Date();
-  yearMinDate: Date | null = null;
-  yearMaxDate: Date | null = null;
+  originalFilteredleaveRecord: any[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0; 
+  minDate: Date | null = null;
+  maxDate: Date = this.today;
+  years = [
+    { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
+    { label: new Date().getFullYear().toString(), value: new Date().getFullYear() },
+    { label: (new Date().getFullYear() + 1).toString(), value: new Date().getFullYear() + 1 }
+  ];
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -91,8 +100,8 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       clearLabel: 'Clear', // could be rtl
     };
     this.loggedInUser = this.authService.getToken();
-    this.initializeYears();
     this.initializeForm();
+    this.updateDateBounds();
     this.getEmployeeId();
     this.getAttendanceReports();
     this.getTeam();
@@ -107,14 +116,14 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       manager: [[]],
       employeeIds: [[]],
       team: [[]]
-    });
+    }, { validators: [this.dateRangeWithinSelectedYearValidator()] });
 
     this.LeaveReportForm.get('year')?.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .subscribe((year: number | null) => {
-        this.updateDateBounds(year);
-        this.resetDateRangeIfOutOfBounds();
-      });
+      .subscribe(() => {
+        this.updateDateBounds();
+        this.clearDateRangeIfOutOfBounds();
+    });
 
     this.LeaveReportForm.get('manager')?.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -133,57 +142,6 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     })
   }
 
-  private updateDateBounds(year: number | null): void {
-    if (year === null || year === undefined || year === ('' as any)) {
-      this.yearMinDate = null;
-      this.yearMaxDate = null;
-      return;
-    }
-
-    const normalizedYear = Number(year);
-    this.yearMinDate = new Date(normalizedYear, 0, 1);
-
-    if (normalizedYear < this.currentYear) {
-      this.yearMaxDate = new Date(normalizedYear, 11, 31);
-    } else if (normalizedYear === this.currentYear) {
-      this.yearMaxDate = new Date(this.today);
-    } else {
-      this.yearMaxDate = new Date(normalizedYear, 11, 31);
-    }
-  }
-
-  private resetDateRangeIfOutOfBounds(): void {
-    const currentRange = this.LeaveReportForm.get('dateRange')?.value as
-      | [Date | string | null, Date | string | null]
-      | null;
-
-    if (!currentRange || (!currentRange[0] && !currentRange[1])) {
-      return;
-    }
-
-    if (!this.yearMinDate && !this.yearMaxDate) {
-      return;
-    }
-
-    const start = currentRange[0] ? new Date(currentRange[0]) : null;
-    const end = currentRange[1] ? new Date(currentRange[1]) : start;
-
-    if ((start && isNaN(start.getTime())) || (end && isNaN(end.getTime()))) {
-      this.LeaveReportForm.patchValue({ dateRange: null }, { emitEvent: false });
-      return;
-    }
-
-    const min = this.yearMinDate;
-    const max = this.yearMaxDate;
-    const outOfBounds =
-      (min && ((start && start < min) || (end && end < min))) ||
-      (max && ((start && start > max) || (end && end > max)));
-
-    if (outOfBounds) {
-      this.LeaveReportForm.patchValue({ dateRange: null }, { emitEvent: false });
-    }
-  }
-
   clearAllFilters(): void {
     this.LeaveReportForm.reset({ 
       year: null,
@@ -193,6 +151,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       manager: [],
       team: []
     });
+    this.updateDateBounds();
     this.filteredleaveRecord = [];
     this.isFilterIndicatorActive = false;
     this.disableBtn = false;
@@ -204,17 +163,16 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   }
 
   isFilterApplied(): boolean {
-    const { year, employeeIds, manager, dateRange, leaveCategory, team } = this.LeaveReportForm.value;
+    const { employeeIds, manager, dateRange, leaveCategory, team, year } = this.LeaveReportForm.value;
     const dateRangeArray = dateRange || [];
     const hasDates = !!(dateRangeArray?.[0] || dateRangeArray?.[1]);
-    const hasYearFilter = year !== null && year !== undefined && year !== '';
     return !!(
-      hasYearFilter ||
       (employeeIds && employeeIds.length > 0) ||
       (manager && manager.length > 0) ||
       hasDates ||
       (leaveCategory && leaveCategory.length > 0) ||
-      (team && team.length > 0)
+      (team && team.length > 0) ||
+      !!year
     );
   }
 
@@ -232,6 +190,8 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
 
   onGenerate(): void {
     this.isFilterIndicatorActive = this.isFilterApplied();
+    this.LeaveReportForm.markAllAsTouched();
+    if (this.LeaveReportForm.invalid) return;
     this.generateleaveReport();
   }
 
@@ -311,28 +271,102 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     return !this.isFilterApplied();
   }
 
+  private getSelectedYear(): number | null {
+    const raw = this.LeaveReportForm?.get('year')?.value;
+    const value = raw && typeof raw === 'object' ? raw.value : raw;
+    const year = Number(value);
+    return Number.isFinite(year) && year > 0 ? year : null;
+  }
+
+  private updateDateBounds(): void {
+    const year = this.getSelectedYear();
+    if (!year) {
+      this.minDate = null;
+      this.maxDate = this.today;
+      return;
+    }
+
+    this.minDate = new Date(year, 0, 1);
+    const endOfYear = new Date(year, 11, 31);
+    this.maxDate = year === this.today.getFullYear() && this.today < endOfYear ? this.today : endOfYear;
+  }
+
+  private clearDateRangeIfOutOfBounds(): void {
+    const year = this.getSelectedYear();
+    if (!year) return;
+
+    const dateRange = this.LeaveReportForm.get('dateRange')?.value;
+    if (!Array.isArray(dateRange) || (!dateRange[0] && !dateRange[1])) return;
+
+    const start = dateRange[0] ? new Date(dateRange[0]) : null;
+    const end = dateRange[1] ? new Date(dateRange[1]) : start;
+    if (!start || !end) return;
+
+    const min = new Date(year, 0, 1);
+    const max = new Date(year, 11, 31, 23, 59, 59, 999);
+    if (start < min || end > max) {
+      this.LeaveReportForm.get('dateRange')?.setValue(null);
+      this.LeaveReportForm.updateValueAndValidity({ emitEvent: false });
+    }
+  }
+
+  private dateRangeWithinSelectedYearValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const yearCtrl = control.get('year');
+      const dateRangeCtrl = control.get('dateRange');
+      const rawYear = yearCtrl?.value;
+      const yearValue = rawYear && typeof rawYear === 'object' ? rawYear.value : rawYear;
+      const year = Number(yearValue);
+      if (!Number.isFinite(year) || year <= 0) return null;
+
+      const dateRange = dateRangeCtrl?.value;
+      if (!Array.isArray(dateRange) || (!dateRange[0] && !dateRange[1])) return null;
+
+      const start = dateRange[0] ? new Date(dateRange[0]) : null;
+      const end = dateRange[1] ? new Date(dateRange[1]) : start;
+      if (!start || !end) return null;
+
+      const min = new Date(year, 0, 1);
+      const max = new Date(year, 11, 31, 23, 59, 59, 999);
+
+      return start < min || end > max ? { dateRangeOutOfYear: true } : null;
+    };
+  }
+
   generateleaveReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
     this.disableBtn = true;
+    if (this.LeaveReportForm.invalid) {
+      this.spinnerLoader1 = false;
+      this.isLoading = false;
+      this.disableBtn = false;
+      return;
+    }
     const formValue = this.LeaveReportForm.value;
-    if (!this.isFilterApplied()) {
+    const dateRangeArray = formValue.dateRange || [];
+    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
+    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
+    //filter condition
+    const employeeIds: any[] = formValue.employeeIds || [];
+    const noFilterProvided =
+      employeeIds.length === 0 &&
+      (!formValue.manager || formValue.manager.length === 0) &&
+      (!formValue.team || formValue.team.length === 0) &&
+      (!formValue.leaveCategory || formValue.leaveCategory.length === 0) &&
+      !this.getSelectedYear() &&
+      !startDate &&
+      !endDate;
+
+    if (noFilterProvided) {
       this.filteredleaveRecord = [];
       this.spinnerLoader1 = false;
       this.isLoading = false;
       this.disableBtn = false;
       return;
     }
-    const dateRangeArray = formValue.dateRange || [];
-    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
-    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
-    const employeeIds: any[] = formValue.employeeIds || [];
 
     const request: IAttendanceDetails = {};
-
-    if (formValue.year) {
-      request.year = Number(formValue.year);
-    }
 
     // Apply leave category if selected
     if (formValue.leaveCategory && formValue.leaveCategory.length > 0) {
@@ -343,6 +377,11 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     if (startDate && endDate) {
       request.startdate = startDate.format('YYYY-MM-DD');
       request.enddate = endDate.format('YYYY-MM-DD');
+    } 
+
+    const selectedYear = this.getSelectedYear();
+    if (selectedYear) {
+      request.year = selectedYear;
     } 
 
     // Apply manager name if provided
@@ -359,6 +398,9 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     this.reportsService.getAttendanceReportsV2(request).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.filteredleaveRecord = response ?? [];
+        this.originalFilteredleaveRecord = [...this.filteredleaveRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
       error: (error) => {
         this.spinnerLoader1 = false;
@@ -376,18 +418,13 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     });
   }
 
-  private initializeYears(): void {
-    this.years = [
-      { label: `${this.currentYear - 1}`, value: this.currentYear - 1 },
-      { label: `${this.currentYear}`, value: this.currentYear },
-      { label: `${this.currentYear + 1}`, value: this.currentYear + 1 },
-    ];
-  }
-
   exportToExcelYearly(): void {
     // Define header mappings
     this.spinnerLoader2 = true;
     setTimeout(() => {
+      // Get sorted data from PrimeNG table
+      const dataToExport = this.leaveTable?.filteredValue || this.leaveTable?.value || this.filteredleaveRecord;
+      
       const HEADER_MAPPINGS: { [key: string]: string } = {
         fusionEmpId: 'EMPLOYEE ID',
         employeeName: 'EMPLOYEE NAME',
@@ -423,13 +460,14 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
 
       // Function to format date in MMM d, yyyy format (e.g., Mar 6, 2026)
       const formatDate = (dateString: string): string => {
-        if (!dateString) return '';
+        if (!dateString) return '-';
         const date = new Date(dateString);
+        if (Number.isNaN(date.getTime())) return '-';
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       };
 
       // Modify data with renamed headers and new sequence
-      const modifiedData = this.filteredleaveRecord.map(record => {
+      const modifiedData = dataToExport.map(record => {
         const modifiedRecord: any = {};
         NEW_SEQUENCE.forEach(columnName => {
           const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
@@ -442,21 +480,29 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
                value = record['leaveCategoryName'];
             }
             
-            if (value !== undefined && value !== null) {
+            if (value !== undefined && value !== null && value !== '') {
               if (['startdate', 'enddate', 'appliedDate', 'startDate', 'endDate'].includes(originalColumnName)) {
                  modifiedRecord[columnName] = formatDate(value);
               } else {
                  modifiedRecord[columnName] = value;
               }
             } else {
-              modifiedRecord[columnName] = '';
+              modifiedRecord[columnName] = '-';
             }
           } else {
-            modifiedRecord[columnName] = '';
+            modifiedRecord[columnName] = '-';
           }
         });
         return modifiedRecord;
       });
+
+      if (modifiedData.length === 0) {
+        const emptyRow: any = {};
+        NEW_SEQUENCE.forEach(columnName => {
+          emptyRow[columnName] = '-';
+        });
+        modifiedData.push(emptyRow);
+      }
 
       // Create a new empty worksheet
       const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
@@ -546,6 +592,45 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
           }));
         }
       },
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredleaveRecord = [...this.originalFilteredleaveRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.leaveTable) this.leaveTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
     });
   }
 

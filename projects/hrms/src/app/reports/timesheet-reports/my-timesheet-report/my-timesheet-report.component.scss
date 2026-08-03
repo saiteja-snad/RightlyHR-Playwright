@@ -1,6 +1,15 @@
 
 .custom-table-content {
     height: calc(100vh - 12rem) !important;
+
+    .sortable-column {
+        cursor: pointer;
+        user-select: none;
+        
+        &:hover {
+            background-color: rgba(11, 58, 131, 0.05);
+        }
+    }
 }
 
 .filter-indicator {

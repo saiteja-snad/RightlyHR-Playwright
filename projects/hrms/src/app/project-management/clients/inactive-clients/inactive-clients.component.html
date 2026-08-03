@@ -21,95 +21,75 @@
                     aria-describedby="basic-addon1">
             </div>
 
-            <ng-container *ngIf="loading; else maincontent">
-                <ng-template #loadingSpinner>
-                    <div>
-                        <app-data-loader-content />
-                    </div>
-                </ng-template>
-                <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-            </ng-container>
-
-            <ng-template #maincontent>
-                <div class="custom-table-content w-100"  [ngClass]="{'has-data': clients.length > 0}">
-                    <table class="w-100">
-                        <thead>
+            <div class="custom-table-content w-100" [ngClass]="{'has-data': clients.length > 0}">
+                @if (!loading) {
+                <p-table #inactiveClientsTable [value]="clients | inactiveclient : searchValue"
+                    [customSort]="true" (onSort)="customSort($event)"
+                    [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+                    <ng-template pTemplate="header">
+                        <tr>
                             <th>Logo</th>
-                            <th>Client Name</th>
-                            <th>Contact name</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            @if(rbac.allowedToAccess('Client Information.update')){
-                        <th class="text-center">{{"Action" | translate}}</th>
-                        }
-                        </thead>
-                        <tbody>
-                            <ng-container *ngIf="(clients | inactiveclient : searchValue) as filteredClients">
-                                <ng-container *ngIf="filteredClients.length > 0; else noDataTemplate">
-                                    <tr *ngFor="let client of filteredClients; let i = index">
-                                        <td>
-                                            <img [src]="getImageUrl(client.logoPath)" alt="Logo" class="client-image" />
-                                        </td>
-                                        <td>
-                                            <a class="data-nav-btn" (click)="navigateView(client.clientId)">{{
-                                                client.clientName }}</a>
-                                        </td>
-                                        <td>{{client?.contact?.name || '-'}}</td>
-                                        <td>{{client?.contact?.email || '-'}}</td>
-                                        <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber ||
-                                            '-'}}</td>
-                                        <td>{{client?.contact?.role || '-'}}</td>
-                                        <td>{{client.status}}</td>
-                                        @if(rbac.allowedToAccess('Client Information.update')){
-                                        <td class="text-center">
-                                            <div class="dropdown">
-                                                <a data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </a>
-                                                <ul class="dropdown-menu custom-dropdown-menu">
-                                                    <li (click)="openModalstatus(statuschanges, client)">
-                                                        <a class="dropdown-item">
-                                                            <i class="bi bi-check-circle me-2"></i> Active
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </td>
-}
-                                        
-                                    </tr>
-                                </ng-container>
-                            </ng-container>
-
-                            <ng-template #noDataTemplate>
-                                <tr>
-                                    <app-no-data-found />
-                                </tr>
-                            </ng-template>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Pagination -->
-                <div class="pagination-content" *ngIf="clients.length > 0">
-                    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                        <div class="d-flex align-items-center gap-3 p-2">
-                            <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                                (ngModelChange)="onPageSizeChange($event)">
-                                <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                                </option>
-                            </select>
-                            <span class="pagination-label text-nowrap">
-                                Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
-                                (+first + +rows) }} of {{ collectionSize }}
-                            </span>
-                        </div>
-                        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-                            (onPageChange)="onPageChange($event)"></p-paginator>
+                            <th pSortableColumn="clientName">Client Name <p-sortIcon field="clientName" /></th>
+                            <th pSortableColumn="contactName">Contact name <p-sortIcon field="contactName" /></th>
+                            <th pSortableColumn="contactEmail">Email <p-sortIcon field="contactEmail" /></th>
+                            <th pSortableColumn="phoneNumber">Phone Number <p-sortIcon field="phoneNumber" /></th>
+                            <th pSortableColumn="contactRole">Role <p-sortIcon field="contactRole" /></th>
+                            <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+                            <th class="text-center">{{'Action' | translate}}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-client>
+                        <tr>
+                            <td><img [src]="getImageUrl(client.logoPath)" alt="Logo" class="client-image" /></td>
+                            <td><a class="data-nav-btn" (click)="navigateView(client.clientId)">{{client.clientName}}</a></td>
+                            <td>{{client?.contact?.name || '-'}}</td>
+                            <td>{{client?.contact?.email || '-'}}</td>
+                            <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber || '-'}}</td>
+                            <td>{{client?.contact?.role || '-'}}</td>
+                            <td>{{client.status}}</td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li (click)="openModalstatus(statuschanges, client)">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-check-circle me-2"></i> Active
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr><td colspan="8"><app-no-data-found /></td></tr>
+                    </ng-template>
+                </p-table>
+                }
+                @else {
+                <app-data-loader-content />
+                }
+            </div>
+            <!-- Pagination -->
+            <div class="pagination-content" *ngIf="clients.length > 0">
+                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onPageSizeChange($event)">
+                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                            </option>
+                        </select>
+                        <span class="pagination-label text-nowrap">
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                            (+first + +rows) }} of {{ collectionSize }}
+                        </span>
                     </div>
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                        (onPageChange)="onPageChange($event)"></p-paginator>
                 </div>
-            </ng-template>
+            </div>
         </div>
     </div>
 </div>

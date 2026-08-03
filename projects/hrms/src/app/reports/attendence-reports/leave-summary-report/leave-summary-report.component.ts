@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Table } from 'primeng/table';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
@@ -21,6 +22,7 @@ import {  Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-leave-summary-report',
@@ -34,17 +36,18 @@ import { MultiSelectModule } from 'primeng/multiselect';
     DataLoaderContentComponent,
     ReportsHeaderComponent,
     TranslateModule,
-    MultiSelectModule
+    MultiSelectModule,
+    TableModule
 ],
   templateUrl: './leave-summary-report.component.html',
   styleUrl: './leave-summary-report.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
+  @ViewChild('leaveSummaryTable') leaveSummaryTable!: Table;
   moduleinfo : string = '';
   subscription!: Subscription;
   private readonly destroy$ = new Subject<void>();
-  private readonly currentYear = new Date().getFullYear();
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
   filterlvsumRecord: any[] = [];
@@ -57,7 +60,6 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   selectedLeave: string | null = null;
   uniqueLeaveCategory: any[] = [];
   lvSummeryReportForm!: FormGroup;
-  years: { label: string; value: number }[] = [];
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   selectedDateRange: any;
   spinnerLoader1 = false;
@@ -67,6 +69,14 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   getEmployeeInfo = [] as any;
   filteredleaveRecords = false;
   selectLeaveEmployeeIds: number[] = [];
+  originalFilterlvsumRecord: any[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
+   years = [
+    { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
+    { label: new Date().getFullYear().toString(), value: new Date().getFullYear() },
+    { label: (new Date().getFullYear() + 1).toString(), value: new Date().getFullYear() + 1 }
+  ];
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -99,7 +109,6 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       clearLabel: 'Clear', // could be rtl
     };
     this.loggedInUser = this.authService.getToken();
-    this.initializeYears();
     this.initializeForm();
     this.getEmployeeId();
     this.getLeaveSummaryReport();
@@ -109,11 +118,11 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.lvSummeryReportForm.reset({
+      year: null,
       leaveCategory: [],
       manager: [],
       employee: [],
-      team: [],
-      year: null
+      team: []
     });
     this.filterlvsumRecord = [];
     this.isFilterIndicatorActive = false;
@@ -126,11 +135,11 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
   initializeForm() {
     this.lvSummeryReportForm = this.fb.group({
+      year: [null],
       leaveCategory: [[]],
       manager: [[]],
       employee: [[]],
-      team:[[]],
-      year: [null]
+      team:[[]]
     });
 
     this.lvSummeryReportForm.get('manager')?.valueChanges
@@ -275,15 +284,13 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
   isAnyFilterApplied(): boolean {
     const form = this.lvSummeryReportForm;
-    const year = form.get('year')?.value;
-    const hasYearFilter = year !== null && year !== undefined && year !== '';
-    const hasOtherFilters = !!(
+    return !!(
       (form.get('employee')?.value && form.get('employee')?.value.length > 0) ||
       (form.get('manager')?.value && form.get('manager')?.value.length > 0) ||
       (form.get('leaveCategory')?.value && form.get('leaveCategory')?.value.length > 0) ||
-      (form.get('team')?.value && form.get('team')?.value.length > 0)
+      (form.get('team')?.value && form.get('team')?.value.length > 0) ||
+      !!form.get('year')?.value
     );
-    return hasYearFilter || hasOtherFilters;
   }
 
   toggleFilters(content: TemplateRef<any>) {
@@ -300,6 +307,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
   onGenerate(): void {
     this.isFilterIndicatorActive = this.isAnyFilterApplied();
+    this.lvSummeryReportForm.markAllAsTouched();
     this.leavesummeryReport();
   }
 
@@ -308,7 +316,8 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.disableBtn = true;
     const formValue = this.lvSummeryReportForm.value;
-
+    
+    // Check if no filter is provided
     if (!this.isAnyFilterApplied()) {
       this.filterlvsumRecord = [];
       this.spinnerLoader1 = false;
@@ -318,10 +327,6 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     }
 
     const request: ILeavesummery = {};
-
-    if (formValue.year) {
-      request.year = Number(formValue.year);
-    }
 
     if (formValue.leaveCategory && formValue.leaveCategory.length > 0) {
       request.leaveCategories = formValue.leaveCategory.map((x: any) => x.value).join(',');
@@ -337,12 +342,19 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       request.employeeId = formValue.employee.map((x: any) => x.employeeId).join(',');
     }
 
+    if (formValue.year) {
+      request.year = (typeof formValue.year === 'object' && formValue.year !== null) ? formValue.year.value : formValue.year;
+    }
+
     // Call service with the constructed request
     // Assuming getLeaveSummaryReport needs to be updated to POST or handle this payload structure
     // For now we assume getLeaveSummaryReport is similar to leave-report's V2 but for summary
     this.subscription = this.reportsService.getLeaveSummaryReportV2(request).subscribe({
       next: (res: any) => {
         this.filterlvsumRecord = res ?? [];
+        this.originalFilterlvsumRecord = [...this.filterlvsumRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
         this.spinnerLoader1 = false;
         this.isLoading = false;
         this.disableBtn = false;
@@ -359,33 +371,27 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     });
   }
 
-  private initializeYears(): void {
-    this.years = [
-      { label: `${this.currentYear - 1}`, value: this.currentYear - 1 },
-      { label: `${this.currentYear}`, value: this.currentYear },
-      { label: `${this.currentYear + 1}`, value: this.currentYear + 1 },
-    ];
-  }
-
   exportToExcelYearly(): void {
-    // Define header mappings
     this.spinnerLoader2 = true;
-    setTimeout(() => {
-      const HEADER_MAPPINGS: { [key: string]: string } = {
-        fusionEmpId: 'EMPLOYEE ID',
-        employeeName: 'EMPLOYEE NAME',
-        department: 'DEPARTMENT',
-        teamManagerName: 'TEAM MANAGER',
-        location: 'LOCATION',
-        subLocation: 'SUB LOCATION',
-        shift: 'SHIFT',
-        monthName: 'MONTH',
-        leaveCategoryName: 'LEAVE CATEGORY',
-        availed: 'LEAVES AVAILED',
-      };
+
+    const dataToExport = this.leaveSummaryTable?.filteredValue ?? this.leaveSummaryTable?.value ?? this.filterlvsumRecord;
+
+    const HEADER_MAPPINGS: { [key: string]: string } = {
+      fusionEmpId: 'EMPLOYEE ID',
+      employeeName: 'EMPLOYEE NAME',
+      department: 'DEPARTMENT',
+      teamManagerName: 'TEAM MANAGER',
+      location: 'LOCATION',
+      subLocation: 'SUB LOCATION',
+      shift: 'SHIFT',
+      year: 'YEAR',
+      monthName: 'MONTH',
+      leaveCategoryName: 'LEAVE CATEGORY',
+      availed: 'LEAVES AVAILED',
+    };
 
       // Define new sequence
-      const NEW_SEQUENCE: string[] = [
+    const NEW_SEQUENCE: string[] = [
         'EMPLOYEE ID',
         'EMPLOYEE NAME',
         'DEPARTMENT',
@@ -393,93 +399,69 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
         'LOCATION',
         'SUB LOCATION',
         'SHIFT',
+        'YEAR',
         'MONTH',
         'LEAVE CATEGORY',
         'LEAVES AVAILED',
-      ];
+    ];
 
-      // Modify data with renamed headers and new sequence
-      const modifiedData = this.filterlvsumRecord.map(record => {
-        const modifiedRecord: any = {};
-        NEW_SEQUENCE.forEach(columnName => {
-          const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
-          if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-            if (originalColumnName === 'startDate') {
-              // Extract the year part from the date
-              const year = new Date(record[originalColumnName]).getFullYear();
-              modifiedRecord[columnName] = year;
-            } else {
-              modifiedRecord[columnName] = record[originalColumnName];
-            }
-          } else {
-            modifiedRecord[columnName] = '';
-          }
-        });
-        return modifiedRecord;
+    const normalizeCell = (value: any) => {
+      if (value === null || value === undefined) return '-';
+      if (typeof value === 'string') return value.trim().length > 0 ? value.trim() : '-';
+      return value;
+    };
+
+    const modifiedData = dataToExport.map((record: any) => {
+      const row: any = {};
+      NEW_SEQUENCE.forEach(col => {
+        const originalKey = Object.keys(HEADER_MAPPINGS).find(k => HEADER_MAPPINGS[k] === col);
+        row[col] = originalKey && record.hasOwnProperty(originalKey) ? normalizeCell(record[originalKey]) : '-';
       });
+      return row;
+    });
 
-      // Create a new empty worksheet
-      const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
+    if (modifiedData.length === 0) {
+      const emptyRow: any = {};
+      NEW_SEQUENCE.forEach(col => { emptyRow[col] = '-'; });
+      modifiedData.push(emptyRow);
+    }
 
-      // Merge cells for WFH Report row from A1 to I1
-      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([]);
 
-      // Add WFH Report row
-      XLSX.utils.sheet_add_aoa(ws, [['LEAVE SUMMARY REPORT']], { origin: 'A1' });
+    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+    XLSX.utils.sheet_add_aoa(ws, [['LEAVE SUMMARY REPORT']], { origin: 'A1' });
+    ws['A1'].s = { font: { bold: true, sz: 16 }, alignment: { horizontal: 'center', vertical: 'center' } };
 
-      // Add header row
-      // Use NEW_SEQUENCE directly for headers as it contains the display names
-      const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName] || columnName);
-      XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
+    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
+    NEW_SEQUENCE.forEach((_, index) => {
+      const cellRef = XLSX.utils.encode_cell({ r: 1, c: index });
+      ws[cellRef].s = {
+        font: { bold: true },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }
+      };
+    });
 
-      // Add data rows
-      XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
-
-      // Apply styles to WFH Report row
-      const wfhReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      wfhReportCell.s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'center' } };
-      ws['A1'] = wfhReportCell; // Assign the styled cell back to the worksheet
-
-      // Apply styles to column headers
-      NEW_SEQUENCE.forEach((columnName, index) => {
-        const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-        const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-        cell.s = { font: { bold: true }, alignment: { horizontal: 'center' } };
-        ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
-      });
-
-      // Apply middle alignment to all data cells
-      modifiedData.forEach((_, rowIndex) => {
-        NEW_SEQUENCE.forEach((_, colIndex) => {
-          const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
-          if (ws[cellRef]) {
-            ws[cellRef].s = {
-              alignment: { horizontal: 'center', vertical: 'center' }
-            };
-          }
-        });
-      });
-
-      // Adjust column width to fit data
-      NEW_SEQUENCE.forEach((columnName, index) => {
-        let columnWidth = this.getColumnWidth(modifiedData, columnName);
-
-        if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'APPLIED DATE' || columnName === 'SUB LOCATION') {
-          columnWidth += 5; // Increase width by 5
+    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
+    modifiedData.forEach((_: any, rowIndex: number) => {
+      NEW_SEQUENCE.forEach((_, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
+        if (ws[cellRef]) {
+          ws[cellRef].s = { alignment: { horizontal: 'center', vertical: 'center' } };
         }
-        ws['!cols'] = ws['!cols'] || [];
-        ws['!cols'][index] = { wch: columnWidth };
       });
+    });
 
-      // Generate Excel file and trigger download
-      const wb: XLSX.WorkBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Leave Summary Report');
-      
-      const today = new Date();
-      const filenameDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(',', '');
-      XLSX.writeFile(wb, `Leave Summary Report - ${filenameDate}.xlsx`);
-      this.spinnerLoader2 = false;
-    }, 100);
+    ws['!autofilter'] = { ref: `A2:${XLSX.utils.encode_col(NEW_SEQUENCE.length - 1)}2` };
+    ws['!cols'] = NEW_SEQUENCE.map(col => ({
+      wch: Math.max(col.length, ...modifiedData.map((r: any) => String(r[col] ?? '').length)) + 2
+    }));
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Leave Summary Report');
+    const formattedDate = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '');
+    XLSX.writeFile(wb, `Leave Summary Report - ${formattedDate}.xlsx`);
+    this.spinnerLoader2 = false;
   }
 
 
@@ -493,6 +475,69 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
+  private readonly MONTH_ORDER: Record<string, number> = {
+    'january': 1, 'february': 2, 'march': 3, 'april': 4,
+    'may': 5, 'june': 6, 'july': 7, 'august': 8,
+    'september': 9, 'october': 10, 'november': 11, 'december': 12
+  };
+
+  customSort(event: any): void {
+    const field = event.field;
+
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filterlvsumRecord = [...this.originalFilterlvsumRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.leaveSummaryTable) this.leaveSummaryTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      if (field === 'monthName') {
+        const m1 = this.MONTH_ORDER[String(val1).toLowerCase()] ?? 0;
+        const m2 = this.MONTH_ORDER[String(val2).toLowerCase()] ?? 0;
+        return event.order * (m1 - m2);
+      }
+      if (field === 'year') {
+        const year1 = Number(val1 ?? 0);
+        const year2 = Number(val2 ?? 0);
+        return event.order * (year1 - year2);
+      }
+       // Numeric fields
+      if (field === 'availed') {
+
+        val1 = Number(a[field] || 0);
+        val2 = Number(b[field] || 0);
+
+        return event.order * (val1 - val2);
+      }
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
+
    navigation(){
     this.router.navigate(['/reports']);
   }

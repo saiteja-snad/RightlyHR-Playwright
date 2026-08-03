@@ -48,13 +48,18 @@
           <th pSortableColumn="requestedDate">{{'Permission Date'| translate}} <p-sortIcon field="requestedDate"></p-sortIcon></th>
           <th pSortableColumn="duration">Duration(In<span class="text-lowercase"> hrs)</span> <p-sortIcon field="duration"></p-sortIcon></th> 
           <th class="text-center">{{'Reason'| translate}}</th>
-          <th pSortableColumn="type">{{'Permission Type'| translate}} <p-sortIcon field="type"></p-sortIcon></th>
+          <th  class="text-center" pSortableColumn="type">{{'Permission Type'| translate}} <p-sortIcon field="type"></p-sortIcon></th>
           <th  class="text-center">{{'Status' | translate}}</th>
           <th class="text-center">{{'Action'| translate}}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-permissionRequest>
         <tr>
+           <td style="width:4rem">
+              @if(canApprove(permissionRequest)){
+              <p-tableCheckbox [value]="permissionRequest"></p-tableCheckbox>
+              }
+            </td>
           <td>{{permissionRequest.createdDate | dateformat}}</td>
           <td>{{permissionRequest.requestedDate | dateformat}}</td>
           <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
@@ -68,7 +73,7 @@
               </ng-template>
             </div>
           </td>
-          <td>{{permissionRequest.type}}</td>
+          <td class="text-center">{{permissionRequest.type}}</td>
           <td class="text-center">{{permissionRequest.status}}</td>
           @if(selectedProducts.length == 0){
             <td class="text-center">

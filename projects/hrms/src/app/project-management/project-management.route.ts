@@ -36,59 +36,63 @@ import { ProjectPhasesComponent } from './projects/project-phases/project-phases
 import { HoldClientsComponent } from './clients/hold-clients/hold-clients.component';
 import { HoldProjectsComponent } from './projects/hold-projects/hold-projects.component';
 import { TimesheetsResourceSummaryComponent } from './time-sheets/timesheets-resource-summary/timesheets-resource-summary.component';
+import { TimesheetsResourceTabsComponent } from './time-sheets/timesheets-resource-tabs/timesheets-resource-tabs.component';
 import { PhasesHoldComponent } from './projects/phases-hold/phases-hold.component';
 import { InactivePhasesProjectComponent } from './projects/inactive-phases-project/inactive-phases-project.component';
 import { ProjectInactiveResourcesComponent } from './projects/project-inactive-resources/project-inactive-resources.component';
 import { ClientResourceInactiveComponent } from './clients/client-resource-inactive/client-resource-inactive.component';
 import { BulkExportComponent } from './time-sheets/bulk-export/bulk-export.component';
 import { BulkImportComponent } from './time-sheets/bulk-import/bulk-import.component';
-import { ExportHistoryComponent } from './time-sheets/export-history/export-history.component';
 import { HistoryLogComponent } from './time-sheets/history-log/history-log.component';
+import { ExportHistoryComponent } from './time-sheets/export-history/export-history.component';
 import { ResourceCreationComponent } from './shared-project-management-componenets/resource-creation/resource-creation.component';
 import { ProjectsLayoutComponent } from './projects/projects-layout/projects-layout.component';
+import { ClientResourcesWaitingForApprovalComponent } from './clients/client-resources-waiting-for-approval/client-resources-waiting-for-approval.component';
+import { ProjectWaitingForApprovalResourcesComponent } from './projects/project-waiting-for-approval-resources/project-waiting-for-approval-resources.component';
 
 export default [
-    { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
+    { path: '', redirectTo: 'clients', pathMatch: 'full' },
     {
         path: 'clients',
         children: [
             { path: '', redirectTo: 'active', pathMatch: 'full' },
-            { path: 'active', component: ActiveClientsComponent },
-            { path: 'inactive', component: InactiveClientsComponent },
-            { path: 'hold', component: HoldClientsComponent },
-            { path: 'add-resources', component: ResourceCreationComponent },
+            { path: 'active', component: ActiveClientsComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Active Clients' } },
+            { path: 'inactive', component: InactiveClientsComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Inactive Clients' } },
+            { path: 'hold', component: HoldClientsComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Held Clients' } },
+            { path: 'add-resources', component: ResourceCreationComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Add Resources' } },
             {
                 path: 'details', component: ClientViewComponent,
                 children: [
-                    { path: 'info', component: ClientInformationComponent },
-                    { path: 'contact-info', component: ClientContactInformationComponent },
-                    { path: 'projects', component: ActiveProjectsComponent },
-                    { path: 'inactiveprojects', component: InacitveProjectsComponent },
-                    { path: 'hold', component: HoldProjectsComponent },
-                    { path: 'resources', component: ClientResourcesComponent },
-                    { path: 'inactive-resources', component: ClientResourceInactiveComponent },
+                    { path: 'info', component: ClientInformationComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Client Information' } },
+                    { path: 'contact-info', component: ClientContactInformationComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Client Contact Information' } },
+                    { path: 'projects', component: ActiveProjectsComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Active Projects' } },
+                    { path: 'inactiveprojects', component: InacitveProjectsComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Inactive Projects' } },
+                    { path: 'hold', component: HoldProjectsComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Held Projects' } },
+                    { path: 'resources', component: ClientResourcesComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Client Resources' } },
+                    { path: 'inactive-resources', component: ClientResourceInactiveComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Inactive Resources' } },
+                    { path: 'waiting-for-approval-resources', component: ClientResourcesWaitingForApprovalComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Waiting for Approval Resources' } },
                     {
                         path: 'timesheet', component: ClientTimeSheetsComponent,
                         children: [
                             { path: '', redirectTo: 'summary', pathMatch: 'full' },
-                            { path: 'summary', component: ClientTimesheetSummaryComponent },
-                            { path: 'detailed', component: ClientTimesheetDetailedComponent },
-                            { path: 'resource-summary', component: ResourceViewSummaryComponent },
+                            { path: 'summary', component: ClientTimesheetSummaryComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Client Timesheet Summary' } },
+                            { path: 'detailed', component: ClientTimesheetDetailedComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Client Timesheet Detailed' } },
+                            { path: 'resource-summary', component: ResourceViewSummaryComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Resource Summary' } },
                         ],
                     },
-                    { path: 'documents', component: ClientDocumentsComponent },
-                    { path: 'inactivedocuments', component: InactiveClientDocumentsComponent }
+                    { path: 'documents', component: ClientDocumentsComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Client Documents' } },
+                    { path: 'inactivedocuments', component: InactiveClientDocumentsComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Inactive Documents' } }
                 ],
             },
             {
                 path: 'add', component: AddClientLayoutComponent,
                 children: [
                     { path: '', redirectTo: 'info', pathMatch: 'full' },
-                    { path: 'info', component: AddClientInfoComponent },
-                    { path: 'contact-info', component: AddClientContactInfoComponent },
-                    { path: 'documents', component: AddClientDocComponent },
-                    { path: 'nda', component: NdaComponent },
-                    { path: 'msa', component: MsaComponent },
+                    { path: 'info', component: AddClientInfoComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Add Client Information' } },
+                    { path: 'contact-info', component: AddClientContactInfoComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Add Client Contact Information' } },
+                    { path: 'documents', component: AddClientDocComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'Add Client Documents' } },
+                    { path: 'nda', component: NdaComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'NDA' } },
+                    { path: 'msa', component: MsaComponent, data: { auditModule: 'Project Management >> Clients', auditPage: 'MSA' } },
                 ],
             },
         ],
@@ -96,32 +100,33 @@ export default [
     {
         path: 'projects', component: ProjectsLayoutComponent,
         children: [
-            { path: 'active', component: ActiveProjectsComponent },
-            { path: 'inactive', component: InacitveProjectsComponent },
-            { path: 'hold', component: HoldProjectsComponent },
-            { path: 'add-resources', component: ResourceCreationComponent },
+            { path: 'active', component: ActiveProjectsComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Active Projects' } },
+            { path: 'inactive', component: InacitveProjectsComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Inactive Projects' } },
+            { path: 'hold', component: HoldProjectsComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Hold Projects' } },
+            { path: 'add-resources', component: ResourceCreationComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Add Resources' } },
             {
                 path: 'details', component: ProjectViewComponent,
                 children: [
                     { path: '', redirectTo: 'information', pathMatch: 'full' },
-                    { path: 'information', component: ProjectDetailesComponent },
-                    { path: 'contact-info', component: ProjectContactsComponent },
-                    { path: 'resources', component: ProjectResourcesComponent },
-                    { path: 'inactive-resources', component: ProjectInactiveResourcesComponent },
+                    { path: 'information', component: ProjectDetailesComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Project Information' } },
+                    { path: 'contact-info', component: ProjectContactsComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Project Contact Information' } },
+                    { path: 'resources', component: ProjectResourcesComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Project Resources' } },
+                    { path: 'inactive-resources', component: ProjectInactiveResourcesComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Inactive Resources' } },
+                    { path: 'waiting-for-approval-resources', component: ProjectWaitingForApprovalResourcesComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Waiting for Approval Resources' } },
                     {
-                        path: 'timesheet', component: ProjectTimesheetsComponent,
+                        path: 'timesheet', component: ProjectTimesheetsComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Project Timesheets' },
                         children: [
-                            { path: '', redirectTo: 'timesheet/summary', pathMatch: 'full' },
-                            { path: 'summary', component: ProjectTimesheetSummaryComponent },
-                            { path: 'detailed', component: ProjectTimesheetDetailedComponent },
-                            { path: 'resource-summary', component: ResourceViewSummaryComponent },
+                            { path: '', redirectTo: 'timesheet/summary', pathMatch: 'full', data: { auditModule: 'Project Management >> Projects', auditPage: 'Project Timesheet Summary' } },
+                            { path: 'summary', component: ProjectTimesheetSummaryComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Project Timesheet Summary' } },
+                            { path: 'detailed', component: ProjectTimesheetDetailedComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Project Timesheet Detailed' } },
+                            { path: 'resource-summary', component: ResourceViewSummaryComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Resource Summary' } },
                         ],
                     },
-                    { path: 'documents', component: ProjectDocumentsComponent },
-                    { path: 'inactivedocuments', component: InactiveProjectDocumentsComponent },
-                    { path: 'phases', component: ProjectPhasesComponent },
-                    { path: 'inactive-phases', component: InactivePhasesProjectComponent },
-                    { path: 'hold-phases', component: PhasesHoldComponent }
+                    { path: 'documents', component: ProjectDocumentsComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Project Documents' } },
+                    { path: 'inactivedocuments', component: InactiveProjectDocumentsComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Inactive Project Documents' } },
+                    { path: 'phases', component: ProjectPhasesComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Project Phases' } },
+                    { path: 'inactive-phases', component: InactivePhasesProjectComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Inactive Project Phases' } },
+                    { path: 'hold-phases', component: PhasesHoldComponent, data: { auditModule: 'Project Management >> Projects', auditPage: 'Hold Project Phases' } }
                 ],
             }
         ],
@@ -129,16 +134,16 @@ export default [
     {
         path: 'timesheet', component: TimesheetsLayoutComponent,
         children: [
-            { path: '', component: TimeSheetViewComponent },
-            { path: 'mytimesheet', component: TimeSheetViewComponent },
-            { path: 'teamtimesheet', component: TeamTimesheetsComponent },
-            { path: 'summary', component: TimesheetsSummaryViewComponent },
-            { path: 'mysummary', component: TimesheetsSummaryViewComponent },
-            { path: 'resourcesummary', component: TimesheetsResourceSummaryComponent },
-            { path: 'bulk-upload', component: BulkImportComponent },
-            { path: 'bulk-export', component: BulkExportComponent },
-            { path: 'historylog', component: HistoryLogComponent },
-            { path: 'export-history', component: ExportHistoryComponent },
+            { path: '', component: TimeSheetViewComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'My Timesheet' } },
+            { path: 'mytimesheet', component: TimeSheetViewComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'My Timesheet' } },
+            { path: 'teamtimesheet', component: TeamTimesheetsComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Team Timesheet' } },
+            { path: 'summary', component: TimesheetsSummaryViewComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Timesheet Summary' } },
+            { path: 'mysummary', component: TimesheetsSummaryViewComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'My Timesheet Summary' } },
+            { path: 'resourcesummary', component: TimesheetsResourceSummaryComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Resource Summary' } },
+            { path: 'bulk-upload', component: BulkImportComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Bulk Upload' } },
+            { path: 'bulk-export', component: BulkExportComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Bulk Export' } },
+            { path: 'historylog', component: HistoryLogComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'History Log' } },
+            { path: 'export-history', component: ExportHistoryComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Export History' } },
         ],
     },
 ] as Route[];

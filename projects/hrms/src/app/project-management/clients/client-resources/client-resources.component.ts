@@ -76,7 +76,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   selectedEmployee: any;
   employeeFullname!: string;
   projectsDataDrown: Project[] = [];
-  loading: boolean = true;
+  loading: boolean = false;
   frequencyTypes = [
     { label: 'Per month', value: 'Per month' },
     { label: 'Per week', value: 'Per week' },
@@ -102,6 +102,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   loader: boolean | undefined;
   departmentIds: number[] = [];
   defaultPendingAuthorityId: any;
+  pendingAuthorityIdForUpdate: any = null;
   modalData: { title?: string; data?: any } = {};
   @ViewChild('reasonModal') reasonModal!: any;
   @ViewChild('extendModal') extendModal!: any;
@@ -126,8 +127,6 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     { label: 150, value: 150 },
     { label: 200, value: 200 }
   ];
-
-
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -152,7 +151,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       const clientID = params['id'];
       if (clientID) {
         this.clientID = parseInt(clientID);
-        this.getResourceData(this.clientID, this.searchValue);
+        // this.getResourceData(this.clientID, this.searchValue);
         this.getclientProjects(this.clientID);
         this.getClientsData(clientID);
       }
@@ -273,7 +272,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     }
     statusEffectiveDateControl?.updateValueAndValidity();
   }
-   onPageSizeChange(newPageSize: number) {
+  onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize;
     this.page = 1;
@@ -289,8 +288,6 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.selectedResources = [];
     this.getResourceData(this.clientID, this.searchValue);
   }
-
-
   getResourceData(id: any, searchTerm?: string) {
     let url = `ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true&pageNumber=${this.page}&pageSize=${this.pageSize}`;
     if (searchTerm) {
@@ -308,18 +305,26 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     if (this.selectedProjectIds?.length > 0) {
       url += `&projectIds=${this.selectedProjectIds.join(',')}`;
     }
+    this.loading = true;
     this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
         if (data?.data?.length > 0) {
-                  this.loading = false;
-
-          this.resourcesData = data.data;
+          this.loading = false;
+          this.resourcesData = Array.isArray(data?.data) ? data.data : [];
           this.collectionSize = data.pagination.totalRecords || 0;
+          this.resourcesData = this.resourcesData.map((item: any) => ({
+            ...item,
+            employee: {
+              ...item.employee,
+              profileUrl: this.getImageUrl(item.employee?.profileUrl)
+            }
+          }));
           this.filteredResourcesData = data.data;
         } else {
           this.resourcesData = [];
           this.filteredResourcesData = [];
         }
+        this.loading = false;
       },
       error: (reason: any) => {
         this.loading = false;
@@ -345,63 +350,32 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     phaseId: number,
     isPopupCall: boolean = false,
   ) {
-    const params: any = {
-      entityType: 'project',
-      entityRefId: projectId,
-    };
-    if (phaseId) {
-      params.phaseId = phaseId;
-    }
+    const params: any = { entityType: 'project', entityRefId: projectId };
+    if (phaseId) params.phaseId = phaseId;
+
     this.subscription = this.http
       .getDataIncludeParams('ProjectResource', params)
       .subscribe({
         next: (data: any) => {
-          if (isPopupCall) {
-            // DO NOT TOUCH TABLE DATA
-            const popupData = data.data ?? [];
-            const uniqueEmployees = Array.from(
-              new Map(popupData.map((r: any) => [r.employee.id, r])).values(),
-            );
+          const popupData = data.data ?? [];
+          const uniqueEmployees = Array.from(
+            new Map(popupData.map((r: any) => [r.employee.id, r])).values(),
+          );
+          this.resoucesDropDownData = (uniqueEmployees as any[]).map((r: any) => ({
+            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+            value: r.employee.id,
+          }));
+          this.defaultPendingAuthorityId = popupData[0]?.pendingApprovalAuthority?.id ?? null;
 
-            this.resoucesDropDownData = uniqueEmployees.map((r: any) => ({
-              label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-              value: r.employee.id,
-            }));
-            this.defaultPendingAuthorityId =
-              popupData[0]?.pendingApprovalAuthority?.id ?? null;
-          } else {
-            // NORMAL CALL - UPDATE TABLE DATA
-            this.resourcesData = Array.isArray(data?.data) ? data.data : [];
-            this.resourcesData = this.resourcesData.map((item: any) => ({
-              ...item,
-              employee: {
-                ...item.employee,
-                profileUrl: this.getImageUrl(item.employee?.profileUrl)
-              }
-            }));
-
-            this.resoucesDropDownData = this.resourcesData
-              .filter((r) => r.employee.id)
-              .map((r) => ({
-                label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-                value: r.employee.id,
-              }));
-            this.defaultPendingAuthorityId =
-              this.resourcesData[0]?.pendingApprovalAuthority?.id ?? null;
-          }
-          const authorityControl =
-            this.updateResourceForm.get('resourceAuthority');
+          const authorityControl = this.updateResourceForm.get('resourceAuthority');
           if (this.resoucesDropDownData.length === 0) {
             authorityControl?.disable();
             authorityControl?.reset();
           } else {
+            const authorityToPatch = this.pendingAuthorityIdForUpdate ?? this.defaultPendingAuthorityId ?? null;
+            const isInDropdown = this.resoucesDropDownData.some((r: any) => r.value === authorityToPatch);
+            authorityControl?.patchValue(isInDropdown ? authorityToPatch : null);
             authorityControl?.enable();
-
-            // Auto-patch default only if user has not selected anything before
-            const hasExistingValue = authorityControl?.value;
-            if (!hasExistingValue && this.defaultPendingAuthorityId) {
-              authorityControl?.patchValue(this.defaultPendingAuthorityId);
-            }
           }
         },
         error: (reason: any) => {
@@ -429,26 +403,12 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
 
   onPhaseChange(event: any) {
     if (!event?.value) return;
-    const selectedPhaseId = event.value;
-    console.log(selectedPhaseId);
-
-    const selectedPhase = this.phaseDropdown.find(
-      (p) => p.value === selectedPhaseId,
-    );
+    const selectedPhase = this.phaseDropdown.find((p) => p.value === event.value);
     if (selectedPhase) {
       this.selectedPhaseId = selectedPhase.value;
       this.projectStartDate = selectedPhase.startDate ?? null;
       this.projectEndDate = selectedPhase.endDate ?? null;
-      const phaseAuthority = selectedPhase?.pendingApprovalAuthority ?? null;
-      const authorityControl = this.updateResourceForm.get('resourceAuthority');
-      if (authorityControl) {
-        authorityControl.patchValue(phaseAuthority);
-        if (phaseAuthority) {
-          authorityControl.disable();
-        } else {
-          authorityControl.enable();
-        }
-      }
+      this.pendingAuthorityIdForUpdate = selectedPhase?.pendingApprovalAuthority ?? null;
       this.updateResourceForm.get('startDate')?.updateValueAndValidity();
       this.updateResourceForm.get('endDate')?.updateValueAndValidity();
       this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId, true);
@@ -646,73 +606,52 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   openModal(content: any, size: any, data: any) {
     this.selectedResource = data;
     this.ResourceId = data?.resourceId;
-    this.modalService.open(content, {
-      centered: true,
-      size: size,
-      backdrop: 'static',
-    });
+    this.modalService.open(content, { centered: true, size, backdrop: 'static' });
+
     this.projectId = data?.project?.projectId;
-    const selectedProject = this.projectsDataDrown.find(
-      (p) => p.projectId === this.projectId,
-    );
+    const selectedProject = this.projectsDataDrown.find((p) => p.projectId === this.projectId);
     if (selectedProject) {
-      this.departmentIds =
-        selectedProject?.departments?.map((d: any) => d.departmentId) || [];
+      this.departmentIds = selectedProject?.departments?.map((d: any) => d.departmentId) || [];
       this.projectStartDate = this.formatDateToLocal(selectedProject.startDate);
       this.projectEndDate = this.formatDateToLocal(selectedProject.endDate);
     }
     this.getJobrole();
     this.getPhaseDataByProject(this.projectId);
-    if (data?.project?.projectId) {
-      this.getProjects(data.project.projectId);
-    }
-    setTimeout(() => {
-      const selectedRole = this.projectRoleDropdown.find(
-        (r: any) => r.value.roleId === data.projectRoleId,
-      );
-      const selectedPhase = this.phaseDropdown.find(
-        (r: any) => r.value === data?.phase?.phaseId,
-      );
-      if (selectedPhase) {
-        this.selectedPhaseId = selectedPhase.value;
-        this.getResourceDataByPhaseId(
-          this.projectId,
-          this.selectedPhaseId,
-          true,
-        );
-      }
-      setTimeout(() => {
-        const authorityFromResource = this.resoucesDropDownData.find(
-          (r: any) => r.value === data?.pendingApprovalAuthority?.id,
-        );
-        let authorityValueToPatch = authorityFromResource?.value ?? null;
+    if (data?.project?.projectId) this.getProjects(data.project.projectId);
 
-        if (!authorityValueToPatch && selectedPhase?.pendingApprovalAuthority) {
-          authorityValueToPatch = selectedPhase.pendingApprovalAuthority;
-        }
-        this.updateResourceForm.patchValue({
-          resourceName: data?.employee?.id,
-          resourceEmail: data?.employee?.workMail,
-          overtimeEligible: data.overtimeEligibile,
-          resourcePhone: data?.employee
-            ? `${data.employee.mobilePhoneCountryCode ?? ''}
-          ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
-            : '-',
-          designation: data?.employee?.designation,
-          resourceAllocationhrs: data.allocatedHours || null,
-          projectName: data?.project?.projectId,
-          projectType: data?.project?.projectType,
-          startDate: this.formatDateToLocal(data?.startDate),
-          endDate: this.formatDateToLocal(data?.endDate),
-          billable: data.billable,
-          allowweekendWork: data.weekendWorkAllowed,
-          resourceRole: selectedRole ? selectedRole.value : null,
-          color: data?.meta?.graphData?.color,
-          resourcePhase: selectedPhase ? selectedPhase.value : null,
-          resourceAuthority: authorityValueToPatch,
-        });
-      }, 100);
-    }, 100);
+    const selectedPhase = this.phaseDropdown.find((r: any) => r.value === data?.phase?.phaseId);
+
+    // Store authority to pre-select after async dropdown population
+    this.pendingAuthorityIdForUpdate = data?.pendingApprovalAuthority?.id
+      ?? selectedPhase?.pendingApprovalAuthority
+      ?? null;
+
+    if (selectedPhase) {
+      this.selectedPhaseId = selectedPhase.value;
+      this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId, true);
+    }
+
+    const selectedRole = this.projectRoleDropdown.find((r: any) => r.value.roleId === data.projectRoleId);
+    this.updateResourceForm.patchValue({
+      resourceName: data?.employee?.id,
+      resourceEmail: data?.employee?.workMail,
+      overtimeEligible: data.overtimeEligibile,
+      resourcePhone: data?.employee
+        ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
+        : '-',
+      designation: data?.employee?.designation,
+      resourceAllocationhrs: data.allocatedHours || null,
+      projectName: data?.project?.projectId,
+      projectType: data?.project?.projectType,
+      startDate: this.formatDateToLocal(data?.startDate),
+      endDate: this.formatDateToLocal(data?.endDate),
+      billable: data.billable,
+      allowweekendWork: data.weekendWorkAllowed,
+      resourceRole: selectedRole ? selectedRole.value : null,
+      color: data?.meta?.graphData?.color,
+      resourcePhase: selectedPhase ? selectedPhase.value : null,
+      resourceAuthority: null,
+    });
   }
 
   updateResources() {
@@ -865,6 +804,17 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     if (!dateString) return null;
     return new Date(dateString); // Converts ISO string to Date object
   }
+
+  private readonly ACTIVE_STATUSES = ['active', 'assigned', 'waiting for approval'];
+
+  isApprovalAuthority(employeeId: number): boolean {
+    return this.resourcesData.some(
+      (r: any) =>
+        r.pendingApprovalAuthority?.id === employeeId &&
+        this.ACTIVE_STATUSES.includes(r.status?.toLowerCase())
+    );
+  }
+
   handleAction(action: string, data: any) {
     const config = this.confirmationMessages[action];
     if (!config) return;
@@ -876,6 +826,15 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
         this.projectStartDate = phaseDate.startDate ?? null;
         this.projectEndDate = phaseDate.endDate ?? null;
       }
+    } else if (action === 'Release' || action === 'Release Resource') {
+      if (this.isApprovalAuthority(data?.employee?.id)) {
+        this.conformationPopup.openErrorModal(
+          'The selected resource is currently assigned as an Approval Authority. Before releasing this resource, please reassign the Approval Authority for all resources reporting to them.'
+        );
+        return;
+      }
+      this.openReasonModal(config.title, data);
+      this.resourcestartdate = this.formatDateToLocalforresource(data?.startDate);
     } else {
       this.openReasonModal(config.title, data);
       this.resourcestartdate = this.formatDateToLocalforresource(
@@ -940,6 +899,16 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     //   return;
     // }
     if (this.selectedResources && this.selectedResources.length > 0) {
+      const blockedResources = this.selectedResources.filter((item: any) =>
+        this.isApprovalAuthority(item.employee?.id)
+      );
+      if (blockedResources.length > 0) {
+        const names = blockedResources.map((r: any) => r.employee?.name).join(', ');
+        this.conformationPopup.openErrorModal(
+          `The following resource(s) are currently assigned as an Approval Authority: ${names}. Before releasing, please reassign the Approval Authority for all resources reporting to them.`
+        );
+        return;
+      }
       let errorShown = false;
       let completed = 0;
       this.spinnerLoader = true;

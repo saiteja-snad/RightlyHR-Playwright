@@ -1,3 +1,62 @@
 .custom-color {
   width: 60px !important;
 }
+
+.popup-table-wrapper {
+  overflow-x: auto;
+}
+
+.popup-table-scroll-container {
+  min-width: 700px;
+}
+
+.popup-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    background-color: var(--table-header-bg, #f5f5f5);
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  td {
+    padding: 6px 8px;
+    vertical-align: top;
+    border-bottom: 1px solid #f0f0f0;
+
+    input.form-control {
+      min-width: 110px;
+    }
+
+    .custom-p-select-content {
+      min-width: 140px;
+    }
+  }
+}
+
+::ng-deep .custom-popup-table {
+  height: 25dvh !important;
+  max-height: 40dvh !important;
+  border: 1px solid var(--content-border-color);
+
+  .p-checkbox-checked .p-checkbox-box {
+    border-color: var(--primary-color) !important;
+    background: var(--primary-color) !important;
+  }
+}
+
+::ng-deep.p-select-option {
+  font-size: 12px !important;
+}
+
+.delete-btn {
+  background-color: var(--error-msg-color) !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  padding: 0.25rem 1.25rem !important;
+}

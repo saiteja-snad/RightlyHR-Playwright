@@ -104,7 +104,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.getAllTeammembersList();
     this.getEmployee();
-    this.emppersonalinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');    
+    this.emppersonalinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     this.getTraineeofferdetails();
     this.assignHeading();
     this.updateModuleInfo();
@@ -711,7 +711,7 @@ getinitateoffboardingdata(){
       next: (data: any) => {
         this.getTraineeOfferDetails = data;
         console.log(data);
-        
+
       },
       error: (err: any) => {
         console.log(err);
@@ -863,6 +863,7 @@ getinitateoffboardingdata(){
     'job-details': 'Job Info',
     'compensation-details': 'Compensations',
     'no-due-clearance-details': 'No Due Clearance',
+    'nodue-form-details': 'No Due Clearance Form',
     'probation-details': 'Probation Info',
     'separation-details': 'Separation Request',
     'separation-requests': 'Separation Request',
@@ -1077,6 +1078,8 @@ getinitateoffboardingdata(){
       '/personalinfo/job/separation-details/exit-feedback-details':
         MODULE_INFOS.JOB_MODULE_EXIT_FEEDBACK_MODULE_INFO,
       '/personalinfo/job/no-due-clearance-details':
+        MODULE_INFOS.JOB_MODULE_NO_DUE_CLEARANCE_DETAILS_MODULE_INFO,
+      '/personalinfo/job/nodue-form-details':
         MODULE_INFOS.JOB_MODULE_NO_DUE_CLEARANCE_DETAILS_MODULE_INFO,
       '/personalinfo/job/probation-details':
         MODULE_INFOS.JOB_MODULE_PROBATION_DETAILS_MODULE_INFO,

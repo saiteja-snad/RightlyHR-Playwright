@@ -7,3 +7,6 @@
   justify-content: center;
 }
 
+::ng-deep .p-select.ng-invalid.ng-dirty .p-select-label.p-placeholder {
+    color: #64748b !important;
+}

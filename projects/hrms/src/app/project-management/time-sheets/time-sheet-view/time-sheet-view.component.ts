@@ -3591,7 +3591,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     console.log(day);
     console.log(day.get('description')?.value)
     console.log(day.get('taskName')?.value)
-    this.approvardetails = day.value.pendingApprovalDetails;
+    this.approvardetails = day.value.pendingApprovalDetails || {};
     this.approvardetails.description = day.get('description')?.value
   }
 
@@ -3604,8 +3604,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (s.includes('draft')) return 'badge-draft';
     return 'badge-default';
    }
-  
-  
+
+
     validateCloneDateRanges() {
     this.cloneErrorMessage = null;
     this.targetAllDaysBlockedError = false;
@@ -3643,7 +3643,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

@@ -1,3 +1,5 @@
+import { applyLetterPageSetup, LETTER_MARGINS } from './letter-builder.utils';
+
 export interface ContractorLetterData {
   title?: string;
   firstName: string;
@@ -228,20 +230,21 @@ export function buildContractorLetterDoc(data: ContractorLetterData): any {
   }
 
   const styledContent = stampFont(content);
-  const topMargin = data.backgroundImageBase64 ? 120 : 50;
-  const bottomMargin = data.backgroundImageBase64 ? 120 : 50;
+  const isSoftCopy = !!data.backgroundImageBase64;
+  const margins = isSoftCopy ? LETTER_MARGINS.softCopy : LETTER_MARGINS.hardCopy;
 
   const docDef: any = {
     pageSize: 'A4',
-    pageMargins: [60, topMargin, 60, bottomMargin],
+    pageMargins: [margins.left, margins.top, margins.right, margins.bottom],
     defaultStyle: { font: bodyFont, fontSize: PX(13), color: '#000' },
     content: styledContent,
   };
 
-  if (data.backgroundImageBase64) {
-    docDef.images = { letterBg: data.backgroundImageBase64 };
-    docDef.background = () => ({ image: 'letterBg', width: 620, height: 870, absolutePosition: { x: -12, y: -14 } });
-  }
+  applyLetterPageSetup(docDef, {
+    backgroundImageBase64: data.backgroundImageBase64,
+    headerLogoBase64: data.headerLogoBase64,
+    bodyFont,
+  });
 
   return docDef;
 }

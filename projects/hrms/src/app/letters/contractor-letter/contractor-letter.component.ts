@@ -32,7 +32,6 @@ import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-fil
   imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, Editor, LettersheaderComponent, LetterFooterComponent],
   templateUrl: './contractor-letter.component.html',
   styleUrl: './contractor-letter.component.scss',
-  encapsulation: ViewEncapsulation.None,
 })
 
 export class ContractorLetterComponent implements OnInit, OnDestroy {
@@ -113,6 +112,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
+
   esic: { name: string, value: boolean }[] = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
@@ -136,8 +136,8 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
   expiryDatevalidate: any;
   selectedSymbol: string = '';
 
-  constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, 
-    private http: HttpService, private authService: AuthService, private conformationPopup: OpenModalService, 
+  constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder,
+    private http: HttpService, private authService: AuthService, private conformationPopup: OpenModalService,
     public formvalidators: FormValidationService, private sanitizer: DomSanitizer) {
     this.initializeForm();
   }
@@ -203,7 +203,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
       address: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
-      Copys: [null],
+       documentType: ['', Validators.required],
       offerExpiryDate: ['', Validators.required],
       authorityid: [null, Validators.required],
       frequency: [null, Validators.required],
@@ -229,8 +229,8 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
     const data = this.prospectiveEmpData;
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_ContractorLetter.pdf`;
        const isSoftCopy = true;
-   
-   
+
+
        const [assets, pm] = await Promise.all([
          fetchLetterAssets(isSoftCopy),
          setupLetterPdfMake(),
@@ -286,7 +286,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
     const data = this.prospectiveEmpData;
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_ContractorLetter.pdf`;
        const isSoftCopy = true;
-  
+
        const [assets, pm] = await Promise.all([
          fetchLetterAssets(isSoftCopy),
          setupLetterPdfMake(),
@@ -391,7 +391,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
           };
         });
@@ -917,7 +917,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
     this.prospectiveEmpData.dob = this.employeeaddress.dob,
     this.prospectiveEmpData.bloodGroup = this.employeeaddress.bloodGroup,
     this.prospectiveEmpData.trainingEndDate = data.trainingEndDate,
-    this.prospectiveEmpData.dateOfJoining = this.employeeStatus != null ? 
+    this.prospectiveEmpData.dateOfJoining = this.employeeStatus != null ?
     this.prospectiveEmpData.dateOfJoining : this.employeeForm.get('dateOfJoining')?.value,
     this.prospectiveEmpData.substatus = 'Offer Letter Generated',
     this.prospectiveEmpData.password = this.employeeaddress.password
@@ -1187,8 +1187,8 @@ export class ContractorLetterComponent implements OnInit, OnDestroy {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName ?? ''} 
-      requested you for the approval of the offer letter of employee ${this.prospectiveEmpData?.firstName} ${this.prospectiveEmpData?.middleName ?? ''} 
+      notificationType: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName ?? ''}
+      requested you for the approval of the offer letter of employee ${this.prospectiveEmpData?.firstName} ${this.prospectiveEmpData?.middleName ?? ''}
       ${this.prospectiveEmpData?.lastName} Offer Letter`,
       empId: loggedInUser.employeeId,
     };

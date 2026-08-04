@@ -2003,12 +2003,12 @@ input[type="file"] {
 // styles for expenses
 .custom-table {
     width: 100%;
-    overflow: auto;
+    // overflow: auto;
     background-color: var(--white-color);
     border-radius: 1.2rem;
     position: relative;
     border: 1px solid var(--table-main-content-border-color);
-       
+
 
     thead {
         top: 0;
@@ -3654,7 +3654,7 @@ input[type=number]::-webkit-outer-spin-button {
 .custom-table-content .p-datatable {
     width: 100%;
     height: calc(96dvh - 10rem);
-    
+
     .p-datatable-table {
         width: 100%;
         min-width: max-content;

@@ -36,7 +36,7 @@ import { Table } from 'primeng/table';
 
 export class ProjectResourcesComponent implements OnInit, OnDestroy {
   @ViewChild('resourcesTable') resourcesTable!: Table;
-  
+
   searchValue: string = '';
   resourcesData = [] as IResource[];
   filteredResources = [] as IResource[];
@@ -113,8 +113,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   phaseUsedHoursForUpdate: number | null = null;
   errorMessage: any;
 
-  constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal, 
-    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
+  constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
+    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
     public formValidation: FormValidationsService,private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
@@ -175,7 +175,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     if (this.searchTimeout) {
       clearTimeout(this.searchTimeout);
     }
-    
+
     // Debounce search to avoid too many API calls
     this.searchTimeout = setTimeout(() => {
       this.getResourceData(this.projectId, undefined, false, this.searchValue, this.page, this.pageSize);
@@ -558,7 +558,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     isPopupCall: boolean = false,
     searchTerm?: string,
     pageNumber?: any,
-    pageSize?: any 
+    pageSize?: any
   ) {
     const params: any = {
       entityType: 'project',
@@ -577,10 +577,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       params.searchTerm = searchTerm.trim();
     }
 
-    // Add sorting parameters
     if (this.currentSortField && this.currentSortOrder !== 0) {
-      params.sortBy = this.currentSortField;
-      params.sortOrder = this.currentSortOrder === 1 ? 'asc' : 'desc';
+      params.Sorts = `${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}`;
     }
 
     if (this.selectedRoleIds?.length > 0 && !isPopupCall) {
@@ -604,23 +602,26 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.loader = false;
           console.log('API Response:', data);
-        
+
           this.collectionSize = data?.pagination?.totalRecords || 0;
             // NORMAL CALL - UPDATE TABLE DATA
             this.loading = false;
             this.resourcesData = Array.isArray(data?.data) ? data.data : [];
             this.resourcesData = this.resourcesData.map((item: any) => ({
               ...item,
-              employee: {
+              employee: item.employee ? {
                 ...item.employee,
-                profileUrl: this.getImageUrl(item.employee?.profileUrl)
-              }
+                profileUrl: this.getImageUrl(item.employee.profileUrl)
+              } : item.employee,
             }));
-
-      
+            this.filteredResources = [...this.resourcesData];
+            if (this.selectedResources.length > 0) {
+              this.reorderRows();
+              this.filteredResources = [...this.resourcesData];
+            }
         },
         error: (reason: any) => {
-          this.loader = false;  
+          this.loader = false;
           console.error(reason);
         },
       });
@@ -638,6 +639,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       status: 'active,assigned'
 
     };
+
 
     if (phaseId) {
       params.phaseId = phaseId;
@@ -659,6 +661,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {
+            console.log('API Data:', data.data);
+console.log('Resources:', this.resourcesData);
+console.log('Filtered:', this.filteredResources);
         this.collectionSize = data?.pagination?.totalRecords || 0;
         if (isPopupCall) {
           // DO NOT TOUCH TABLE DATA
@@ -690,17 +695,25 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
           authorityControl?.enable();
           } else {
             // NORMAL CALL - UPDATE TABLE DATA
+            this.resourcesData = Array.isArray(data?.data) ? data.data : [];
+            this.resourcesData = this.resourcesData.map((item: any) => ({
+              ...item,
+              employee: item.employee ? {
+                ...item.employee,
+                profileUrl: this.getImageUrl(item.employee.profileUrl)
+              } : item.employee,
+            }));
             this.filteredResources = [...this.resourcesData];
 
             this.resoucesDropDownData = this.resourcesData
-              .filter((r) => r.employee.id)
+              .filter((r) => r.employee?.id)
               .map((r) => ({
                 label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
                 value: r.employee.id,
               }));
             this.defaultPendingAuthorityId =
               this.resourcesData[0]?.pendingApprovalAuthority?.id ?? null;
-            
+
             console.log('Processed data - Resources:', this.resourcesData.length, 'Total:', this.collectionSize);
           }
           const authorityControl =
@@ -717,7 +730,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
               authorityControl?.patchValue(this.defaultPendingAuthorityId);
             }
           }
-          
+
           this.loading = false;
         },
         error: (reason: any) => {
@@ -774,7 +787,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
       overtimeEligible: data.overtimeEligibile,
-      resourcePhone: data?.employee ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() 
+      resourcePhone: data?.employee ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim()
       || '-' : '-',
       designation: data?.employee?.designation,
       resourceAllocationhrs: data.allocatedHours || null,
@@ -852,7 +865,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.selectedEmployee = this.employeeDetails.find(employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
-      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} 
+      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''}
       ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-' : '-',
     });
     this.getJobdetails(this.selectedEmployee?.employeeId);
@@ -1141,7 +1154,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     if (action === 'Update') {
       this.openModal(this.updateResourcemodal, 'lg', data);
-    
+
       const phaseDate = data?.phase;
       if (phaseDate) {
         this.projectStartDate = phaseDate.startDate ?? null;

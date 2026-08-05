@@ -362,6 +362,7 @@ export class InactiveAssetsListComponent {
     if (formdata.valid) {
       // Convert dates to ISO format
       let purchaseDate = new Date(formdata.value.purchasedate).toISOString();
+      const assetCategory = this.getAssetCategoryName(formdata.value.assetCategory);
 
       let currentDate = new Date().toISOString().split('T')[0];
       // Create the initial payload for the asset
@@ -370,7 +371,7 @@ export class InactiveAssetsListComponent {
           id: storeassetid,
           assetid: this.assetid,
           assetModel: formdata.value.assetModel,
-          assetCategory: formdata.value.assetCategory,
+          assetCategory,
           assetSubCategory: formdata.value.assetSubCategory,
           identificationNumber: formdata.value.assetID,
           serialNumber: formdata.value.serialnumber,
@@ -423,6 +424,15 @@ export class InactiveAssetsListComponent {
     } else {
       console.log('Form is invalid');
     }
+  }
+
+  private getAssetCategoryName(assetCategoryValue: string | number | null | undefined): string {
+    if (typeof assetCategoryValue === 'string' && Number.isNaN(Number(assetCategoryValue))) {
+      return assetCategoryValue;
+    }
+
+    const selectedCategory = this.assetCategorys.find((category) => category.id === Number(assetCategoryValue));
+    return selectedCategory?.name ?? this.selectedAsset?.assetCategory ?? '';
   }
 
 
@@ -754,7 +764,7 @@ export class InactiveAssetsListComponent {
 
   customSort(event: any): void {
     const field = event.field;
-    
+
     this.updateSortState(field, event);
     if (this.currentSortOrder === 0) return; // Reset case handled in updateSortState
 
@@ -790,18 +800,18 @@ export class InactiveAssetsListComponent {
 
   private compareValues(a: any, b: any, field: string, order: number): number {
     const [val1, val2] = this.extractFieldValues(a, b, field);
-    
+
     const dateFields = ['purchaseDate', 'allocatedDate'];
     const numericFields = ['serialNumber', 'assetModel'];
-    
+
     if (dateFields.includes(field)) {
       return this.compareDates(val1, val2, order);
     }
-    
+
     if (numericFields.includes(field)) {
       return this.compareNumericStrings(val1, val2, order);
     }
-    
+
     return this.compareStrings(val1, val2, order);
   }
 
@@ -827,21 +837,21 @@ export class InactiveAssetsListComponent {
   private compareNumericStrings(val1: any, val2: any, order: number): number {
     const str1 = String(val1 ?? '').trim();
     const str2 = String(val2 ?? '').trim();
-    
+
     const isNum1 = /^\d+$/.test(str1);
     const isNum2 = /^\d+$/.test(str2);
-    
+
     if (isNum1 && isNum2) {
       return order * (parseInt(str1) - parseInt(str2));
     }
-    
+
     if (isNum1 !== isNum2) {
       return order * (isNum1 ? -1 : 1); // Numeric values first
     }
-    
-    return order * str1.localeCompare(str2, undefined, { 
-      numeric: true, 
-      sensitivity: 'base' 
+
+    return order * str1.localeCompare(str2, undefined, {
+      numeric: true,
+      sensitivity: 'base'
     });
   }
 

@@ -248,6 +248,7 @@ subCategoryDetails=[] as any;
   }
 
   onTicketRaisedForChange(event: any) {
+    console.log(this.allEmployeesself);
     let value = event;
     this.ticketFor = value;
     this.setConditionalValidators();
@@ -465,11 +466,23 @@ subCategoryDetails=[] as any;
     });
   }
 
-  openModal(content: any) {
-    this.ticketFor = 'Self';
-    this.itSupportForm.patchValue({ employee: 'Self' });
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
-  }
+openModal(content: any) {
+  this.ticketFor = 'Self';
+
+  this.itSupportForm.reset();
+
+  this.itSupportForm.patchValue({
+    employee: 'Self'
+  });
+
+  this.onTicketRaisedForChange('Self');
+
+  this.modalService.open(content, {
+    centered: true,
+    size: 'lg',
+    backdrop: 'static'
+  });
+}
 
   cleardata() {
     this.ngOnInit();

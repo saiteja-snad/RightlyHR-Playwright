@@ -375,8 +375,8 @@
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary "
                         (click)="opendeletepopup(updateconformation)">{{'Cancel' | translate }}</button>
-                    <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
-                                   ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
+                    <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid
+                                   ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) ||
                                    (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
                         {{'Update' | translate }}
                     </button>

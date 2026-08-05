@@ -93,28 +93,45 @@ export class ProjectManagementApprovalTabsComponent {
   getAllPendingApprovalsCount(updateAll: boolean = false) {
     this.loading = true;
     const employeeId = Number.parseInt(this.LOGIN.employeeId);
-    this.http.getData(`PendingApproval/onboard-requests-count?month=${this.selectedMonth}&year=${this.selectedYear}&EmployeeId=${employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response: any) => {
-        if (response.success) {
-          const modules = response.data.modules;
-          const moduleMap = new Map(modules.map((m: any) => [m.name, m.count]));
+    const onboardCount$ = this.http.getData(`PendingApproval/onboard-requests-count?month=${this.selectedMonth}&year=${this.selectedYear}&EmployeeId=${employeeId}`).pipe(takeUntil(this.destroy$));
+    const approvalCounts$ = this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${employeeId}`).pipe(takeUntil(this.destroy$));
 
-          if (updateAll) {
-            const mapped = this.navLinks.map((link: NavLink) => ({
-              ...link,
-              count: Number(moduleMap.get(link.label)) || 0,
-            }));
-            const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
-              .some(m => m.moduleKey === this.tabsKey);
-            this.navLinks = hasSavedPref ? mapped : mapped.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
-            this.filteredNavLinks = [...this.navLinks];
-          } else {
-            const activeLink = this.navLinks.find((link: NavLink) => this.isActiveRoute(link.route));
-            if (activeLink) {
-              activeLink.count = Number(moduleMap.get(activeLink.label)) || 0;
-              const filteredLink = this.filteredNavLinks.find(l => l.label === activeLink.label);
-              if (filteredLink) filteredLink.count = activeLink.count;
-            }
+    combineLatest([onboardCount$, approvalCounts$]).subscribe({
+      next: ([onboardResponse, approvalResponse]: any) => {
+        let resourceApprovalCount = 0;
+        if (onboardResponse?.success) {
+          const modules = onboardResponse.data?.modules ?? [];
+          const resourceModule = modules.find((m: any) => m.name === 'Resource Approval');
+          resourceApprovalCount = Number(resourceModule?.count || 0);
+        }
+
+        const approvalCounts: any[] = Array.isArray(approvalResponse) ? approvalResponse : [];
+        const timesheetEntry = approvalCounts.find((x: any) => x.moduleId === 30);
+        const timesheetCount = Number(timesheetEntry?.totalCount || 0);
+
+        const timesheetTab = this.navLinks.find((l: NavLink) => l.label === 'Timesheets');
+        const resourceTab = this.navLinks.find((l: NavLink) => l.label === 'Resource Approval');
+
+        if (updateAll) {
+          const mapped = this.navLinks.map((link: NavLink) => {
+            if (link.label === 'Timesheets') return { ...link, count: timesheetCount };
+            if (link.label === 'Resource Approval') return { ...link, count: resourceApprovalCount };
+            return { ...link, count: link.count ?? 0 };
+          });
+          const hasSavedPref = (this.menuOrderService.preferenceV2()?.tabs?.modules ?? [])
+            .some(m => m.moduleKey === this.tabsKey);
+          this.navLinks = hasSavedPref ? mapped : mapped.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+          this.filteredNavLinks = [...this.navLinks];
+        } else {
+          if (timesheetTab) {
+            timesheetTab.count = timesheetCount;
+            const filteredTimesheet = this.filteredNavLinks.find(l => l.label === 'Timesheets');
+            if (filteredTimesheet) filteredTimesheet.count = timesheetCount;
+          }
+          if (resourceTab) {
+            resourceTab.count = resourceApprovalCount;
+            const filteredResource = this.filteredNavLinks.find(l => l.label === 'Resource Approval');
+            if (filteredResource) filteredResource.count = resourceApprovalCount;
           }
         }
         this.loading = false;

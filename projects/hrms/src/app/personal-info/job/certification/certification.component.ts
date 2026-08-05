@@ -177,24 +177,32 @@ export class CertificationComponent implements OnInit, OnDestroy {
   }
 
   onSelectBankProofDownload(file: any) {
-    this.subscription = this.http
-      .DownloadDataWithQuery('FileSystem/Downloadfile', file.attachment)
-      .subscribe({
-        next: (res: any) => {
-          let fileName = res.headers
-            .get('content-disposition')
-            ?.split(':')[1]
-            .split('=')[1];
-          let blob: Blob = res.body as Blob;
-          let a = document.createElement('a');
-          a.href = window.URL.createObjectURL(blob);
-          let filename =
-            file.attachment.split('/')[file.attachment.split('/').length - 1];
-          a.download = filename;
-          a.click();
-        },
-        error: (reason) => console.log(reason),
-      });
+  if (!file?.attachment) {
+    this.conformationPopup.openErrorModal('Attachment not found.');
+    return;
+  }
+
+  this.subscription = this.http
+    .DownloadDataWithQuery('FileSystem/Downloadfile', file.attachment)
+    .subscribe({
+      next: (res: any) => {
+        const blob = res.body as Blob;
+
+        const a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+
+        const filename = file.attachment.split('/').pop() || 'download';
+
+        a.download = filename;
+        a.click();
+
+        window.URL.revokeObjectURL(a.href);
+      },
+      error: (reason) => {
+        console.error('Download failed:', reason);
+        this.conformationPopup.openErrorModal('Failed to download the attachment.');
+      },
+    });
   }
 
 
@@ -233,7 +241,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
 
 
   }
- 
+
   resetForms() {
     this.certificationForm.get('attachment')?.reset();
     this.certificationForm.get('attachment')?.markAsUntouched();
@@ -346,7 +354,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
 
   customSort(event: any): void {
     const field = event.field;
-    
+
     // Track current sort state for the clicked field
     if (this.currentSortField === field) {
       // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
@@ -388,7 +396,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
         if (!val1 && !val2) return 0;
         if (!val1) return event.order * 1; // null dates go to end
         if (!val2) return event.order * -1;
-        
+
         const date1 = new Date(val1);
         const date2 = new Date(val2);
         return event.order * (date1.getTime() - date2.getTime());

@@ -56,7 +56,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.initializeBankDetailsupdateForm()
     this.getbanknames()
     this.getFieldsApprovalStatus();
-    
+
   }
 
 
@@ -302,17 +302,31 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
 
   //download Functionality
   onSelectBankProofDownload(file: any) {
-    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.docUrl).subscribe({
+     if (!file?.docUrl) {
+    this.conformationPopup.openErrorModal('Attachment not found.');
+    return;
+  }
+
+  this.subscription = this.http
+    .DownloadDataWithQuery('FileSystem/Downloadfile', file.docUrl)
+    .subscribe({
       next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
-        let blob: Blob = res.body as Blob;
-        let a = document.createElement('a');
+        const blob = res.body as Blob;
+
+        const a = document.createElement('a');
         a.href = window.URL.createObjectURL(blob);
-        let filename = file.docUrl.split('/')[file.docUrl.split('/').length - 1];
+
+        const filename = file.docUrl.split('/').pop() || 'download';
+
         a.download = filename;
         a.click();
+
+        window.URL.revokeObjectURL(a.href);
       },
-      error: (reason) => console.log(reason),
+      error: (reason) => {
+        console.error('Download failed:', reason);
+        this.conformationPopup.openErrorModal('Failed to download the attachment.');
+      },
     });
   }
 
@@ -431,7 +445,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     console.error('Bank ID is not set. Cannot delete bank details.');
     return;
   }
- 
+
   const payload = {
     bankId: this.bankid,
     empId: this.empinfo.employeeId,    // Set from logged-in user context
@@ -440,7 +454,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     moduleName: "Bank Info",
     displayName: "Personal"
   };
- 
+
   this.subscription = this.http.postdata(`BankDetail/delete`, payload).subscribe({
     next: () => {
       this.getbankempid(); // Refresh bank list
@@ -517,7 +531,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
 
   customSort(event: any): void {
     const field = event.field;
-    
+
     // Track current sort state for the clicked field
     if (this.currentSortField === field) {
       // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)

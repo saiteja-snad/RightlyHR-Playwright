@@ -203,9 +203,9 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
         this.deskheaderpending = (data.data as Entity[]).filter(
           item =>
             item.approvalHeader.status !== 'Processed' &&
-            item.approvalHeader.status !== 'Rejected' &&
-            item.approvalHeader.status !== 'Approved'
+            item.approvalHeader.status !== 'Rejected'
         );
+        console.log(this.deskheaderpending);
         this.originalData = [...this.deskheaderpending];
       }, error: (err) => {
         this.loading = false;
@@ -391,7 +391,7 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
         if (!val) return null;
         return moment(val).format('YYYY-MM-DD');
       });
-      
+
       const allSame = normalizedValues.every((val: any) => val === normalizedValues[0]);
       if (allSame) {
         // Reset sort state and prevent sorting
@@ -449,7 +449,7 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
       if (field.includes('Date') || field.includes('date')) {
         const date1 = moment(val1);
         const date2 = moment(val2);
-        
+
         return event.order * date1.diff(date2);
       }
 

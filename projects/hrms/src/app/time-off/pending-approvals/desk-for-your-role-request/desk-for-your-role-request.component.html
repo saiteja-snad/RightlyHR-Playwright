@@ -121,9 +121,11 @@
                 </tr>
             </ng-template>
 
-            <ng-template #noDataTemplate>
+            <ng-template pTemplate="emptymessage">
                 <tr>
-                    <app-no-data-found></app-no-data-found>
+                    <td [attr.colspan]="11">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
                 </tr>
             </ng-template>
 

@@ -150,8 +150,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
         this.deskheaderpending = (data.data as any[]).filter(
           item =>
             item.approvalHeader.status !== 'Processed' &&
-            item.approvalHeader.status !== 'Rejected' &&
-            item.approvalHeader.status !== 'Approved'
+            item.approvalHeader.status !== 'Rejected'
         );
         this.originalData = [...this.deskheaderpending];
         // this.filterPendingExpenses()

@@ -54,7 +54,7 @@
                     <th class="text-center">Action</th>
                     }
             </ng-template>
-            <ng-template #body let-exp>
+            <ng-template pTemplate="body" let-exp>
                 <tr>
 
                     <td>
@@ -124,9 +124,11 @@
                     }
                 </tr>
             </ng-template>
-            <ng-template #noDataTemplate>
+            <ng-template pTemplate="emptymessage">
                 <tr>
-                    <app-no-data-found></app-no-data-found>
+                    <td [attr.colspan]="11">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
                 </tr>
             </ng-template>
 

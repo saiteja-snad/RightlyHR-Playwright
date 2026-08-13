@@ -1,27 +1,34 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AccordionModule } from 'primeng/accordion';
 import { SetupWizardService } from '../../services/setup-wizard.service';
+import { SetupWizardNavigationService } from '../../services/setup-wizard-navigation.service';
+import { SetupWizardAccordion, SetupWizardSectionKey } from '../../models/setup-wizard.model';
+import { SetupWizardSectionComponent } from '../setup-wizard-section/setup-wizard-section.component';
 
 @Component({
   selector: 'app-setup-module-form',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, AccordionModule, SetupWizardSectionComponent],
   templateUrl: './setup-module-form.component.html',
   styleUrl: './setup-module-form.component.scss'
 })
 export class SetupModuleFormComponent implements OnInit {
-  private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly wizardService = inject(SetupWizardService);
+  private readonly wizardNav = inject(SetupWizardNavigationService);
 
-  moduleForm!: FormGroup;
   currentIndex = 0;
   spinnerLoader = false;
+  activeAccordionIndex: number[] = [0];
 
   get currentModule() {
     return this.wizardService.modules()[this.currentIndex];
+  }
+
+  get accordions(): SetupWizardAccordion[] {
+    return this.currentModule?.accordions ?? [];
   }
 
   get isFirst(): boolean {
@@ -36,16 +43,13 @@ export class SetupModuleFormComponent implements OnInit {
     this.route.data.subscribe(data => {
       this.currentIndex = data['moduleIndex'] ?? 0;
       this.wizardService.setCurrentModule(this.currentIndex);
-      this.initForm();
+      this.wizardNav.setActiveStep(this.currentModule?.route ?? null);
+      this.activeAccordionIndex = [0];
     });
   }
 
-  private initForm(): void {
-    this.moduleForm = this.fb.group({
-      configName: ['', Validators.required],
-      description: [''],
-      enableModule: [false]
-    });
+  asSectionKey(section: string): SetupWizardSectionKey {
+    return section as SetupWizardSectionKey;
   }
 
   onBack(): void {
@@ -57,7 +61,7 @@ export class SetupModuleFormComponent implements OnInit {
 
   onNext(): void {
     if (this.isLast) {
-      this.onFinish();
+      this.onSubmit();
       return;
     }
     this.wizardService.markModuleComplete(this.currentIndex);
@@ -65,7 +69,7 @@ export class SetupModuleFormComponent implements OnInit {
     this.router.navigate(['/setup-wizard', nextModule.route]);
   }
 
-  private onFinish(): void {
+  private onSubmit(): void {
     this.spinnerLoader = true;
     this.wizardService.markModuleComplete(this.currentIndex);
     setTimeout(() => {

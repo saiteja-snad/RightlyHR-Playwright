@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 @Component({
   selector: 'app-published-holidays',
@@ -19,7 +21,7 @@ export class PublishedHolidaysComponent {
   subscription!: Subscription
   allHolidays = [] as any;
   loading = false;
-  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
 
   ngOnInit() {
     this.getAllHolidays();
@@ -40,15 +42,19 @@ export class PublishedHolidaysComponent {
 
   viewPublishedholiday(holiday: any) {
     localStorage.setItem('updateholidays', JSON.stringify(holiday));
-    this.router.navigate(['/settings/employee-fields/viewholidays']);
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/viewholidays']);
   }
 
   navigateToCloneComponent(holiday: any) {
     localStorage.setItem('updateholidays', JSON.stringify(holiday));
-    this.router.navigate(['/settings/employee-fields/cloneholidays']);
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/cloneholidays']);
   }
 
   nagvition() {
-    this.router.navigate(['/settings/employee-fields/addholidays']);
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('add-holidays', { onClosed: () => this.getAllHolidays() });
+      return;
+    }
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/addholidays']);
   }
 }

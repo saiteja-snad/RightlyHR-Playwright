@@ -5,13 +5,14 @@ import { Select } from 'primeng/select';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ILetterType } from '../../../../Interfaces/leave-type.model';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
 @Component({
   selector: 'app-add-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule,TranslateModule, MultiSelectModule],
@@ -91,7 +92,12 @@ export class AddLeavecategoryComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   empinfo = {} as IJob;
   constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,
-    private router: Router, private modalService: NgbModal) {
+    private router: Router, private route: ActivatedRoute, private modalService: NgbModal,
+    private wizardNav: SetupWizardNavigationService) {
+  }
+
+  get parentBreadcrumb(): string {
+    return this.wizardNav.getParentBreadcrumb('Leave Category', this.route);
   }
 
   ngOnInit(): void {
@@ -576,7 +582,7 @@ export class AddLeavecategoryComponent {
   }
 
   navigate() {
-    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
+    this.wizardNav.closeWizardFormOrNavigateBack(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory'], this.route);
   }
 
   // Patch form values (for edit mode)
@@ -709,7 +715,7 @@ export class AddLeavecategoryComponent {
     this.http.postdata('OrgLeavesCategories', payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Leave Category added successfully');
-        this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
+        this.wizardNav.completeWizardFormOrNavigateBack(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory'], this.route);
         this.leavePolicyForm.reset();
       },
       error: (err: any) => {
@@ -723,7 +729,7 @@ export class AddLeavecategoryComponent {
   }
 
   cancel() {
-    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
+    this.wizardNav.closeWizardFormOrNavigateBack(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory'], this.route);
     this.leavePolicyForm.reset();
 
   }

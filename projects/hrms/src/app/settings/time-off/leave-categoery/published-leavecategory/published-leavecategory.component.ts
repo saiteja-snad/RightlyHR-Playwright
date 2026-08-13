@@ -10,6 +10,8 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { FormsModule } from '@angular/forms';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 @Component({
   selector: 'app-published-leavecategory',
   imports: [CommonModule, TranslateModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent, DocumentViewIconComponent],
@@ -23,7 +25,7 @@ export class PublishedLeavecategoryComponent {
   subscription!: Subscription;
   loading = false;
 
-  constructor(private http: HttpService, public rbac: RbacService, private router: Router) { }
+  constructor(private http: HttpService, public rbac: RbacService, private router: Router, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
 
   ngOnInit(): void {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHRUser') || '{}');
@@ -31,7 +33,11 @@ export class PublishedLeavecategoryComponent {
   }
 
   navigateToAddLeaveCategory() {
-    this.router.navigate(['/settings/timeoff-configurations/addleavecategory']);
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('add-leave-category', { onClosed: () => this.getOrgLeavesCategories() });
+      return;
+    }
+    this.wizardNav.navigateToSettings(['/settings/timeoff-configurations/addleavecategory']);
   }
 
   getOrgLeavesCategories() {
@@ -51,11 +57,11 @@ export class PublishedLeavecategoryComponent {
 
   navigateToViewLeaveCategory(details: any) {
     localStorage.setItem('viewleavecategory', JSON.stringify(details));
-    this.router.navigate(['/settings/timeoff-configurations/viewleavecategory']);
+    this.wizardNav.navigateToSettings(['/settings/timeoff-configurations/viewleavecategory']);
   }
 
   navigateToCloneLeaveCategory(details: any) {
     localStorage.setItem('cloneleavecategory', JSON.stringify(details));
-    this.router.navigate(['/settings/timeoff-configurations/cloneleavecategory']);
+    this.wizardNav.navigateToSettings(['/settings/timeoff-configurations/cloneleavecategory']);
   }
 }

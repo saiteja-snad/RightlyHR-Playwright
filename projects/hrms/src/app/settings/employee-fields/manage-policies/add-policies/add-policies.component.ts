@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, FormBuilder, Validators, AbstractControl } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import moment from 'moment';
 import { Select } from 'primeng/select';
 import { IPolicies } from '../../../../Interfaces/policies.model';
@@ -24,6 +24,7 @@ import {
   normalizePolicyVisibilityKey
 } from '../../../../shared/policies/policy-visibility.catalog';
 import { PolicyVisibilityOptionsService } from '../../../../shared/policies/policy-visibility-options.service';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
 @Component({
   selector: 'app-add-policies',
   imports: [RouterModule,
@@ -49,11 +50,28 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
   policyVisibilitySubModules: Record<string, Array<{ label: string; value: string }>> = {};
   policyVisibilitySubModulesLoading: Record<string, boolean> = {};
 
-  constructor(private fb: FormBuilder, public router: Router, private http: HttpService,
+  constructor(private fb: FormBuilder, public router: Router, private route: ActivatedRoute, private http: HttpService,
     private confirmation: OpenModalService, private modalService: NgbModal,
     public formValidations: FormValidationsService,
-    private policyVisibilityOptionsService: PolicyVisibilityOptionsService
+    private policyVisibilityOptionsService: PolicyVisibilityOptionsService,
+    private wizardNav: SetupWizardNavigationService
   ) { }
+
+  get parentBreadcrumb(): string {
+    return this.wizardNav.getParentBreadcrumb('Manage Policies', this.route);
+  }
+
+  goBack(): void {
+    if (this.wizardNav.isModalContext()) {
+      this.wizardNav.closeWizardFormOrNavigateBack(['/settings/employee-fields/manage-policies/pending-for-submit'], this.route);
+      return;
+    }
+    if (this.wizardNav.isFromSetupWizard(this.route)) {
+      this.wizardNav.navigateBack(['/settings/employee-fields/manage-policies/pending-for-submit'], this.route);
+      return;
+    }
+    this.Cancel();
+  }
 
 
   ngOnInit(): void {
@@ -478,7 +496,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
         localStorage.setItem('personaldata', JSON.stringify(response))
         localStorage.setItem('updatepolicies', JSON.stringify(response))
         this.confirmation.openSuccessModal('Policy added successfully');
-        this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
+        this.wizardNav.completeWizardFormOrNavigateBack(['/settings/employee-fields/manage-policies/pending-for-submit'], this.route);
       },
       error: (err) => {
         console.log(err);
@@ -679,7 +697,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     }
   }
   navigation() {
-    this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
+    this.wizardNav.completeWizardFormOrNavigateBack(['/settings/employee-fields/manage-policies/pending-for-submit'], this.route);
   }
 
   closeDelete(modal: any) {

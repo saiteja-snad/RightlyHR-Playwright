@@ -6,38 +6,33 @@
 
   <hr class="divider" />
 
-  <form [formGroup]="moduleForm" class="module-form-body">
-    <div class="form-group mb-3">
-      <label class="custom-label">Configuration Name</label>
-      <input
-        type="text"
-        class="form-control custom-input"
-        formControlName="configName"
-        placeholder="Enter configuration name"
-      />
-    </div>
-
-    <div class="form-group mb-3">
-      <label class="custom-label">Description</label>
-      <textarea
-        class="form-control custom-input"
-        formControlName="description"
-        rows="3"
-        placeholder="Enter description"
-      ></textarea>
-    </div>
-
-    <div class="form-group mb-4">
-      <label class="custom-label d-block mb-2">Toggle</label>
-      <div class="toggle-row">
-        <span class="toggle-label">Enable Module</span>
-        <label class="toggle-switch">
-          <input type="checkbox" formControlName="enableModule" />
-          <span class="toggle-slider"></span>
-        </label>
+  <div class="module-form-body">
+    <div class="custom-accordians">
+      <div class="custom-accordian-data-content">
+        <p-accordion [multiple]="true" [(activeIndex)]="activeAccordionIndex">
+          @for (accordion of accordions; track accordion.id; let i = $index) {
+            <p-accordion-panel [value]="i">
+              <p-accordion-header>
+                <div class="d-flex align-items-center gap-2">
+                  <span>{{ accordion.label }}</span>
+                  @if (accordion.optional) {
+                    <span class="optional-badge">Optional</span>
+                  }
+                </div>
+              </p-accordion-header>
+              <p-accordion-content>
+                <div class="accordion-panel-body">
+                  @for (section of accordion.sections; track section) {
+                    <app-setup-wizard-section [sectionKey]="asSectionKey(section)" />
+                  }
+                </div>
+              </p-accordion-content>
+            </p-accordion-panel>
+          }
+        </p-accordion>
       </div>
     </div>
-  </form>
+  </div>
 
   <hr class="divider" />
 
@@ -48,7 +43,7 @@
       [disabled]="isFirst"
       (click)="onBack()"
     >
-      Back
+      Previous
     </button>
     <button
       type="button"
@@ -58,9 +53,9 @@
     >
       @if (spinnerLoader) {
         <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-        Saving...
+        Submitting...
       } @else if (isLast) {
-        Finish
+        Submit
       } @else {
         Next
       }

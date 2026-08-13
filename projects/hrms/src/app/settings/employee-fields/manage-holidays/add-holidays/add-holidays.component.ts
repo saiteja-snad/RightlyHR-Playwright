@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Select } from 'primeng/select';
 import { forkJoin, Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
@@ -9,6 +9,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
 @Component({
   selector: 'app-add-holidays',
   imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule],
@@ -31,7 +32,11 @@ export class AddHolidaysComponent {
   groupedLocationData: any[] = [];
   shiftDropdown: any[] = []; // To store the dynamically fetched shifts
   isDuplicateholidayName: boolean[] = [];
-  constructor(private fb: FormBuilder, public router: Router,    public formValidations: FormValidationsService, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder, public router: Router, private route: ActivatedRoute, public formValidations: FormValidationsService, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal, private wizardNav: SetupWizardNavigationService) { }
+
+  get parentBreadcrumb(): string {
+    return this.wizardNav.getParentBreadcrumb('Manage Holidays', this.route);
+  }
 
   //ngoninit method start
   ngOnInit(): void {
@@ -226,7 +231,7 @@ checkDuplicate(): void {
       next: (response: any) => {
         localStorage.setItem('personaldata', JSON.stringify(response))
         this.confirmation.openSuccessModal('Holidays added successfully');
-        this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+        this.wizardNav.completeWizardFormOrNavigateBack(['/settings/employee-fields/manage-holidays/pending-for-submit'], this.route);
       },
       error: (error) => {
         if (error.error) {
@@ -347,14 +352,14 @@ getShiftBYid(selectedSubLocation: any): void {
 
   // cancel dailog yes button click method start
   cancel() {
-    this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+    this.wizardNav.closeWizardFormOrNavigateBack(['/settings/employee-fields/manage-holidays/pending-for-submit'], this.route);
   }
 
   // cancel dailog yes button click method end
 
   //cancel dailog no button click method start
   nagvition() {
-    this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+    this.wizardNav.closeWizardFormOrNavigateBack(['/settings/employee-fields/manage-holidays/pending-for-submit'], this.route);
   }
   //cancel dailog no button click method end
 

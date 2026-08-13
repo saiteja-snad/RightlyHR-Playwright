@@ -9,6 +9,8 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DocumentViewIconComponent } from '../../../../icons/document-view-icon/document-view-icon.component';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 @Component({
   selector: 'app-published-shifts',
@@ -26,7 +28,7 @@ export class PublishedShiftsComponent {
   publishedCount: any;
   viewClicked: boolean | undefined;
   loading = false;
-  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -82,7 +84,7 @@ view(id: any): void {
   };
 
   localStorage.setItem('viewShiftData', JSON.stringify(transformedShift));
-  this.router.navigate(['/settings/employee-fields/viewshifts', id]);
+  this.wizardNav.navigateToSettings(['/settings/employee-fields/viewshifts', id]);
 }
 
   cloneshiftsPolicy1(id: any): void {
@@ -109,10 +111,14 @@ view(id: any): void {
     }))
   };
     localStorage.setItem('clonedShiftData', JSON.stringify(transformedShift));
-    this.router.navigate(['/settings/employee-fields/cloneshifts', id]);
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/cloneshifts', id]);
   }
 
   nagvition() {
-    this.router.navigate(['/settings/employee-fields/addshifts']);
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('add-shifts', { onClosed: () => this.getShifts() });
+      return;
+    }
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/addshifts']);
   }
 }

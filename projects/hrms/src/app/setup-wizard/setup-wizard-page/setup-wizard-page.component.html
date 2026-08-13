@@ -1,5 +1,4 @@
 <div class="wizard-page-wrapper">
-  <!-- Page Header -->
   <div class="wizard-page-header">
     <div class="header-info">
       <h4 class="page-title">Setup Wizard</h4>
@@ -12,13 +11,18 @@
     </button>
   </div>
 
-  <!-- Stepper -->
   @if (!isCompletePage) {
-    <app-setup-wizard-stepper [activeIndex]="wizardService.currentModuleIndex()" />
+    <div class="wizard-layout d-flex gap-3 w-100">
+      <div class="wizard-left-nav">
+        <app-setup-wizard-stepper />
+      </div>
+      <div class="wizard-right-content">
+        <router-outlet />
+      </div>
+    </div>
+  } @else {
+    <div class="wizard-step-content">
+      <router-outlet />
+    </div>
   }
-
-  <!-- Step Content -->
-  <div class="wizard-step-content">
-    <router-outlet />
-  </div>
 </div>

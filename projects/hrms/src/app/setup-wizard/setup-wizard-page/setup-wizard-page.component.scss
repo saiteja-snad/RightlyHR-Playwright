@@ -1,14 +1,26 @@
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
 .wizard-page-wrapper {
-  padding: 1.5rem 2rem;
-  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 1rem 1.25rem 0.75rem;
   background: #f9fafb;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .wizard-page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
 
   .page-title {
     font-size: 1.25rem;
@@ -24,6 +36,37 @@
   }
 }
 
+.wizard-layout {
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.wizard-left-nav {
+  width: 18rem;
+  flex-shrink: 0;
+  min-height: 0;
+  overflow-y: auto;
+  border-radius: 0.5rem;
+  background-color: var(--white-color);
+  border: 1px solid var(--border-color);
+}
+
+.wizard-right-content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--white-color);
+  padding: 1rem;
+}
+
 .wizard-step-content {
-  margin-top: 2rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }

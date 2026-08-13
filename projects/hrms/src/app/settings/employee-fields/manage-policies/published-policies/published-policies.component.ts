@@ -11,6 +11,8 @@ import { RbacService } from '../../../../services/rbac.service';
 import { IPolicy } from '../pending-policies/policies.model';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 @Component({
   selector: 'app-published-policies',
@@ -23,19 +25,23 @@ export class PublishedPoliciesComponent implements OnInit, OnDestroy {
   subscription!: Subscription
   allPolicies: IPolicy[] = [];
   loading = false;
-  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
   
   ngOnInit(): void {
     this.getAllPolicies();
   }
   
   nagvition() {
-    this.router.navigate(['/settings/employee-fields/addpolices']);
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('add-policies', { onClosed: () => this.getAllPolicies() });
+      return;
+    }
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/addpolices']);
   }
 
   updateNavigation(policy: any) {
     localStorage.setItem('updatepolicies', JSON.stringify(policy));
-    this.router.navigate(['/settings/employee-fields/updatepolices']);
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/updatepolices']);
   }
 
   getAllPolicies() {
@@ -57,13 +63,13 @@ export class PublishedPoliciesComponent implements OnInit, OnDestroy {
   }
   clonePolicy1(id: any) {
     localStorage.setItem('updatepolicies', JSON.stringify(id));
-    this.router.navigate(['/settings/employee-fields/clonepolices']);
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/clonepolices']);
   }
 
   viewPublishedPolicy(holiday: any) {
     console.log('updatepolicies',holiday);
     localStorage.setItem('updatepolicies', JSON.stringify(holiday));
-    this.router.navigate(['/settings/employee-fields/viewpolices']);
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/viewpolices']);
     
   }
 

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
@@ -11,6 +11,7 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
 
 @Component({
   selector: 'app-add-shift',
@@ -34,12 +35,18 @@ export class AddShiftComponent {
 
   constructor(
     public router: Router,
+    private route: ActivatedRoute,
     private fb: FormBuilder,
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
-    public formValidations: FormValidationsService
+    public formValidations: FormValidationsService,
+    private wizardNav: SetupWizardNavigationService
   ) { }
+
+  get parentBreadcrumb(): string {
+    return this.wizardNav.getParentBreadcrumb('Manage Shifts', this.route);
+  }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -281,6 +288,6 @@ restrictShiftName(event: KeyboardEvent) {
   }
 
   nagvition() {
-    this.router.navigate(['/settings/employee-fields/manage-shifts/pending-for-submit']);
+    this.wizardNav.closeWizardFormOrNavigateBack(['/settings/employee-fields/manage-shifts/pending-for-submit'], this.route);
   }
 }

@@ -11,6 +11,8 @@ import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 @Component({
    selector: 'app-published-weekends',
    imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent],
@@ -23,7 +25,7 @@ export class PublishedWeekendsComponent {
    destroy$: Subject<boolean> = new Subject<boolean>();
    loading = false;
 
-   constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
+   constructor(private router: Router, private http: HttpService, public rbac: RbacService, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
 
    ngOnInit(): void {
       this.getAllWeekend();
@@ -45,17 +47,21 @@ export class PublishedWeekendsComponent {
    }
 
    addWeekends() {
-      this.router.navigate(['/settings/employee-fields/add-weekends']);
+      if (this.wizardNav.isInsideWizardRoute()) {
+         this.wizardFormModal.openWizardForm('add-weekends', { onClosed: () => this.getAllWeekend() });
+         return;
+      }
+      this.wizardNav.navigateToSettings(['/settings/employee-fields/add-weekends']);
    }
 
    navigateToClone(weekend: IWeekends) {
       localStorage.setItem('weekend-update', JSON.stringify(weekend));
-      this.router.navigate(['/settings/employee-fields/clone-weekends']);
+      this.wizardNav.navigateToSettings(['/settings/employee-fields/clone-weekends']);
    }
 
    navigateToView(weekend: IWeekends) {
       localStorage.setItem('weekend-update', JSON.stringify(weekend));
-      this.router.navigate(['/settings/employee-fields/view-weekends']);
+      this.wizardNav.navigateToSettings(['/settings/employee-fields/view-weekends']);
    }
 
    getShiftNames(shift: any) {

@@ -14,6 +14,7 @@ import { EmployeeFieldsUpdateConfigurationsLayoutComponentComponent } from "../.
 import { RateCardComponent } from "../../settings/employee-rate-card-configuration/rate-card/rate-card.component";
 import { RateCardLayoutComponent } from "../../settings/employee-rate-card-configuration/rate-card-layout/rate-card-layout.component";
 import { HelpdeskManagementConfigLayoutComponent } from "../../settings/help-desk-configurations/helpdesk-management-config-layout/helpdesk-management-config-layout.component";
+import { BulkuploadConfigLayoutComponent } from "../../settings/bulkupload-configurations/bulkupload-config-layout/bulkupload-config-layout.component";
 
 export default [
     { path: '', redirectTo: '/settings/overview', pathMatch: 'full' },
@@ -30,4 +31,6 @@ export default [
     { path: 'employee-fields-update-configurations', component: EmployeeFieldsUpdateConfigurationsLayoutComponentComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/employee-fields-update-configuration/employee-fields-update-configurations.route') },
     { path: 'employee-rate-card', compenent:RateCardLayoutComponent , canActivate: [authGuard], loadChildren: () => import('../../settings/employee-rate-card-configuration/rate-card.route') },
     { path: 'helpdesk-management-config', component: HelpdeskManagementConfigLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/help-desk-configurations/helpdesk-management.route')},
+    { path: 'bulkupload-configurations', component: BulkuploadConfigLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/bulkupload-configurations/bulkupload-configurations.route')},
 ] as Route[];
+

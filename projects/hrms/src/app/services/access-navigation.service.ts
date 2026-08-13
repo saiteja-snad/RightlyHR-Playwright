@@ -316,6 +316,10 @@ export class AccessNavigationService {
             }
           }
         }
+
+        if (this.rbac.allowedToAccess('Bulk Upload Configuration Module.view') || this.rbac.allowedToAccess('Project Management Configuration Module.view')) {
+          return '/settings/bulkupload-configurations/bulk-import';
+        }
         break;
 
       case '/policies':
@@ -1400,6 +1404,12 @@ export class AccessNavigationService {
           }
         }
         break;
+
+      case '/settings/bulkupload-configurations':
+      case '/settings/bulkupload-configurations/bulk-import':
+      case '/settings/bulkupload-configurations/historylog':
+        return actualRoute === '/settings/bulkupload-configurations' ? '/settings/bulkupload-configurations/bulk-import' : actualRoute;
+
 
       case '/settings/employee-fields/documents':
         if (this.rbac.allowedToAccess('Document Tab.view')) {

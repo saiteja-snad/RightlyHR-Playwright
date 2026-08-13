@@ -241,6 +241,25 @@
                         </p-accordion-panel>
                     </li>
                     }
+                    @if(rbac.allowedToAccess('Bulk Upload Configuration Module.view') || rbac.allowedToAccess('Project Management Configuration Module.view')){
+                    <!--Bulk Upload Configurations-->
+                    <li class="accordian-list-item"
+                        (click)="navigateToAccessedRoute('/settings/bulkupload-configurations', 'settings-panel-12')"
+                        id="settings-panel-12">
+                        <p-accordion-panel value="12">
+                            <p-accordion-header>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <img src="icons/file-upload-icon.png" alt="Icon"
+                                            class="list-icon">
+                                        <div class="list-label-name">{{ 'Bulk Upload Configurations' | translate }}</div>
+                                    </div>
+                                    <p class="list-description m-0">{{settingbulkUploadConfigurationModule}}</p>
+                                </div>
+                            </p-accordion-header>
+                        </p-accordion-panel>
+                    </li>
+                    }
                 </p-accordion>
             </ul>
         </div>

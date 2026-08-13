@@ -352,6 +352,18 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.moduleName = 'Rate Card Configuration';
       this.componentName = 'Rate Card';
     }
+    else if (url.startsWith('/settings/bulkupload-configurations/bulk-import')) {
+      this.moduleName = 'Bulk Upload Configurations';
+      this.componentName = 'Bulk Import';
+    }
+    else if (url.startsWith('/settings/bulkupload-configurations/historylog')) {
+      this.moduleName = 'Bulk Upload Configurations';
+      this.componentName = 'View History Log';
+    }
+    else if (url.startsWith('/settings/bulkupload-configurations')) {
+      this.moduleName = 'Bulk Upload Configurations';
+      this.componentName = 'Bulk Import';
+    }
   }
 
   getdatacarryforword() {

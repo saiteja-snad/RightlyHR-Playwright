@@ -9,6 +9,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { FormsModule } from '@angular/forms';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 @Component({
   selector: 'app-pending-leavecategory',
   imports: [CommonModule, TranslateModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent],
@@ -22,7 +24,7 @@ export class PendingLeavecategoryComponent {
   loading = false;
   subscription!: Subscription;
   
-  constructor(private http: HttpService, public rbac: RbacService, private router: Router) { }
+  constructor(private http: HttpService, public rbac: RbacService, private router: Router, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
 
   ngOnInit(): void {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHRUser') || '{}');
@@ -30,6 +32,10 @@ export class PendingLeavecategoryComponent {
   }
 
   navigateToAddLeaveCategory() {
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('add-leave-category', { onClosed: () => this.getOrgLeavesCategories() });
+      return;
+    }
     this.router.navigate(['/settings/timeoff-configurations/addleavecategory']);
   }
 
@@ -54,6 +60,10 @@ export class PendingLeavecategoryComponent {
 
   navigateToUpdateLeaveCategory(leave: any) {
     localStorage.setItem('updateleavecategory', JSON.stringify(leave));
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('update-leave-category', { onClosed: () => this.getOrgLeavesCategories() });
+      return;
+    }
     this.router.navigate(['/settings/timeoff-configurations/updateleavecategory']);
   }
 }

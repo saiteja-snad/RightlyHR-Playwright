@@ -11,6 +11,8 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 @Component({
   selector: 'app-update-shift',
@@ -47,7 +49,17 @@ export class UpdateShiftComponent {
   initialPoliciesState: any;
   constructor(
     private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private http: HttpService,
-    private conformationPopup: OpenModalService, private modalService: NgbModal, public formValidations: FormValidationsService) { }
+    private conformationPopup: OpenModalService, private modalService: NgbModal, public formValidations: FormValidationsService,
+    private wizardNav: SetupWizardNavigationService, readonly wizardFormModal: SetupWizardFormModalService
+  ) { }
+
+  get isWizardModal(): boolean {
+    return this.wizardFormModal.isModalContext();
+  }
+
+  get parentBreadcrumb(): string {
+    return this.wizardNav.getParentBreadcrumb('Manage Shifts', this.route);
+  }
     
 ngOnInit(): void {
   this.initializeForm();
@@ -66,11 +78,12 @@ ngOnInit(): void {
   }
 
   patchShiftForm(data: any) {
+    this.updategetdata = data;
 
     this.shiftForm.patchValue({
       year: data.applicableyear,
       location: data.locationId,
-      // subLocation: data.subLocationId,
+      id: data.id,
     });
     console.log(data.locationId);
     const selectedLocation = this.locations.find(loc => loc.id === data.locationId);
@@ -93,6 +106,8 @@ ngOnInit(): void {
         shiftCode: [item.code, Validators.required],
         shiftName: [item.shiftName, Validators.required],
         color: [item.color],
+        id: [item.id],
+        headerID: [data.id],
         startTime: [item.shiftStartTime, Validators.required],
         endTime: [item.shiftEndTime, Validators.required],
         gracePeriod: [item.allowedGracePeriod, Validators.required],
@@ -289,11 +304,21 @@ restrictShiftName(event: KeyboardEvent) {
 }
   // end get shift by id
  
+  private getShiftHeaderId(): string | number | null {
+    return (
+      this.shiftForm.getRawValue().id ??
+      this.updategetdata?.id ??
+      JSON.parse(localStorage.getItem('selectedShift') || '{}').id ??
+      this.route.snapshot.paramMap.get('id')
+    );
+  }
+
   updateshift(f: FormGroup) {
     if (this.shiftForm.valid) {
       const formValue = this.shiftForm.value;
+      const headerId = this.getShiftHeaderId();
       const payload = {
-        id: this.route.snapshot.paramMap.get('id'),
+        id: headerId,
         locationId: formValue.location,
         subLocationId: formValue.subLocation,
         applicableyear: formValue.year,
@@ -301,10 +326,10 @@ restrictShiftName(event: KeyboardEvent) {
         addedby: this.Employeeinfo.employeeId,
         addedDate: new Date(),
         lastModifeddate: new Date(),
-        orgShiftsItems: formValue.shifts.map((shift: any, index: any) => ({
+        orgShiftsItems: formValue.shifts.map((shift: any) => ({
           shiftName: shift.shiftName,
-          id: this.route.snapshot.paramMap.get('id'),
-          headerID: shift.id,
+          id: shift.id,
+          headerID: shift.headerID ?? headerId,
           shiftStartTime: shift.startTime,
           shiftEndTime: shift.endTime,
           shiftDescription: "hi",
@@ -327,7 +352,7 @@ restrictShiftName(event: KeyboardEvent) {
           } else {
             this.hoildaylist = data;
             this.conformationPopup.openSuccessModal('Shift Updated successfully');
-            this.nagvition();
+            this.nagvition(true);
           }
         },
         error: (error: any) => {
@@ -386,16 +411,21 @@ restrictShiftName(event: KeyboardEvent) {
   }
 
   publish() {
-    console.log(this.shiftForm.value);
-    let publishItem = {
-      Category: 'shifts',
-      refentityId: this.shiftForm.value.id
+    const refentityId = this.getShiftHeaderId();
+    if (!refentityId) {
+      this.conformationPopup.openErrorModal('Unable to publish shift. Shift ID is missing.');
+      return;
     }
+
+    const publishItem = {
+      Category: 'shifts',
+      refentityId
+    };
     this.subscription = this.http.postdata(`CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`, { params: publishItem }).subscribe({
       next: (respnose: any) => {
         this.conformationPopup.openSuccessModal('Shift Published successfully');
         setTimeout(() => {
-          this.nagvition();
+          this.nagvition(true);
         }, 2000);
       },
       error: (error: any) => {
@@ -505,7 +535,12 @@ onSubLocationChange(subLocationId: any) {
     modal.dismiss();
   }
 
-  nagvition() {
-    this.router.navigate(['/settings/employee-fields/manage-shifts/pending-for-submit']);
+  nagvition(saved = false) {
+    const path = ['/settings/employee-fields/manage-shifts/pending-for-submit'];
+    if (saved) {
+      this.wizardNav.completeWizardFormOrNavigateBack(path, this.route);
+      return;
+    }
+    this.wizardNav.closeWizardFormOrNavigateBack(path, this.route);
   }
 }

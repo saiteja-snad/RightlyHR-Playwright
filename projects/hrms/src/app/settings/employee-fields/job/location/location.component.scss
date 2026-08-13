@@ -1,0 +1,8 @@
+.custom-settings-data-table td.action-dropdown-cell {
+  overflow: visible !important;
+  position: relative;
+}
+
+.custom-settings-data-table td.action-dropdown-cell .dropdown-menu.show {
+  z-index: 1060 !important;
+}

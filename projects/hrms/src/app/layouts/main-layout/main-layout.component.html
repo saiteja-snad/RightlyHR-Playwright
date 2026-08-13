@@ -15,12 +15,14 @@
 </div>
 
 <!-- Setup Wizard Popup -->
-@if (isWizardPopupOpen) {
+@if (isWizardPopupOpen && tenantService.shouldShowSetupWizard) {
   <app-setup-wizard-popup (close)="isWizardPopupOpen = false" />
 }
 
 <!-- Setup Wizard Floating Button -->
-<app-setup-wizard-button (clicked)="isWizardPopupOpen = !isWizardPopupOpen" />
+@if (tenantService.shouldShowSetupWizard) {
+  <app-setup-wizard-button (clicked)="isWizardPopupOpen = !isWizardPopupOpen" />
+}
 
 <ng-template #getstarted  let-modal >
     <div id="popupgetstarted" class="custom-modal-bg" ngbAutofocus>

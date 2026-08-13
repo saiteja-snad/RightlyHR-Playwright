@@ -3,10 +3,8 @@
     <ul class="nav flex-column">
       @for (module of wizardService.modules(); track module.id; let i = $index) {
         <li class="nav-item">
-          <a
+          <span
             class="nav-link wizard-step-link"
-            [routerLink]="['/setup-wizard', module.route]"
-            routerLinkActive="active-nav-link"
             [ngClass]="getStepState(i)"
           >
             <span class="step-indicator">
@@ -17,7 +15,7 @@
               }
             </span>
             <span class="step-label">{{ module.title }}</span>
-          </a>
+          </span>
         </li>
       }
     </ul>

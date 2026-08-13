@@ -12,6 +12,8 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
 import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 @Component({
   selector: 'app-pending-shifts',
@@ -29,7 +31,7 @@ export class PendingShiftsComponent {
   successModalRef: any;
   deleteModalRef: any;
    constructor(public router: Router, private http: HttpService, public rbac: RbacService,private confirmation: OpenModalService,
-  private modalService: NgbModal) { }
+  private modalService: NgbModal, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -64,6 +66,10 @@ export class PendingShiftsComponent {
   updateShift(id: any): void {
     const shift = this.shiftsData.find((item : any) => item.id == id);
     localStorage.setItem('selectedShift', JSON.stringify(shift));
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('update-shifts', { onClosed: () => this.getShifts() });
+      return;
+    }
     this.router.navigate(['/settings/employee-fields/updateshifts', id]);
   }
   shiftsddata:any
@@ -99,6 +105,10 @@ export class PendingShiftsComponent {
       });
    }
    nagvition() {
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('add-shifts', { onClosed: () => this.getShifts() });
+      return;
+    }
     this.router.navigate(['/settings/employee-fields/addshifts']);
   }
   ngOnDestroy(): void {

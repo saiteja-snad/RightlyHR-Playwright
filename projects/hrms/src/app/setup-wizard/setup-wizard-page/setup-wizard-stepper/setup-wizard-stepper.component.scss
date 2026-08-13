@@ -6,6 +6,8 @@
   display: flex !important;
   align-items: center;
   gap: 0.75rem;
+  cursor: default;
+  pointer-events: none;
 
   &.completed .step-indicator {
     background-color: var(--primary-color);

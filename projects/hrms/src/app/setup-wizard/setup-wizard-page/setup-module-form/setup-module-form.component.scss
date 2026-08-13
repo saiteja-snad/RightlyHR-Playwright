@@ -47,10 +47,122 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 0.25rem;
+
+  .custom-accordian-data-content {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+
+    .p-accordioncontent-content {
+      overflow: visible;
+    }
+  }
 }
 
 .accordion-panel-body {
   padding: 1rem;
+
+  ::ng-deep .custom-main-component-container {
+    padding: 0;
+  }
+
+  ::ng-deep .custom-settings-add-input {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+    overflow: hidden;
+
+    .custom-input {
+      flex: 1;
+      min-width: 0;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    .input-group-text {
+      display: flex;
+      align-items: stretch;
+      padding: 0 !important;
+      margin: 0;
+      border: none;
+      background: transparent;
+
+      .custom-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        min-height: 2.375rem;
+        border-radius: 0;
+        white-space: nowrap;
+        padding-inline: 1.25rem;
+      }
+    }
+  }
+
+  ::ng-deep .custom-settings-data-table {
+    width: 100%;
+    height: auto;
+    max-height: 18rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-top: 0.5rem;
+    border: none;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      display: table-row;
+    }
+
+    td {
+      display: table-cell;
+      padding: 0.75rem 0;
+      vertical-align: middle;
+      border-bottom: 1px solid #e8e8e8;
+      font-weight: 400;
+      font-size: var(--fontsize14, 0.875rem);
+      color: var(--primary-color);
+    }
+
+    td.w-75,
+    td:first-child {
+      width: calc(100% - 2.75rem) !important;
+      padding-left: 0;
+      padding-right: 0.75rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    td.action-dropdown-cell,
+    td.w-25.text-end {
+      width: 2.75rem !important;
+      text-align: right;
+      padding-right: 0;
+      overflow: visible;
+      position: relative;
+    }
+
+    td.action-dropdown-cell .dropdown-menu.show {
+      z-index: 1060 !important;
+    }
+  }
+
+  ::ng-deep .error-msg {
+    max-width: 100%;
+  }
 }
 
 .optional-badge {

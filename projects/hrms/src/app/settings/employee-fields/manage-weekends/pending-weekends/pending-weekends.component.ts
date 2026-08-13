@@ -13,6 +13,8 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
 import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 @Component({
    selector: 'app-pending-weekends',
    imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, SettingsUpdateIconComponent],
@@ -32,7 +34,9 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
       private http: HttpService,
       public rbac: RbacService,
         private confirmation: OpenModalService,
-      private modalService: NgbModal
+      private modalService: NgbModal,
+      private wizardNav: SetupWizardNavigationService,
+      private wizardFormModal: SetupWizardFormModalService
    ) { }
 
    ngOnInit(): void {
@@ -40,11 +44,19 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
    }
 
    addWeekends() {
+      if (this.wizardNav.isInsideWizardRoute()) {
+         this.wizardFormModal.openWizardForm('add-weekends', { onClosed: () => this.getAllWeekend() });
+         return;
+      }
       this.router.navigate(['/settings/employee-fields/add-weekends']);
    }
 
    openUpdate(weekend: IWeekends){
       localStorage.setItem('weekend-update', JSON.stringify(weekend));
+      if (this.wizardNav.isInsideWizardRoute()) {
+         this.wizardFormModal.openWizardForm('update-weekends', { onClosed: () => this.getAllWeekend() });
+         return;
+      }
       this.router.navigate(['/settings/employee-fields/update-weekends']);
    }
 

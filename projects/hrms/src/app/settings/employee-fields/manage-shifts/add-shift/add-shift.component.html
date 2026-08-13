@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container" [class.wizard-modal-form]="isWizardModal">
     <div class="component-header-content pt-2">
         <div class="heading-content">
             <div class="commpoment-name navigator" (click)="nagvition()">{{ parentBreadcrumb }}
@@ -62,7 +62,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="pt-4 mt-1">
+                <div class="add-new-action">
                     <button type="button" class="custom-btn btn-primary px-4" (click)="addShift()">
                         <i class="bi bi-plus me-2"></i> {{'Add New'|translate}}
                     </button>
@@ -271,7 +271,7 @@
             <!-- <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div> -->
     
         </div>
-        <div class="d-flex gap-3 justify-content-end">
+        <div class="d-flex gap-3 justify-content-end shift-form-footer">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel'|translate}}</button>
             <button type="submit" class="custom-btn btn-primary px-5" [disabled]="shiftForm.invalid || isDuplicateCodeName1.includes(true) 
                     || isDuplicateCodeName.includes(true)">{{'Submit'|translate}}</button>

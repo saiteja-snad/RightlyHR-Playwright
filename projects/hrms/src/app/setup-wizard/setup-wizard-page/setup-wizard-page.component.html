@@ -4,6 +4,7 @@
       <h4 class="page-title">Setup Wizard</h4>
       <p class="page-subtitle">
         {{ wizardService.completedCount() }} of {{ wizardService.totalCount() }} tasks completed
+        ({{ wizardService.progressPercent() }}%)
       </p>
     </div>
     <button type="button" class="custom-btn btn-secondary" (click)="onBackToDashboard()">

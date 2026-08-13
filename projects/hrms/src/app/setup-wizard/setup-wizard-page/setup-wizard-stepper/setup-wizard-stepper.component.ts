@@ -1,11 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { SetupWizardService } from '../../services/setup-wizard.service';
 
 @Component({
   selector: 'app-setup-wizard-stepper',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule],
   templateUrl: './setup-wizard-stepper.component.html',
   styleUrl: './setup-wizard-stepper.component.scss'
 })

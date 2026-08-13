@@ -20,8 +20,9 @@
     <!-- Required Action Card -->
     <div class="section-label">REQUIRED ACTION</div>
     <div class="required-action-card">
-      <p class="action-category">{{ wizardService.firstIncompleteModule().category }}</p>
-      <p class="action-title">{{ wizardService.firstIncompleteModule().title }}</p>
+      <p class="action-category">{{ wizardService.currentModule().category }}</p>
+      <p class="action-title">{{ wizardService.currentModule().title }}</p>
+      <p class="action-progress">{{ wizardService.progressPercent() }}% complete</p>
       <button class="resume-btn" (click)="onResumeSetup()" type="button">
         Resume Setup <i class="bi bi-arrow-right ms-1"></i>
       </button>
@@ -34,7 +35,7 @@
         <li
           class="checklist-item"
           [class.completed]="module.completed"
-          (click)="onChecklistItemClick($index)"
+          [class.active]="isCurrentStep($index)"
         >
           <span class="check-box" [class.checked]="module.completed">
             @if (module.completed) {

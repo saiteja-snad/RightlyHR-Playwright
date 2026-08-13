@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SetupWizardService } from '../../services/setup-wizard.service';
@@ -59,9 +59,13 @@ import { SetupWizardService } from '../../services/setup-wizard.service';
     }
   `]
 })
-export class SetupCompleteComponent {
+export class SetupCompleteComponent implements OnInit {
   readonly wizardService = inject(SetupWizardService);
   private readonly router = inject(Router);
+
+  ngOnInit(): void {
+    this.wizardService.markWizardCompleted();
+  }
 
   onGoToDashboard(): void {
     this.router.navigate(['/dashboard']);

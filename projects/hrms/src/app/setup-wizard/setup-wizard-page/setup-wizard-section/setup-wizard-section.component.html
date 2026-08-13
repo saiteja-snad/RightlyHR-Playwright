@@ -1,10 +1,10 @@
 @switch (sectionKey()) {
   @case ('location') { <app-location /> }
   @case ('sub-location') { <app-sub-location /> }
-  @case ('shifts') { <app-published-shifts /> }
-  @case ('holidays') { <app-published-holidays /> }
-  @case ('weekends') { <app-published-weekends /> }
-  @case ('policies') { <app-published-policies /> }
+  @case ('shifts') { <app-setup-wizard-status-section moduleKey="shifts" /> }
+  @case ('holidays') { <app-setup-wizard-status-section moduleKey="holidays" /> }
+  @case ('weekends') { <app-setup-wizard-status-section moduleKey="weekends" /> }
+  @case ('policies') { <app-setup-wizard-status-section moduleKey="policies" /> }
   @case ('department') { <app-department /> }
   @case ('team') { <app-team /> }
   @case ('salutation') { <app-salutation /> }
@@ -19,7 +19,7 @@
   @case ('grade') { <app-grade /> }
   @case ('compensation-reason') { <app-compensation-reason /> }
   @case ('org-hierarchy') { <app-organizationchart /> }
-  @case ('leave-category') { <app-published-leavecategory /> }
+  @case ('leave-category') { <app-setup-wizard-status-section moduleKey="leave-category" /> }
   @case ('leave-allocation') { <app-leave-alloctaion /> }
   @case ('signature-authority') { <app-signature-authority /> }
 }

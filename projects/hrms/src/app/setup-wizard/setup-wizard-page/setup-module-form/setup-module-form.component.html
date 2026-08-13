@@ -40,7 +40,7 @@
     <button
       type="button"
       class="custom-btn btn-secondary"
-      [disabled]="isFirst"
+      [disabled]="isFirst || spinnerLoader || wizardService.isSaving()"
       (click)="onBack()"
     >
       Previous
@@ -48,7 +48,7 @@
     <button
       type="button"
       class="custom-btn btn-primary"
-      [disabled]="spinnerLoader"
+      [disabled]="spinnerLoader || wizardService.isSaving()"
       (click)="onNext()"
     >
       @if (spinnerLoader) {

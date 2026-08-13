@@ -41,11 +41,26 @@ export class SetupModuleFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.data.subscribe(data => {
-      this.currentIndex = data['moduleIndex'] ?? 0;
-      this.wizardService.setCurrentModule(this.currentIndex);
+      const moduleIndex = data['moduleIndex'] ?? 0;
+
+      if (!this.canAccessStep(moduleIndex)) {
+        this.router.navigate(['/setup-wizard', this.wizardService.currentTabRoute()]);
+        return;
+      }
+
+      this.currentIndex = moduleIndex;
+      this.wizardService.syncCurrentTab(this.currentIndex);
       this.wizardNav.setActiveStep(this.currentModule?.route ?? null);
       this.activeAccordionIndex = [0];
     });
+  }
+
+  private canAccessStep(moduleIndex: number): boolean {
+    if (moduleIndex <= this.wizardService.currentModuleIndex()) {
+      return true;
+    }
+
+    return this.wizardService.modules()[moduleIndex]?.completed ?? false;
   }
 
   asSectionKey(section: string): SetupWizardSectionKey {
@@ -53,28 +68,63 @@ export class SetupModuleFormComponent implements OnInit {
   }
 
   onBack(): void {
-    if (!this.isFirst) {
-      const prevModule = this.wizardService.modules()[this.currentIndex - 1];
-      this.router.navigate(['/setup-wizard', prevModule.route]);
+    if (this.isFirst || this.spinnerLoader || this.wizardService.isSaving()) {
+      return;
     }
+
+    const prevIndex = this.currentIndex - 1;
+    const prevModule = this.wizardService.modules()[prevIndex];
+    this.spinnerLoader = true;
+
+    this.wizardService.navigateToTab(prevIndex).subscribe({
+      next: (result) => {
+        if (result) {
+          this.router.navigate(['/setup-wizard', prevModule.route]);
+        }
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      }
+    });
   }
 
   onNext(): void {
+    if (this.spinnerLoader || this.wizardService.isSaving()) {
+      return;
+    }
+
     if (this.isLast) {
       this.onSubmit();
       return;
     }
-    this.wizardService.markModuleComplete(this.currentIndex);
+
+    this.spinnerLoader = true;
     const nextModule = this.wizardService.modules()[this.currentIndex + 1];
-    this.router.navigate(['/setup-wizard', nextModule.route]);
+
+    this.wizardService.completeTabAndGoNext(this.currentIndex).subscribe({
+      next: (result) => {
+        if (result && nextModule) {
+          this.router.navigate(['/setup-wizard', nextModule.route]);
+        }
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      }
+    });
   }
 
   private onSubmit(): void {
     this.spinnerLoader = true;
-    this.wizardService.markModuleComplete(this.currentIndex);
-    setTimeout(() => {
-      this.spinnerLoader = false;
-      this.router.navigate(['/setup-wizard/complete']);
-    }, 600);
+
+    this.wizardService.finishWizard(this.currentIndex).subscribe({
+      next: (result) => {
+        if (result) {
+          this.router.navigate(['/setup-wizard/complete']);
+        }
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      }
+    });
   }
 }

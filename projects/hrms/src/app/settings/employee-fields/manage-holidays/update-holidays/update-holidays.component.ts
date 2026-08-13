@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
@@ -10,6 +10,8 @@ import moment from 'moment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 @Component({
   selector: 'app-update-holidays',
@@ -30,7 +32,25 @@ export class UpdateHolidaysComponent {
   shiftDropdown: any[] = [];
   isDuplicateholidayName: boolean[] = [];
    initialPoliciesState: any;
-  constructor(private fb: FormBuilder,    public formValidations: FormValidationsService, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
+  constructor(
+    private fb: FormBuilder,
+    public formValidations: FormValidationsService,
+    public router: Router,
+    private route: ActivatedRoute,
+    private http: HttpService,
+    private confirmation: OpenModalService,
+    private modalService: NgbModal,
+    private wizardNav: SetupWizardNavigationService,
+    readonly wizardFormModal: SetupWizardFormModalService
+  ) { }
+
+  get isWizardModal(): boolean {
+    return this.wizardFormModal.isModalContext();
+  }
+
+  get parentBreadcrumb(): string {
+    return this.wizardNav.getParentBreadcrumb('Manage Holidays', this.route);
+  }
 
   //ngoninit method start
   ngOnInit(): void {
@@ -256,7 +276,7 @@ get holidaysArray(): FormArray {
     this.subscription = this.http.postdata('orgHolidays/Update', payload).subscribe({
       next: (response: any) => {
         this.confirmation.openSuccessModal('Holidays updated successfully');
-        this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+        this.nagvition(true);
       },
       // error: (err) => {
       //   this.confirmation.openErrorModal('Holidays update failed');
@@ -273,7 +293,7 @@ get holidaysArray(): FormArray {
 
   //this method used for close dailog no button click 
   cancel() {
-    this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+    this.nagvition();
   }
 
   //this method used for close button  click open dalog close
@@ -296,7 +316,7 @@ get holidaysArray(): FormArray {
       next: (respnose: any) => {
         this.confirmation.openSuccessModal('Holidays Published successfully');
         setTimeout(() => {
-          this.nagvition();
+          this.nagvition(true);
         }, 2000);
       },
       error: (error: any) => {
@@ -385,9 +405,13 @@ get holidaysArray(): FormArray {
       });
   }
 
-  //this method used for after submit data navigate to main page
-  nagvition() {
-    this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+  nagvition(saved = false) {
+    const path = ['/settings/employee-fields/manage-holidays/pending-for-submit'];
+    if (saved) {
+      this.wizardNav.completeWizardFormOrNavigateBack(path, this.route);
+      return;
+    }
+    this.wizardNav.closeWizardFormOrNavigateBack(path, this.route);
   }
 
   ngOnDestroy() {

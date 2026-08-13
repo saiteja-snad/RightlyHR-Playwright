@@ -11,6 +11,8 @@ import { RbacService } from '../../../../services/rbac.service';
 import { IPolicy } from './policies.model';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 
 @Component({
@@ -27,18 +29,25 @@ export class PendingPoliciesComponent implements OnInit, OnDestroy {
  message: any;
   successModalRef: any;
   deleteModalRef: any;
-  constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, public rbac: RbacService,private confirmation: OpenModalService,
-   ) { }
+  constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, public rbac: RbacService, private confirmation: OpenModalService, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
   ngOnInit(): void {
     this.getAllPolicies();
   }
   
   nagvition() {
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('add-policies', { onClosed: () => this.getAllPolicies() });
+      return;
+    }
     this.router.navigate(['/settings/employee-fields/addpolices']);
   }
 
   updateNavigation(policy: any) {
     localStorage.setItem('updatepolicies', JSON.stringify(policy));
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('update-policies', { onClosed: () => this.getAllPolicies() });
+      return;
+    }
     this.router.navigate(['/settings/employee-fields/updatepolices']);
   }
   Message: any;

@@ -1,4 +1,4 @@
-@if (visible()) {
+@if (visible() && showSetupWizard() && !wizardService.isCompleted()) {
   <button class="setup-wizard-fab" (click)="onClick()" type="button">
     <span class="fab-icon">
       <i class="bi bi-list-check"></i>

@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SetupWizardService } from '../services/setup-wizard.service';
@@ -9,30 +9,27 @@ import { SetupWizardService } from '../services/setup-wizard.service';
   templateUrl: './setup-wizard-popup.component.html',
   styleUrl: './setup-wizard-popup.component.scss'
 })
-export class SetupWizardPopupComponent {
+export class SetupWizardPopupComponent implements OnInit {
   readonly wizardService = inject(SetupWizardService);
   private readonly router = inject(Router);
   readonly close = output<void>();
+
+  ngOnInit(): void {
+    this.wizardService.loadProgress().subscribe();
+  }
 
   onClose(): void {
     this.close.emit();
   }
 
   onResumeSetup(): void {
-    const module = this.wizardService.firstIncompleteModule();
-    this.wizardService.setCurrentModule(
-      this.wizardService.modules().findIndex(m => m.id === module.id)
-    );
+    const module = this.wizardService.currentModule();
+
     this.close.emit();
     this.router.navigate(['/setup-wizard', module.route]);
   }
 
-  onChecklistItemClick(index: number): void {
-    const module = this.wizardService.modules()[index];
-    if (!module.completed) {
-      this.wizardService.setCurrentModule(index);
-      this.close.emit();
-      this.router.navigate(['/setup-wizard', module.route]);
-    }
+  isCurrentStep(index: number): boolean {
+    return index === this.wizardService.currentModuleIndex() && !this.wizardService.modules()[index]?.completed;
   }
 }

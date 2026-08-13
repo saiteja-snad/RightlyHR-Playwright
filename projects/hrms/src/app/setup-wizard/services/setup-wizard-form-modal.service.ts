@@ -7,7 +7,12 @@ export type SetupWizardFormKey =
   | 'add-holidays'
   | 'add-weekends'
   | 'add-policies'
-  | 'add-leave-category';
+  | 'add-leave-category'
+  | 'update-shifts'
+  | 'update-holidays'
+  | 'update-weekends'
+  | 'update-policies'
+  | 'update-leave-category';
 
 export interface SetupWizardFormDefinition {
   title: string;
@@ -52,6 +57,41 @@ const SETUP_WIZARD_FORM_DEFINITIONS: Record<SetupWizardFormKey, SetupWizardFormD
     loadComponent: () =>
       import('../../settings/time-off/leave-categoery/add-leavecategory/add-leavecategory.component').then(
         (m) => m.AddLeavecategoryComponent as Type<unknown>
+      )
+  },
+  'update-shifts': {
+    title: 'Update Shifts',
+    loadComponent: () =>
+      import('../../settings/employee-fields/manage-shifts/update-shift/update-shift.component').then(
+        (m) => m.UpdateShiftComponent as Type<unknown>
+      )
+  },
+  'update-holidays': {
+    title: 'Update Holidays',
+    loadComponent: () =>
+      import('../../settings/employee-fields/manage-holidays/update-holidays/update-holidays.component').then(
+        (m) => m.UpdateHolidaysComponent as Type<unknown>
+      )
+  },
+  'update-weekends': {
+    title: 'Update Weekends',
+    loadComponent: () =>
+      import('../../settings/employee-fields/manage-weekends/update-weekends/update-weekends.component').then(
+        (m) => m.UpdateWeekendsComponent as Type<unknown>
+      )
+  },
+  'update-policies': {
+    title: 'Update Policies',
+    loadComponent: () =>
+      import('../../settings/employee-fields/manage-policies/update-policies/update-policies.component').then(
+        (m) => m.UpdatePoliciesComponent as Type<unknown>
+      )
+  },
+  'update-leave-category': {
+    title: 'Update Leave Category',
+    loadComponent: () =>
+      import('../../settings/time-off/leave-categoery/update-leavecategory/update-leavecategory.component').then(
+        (m) => m.UpdateLeavecategoryComponent as Type<unknown>
       )
   }
 };

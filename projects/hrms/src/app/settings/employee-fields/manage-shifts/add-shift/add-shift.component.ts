@@ -12,6 +12,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 @Component({
   selector: 'app-add-shift',
@@ -41,8 +42,13 @@ export class AddShiftComponent {
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
-    private wizardNav: SetupWizardNavigationService
+    private wizardNav: SetupWizardNavigationService,
+    readonly wizardFormModal: SetupWizardFormModalService
   ) { }
+
+  get isWizardModal(): boolean {
+    return this.wizardFormModal.isModalContext();
+  }
 
   get parentBreadcrumb(): string {
     return this.wizardNav.getParentBreadcrumb('Manage Shifts', this.route);

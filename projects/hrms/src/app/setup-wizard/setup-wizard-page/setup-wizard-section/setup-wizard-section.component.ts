@@ -2,10 +2,7 @@ import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LocationComponent } from '../../../settings/employee-fields/job/location/location.component';
 import { SubLocationComponent } from '../../../settings/employee-fields/job/sub-location/sub-location.component';
-import { PublishedShiftsComponent } from '../../../settings/employee-fields/manage-shifts/published-shifts/published-shifts.component';
-import { PublishedHolidaysComponent } from '../../../settings/employee-fields/manage-holidays/published-holidays/published-holidays.component';
-import { PublishedWeekendsComponent } from '../../../settings/employee-fields/manage-weekends/published-weekends/published-weekends.component';
-import { PublishedPoliciesComponent } from '../../../settings/employee-fields/manage-policies/published-policies/published-policies.component';
+import { SetupWizardStatusSectionComponent } from '../setup-wizard-status-section/setup-wizard-status-section.component';
 import { DepartmentComponent } from '../../../settings/employee-fields/job/department/department.component';
 import { TeamComponent } from '../../../settings/employee-fields/job/team/team.component';
 import { SalutationComponent } from '../../../settings/employee-fields/personal/salutation/salutation.component';
@@ -20,7 +17,6 @@ import { PaytypeComponent } from '../../../settings/employee-fields/job/paytype/
 import { GradeComponent } from '../../../settings/employee-fields/job/grade/grade.component';
 import { CompensationReasonComponent } from '../../../settings/employee-fields/job/compensation-reason/compensation-reason.component';
 import { OrganizationchartComponent } from '../../../organizationchart/organizationchart/organizationchart.component';
-import { PublishedLeavecategoryComponent } from '../../../settings/time-off/leave-categoery/published-leavecategory/published-leavecategory.component';
 import { LeaveAlloctaionComponent } from '../../../settings/time-off/leave-alloctaion/leave-alloctaion.component';
 import { SignatureAuthorityComponent } from '../../../settings/employee-fields/job/signature-authority/signature-authority.component';
 import { SetupWizardSectionKey } from '../../models/setup-wizard.model';
@@ -31,10 +27,7 @@ import { SetupWizardSectionKey } from '../../models/setup-wizard.model';
     CommonModule,
     LocationComponent,
     SubLocationComponent,
-    PublishedShiftsComponent,
-    PublishedHolidaysComponent,
-    PublishedWeekendsComponent,
-    PublishedPoliciesComponent,
+    SetupWizardStatusSectionComponent,
     DepartmentComponent,
     TeamComponent,
     SalutationComponent,
@@ -49,7 +42,6 @@ import { SetupWizardSectionKey } from '../../models/setup-wizard.model';
     GradeComponent,
     CompensationReasonComponent,
     OrganizationchartComponent,
-    PublishedLeavecategoryComponent,
     LeaveAlloctaionComponent,
     SignatureAuthorityComponent
   ],

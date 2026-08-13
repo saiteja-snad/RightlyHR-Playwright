@@ -9,6 +9,8 @@ import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 @Component({
   selector: 'app-pending-holidays',
@@ -24,7 +26,7 @@ loading = false;
  message: any;
   successModalRef: any;
   deleteModalRef: any;
-  constructor(public router: Router, private http: HttpService, public rbac: RbacService, private confirmation: OpenModalService,private modalService: NgbModal) { }
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService, private confirmation: OpenModalService, private modalService: NgbModal, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
 
 
   ngOnInit() {
@@ -46,7 +48,11 @@ loading = false;
 
   updateHoliday(holiday: any) {
     localStorage.setItem('updateholidays', JSON.stringify(holiday));
-    this.router.navigate(['/settings/employee-fields/updateholidays'])
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('update-holidays', { onClosed: () => this.getAllHolidays() });
+      return;
+    }
+    this.router.navigate(['/settings/employee-fields/updateholidays']);
   }
  holidaydata: any;
  
@@ -80,6 +86,10 @@ loading = false;
     });
   }
   nagvition() {
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('add-holidays', { onClosed: () => this.getAllHolidays() });
+      return;
+    }
     this.router.navigate(['/settings/employee-fields/addholidays']);
   }
 

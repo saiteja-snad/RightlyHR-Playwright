@@ -147,7 +147,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public formsValidation: FormValidationsService,
     public readonly router: Router
-  ) { }
+  ) {}
 
   // ngOnInit(): void {
   //   this.getattendancedatabyentry();
@@ -340,11 +340,10 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     if (this.maxPastDaysAllowed === undefined) return false;
     const today = new Date();
     const selected = new Date(date);
-
+    // Calculate the difference in days
     const diff = Math.floor(
       (today.getTime() - selected.getTime()) / (1000 * 60 * 60 * 24)
     );
-
     return diff <= this.maxPastDaysAllowed && diff >= 0;
   }
 
@@ -431,13 +430,13 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
         });
     }
   }
-  getApprovalStatusCounts() {
+getApprovalStatusCounts() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.leavesModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-      this.http.updatePendingApprovalCounts(this.totalCount);
-      //Map counts to tabs
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
     });
   }
   navigateToLeave(data: any) {
@@ -470,8 +469,9 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   getAttendnaceData(employee: any) {
     this.dataLoader = true;
     const employeeId = employee.employeeId;
-    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''
-      }${employee.lastName ? ' ' + employee.lastName : ''}`;;
+        this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
+      employee.middleName ? ' ' + employee.middleName : ''
+    }${employee.lastName ? ' ' + employee.lastName : ''}`;;
 
     // Calculate start and end dates for the selected month
     const startDate = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month').format('YYYY-MM-DD');
@@ -492,30 +492,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
             })
           );
           this.attendanceData.next(updatedAttendanceData);
-          const june13 = updatedAttendanceData.find(
-            (x: any) => x.date === '2026-06-13'
-          );
-
-          console.log('June 13 Record:', june13);
-          const june18 = updatedAttendanceData.find(
-            (x: any) => x.date === '2026-06-18'
-          );
-          console.log('June 18 Status:', june18.status);
-          console.log('June 18 DisplayStatus:', june18.displayStatus);
-
-          console.log('June 18 Record:', june18);
           this.statusCounts$.next(response.data.summary);
           this.shiftDetails = response.data.shiftDetails;
-          console.log('shiftDetails:', this.shiftDetails);
-          console.log('maxPastDaysAllowed:', this.maxPastDaysAllowed);
-          console.log(
-            'Permission:',
-            this.rbac.allowedToAccess('Request Regularization.view')
-          );
-          console.log('Logged-in Employee:', this.empdata.employeeId);
-          console.log('Attendance Employee:', response.data.employeeId);
-          console.log(updatedAttendanceData[0]);
-          console.log(updatedAttendanceData[0].shiftDetails);
           this.initChart();
           // this.attendanceData.next(response.data);
         },
@@ -569,9 +547,11 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
               )
               .map((employee: any) => ({
                 ...employee,
-                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''
-                  }${employee.lastName ?? ''}`.trim(),
+                fullName: `${
+                  employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName ?? ''} ${
+                  employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName ?? ''}`.trim(),
               }))
               .sort((a: any, b: any) =>
                 (a.firstName ?? '').localeCompare(b.firstName ?? '')
@@ -584,32 +564,32 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       });
   }
 
-  onclickRegularization(date: Date | string) {
-    const displayDateString =
-      typeof date === 'string'
-        ? date.split('T')[0]
-        : date.toISOString().split('T')[0];
+onclickRegularization(date: Date | string) {
+  const displayDateString =
+    typeof date === 'string'
+      ? date.split('T')[0]
+      : date.toISOString().split('T')[0];
 
-    const selectedDateObj = new Date(displayDateString);
+  const selectedDateObj = new Date(displayDateString);
 
-    if (isNaN(selectedDateObj.getTime())) {
-      console.error('Invalid date received:', date);
-      return;
-    }
-
-    const attendanceRecord = this.attendanceData.value.find((item: any) => {
-      const itemDate = new Date(item.date);
-      return itemDate.toDateString() === selectedDateObj.toDateString();
-    });
-
-    // This is the key fix: use patchValue with emitEvent: false
-    this.regularizationForm.patchValue({
-      permissionDate: displayDateString
-    }, { emitEvent: false });
-
-    this.selectedDateTotalDuration =
-      attendanceRecord?.duration?.totalDuration || '00:00:00';
+  if (isNaN(selectedDateObj.getTime())) {
+    console.error('Invalid date received:', date);
+    return;
   }
+
+  const attendanceRecord = this.attendanceData.value.find((item: any) => {
+    const itemDate = new Date(item.date);
+    return itemDate.toDateString() === selectedDateObj.toDateString();
+  });
+
+  // This is the key fix: use patchValue with emitEvent: false
+  this.regularizationForm.patchValue({
+    permissionDate: displayDateString
+  }, { emitEvent: false });
+
+  this.selectedDateTotalDuration =
+    attendanceRecord?.duration?.totalDuration || '00:00:00';
+}
 
   getEmployeeDetails() {
     const EmployeeId = this.empdata.employeeId;
@@ -623,10 +603,12 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
               .map((employee: any) => {
                 return {
                   ...employee,
-                  fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                    }${employee.firstName}
-                ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName
-                    }`,
+                  fullName: `${
+                    employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName}
+                ${employee.middleName ? employee.middleName + ' ' : ''}${
+                    employee.lastName
+                  }`,
                 };
               })
               .sort((a: any, b: any) => {

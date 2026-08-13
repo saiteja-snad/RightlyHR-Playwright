@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Table } from 'primeng/table';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
@@ -18,6 +19,7 @@ import {  Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { MultiSelectModule } from 'primeng/multiselect';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-yearly-summary-report',
@@ -31,13 +33,15 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
     NoDataFoundComponent,
     DataLoaderContentComponent,
     ReportsHeaderComponent,
-    MultiSelectModule
+    MultiSelectModule,
+    TableModule
 ],
   templateUrl: './yearly-summary-report.component.html',
   styleUrl: './yearly-summary-report.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class YearlySummaryReportComponent implements OnInit,OnDestroy {
+  @ViewChild('yearlyTable') yearlyTable!: Table;
   moduleinfo : string = '';
   subscription!: Subscription;
   private readonly destroy$ = new Subject<void>();
@@ -57,6 +61,9 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
   isFilterIndicatorActive = false;
   disableBtn = false;
   employeeMultiSelectOptions: any[] = [];
+  originalFilteredYearlyRecord: any[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
 
   years = [
     { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
@@ -257,6 +264,9 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
           if (!bName) return -1;
           return aName.localeCompare(bName);
         });
+        this.originalFilteredYearlyRecord = [...this.filteredYearlyRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
         if (this.filteredYearlyRecord.length === 0) {
           // Show modal: no data
         } else {
@@ -296,129 +306,87 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
   }
 
   exportToExcelYearly(): void {
-    // Define header mappings
     this.spinnerLoader2 = true;
-    setTimeout(() => {
+
+    const dataToExport = this.yearlyTable?.filteredValue ?? this.yearlyTable?.value ?? this.filteredYearlyRecord;
+
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
       department: 'DEPARTMENT',
       teamManagerName: 'TEAM MANAGER',
-      entitlementYear: 'YEAR',
+      year: 'YEAR',
       location: 'LOCATION',
       subLocation: 'SUB LOCATION',
       shift: 'SHIFT',
       leaveCategoryName: 'LEAVE CATEGORY',
       entitled: 'ENTITLED',
       availed: 'AVAILED',
-      frozenCount: 'FROZEN',
-      balanced: 'BALANCE',
-      // Map V2 lowercase keys if different
-      year: 'YEAR',
       balance: 'BALANCE'
     };
 
-    // Define new sequence
     const NEW_SEQUENCE: string[] = [
-      'EMPLOYEE ID',
-      'EMPLOYEE NAME',
-      'DEPARTMENT',
-      'TEAM MANAGER',
-      'YEAR',
-      'LOCATION',
-      'SUB LOCATION',
-      'SHIFT',
-      'LEAVE CATEGORY',
-      'ENTITLED',
-      'AVAILED',
-      'FROZEN',
-      'BALANCE'
+      'EMPLOYEE ID', 'EMPLOYEE NAME', 'DEPARTMENT', 'TEAM MANAGER', 'YEAR',
+      'LOCATION', 'SUB LOCATION', 'SHIFT', 'LEAVE CATEGORY', 'ENTITLED', 'AVAILED', 'BALANCE'
     ];
 
-    // Modify data with renamed headers and new sequence
-    const modifiedData = this.filteredYearlyRecord.map(record => {
-      const modifiedRecord: any = {};
-      NEW_SEQUENCE.forEach(columnName => {
-        // Handle case where multiple keys map to same header (e.g. year/entitlementYear)
-        // We need to find if record has any of the keys that map to this column name
-        const keyInRecord = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName && record.hasOwnProperty(key));
-        
-        if (keyInRecord) {
-           const value = record[keyInRecord];
-           if (value === null || value === undefined) {
-             modifiedRecord[columnName] = '-';
-           } else if (typeof value === 'string' && value.trim().length === 0) {
-             modifiedRecord[columnName] = '-';
-           } else {
-             modifiedRecord[columnName] = value;
-           }
-        } else {
-          modifiedRecord[columnName] = '-';
+    const normalizeCell = (value: any) => {
+      if (value === null || value === undefined) return '-';
+      if (typeof value === 'string') return value.trim().length > 0 ? value.trim() : '-';
+      return value;
+    };
+
+    const modifiedData = dataToExport.map((record: any) => {
+      const row: any = {};
+      NEW_SEQUENCE.forEach(col => {
+        const originalKey = Object.keys(HEADER_MAPPINGS).find(k => HEADER_MAPPINGS[k] === col);
+        row[col] = originalKey && record.hasOwnProperty(originalKey) ? normalizeCell(record[originalKey]) : '-';
+      });
+      return row;
+    });
+
+    if (modifiedData.length === 0) {
+      const emptyRow: any = {};
+      NEW_SEQUENCE.forEach(col => { emptyRow[col] = '-'; });
+      modifiedData.push(emptyRow);
+    }
+
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([]);
+
+    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+    XLSX.utils.sheet_add_aoa(ws, [['YEARLY SUMMARY REPORT']], { origin: 'A1' });
+    ws['A1'].s = { font: { bold: true, sz: 16 }, alignment: { horizontal: 'center', vertical: 'center' } };
+
+    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
+    NEW_SEQUENCE.forEach((_, index) => {
+      const cellRef = XLSX.utils.encode_cell({ r: 1, c: index });
+      ws[cellRef].s = {
+        font: { bold: true },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }
+      };
+    });
+
+    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
+    modifiedData.forEach((_: any, rowIndex: number) => {
+      NEW_SEQUENCE.forEach((_, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
+        if (ws[cellRef]) {
+          ws[cellRef].s = { alignment: { horizontal: 'center', vertical: 'center' } };
         }
       });
-      return modifiedRecord;
     });
 
-    // Create a new empty worksheet
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
+    ws['!autofilter'] = { ref: `A2:${XLSX.utils.encode_col(NEW_SEQUENCE.length - 1)}2` };
+    ws['!cols'] = NEW_SEQUENCE.map(col => ({
+      wch: Math.max(col.length, ...modifiedData.map((r: any) => String(r[col] ?? '').length)) + 2
+    }));
 
-    // Merge cells for Report row
-    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
-
-    // Add Report row
-    XLSX.utils.sheet_add_aoa(ws, [['YEARLY SUMMARY REPORT']], { origin: 'A1' });
-
-    // Add header row
-    const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName] || columnName);
-    XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
-
-    // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3', skipHeader: true });
-
-    // Apply styles to Report row
-    const wfhReportCell = ws['A1'] || { t: '', v: '' }; 
-    wfhReportCell.s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'center' } };
-    ws['A1'] = wfhReportCell;
-
-    // Apply styles to column headers
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-      const cell = ws[cellAddress] || { t: '', v: '' }; 
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' } };
-      ws[cellAddress] = cell; 
-    });
-
-     // Apply middle alignment to all data cells
-     modifiedData.forEach((_, rowIndex) => {
-        NEW_SEQUENCE.forEach((_, colIndex) => {
-          const cellRef = XLSX.utils.encode_cell({ r: rowIndex + 2, c: colIndex });
-          if (ws[cellRef]) {
-            ws[cellRef].s = {
-              alignment: { horizontal: 'center', vertical: 'center' }
-            };
-          }
-        });
-      });
-
-    // Adjust column width to fit data
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      let columnWidth = this.getColumnWidth(modifiedData, columnName);
-
-      if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'SUB LOCATION') {
-        columnWidth += 5; // Increase width by 5
-      }
-      ws['!cols'] = ws['!cols'] || [];
-      ws['!cols'][index] = { wch: columnWidth };
-    });
-
-    // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Yearly Summary Report');
-    const today = new Date();
-    const filenameDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(',', '');
-    XLSX.writeFile(wb, `Yearly Summary Report - ${filenameDate}.xlsx`);
+    const formattedDate = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '');
+    XLSX.writeFile(wb, `Yearly Summary Report - ${formattedDate}.xlsx`);
     this.spinnerLoader2 = false;
-    }, 100);
   }
 
   getColumnWidth(data: any[], columnName: string): number {
@@ -434,7 +402,53 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
  navigation(){
     this.router.navigate(['/reports']);
   }
+customSort(event: any): void {
+    const field = event.field;
 
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredYearlyRecord = [...this.originalFilteredYearlyRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.yearlyTable) this.yearlyTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      // Handle fusionEmpId numeric sorting
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // Handle numeric fields: year, entitled, availed, balance
+      if (field === 'year' || field === 'entitled' || field === 'availed' || field === 'balance') {
+        const num1 = Number(val1) || 0;
+        const num2 = Number(val2) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      // String sorting (default)
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

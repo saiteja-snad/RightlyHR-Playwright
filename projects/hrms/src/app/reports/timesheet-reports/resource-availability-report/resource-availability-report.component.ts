@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { AuthService } from '../../../services/auth.service';
@@ -21,15 +21,18 @@ import { PaginatorModule } from 'primeng/paginator';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { HttpResponse } from '@angular/common/http';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-resource-availability-report',
-  imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+  imports: [DatePicker, CommonModule, MultiSelectModule, TableModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './resource-availability-report.component.html',
   styleUrl: './resource-availability-report.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
+  @ViewChild('dt') table!: Table;
+  
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -76,6 +79,73 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
   ];
   today: Date = new Date();
   employeeiddetails: any[] = [];
+  
+  // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  currentUIField: string | null = null; // Track the UI field name for visual state
+  suppressNextPageChange = false;
+  
+  // Sort field mapping for server-side sorting
+  readonly sortFieldMap: Record<string, string> = {
+    fusionEmpId: 'fusionEmpId',
+    employeeName: 'employeeName',
+    department: 'department',
+    designation: 'designation',
+    projectAssigned: 'projectAssigned',
+    phaseName: 'phaseName',
+    projectStartDate: 'projectStartDate',
+    projectEndDate: 'projectEndDate',
+    availableFrom: 'availableFrom'
+  };
+
+  // Method to handle column header clicks
+  onColumnSort(field: string): void {
+    const backendField = this.sortFieldMap[field] || field;
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === 0) {
+        // Currently no sort, set to ascending
+        this.currentSortOrder = 1;
+        this.currentSortField = backendField;
+        this.currentUIField = field;
+      } else if (this.currentSortOrder === 1) {
+        // Currently ascending, set to descending
+        this.currentSortOrder = -1;
+        this.currentSortField = backendField;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = null;
+        this.currentSortOrder = 0;
+        
+        // Manually reset PrimeNG table sort state
+        if (this.table) {
+          this.table.reset();
+        }
+        
+        // Reset to first page and reload data without sorting
+        this.page = 1;
+        this.first = 0;
+        this.generateResourceAvailabilityReport(this.page, this.pageSize, true, true);
+        return;
+      }
+    } else {
+      // Different field clicked - start with ascending
+      this.currentUIField = field;
+      this.currentSortField = backendField;
+      this.currentSortOrder = 1; // Always start with ascending for new field
+    }
+
+    // Reset to first page when sorting changes
+    this.page = 1;
+    this.first = 0;
+    
+    // Call generate to refresh data with new sorting
+    this.generateResourceAvailabilityReport(this.page, this.pageSize, true, true);
+  }
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -86,6 +156,12 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     private offcanvasService: NgbOffcanvas,
   ) { }
+
+  customSort(event: any): void {
+    // This method is kept for compatibility but does nothing
+    // We handle sorting through onColumnSort instead
+    return;
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -131,6 +207,29 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
     this.collectionSize = 0;
     this.ResourceAvailabilityReportForm.get('phases')?.disable();
     this.getEmployeeData();
+    
+    // Reset sorting arrows and pagination - use null and 0 for proper reset
+    this.currentSortField = '';
+    this.currentUIField = null;
+    this.currentSortOrder = 0;
+    
+    // Reset pagination to first page
+    this.page = 1;
+    this.first = 0;
+    
+    // Reset the table sort state
+    if (this.table) {
+      this.table.reset();
+    }
+    
+    // Prevent suppression of next page change to ensure proper reset
+    this.suppressNextPageChange = false;
+    
+    // Reset disabled button state
+    this.disableBtn = false;
+    
+    // Close the offcanvas after clearing
+    this.closeCanvas();
   }
     
   toggleFilters(content: TemplateRef<any>) {
@@ -157,6 +256,11 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
   }
 
   onPageChange(event: any) {
+    if (this.suppressNextPageChange && event?.page === 0 && event?.first === 0) {
+      this.suppressNextPageChange = false;
+      return;
+    }
+    this.suppressNextPageChange = false;
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
@@ -469,9 +573,13 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
     if (showLoader) this.spinnerLoader1 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+    
+    // Add sorting to the query string
+    const sortQuery = this.currentSortField && this.currentSortOrder !== 0 ? `&Sorts=${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}` : '';
+    
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}${sortQuery}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.spinnerLoader1 = false;   
+        this.spinnerLoader1 = false;
         this.offcanvasService.dismiss();
         if (res.success && res.data?.items) {
           this.filteredResourceAvailabilityRecord = res.data.items;
@@ -503,7 +611,11 @@ export class ResourceAvailabilityReportComponent implements OnInit, OnDestroy {
     this.spinnerLoader2 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
+    
+    // Add sorting to export as well
+    const sortQuery = this.currentSortField && this.currentSortOrder !== 0 ? `&Sorts=${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}` : '';
+    
+    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}${sortQuery}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
         this.spinnerLoader2 = false;
         // Extract filename from Content-Disposition

@@ -10,65 +10,67 @@
 
     <ng-template #maincontent>
         <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <th>Contact Name</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Role</th>
-                    <th class="text-center" style="text-transform: none;" *ngIf="this.inactiveStatus !== 'inactive'">Set as Primary Contact</th>
-                    @if((rbac.allowedToAccess('Contact Info Tab.update') || rbac.allowedToAccess('Contact Info Tab.delete'))
-                    && inactiveStatus !== 'inactive'){
-                    <th class="text-center">{{"Action" | translate}}</th>
-                    }
-                </thead>
-                <tbody>
-                    <ng-container *ngIf="(contactData?.length ?? 0) > 0; else noDataTemplate">
-                        <tr *ngFor="let contact of contactData; let i = index">
-                            <td style="text-transform: capitalize;">{{ contact?.name || '-' }}</td>
-                            <td>{{ contact?.email || '-' }}</td>
-                            <td>{{ (contact?.phoneDialCode && contact?.phoneNumber) ? contact.phoneDialCode + ' ' + contact.phoneNumber : '-' }}</td>
-                            <td>{{ contact?.role || '-' }}</td>
-                            <td class="text-center" *ngIf="this.inactiveStatus !== 'inactive'">
-                                <span (click)="openispermiarayModal(conformation ,contact)">
-                                    <input type="checkbox" [checked]="contact.primaryContact === true || contact.primaryContact === 'true'"
-                                        [disabled]="contact.primaryContact === true || contact.primaryContact === 'true'" />
-                                </span>
-                            </td>
-                            @if((rbac.allowedToAccess('Contact Info Tab.update') || rbac.allowedToAccess('Contact Info Tab.delete')) && inactiveStatus !== 'inactive'){
-                            <td class="text-center">
-                                <div class="dropdown">
-                                    <a data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        @if(rbac.allowedToAccess('Contact Info Tab.update')){
-                                        <li (click)="openupdateModal(updatecontact ,contact)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-pencil me-2"></i>Update
-                                            </a>
-                                        </li>
-                                        }
-                                        @if(rbac.allowedToAccess('Contact Info Tab.delete')){
-                                        <li (click)="opendeletModal(deleteconformation ,contact)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-trash me-2"></i>Delete
-                                            </a>
-                                        </li>
-                                        }
-                                    </ul>
-                                </div>
-                            </td>
-                            }
-                        </tr>
-                    </ng-container>
-                    <ng-template #noDataTemplate>
-                        <tr>
+            <p-table #contactsTable [value]="contactData" [customSort]="true" (sortFunction)="customSort($event)" [sortMode]="'single'">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="name">Contact Name <p-sortIcon field="name" /></th>
+                        <th pSortableColumn="email">Email <p-sortIcon field="email" /></th>
+                        <th pSortableColumn="phoneNumber">Phone Number <p-sortIcon field="phoneNumber" /></th>
+                        <th pSortableColumn="role">Role <p-sortIcon field="role" /></th>
+                        <th class="text-center" style="text-transform: none;" *ngIf="this.inactiveStatus !== 'inactive'">Set as Primary Contact</th>
+                        @if((rbac.allowedToAccess('Contact Info Tab.update') || rbac.allowedToAccess('Contact Info Tab.delete'))
+                        && inactiveStatus !== 'inactive'){
+                        <th class="text-center">{{"Action" | translate}}</th>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-contact let-i="rowIndex">
+                    <tr>
+                        <td style="text-transform: capitalize;">{{ contact?.name || '-' }}</td>
+                        <td>{{ contact?.email || '-' }}</td>
+                        <td>{{ (contact?.phoneDialCode && contact?.phoneNumber) ? contact.phoneDialCode + ' ' + contact.phoneNumber : '-' }}</td>
+                        <td>{{ contact?.role || '-' }}</td>
+                        <td class="text-center" *ngIf="this.inactiveStatus !== 'inactive'">
+                            <span (click)="openispermiarayModal(conformation ,contact)">
+                                <input type="checkbox" [checked]="contact.primaryContact === true || contact.primaryContact === 'true'"
+                                    [disabled]="contact.primaryContact === true || contact.primaryContact === 'true'" />
+                            </span>
+                        </td>
+                        @if((rbac.allowedToAccess('Contact Info Tab.update') || rbac.allowedToAccess('Contact Info Tab.delete')) && inactiveStatus !== 'inactive'){
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('Contact Info Tab.update')){
+                                    <li (click)="openupdateModal(updatecontact ,contact)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-pencil me-2"></i>Update
+                                        </a>
+                                    </li>
+                                    }
+                                    @if(rbac.allowedToAccess('Contact Info Tab.delete')){
+                                    <li (click)="opendeletModal(deleteconformation ,contact)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-trash me-2"></i>Delete
+                                        </a>
+                                    </li>
+                                    }
+                                </ul>
+                            </div>
+                        </td>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="inactiveStatus !== 'inactive' ? 6 : 5">
                             <app-no-data-found />
-                        </tr>
-                    </ng-template>
-                </tbody>
-            </table>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
         </div>
     </ng-template>
 </div>

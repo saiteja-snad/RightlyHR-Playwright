@@ -136,75 +136,6 @@ export class InactiveContractEmployeesComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  
-
-  private clientSideSort(employees: Iinactivetrainee[]): Iinactivetrainee[] {
-    return employees.sort((a: any, b: any) => {
-      let val1: any;
-      let val2: any;
-
-      // Handle nested job details fields
-      if (['location', 'subLocation', 'shiftName', 'designation'].includes(this.currentSortField)) {
-        switch (this.currentSortField) {
-          case 'location':
-            val1 = a.jobDetails?.[0]?.lopcation;
-            val2 = b.jobDetails?.[0]?.lopcation;
-            break;
-          case 'subLocation':
-            val1 = a.jobDetails?.[0]?.subLocation;
-            val2 = b.jobDetails?.[0]?.subLocation;
-            break;
-          case 'shiftName':
-            val1 = a.jobDetails?.[0]?.shiftName;
-            val2 = b.jobDetails?.[0]?.shiftName;
-            break;
-          case 'designation':
-            val1 = a.jobDetails?.[0]?.jobRole;
-            val2 = b.jobDetails?.[0]?.jobRole;
-            break;
-        }
-      } else if (this.currentSortField === 'firstName') {
-        // Handle employee name sorting (combine first, middle, last name)
-        val1 = `${a.firstName || ''} ${a.middleName || ''} ${a.lastName || ''}`.trim();
-        val2 = `${b.firstName || ''} ${b.middleName || ''} ${b.lastName || ''}`.trim();
-      } else if (this.currentSortField === 'dateOfJoining') {
-        // Handle date sorting
-        const date1 = new Date(a.dateOfJoining ?? 0).getTime();
-        const date2 = new Date(b.dateOfJoining ?? 0).getTime();
-        return this.currentSortOrder * (date1 - date2);
-      } else {
-        // Handle direct fields
-        val1 = a[this.currentSortField];
-        val2 = b[this.currentSortField];
-      }
-
-      // Handle Employee ID sorting (alphanumeric)
-      if (this.currentSortField === 'fusionEmpId') {
-        return this.currentSortOrder * String(val1 ?? '').localeCompare(
-          String(val2 ?? ''),
-          undefined,
-          {
-            numeric: true,
-            sensitivity: 'base'
-          }
-        );
-      }
-
-      // Handle contact number sorting (numeric)
-      if (this.currentSortField === 'contactnumber') {
-        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
-        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
-        return this.currentSortOrder * (num1 - num2);
-      }
-
-      // Handle string sorting for all other fields
-      val1 = String(val1 ?? '').trim();
-      val2 = String(val2 ?? '').trim();
-      return this.currentSortOrder * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
-    });
-  }
-
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     // this.router.navigate(['/personalinfo']);
@@ -224,14 +155,7 @@ export class InactiveContractEmployeesComponent implements OnInit, OnDestroy {
     return this.router.url.includes(link);
   }
 
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
-  }
+
 
   getFilteredAndSortedEmployees(): Iinactivetrainee[] {
     return this.filteredInActiveTrainee;
@@ -348,5 +272,13 @@ export class InactiveContractEmployeesComponent implements OnInit, OnDestroy {
     this.currentSortOrder = order;
 
     this.getAllInactiveContractEmployees(this.page, this.pageSize);
+  }
+    ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
   }
 }

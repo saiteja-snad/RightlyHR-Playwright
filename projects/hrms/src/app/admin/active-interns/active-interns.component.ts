@@ -161,16 +161,6 @@ page = 1;
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
   }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
-  }
-
   getFilteredAndSortedInterns(): ITrainee[] {
     return this.filteredTraineeActive;
   }
@@ -286,5 +276,13 @@ page = 1;
     this.currentSortOrder = order;
 
     this.getAllActiveInterns(this.page, this.pageSize);
+  }
+  ngOnDestroy(): void {
+   if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
@@ -27,16 +27,18 @@ import { Paginator } from "primeng/paginator";
 import { HelpdeskCreatequeires } from '../helpdesk-model';
 import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
 import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+import { Table, TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-employee-help-desk',
   imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, NgbPopoverModule, ApplicablePoliciesTriggerComponent,
-    TranslateModule, DateformatPipe, FormsModule, ModuleInformationComponent, ItsuporrtHeaderTabsComponent, DataLoaderContentComponent, ModuleInfoIconComponent, ProfileIconComponent, InfoIconComponent, HelpdeskPipe, HelpdeskHeaderTabsComponent, Paginator],
+    TranslateModule, DateformatPipe, FormsModule, ModuleInformationComponent, ItsuporrtHeaderTabsComponent, DataLoaderContentComponent, ModuleInfoIconComponent, ProfileIconComponent, InfoIconComponent, HelpdeskPipe, HelpdeskHeaderTabsComponent, Paginator, TableModule],
   templateUrl: './employee-help-desk.component.html',
   styleUrl: './employee-help-desk.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class EmployeeHelpDeskComponent {
+  @ViewChild('dt') dt!: Table;
   applicablePolicies = APPLICABLE_POLICIES_KEYS.HELP_DESK_TICKETS;
   moduleinfo: string = '';
   subscription!: Subscription;
@@ -83,6 +85,18 @@ export class EmployeeHelpDeskComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  sortField = '';
+  sortOrder = '';
+  tableSortField = '';
+  tableSortOrder = -1;
+  readonly sortFieldMap: Record<string, string> = {
+    id: 'id',
+    category: 'category',
+    subcategory: 'subcategory',
+    createdDate: 'createdDate',
+    status: 'status',
+    priority: 'priority'
+  };
   constructor(private readonly http: HttpService, private readonly modalService: NgbModal, private fb: FormBuilder, private confirmation: OpenModalService,
     private offcanvasService: NgbOffcanvas, public rbac: RbacService, public readonly router: Router) { }
 
@@ -136,6 +150,34 @@ export class EmployeeHelpDeskComponent {
     this.first = 0;
     this.getemployedeshdata(this.page, this.pageSize);
 
+  }
+
+  onSort(event: any) {
+    const field = String(event.field ?? '');
+    const nextField = this.sortFieldMap[field] ?? field;
+    const nextOrder = event.order === 1 ? 'asc' : 'desc';
+
+    if (this.sortField === nextField && this.sortOrder === 'desc' && event.order === 1) {
+      this.dt.reset();
+      this.sortField = '';
+      this.sortOrder = '';
+      this.tableSortField = '';
+      this.tableSortOrder = 1;
+      this.page = 1;
+      this.first = 0;
+      this.getemployedeshdata();
+      return;
+    }
+
+    if (this.sortField === nextField && this.sortOrder === nextOrder) return;
+
+    this.sortField = nextField;
+    this.sortOrder = nextOrder;
+    this.tableSortField = field;
+    this.tableSortOrder = event.order;
+    this.page = 1;
+    this.first = 0;
+    this.getemployedeshdata();
   }
 
   // onDepartmentClear() {
@@ -403,10 +445,12 @@ export class EmployeeHelpDeskComponent {
 
   let url = `HelpDeskQueries/${EmpId}?pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
+  const sortQuery = this.sortField && this.sortOrder ? `&Sorts=${this.sortField}:${this.sortOrder}` : '';
   // Add search only when value exists
   if (this.searchValue && this.searchValue.trim() !== '') {
     url += `&search=${this.searchValue}`;
   }
+  url += sortQuery;
     this.subscription = this.http.getData(url).subscribe({
       next: (response: any) => {
         this.dataloader = false;

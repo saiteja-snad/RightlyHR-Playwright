@@ -88,6 +88,7 @@ export default [
       { path: 'job-details', loadComponent: () => import('./job/job-details/job-details.component').then((m) => m.JobDetailsComponent), data: { permission: 'Employee Info Job Details.view' } },
       { path: 'compensation-details', loadComponent: () => import('./job/compensation/compensation.component').then((m) => m.CompensationComponent), data: { permission: 'Employee Info Compensation Details.view' } },
       { path: 'no-due-clearance-details', loadComponent: () => import('./job/no-due-clearance/no-due-clearance.component').then((m) => m.NoDueClearanceComponent), data: { permission: 'Employee Info No Due Clearance Details.view' } },
+      { path: 'nodue-form-details', loadComponent: () => import('../admin/nodue-form-details/nodue-form-details.component').then((m) => m.NodueFormDetailsComponent) },
       { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent), data: { permission: 'Employee Info Probation Details.view' } },
       //{ path: 'separation-details', loadComponent: () => import('./job/separation-request/separation-request.component').then((m) => m.SeparationRequestComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
       {

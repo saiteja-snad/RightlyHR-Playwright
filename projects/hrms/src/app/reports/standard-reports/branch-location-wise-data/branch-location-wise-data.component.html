@@ -26,65 +26,60 @@
 
     <div class="custom-table-content">
         @if(!dataload){
-        <table class="w-100" id="branchLocation">
-            <thead>
+        <p-table #branchTable [value]="standardReportData" [tableStyle]="{'width': '100%'}" (onSort)="onSortChange($event)"[customSort]="true" (sortFunction)="customSort($event)">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{ "Employee ID" }}</th>
-                    <th>{{ "Salutation" }}</th>
-                    <th>{{ "First Name" }}</th>
-                    <th>{{ "Middle Name" }}</th>
-                    <th>{{ "Last Name" }}</th>
-                    <th>{{ "Employee Status" }}</th>
-                    <th>{{ "Date Of Joining" }}</th>
+                    <th pSortableColumn="fusionEmpId">{{ "Employee ID" }} <p-sortIcon field="fusionEmpId" /></th>
+                    <th pSortableColumn="title">{{ "Salutation" }} <p-sortIcon field="title" /></th>
+                    <th pSortableColumn="firstName">{{ "First Name" }} <p-sortIcon field="firstName" /></th>
+                    <th pSortableColumn="middleName">{{ "Middle Name" }} <p-sortIcon field="middleName" /></th>
+                    <th pSortableColumn="lastName">{{ "Last Name" }} <p-sortIcon field="lastName" /></th>
+                    <th pSortableColumn="empstatus">{{ "Employee Status" }} <p-sortIcon field="empstatus" /></th>
+                    <th pSortableColumn="dateOfJoining">{{ "Date Of Joining" }} <p-sortIcon field="dateOfJoining" /></th>
                     <th>{{ "Work Number" }}</th>
                     <th>{{ "Phone Number" }}</th>
-                    <th>{{ 'Work Mail'}}</th>
-                    <th>{{"Personal Email"}}</th>
-
-                    <th>{{ "Address Line 1(Current)" }}</th>
-                    <th>{{ "Address Line 2(Current)" }}</th>
-                    <th>{{ "City(Current)" }}</th>
-                    <th>{{ "State(Current)" }}</th>
-                    <th>{{ "Country(Current)" }}</th>
-                    <th>{{ "ZipCode(Current)" }}</th>
-                    <th>{{ "Address Line 1(Permanent)" }}</th>
-                    <th>{{ "Address Line 2(Permanent)" }}</th>
-                    <th>{{ "City(Permanent)" }}</th>
-                    <th>{{ "State(Permanent)" }}</th>
-                    <th>{{ "Country(Permanent)" }}</th>
-                    <th>{{ "ZipCode(Permanent)" }}</th>
-                    
-                    <th>{{"Job Effective Date"}}</th>
-                    <th>{{ "Branch Code" }}</th>
-                    <th>{{ "Job Role" }}</th>
-                    <th>{{ "Job Grade" }}</th>
-                    <th>{{ "Department" }}</th>
-                    <th>{{"Team"}}</th>
-                    <th>{{"Team Manager"}}</th>
-                    <th>{{"Reporting Manager"}}</th>
-                    <th>{{ "Location" }}</th>
-                    <th>{{ "Sub Location" }}</th>
-                    <th>{{ "Shift" }}</th>
-                    <th>{{ "Shift Code" }}</th>
-                    <th>{{ "Job Type" }}</th>
+                    <th pSortableColumn="workEmail">{{ 'Work Mail' }} <p-sortIcon field="workEmail" /></th>
+                    <th pSortableColumn="emailaddress">{{ "Personal Email" }} <p-sortIcon field="emailaddress" /></th>
+                    <th pSortableColumn="currentaddressline1">{{ "Address Line 1(Current)" }} <p-sortIcon field="currentaddressline1" /></th>
+                    <th pSortableColumn="currentaddressline2">{{ "Address Line 2(Current)" }} <p-sortIcon field="currentaddressline2" /></th>
+                    <th pSortableColumn="currentcity">{{ "City(Current)" }} <p-sortIcon field="currentcity" /></th>
+                    <th pSortableColumn="currentstate">{{ "State(Current)" }} <p-sortIcon field="currentstate" /></th>
+                    <th pSortableColumn="currentcountry">{{ "Country(Current)" }} <p-sortIcon field="currentcountry" /></th>
+                    <th pSortableColumn="currentzipcode">{{ "ZipCode(Current)" }} <p-sortIcon field="currentzipcode" /></th>
+                    <th pSortableColumn="permanentaddressline1">{{ "Address Line 1(Permanent)" }} <p-sortIcon field="permanentaddressline1" /></th>
+                    <th pSortableColumn="permanentaddressline2">{{ "Address Line 2(Permanent)" }} <p-sortIcon field="permanentaddressline2" /></th>
+                    <th pSortableColumn="permanentcity">{{ "City(Permanent)" }} <p-sortIcon field="permanentcity" /></th>
+                    <th pSortableColumn="permanentstate">{{ "State(Permanent)" }} <p-sortIcon field="permanentstate" /></th>
+                    <th pSortableColumn="permanentcountry">{{ "Country(Permanent)" }} <p-sortIcon field="permanentcountry" /></th>
+                    <th pSortableColumn="permanentzipcode">{{ "ZipCode(Permanent)" }} <p-sortIcon field="permanentzipcode" /></th>
+                    <th pSortableColumn="jobeffectivedate">{{ "Job Effective Date" }} <p-sortIcon field="jobeffectivedate" /></th>
+                    <th pSortableColumn="branchcode">{{ "Branch Code" }} <p-sortIcon field="branchcode" /></th>
+                    <th pSortableColumn="jobRole">{{ "Job Role" }} <p-sortIcon field="jobRole" /></th>
+                    <th pSortableColumn="gradeName">{{ "Job Grade" }} <p-sortIcon field="gradeName" /></th>
+                    <th pSortableColumn="departmentName">{{ "Department" }} <p-sortIcon field="departmentName" /></th>
+                    <th pSortableColumn="subdepartment_name">{{ "Team" }} <p-sortIcon field="subdepartment_name" /></th>
+                    <th pSortableColumn="teammanager">{{ "Team Manager" }} <p-sortIcon field="teammanager" /></th>
+                    <th pSortableColumn="reportingManager">{{ "Reporting Manager" }} <p-sortIcon field="reportingManager" /></th>
+                    <th pSortableColumn="joblocationname">{{ "Location" }} <p-sortIcon field="joblocationname" /></th>
+                    <th pSortableColumn="jobsublocationname">{{ "Sub Location" }} <p-sortIcon field="jobsublocationname" /></th>
+                    <th pSortableColumn="shiftname">{{ "Shift" }} <p-sortIcon field="shiftname" /></th>
+                    <th pSortableColumn="shiftcode">{{ "Shift Code" }} <p-sortIcon field="shiftcode" /></th>
+                    <th pSortableColumn="jobType">{{ "Job Type" }} <p-sortIcon field="jobType" /></th>
                 </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="standardReportData.length > 0; else noData">
-                    @for(emp of standardReportData; track emp){
-                    <tr>
-                        <td>{{ emp.fusionEmpId ? emp.fusionEmpId : '-'}}</td>
-                        <td>{{ emp.title ? emp.title : '-'}}</td>
-                        <td>{{ emp.firstName ? emp.firstName : '-' }}</td>
-                        <td>{{ emp.middleName ? emp.middleName : '-' }}</td>
-                        <td>{{ emp.lastName ? emp.lastName : '-' }}</td>
-                        <td>{{ emp.empstatus ? emp.empstatus : '-' }}</td>
-                        <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | dateformat) : '-' }}</td>
-
-                        <td>{{ extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -') }}</td>
-                        <td>{{ extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -') }}</td>
-                        <td>{{ emp.workEmail ? emp.workEmail : '-'}}</td>
-                        <td>{{ emp.emailaddress ? emp.emailaddress : '-'}}</td>
+            </ng-template>
+            <ng-template pTemplate="body" let-emp>
+                <tr>
+                    <td>{{ emp.fusionEmpId ? emp.fusionEmpId : '-'}}</td>
+                    <td>{{ emp.title ? emp.title : '-'}}</td>
+                    <td>{{ emp.firstName ? emp.firstName : '-' }}</td>
+                    <td>{{ emp.middleName ? emp.middleName : '-' }}</td>
+                    <td>{{ emp.lastName ? emp.lastName : '-' }}</td>
+                    <td>{{ emp.empstatus ? emp.empstatus : '-' }}</td>
+                    <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | dateformat) : '-' }}</td>
+                    <td>{{ extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -') }}</td>
+                    <td>{{ extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -') }}</td>
+                    <td>{{ emp.workEmail ? emp.workEmail : '-'}}</td>
+                    <td>{{ emp.emailaddress ? emp.emailaddress : '-'}}</td>
 
 
                         <td>{{ emp.currentaddressline1 ? emp.currentaddressline1 : '-' }}</td>
@@ -113,16 +108,14 @@
                         <td>{{ emp.shiftname ? emp.shiftname : '-' }}</td>
                         <td>{{ emp.shiftcode ? emp.shiftcode : '-' }}</td>
                         <td>{{ emp.jobType ? emp.jobType : '-' }}</td>
-                    </tr>
-                    }
-                </ng-container>
-                <ng-template #noData>
-                    <tr>
-                        <app-no-data-found/>
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="36" class="text-center"><div class="wrapper"><app-no-data-found /></div></td>
+                </tr>
+            </ng-template>
+        </p-table>
         }
         @else {
         <app-data-loader-content />

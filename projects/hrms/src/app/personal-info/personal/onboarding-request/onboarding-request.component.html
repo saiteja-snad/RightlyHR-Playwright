@@ -8,24 +8,35 @@
     <!--Input search-->
     <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-            <thead>
+        <p-table #documentsTable [value]="(documentData | async) ?? []" [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="p-datatable-sm" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{'Document Type'|translate}}</th>
-                    <th>{{'Document Number'|translate}}</th>
-                    <th class="text-center">{{'Submitted Date'|translate}}</th>
+                    <th pSortableColumn="documentType">
+                        {{'Document Type'|translate}}
+                        <p-sortIcon field="documentType"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="referenceNumber">
+                        {{'Document Number'|translate}}
+                        <p-sortIcon field="referenceNumber"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="submittedDate">
+                        {{'Submitted Date'|translate}}
+                        <p-sortIcon field="submittedDate"></p-sortIcon>
+                    </th>
                     <th class="text-center">{{'Document'|translate}}</th>
-                    <th class="text-center">{{'Status'|translate}}</th>
+                    <th class="text-center" pSortableColumn="status">
+                        {{'Status'|translate}}
+                        <p-sortIcon field="status"></p-sortIcon>
+                    </th>
                     @if( (rbac.allowedToAccess('Employee Info Documents Verification.update')
                     || rbac.allowedToAccess('Employee Info Documents Verification.delete')) && shouldShowActionColumn
                     ){
                     <th class="text-center">{{'Action'|translate}}</th>
                     }
                 </tr>
-            </thead>
-            <tbody>
-                @if( ((documentData | async) ?? []).length > 0){
-                @for (data of (documentData|async); track data.id) {
+            </ng-template>
+            <ng-template pTemplate="body" let-data>
                 @if (data.status != 'Not Submitted'){
                 <tr>
                     <td>{{ data.documentType ? data.documentType : '-' }}</td>
@@ -88,15 +99,17 @@
                     </td>}}
                 </tr>
                 }
-                }
-                }
-                @else{
-                <tr>
-                    <app-no-data-found />
-                </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
+                    <tr>
+                        <td [attr.colspan]="shouldShowActionColumn ? 6 : 5">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </div>
+            </ng-template>
+        </p-table>
     }
     @else {
         <app-data-loader-content />

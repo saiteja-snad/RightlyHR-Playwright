@@ -1,15 +1,15 @@
 <div class="custom-main-component-container">
-  <div class="custom-table-content ">
+  <div class="custom-table-content">
     @if(!dataLoad){
-    <p-table #remoteRejectedTable [value]="approvedRemotes" [customSort]="true" (sortFunction)="customSort($event)" [tableStyle]="{'width': '100%'}">
+    <p-table #remoteRequestsTable [value]="approvedRemotes" [tableStyle]="{'width': '100%'}" [customSort]="true" (sortFunction)="customSort($event)">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="startTime">{{'Worked Date' | translate}} <p-sortIcon field="startTime" /></th>
-          <th pSortableColumn="durationType">{{'Availed' | translate}} <p-sortIcon field="durationType" /></th>
-          <th pSortableColumn="requestedComments" class="text-center">{{'Reason' | translate}} <p-sortIcon field="requestedComments" /></th>
-          <th pSortableColumn="rejectReason" class="text-center"> {{'Rejected Reason' | translate}} <p-sortIcon field="rejectReason" /></th>
-          <th pSortableColumn="requestedDate">{{'Applied Date '|translate}} <p-sortIcon field="requestedDate" /></th>
-          <th pSortableColumn="status">{{'Status'|translate}} <p-sortIcon field="status" /></th>
+          <th pSortableColumn="workedDate">{{'Worked Date' | translate}} <p-sortIcon field="workedDate" /></th>
+          <th pSortableColumn="availed">{{'Availed' | translate}} <p-sortIcon field="availed" /></th>
+          <th class="text-center">{{'Reason' | translate}}</th>
+          <th class="text-center">{{'Rejected Reason' | translate}}</th>
+          <th pSortableColumn="appliedDate">{{'Applied Date '|translate}} <p-sortIcon field="appliedDate" /></th>
+          <th class="text-center">{{'Status'|translate}}</th>
         </tr>
       </ng-template>
 
@@ -34,25 +34,25 @@
             <ng-template #res>-</ng-template>
           </td>
           <td class="text-center">
-            <div class="mt-2" *ngIf="remoteRequest.reason;else rejectRes">
-              <a type="button" [ngbPopover]="rejectReason">
+            <div class="mt-2" *ngIf="remoteRequest.reason;else rejectedRes">
+              <a type="button" [ngbPopover]="rejectedReason">
                 <app-info-icon />
               </a>
-              <ng-template #rejectReason>
+              <ng-template #rejectedReason>
                 <p class="mb-0">{{remoteRequest.reason}}</p>
               </ng-template>
             </div>
-            <ng-template #rejectRes>-</ng-template>
+            <ng-template #rejectedRes>-</ng-template>
           </td>
           <td>{{ remoteRequest.requestedDate | dateformat }}</td>
-          <td>{{ remoteRequest.status }}</td>
+          <td class="text-center">{{ remoteRequest.status }}</td>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="emptymessage">
         <div class="wrapper">
           <tr>
-            <td colspan="11">
+            <td colspan="6">
               <app-no-data-found />
             </td>
           </tr>

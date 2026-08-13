@@ -28,28 +28,49 @@
 
   <div class="custom-table-content">
     @if (!spinnerLoader1) {
-    <table id="weeklyTimesheetReportTable" class="w-100">
-      <thead>
-        <th>Worked Date</th>
-        <th>Employee ID</th>
-        <th>Employee Name</th>
-        <th>Logged Hours</th>
-        <th>Billable/Non-Billable</th>
-        <!-- <th>Status</th> -->
-        <th>Submitted Date</th>
-        <th>Approved By</th>
-        <th>Approved On</th>
-      </thead>
-      <tbody>
-        @if (!filteredWeeklyTimesheetRecord || filteredWeeklyTimesheetRecord.length === 0) {
+    <p-table #dt
+             [value]="filteredWeeklyTimesheetRecord" 
+             [tableStyle]="{'width': '100%'}"
+             [sortField]="currentUIField"
+             [sortOrder]="currentSortOrder">
+      <ng-template pTemplate="header">
         <tr>
-          <td colspan="9" class="text-center">
-            <app-no-data-found />
-          </td>
+          <th class="sortable-column" (click)="onColumnSort('date')">
+            Worked Date 
+            <p-sortIcon field="date" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('fusionEmpId')">
+            Employee ID 
+            <p-sortIcon field="fusionEmpId" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('employee')">
+            Employee Name 
+            <p-sortIcon field="employee" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('hoursWorked')">
+            Logged Hours 
+            <p-sortIcon field="hoursWorked" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('billableStatus')">
+            Billable/Non-Billable 
+            <p-sortIcon field="billableStatus" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('submittedDate')">
+            Submitted Date 
+            <p-sortIcon field="submittedDate" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('approvedBy')">
+            Approved By 
+            <p-sortIcon field="approvedBy" />
+          </th>
+          <th class="sortable-column" (click)="onColumnSort('processedOn')">
+            Approved On 
+            <p-sortIcon field="processedOn" />
+          </th>
         </tr>
-        }
-        @else {
-        @for (record of filteredWeeklyTimesheetRecord; track $index) {
+      </ng-template>
+      
+      <ng-template pTemplate="body" let-record>
         <tr>
           <td>{{ record.date ? (record.date | date) : '-' }}</td>
           <td>{{ record.fusionEmpId ?? '-' }}</td>
@@ -62,15 +83,22 @@
             }
           </td>
           <td>{{ record.billableStatus ?? '-' }}</td>
-          <!-- <td>{{ record.approvalStatus === 'Processed' ? 'Approved' : (record.approvalStatus ?? '-') }}</td> -->
           <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
           <td>{{ record.approvedBy ?? '-' }}</td>
           <td>{{ record.processedOn ? (record.processedOn | date) : '-' }}</td>
         </tr>
-        }
-        }
-      </tbody>
-    </table>
+      </ng-template>
+      
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8"> 
+            <div class="wrapper">
+              <app-no-data-found />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
     }
     @else{
     <app-data-loader-content />

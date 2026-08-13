@@ -11,59 +11,77 @@
 
     <div class="custom-table-content">
         @if(!loading){
-        <table class="w-100">
-            <thead>
+        <p-table #onboardingTable [value]="(dynamicData | async) ?? []" [customSort]="true" (sortFunction)="customSort($event)"
+                 styleClass="p-datatable-sm" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{'Request Date' | translate}}</th>
-                    <th class="text-center">{{'Training Start Date' | translate}}</th>
-                    <th class="text-center">{{'Training End Date' | translate}}</th>
-                    <th class="text-center">{{'Training Extension Date' | translate}}</th>
-                    <th class="text-center">{{'Status' | translate}}</th>
+                    <th pSortableColumn="requestedDate">
+                        {{'Request Date' | translate}}
+                        <p-sortIcon field="requestedDate"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="trainingStartDate">
+                        {{'Training Start Date' | translate}}
+                        <p-sortIcon field="trainingStartDate"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="trainingEndDate">
+                        {{'Training End Date' | translate}}
+                        <p-sortIcon field="trainingEndDate"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="extendedDate">
+                        {{'Training Extension Date' | translate}}
+                        <p-sortIcon field="extendedDate"></p-sortIcon>
+                    </th>
+                    <th class="text-center" pSortableColumn="status">
+                        {{'Status' | translate}}
+                        <p-sortIcon field="status"></p-sortIcon>
+                    </th>
                     <th class="text-center">{{'Training Feedback' | translate}}</th>
-                    <th></th>
+                    <th>Action</th>
                 </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((dynamicData | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let item of dynamicData |async">
-                        <td>{{ item.requestedDate | dateformat }}</td>
-                        <td class="text-center text-nowrap">{{ item.trainingStartDate | dateformat }}</td>
-                        <td class="text-center text-nowrap">{{ item.trainingEndDate | dateformat }}</td>
-                        <td class="text-center text-nowrap">{{ item.extendedDate ? (item.extendedDate | dateformat) : '-' }}</td>
-                        <td class="text-center">{{ item.status }}</td>
-                        <td class="text-center">
-                            <span *ngIf="item.feedbackComments;else feedbackComment">
-                                <div (click)="fustiontostorefeedback(item.feedbackComments,EmployeeComments)">
-                                    <app-info-icon />
-                                </div>
-                            </span>
-                            <ng-template #feedbackComment>-</ng-template>
-                        </td>
-                        <td class="text-center" [ngClass]="{ 'disabled-button': isEditing }">
-                            @if((item.status=='Processed' && this.empdata.substatus === 'Offer Letter Accepted' && this.empdata.empstatus === 'Trainee Active' )){
-                                <div class="dropdown" >
-                                    <span type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </span>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li *ngIf="item.status=='Processed' && this.empdata.substatus === 'Offer Letter Accepted' && this.empdata.empstatus === 'Trainee Active' ">
-                                            <a class="dropdown-item" (click)="openmodel(readyforonboard)">
-                                                {{'Ready for Onboard' | translate}}
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            }
-                        </td>
-                    </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{ item.requestedDate | dateformat }}</td>
+                    <td class="text-center text-nowrap">{{ item.trainingStartDate | dateformat }}</td>
+                    <td class="text-center text-nowrap">{{ item.trainingEndDate | dateformat }}</td>
+                    <td class="text-center text-nowrap">{{ item.extendedDate ? (item.extendedDate | dateformat) : '-' }}</td>
+                    <td class="text-center">{{ item.status }}</td>
+                    <td class="text-center">
+                        <span *ngIf="item.feedbackComments;else feedbackComment">
+                            <div (click)="fustiontostorefeedback(item.feedbackComments,EmployeeComments)">
+                                <app-info-icon />
+                            </div>
+                        </span>
+                        <ng-template #feedbackComment>-</ng-template>
+                    </td>
+                    <td class="text-center" [ngClass]="{ 'disabled-button': isEditing }">
+                        @if((item.status=='Processed' && this.empdata.substatus === 'Offer Letter Accepted' && this.empdata.empstatus === 'Trainee Active' )){
+                            <div class="dropdown" >
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li *ngIf="item.status=='Processed' && this.empdata.substatus === 'Offer Letter Accepted' && this.empdata.empstatus === 'Trainee Active' ">
+                                        <a class="dropdown-item" (click)="openmodel(readyforonboard)">
+                                            {{'Ready for Onboard' | translate}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <div class="wrapper">
                     <tr>
-                        <app-no-data-found />
+                        <td colspan="7">
+                            <app-no-data-found />
+                        </td>
                     </tr>
-                </ng-template>
-            </tbody>
-        </table>
+                </div>
+            </ng-template>
+        </p-table>
     }
     @else {
         <app-data-loader-content />

@@ -41,27 +41,22 @@
       }
       @else {
       <div class="custom-table-content">
-        <table id="compoffReportTable" class="content w-100">
-          <thead>
-              <th class="text-center">Employee ID</th>
-              <th>Employee Name</th>
-              <th>Department</th>
-              <th>Team Manager</th>
-              <th>Location</th>
-              <th>Sub Location</th>
-              <th>Shift</th>
-              <th class="text-center">Worked Date</th>
-              <th class="text-center">Entitled Days</th>
-              <th class="text-center">Availed</th>
-          </thead>
-          <tbody>
-            @if (!filteredCompoffRecord || filteredCompoffRecord.length === 0) {
+        <p-table #compoffTable [value]="filteredCompoffRecord" [tableStyle]="{'width': '100%'}"[customSort]="true" (sortFunction)="customSort($event)">
+          <ng-template pTemplate="header">
             <tr>
-                <app-no-data-found></app-no-data-found>
+              <th pSortableColumn="fusionEmpId" class="text-center">{{ 'Employee ID' | translate }} <p-sortIcon field="fusionEmpId" /></th>
+              <th pSortableColumn="employeeName">{{ 'Employee Name' | translate }} <p-sortIcon field="employeeName" /></th>
+              <th pSortableColumn="department">{{ 'Department' | translate }} <p-sortIcon field="department" /></th>
+              <th pSortableColumn="teamManagerName">{{ 'Team Manager' | translate }} <p-sortIcon field="teamManagerName" /></th>
+              <th pSortableColumn="location">{{ 'Location' | translate }} <p-sortIcon field="location" /></th>
+              <th pSortableColumn="subLocation">{{ 'Sub Location' | translate }} <p-sortIcon field="subLocation" /></th>
+              <th pSortableColumn="shift">{{ 'Shift' | translate }} <p-sortIcon field="shift" /></th>
+              <th pSortableColumn="worked_Date" class="text-center">{{ 'Worked Date' | translate }} <p-sortIcon field="worked_Date" /></th>
+              <th pSortableColumn="entitlementDays" class="text-center">{{ 'Entitled Days' | translate }} <p-sortIcon field="entitlementDays" /></th>
+              <th pSortableColumn="duration" class="text-center">{{ 'Availed' | translate }} <p-sortIcon field="duration" /></th>
             </tr>
-            }
-            @else {
-            @for (record of filteredCompoffRecord; track $index) {
+          </ng-template>
+          <ng-template pTemplate="body" let-record>
             <tr>
               <td class="text-center">{{ record.fusionEmpId ?? '-' }}</td>
               <td>{{ record.employeeName ?? '-' }}</td>
@@ -70,15 +65,21 @@
               <td>{{ record.location ?? '-' }}</td>
               <td>{{ record.subLocation ?? '-' }}</td>
               <td>{{ record.shift ?? '-' }}</td>
-              <!-- <td>{{record.leaveType ?? '-' }}</td> -->
               <td class="text-center">{{ record.worked_Date ? (record.worked_Date | date) : '-' }}</td>
-              <td class="text-center">{{record.entitlementDays ?? '-' }}</td>
-              <td class="text-center">{{record.duration ?? '-'}}</td>
+              <td class="text-center">{{ record.entitlementDays ?? '-' }}</td>
+              <td class="text-center">{{ record.duration ?? '-' }}</td>
             </tr>
-            }
-            }
-          </tbody>
-        </table>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="10">
+                <div class="wrapper">
+                  <app-no-data-found />
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
       }
     </div>

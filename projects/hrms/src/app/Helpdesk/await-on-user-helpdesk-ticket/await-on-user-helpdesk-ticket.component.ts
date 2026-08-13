@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { HttpService } from '../../services/http.service';
-import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
@@ -8,27 +8,21 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription, takeUntil } 
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Select } from 'primeng/select';
-import { OpenModalService } from '../../services/open-modal.service';
-import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
-import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
-import { SettingsUpdateIconComponent } from "../../icons/settings-update-icon/settings-update-icon.component";
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
-import { HelpdeskPipe } from "../../Pipes/helpdesk.pipe";
 import { environment } from '../../../environments/environment';
 import { Paginator } from "primeng/paginator";
-import { HelpdeskStatusUpdate } from '../helpdesk-model';
-
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-await-on-user-helpdesk-ticket',
-  imports: [CommonModule, Select, RouterModule, NgbPopoverModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, DataLoaderContentComponent, SettingsUpdateIconComponent, ProfileIconComponent, InfoIconComponent, HelpdeskPipe, Paginator],
+  imports: [CommonModule, RouterModule, NgbPopoverModule, NoDataFoundComponent, FormsModule,
+    TranslateModule, ReactiveFormsModule, DataLoaderContentComponent, ProfileIconComponent, InfoIconComponent, Paginator, TableModule],
   templateUrl: './await-on-user-helpdesk-ticket.component.html',
   styleUrl: './await-on-user-helpdesk-ticket.component.scss'
 })
+
 export class AwaitOnUserHelpdeskTicketComponent {
   subscription!: Subscription;
   searchValue !: string;
@@ -45,7 +39,6 @@ export class AwaitOnUserHelpdeskTicketComponent {
     { value: 'High', label: 'High' },
     { value: 'Medium', label: 'Medium' },
     { value: 'Low', label: 'Low' }
-
   ];
   selectedAssigneeId: any;
   dataloader: boolean = false;
@@ -59,27 +52,34 @@ export class AwaitOnUserHelpdeskTicketComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   searchSubject = new Subject<string>();
   page = 1;
-  pageSize = 10;
-  rows = 10;
+  pageSize = 50;
+  rows = 50;
   collectionSize!: number;
   first = 0;
-  totalRecords = 0;
   options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
-  constructor(
-    private readonly http: HttpService,
-    private readonly modalService: NgbModal,
-    private fb: FormBuilder,
-    private offcanvasService: NgbOffcanvas,
-    private confirmation: OpenModalService,
-    public rbac: RbacService,
-    public readonly router: Router,
-    private route: ActivatedRoute
-  ) { }
+  sortField = '';
+  sortOrder = '';
+  tableSortField = '';
+  tableSortOrder = -1;
+  readonly sortFieldMap: Record<string, string> = {
+    id: 'id',
+    employeeName: 'employeeName',
+    createdDate: 'createdDate',
+    category: 'category',
+    subcategory: 'subcategory',
+    status: 'status',
+    priority: 'priority'
+  };
+  @ViewChild('dt') dt!: Table;
+
+  constructor(private readonly http: HttpService, private readonly modalService: NgbModal,
+    private fb: FormBuilder, public rbac: RbacService, public readonly router: Router,
+    private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -91,7 +91,6 @@ export class AwaitOnUserHelpdeskTicketComponent {
       priority: [null, Validators.required],
       comment: ['', [Validators.required, Validators.maxLength(100)]]
     });
-
     this.searchSubject.pipe(
       debounceTime(500),
       distinctUntilChanged(),
@@ -111,6 +110,7 @@ export class AwaitOnUserHelpdeskTicketComponent {
     this.first = 0;
     this.getuserticketsbyempid(this.page, this.pageSize);
   }
+
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
@@ -122,29 +122,56 @@ export class AwaitOnUserHelpdeskTicketComponent {
     this.page = 1;
     this.first = 0;
     this.getuserticketsbyempid(this.page, this.pageSize);
-
   }
+
   onSearchChange() {
     this.searchSubject.next(this.searchValue || '');
+  }
+
+  onSort(event: any) {
+    const field = String(event.field ?? '');
+    const nextField = this.sortFieldMap[field] ?? field;
+    const nextOrder = event.order === 1 ? 'asc' : 'desc';
+
+    if (this.sortField === nextField && this.sortOrder === 'desc' && event.order === 1) {
+      this.dt.reset();
+      this.sortField = '';
+      this.sortOrder = '';
+      this.tableSortField = '';
+      this.tableSortOrder = 1;
+      this.page = 1;
+      this.first = 0;
+      this.getuserticketsbyempid();
+      return;
+    }
+
+    if (this.sortField === nextField && this.sortOrder === nextOrder) return;
+
+    this.sortField = nextField;
+    this.sortOrder = nextOrder;
+    this.tableSortField = field;
+    this.tableSortOrder = event.order;
+    this.page = 1;
+    this.first = 0;
+    this.getuserticketsbyempid();
   }
 
   // get help desk ticket data
   getuserticketsbyempid(page?: number, pageSize?: number) {
     this.dataloader = true;
     let EmpId = parseInt(this.empinfo.employeeId);
-
     let url = `HelpDeskQueries/AssignedTo/${EmpId}?pageNumber=${this.page}&pageSize=${this.pageSize}&status=Await On User`;
+    const sortQuery = this.sortField && this.sortOrder ? `&Sorts=${this.sortField}:${this.sortOrder}` : '';
     if (this.searchValue && this.searchValue.trim() !== '') {
       url += `&search=${this.searchValue}`;
     }
+    url += sortQuery;
     this.subscription = this.http.getData(url).subscribe({
       next: (response: any) => {
         this.dataloader = false;
         if (response.success && response.data) {
           this.tickets = response.data.data || [];
           this.collectionSize = response.data.totalAwaitOnUser;
-          console.log("Await On User tickets:", this.tickets);
-
         } else {
           this.tickets = [];
         }
@@ -174,10 +201,10 @@ export class AwaitOnUserHelpdeskTicketComponent {
       }
     });
   }
+
   // open the offcanvas to show ticket details and allow status/assignee update
   openEnd(ticket: any) {
     if (!this.rbac.allowedToAccess('Support Helpdesk Queries Tab.update')) return;
-
     // Save current tab route
     localStorage.setItem('previousTab', this.router.url);
     localStorage.setItem("temselectdata", JSON.stringify(ticket));
@@ -186,6 +213,7 @@ export class AwaitOnUserHelpdeskTicketComponent {
       { relativeTo: this.route }
     );
   }
+
   // get image url
   getImageUrl(imagePath: string): string | null {
     if (!imagePath) {
@@ -203,6 +231,7 @@ export class AwaitOnUserHelpdeskTicketComponent {
   getProfileImage(imagePath: string): string | null {
     return this.getImageUrl(imagePath);
   }
+
   // get image url end
   isFormValid(): boolean {
     return (
@@ -211,9 +240,11 @@ export class AwaitOnUserHelpdeskTicketComponent {
       this.queriesdetailsForm?.get('comment')?.value
     );
   }
+
   assigneeDetails(id: any) {
     this.selectedAssigneeId = id;
   }
+
   // update the query status end
   openConfirmationModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -222,6 +253,7 @@ export class AwaitOnUserHelpdeskTicketComponent {
   cleardata() {
     this.modalService.dismissAll();
   }
+
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();

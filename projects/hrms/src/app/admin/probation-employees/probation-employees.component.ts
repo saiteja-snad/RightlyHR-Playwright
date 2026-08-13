@@ -194,24 +194,12 @@ export class ProbationEmployeesComponent implements OnInit, OnDestroy {
     this.router.navigate(['/letters/lettes-tabs'])
   }
 
-  /** Sort immediately and re‑render */
-  sortData(field: keyof IProbationEmployees, direction: 'asc' | 'desc'): void {
-    this.sortField = field;
-    this.sortDirection = direction;
-    // asc and desc ordering
-    this.probationemp = [...this.probationemp].sort((a: any, b: any) => {
-      const aDate = new Date(a[field] ?? 0).getTime();
-      const bDate = new Date(b[field] ?? 0).getTime();
-      return direction === 'asc' ? aDate - bDate : bDate - aDate;
-    })
-  }
- 
-
- 
-
   getFilteredAndSortedEmployees(): IProbationEmployees[] {
     return this.filteredProbationEmp;
   }
+ 
+
+ 
 
   onSearchChange(): void {
     this.page = 1;
@@ -327,6 +315,9 @@ export class ProbationEmployeesComponent implements OnInit, OnDestroy {
    ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
     }
   }
 }

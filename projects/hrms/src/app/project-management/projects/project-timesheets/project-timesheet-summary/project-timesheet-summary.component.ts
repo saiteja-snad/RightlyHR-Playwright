@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
@@ -11,19 +11,24 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { SkeletonModule } from 'primeng/skeleton';
 import { ModuleInfoIconComponent } from '../../../../icons/module-info-icon/module-info-icon.component';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 import dayjs from 'dayjs'
 
 @Component({
   selector: 'app-project-timesheet-summary',
-  imports: [CommonModule, SelectModule, TranslateModule,ModuleInfoIconComponent, ChartModule, NgbPopover, NoDataFoundComponent, SkeletonModule],
+  imports: [CommonModule, SelectModule, TranslateModule,ModuleInfoIconComponent, ChartModule, NgbPopover, NoDataFoundComponent, SkeletonModule, TableModule],
   templateUrl: './project-timesheet-summary.component.html',
   styleUrl: './project-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
+  @ViewChild('resourceSummaryTable') resourceSummaryTable!: Table;
+  
   // Project Resource Data variable
   projectResourceSummaryData: any;
+  filteredResourceSummaryData: any[] = [];
   // Department wise Contribution variables
   roleWiseData: any;
   roleWiseHoursData: any;
@@ -71,7 +76,12 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
   projectId:any;
   projectstartdate : any;
   projectsData:any;
-  currentdata:any
+  currentdata:any;
+  
+  // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  
   constructor(private router: Router, public formValidation: FormValidationsService, private http: HttpService, private route: ActivatedRoute) { }
 ngOnInit(): void {
  this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
@@ -251,15 +261,78 @@ getProjects(projectId: string) {
       next: (res: any) => {
         this.resourceSummaryLoader = false;
         this.projectResourceSummaryData = Array.isArray(res?.data) ? res.data : [];
+        this.filteredResourceSummaryData = [...this.projectResourceSummaryData];
       },
       error: (err) => {
         this.resourceSummaryLoader = false;
         console.error('Error fetching project resource summary:', err);
         this.projectResourceSummaryData = [];
+        this.filteredResourceSummaryData = [];
       }
     });
   });
 }
+
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+
+    // Map UI fields to data fields
+    const fieldMap: { [key: string]: string } = {
+      phase: 'phase',
+      employeeName: 'employeeName',
+      projectRole: 'projectRole',
+      utilizationPercent: 'utilizationPercent',
+      totalLoggedHours: 'totalLoggedHours',
+      totalAllocatedHours: 'totalAllocatedHours'
+    };
+
+    const sortField = fieldMap[field] || field;
+
+    // Handle three-state sorting: none → asc → desc → none
+    if (this.currentSortField === sortField) {
+      if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        this.filteredResourceSummaryData = [...this.projectResourceSummaryData];
+        if (this.resourceSummaryTable) {
+          this.resourceSummaryTable.sortField = '';
+          this.resourceSummaryTable.sortOrder = 0;
+        }
+        return;
+      }
+    }
+
+    // Set new sort state
+    this.currentSortField = sortField;
+    this.currentSortOrder = order;
+
+    // Perform client-side sorting
+    this.filteredResourceSummaryData.sort((a: any, b: any) => {
+      let aValue = a[sortField];
+      let bValue = b[sortField];
+
+      // Handle null/undefined values
+      if (aValue == null && bValue == null) return 0;
+      if (aValue == null) return 1;
+      if (bValue == null) return -1;
+
+      // Handle different data types
+      if (typeof aValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      if (aValue < bValue) return -1 * order;
+      if (aValue > bValue) return 1 * order;
+      return 0;
+    });
+  }
+
+  getFilteredResourceSummary(): any[] {
+    return this.filteredResourceSummaryData;
+  }
 
 
   roleWiseHoursGraph(

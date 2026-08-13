@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -23,6 +23,7 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
 import { DatePicker } from 'primeng/datepicker';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { TableModule, Table } from 'primeng/table';
 
 @Component({
   selector: 'app-branch-location-wise-data',
@@ -37,7 +38,8 @@ import { TranslateModule } from '@ngx-translate/core';
     DatePicker,
     DataLoaderContentComponent,
     ReportsHeaderComponent,
-    TranslateModule
+    TranslateModule,
+    TableModule
   ],
   templateUrl: './branch-location-wise-data.component.html',
   styleUrl: './branch-location-wise-data.component.scss',
@@ -45,6 +47,8 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 
 export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
+  @ViewChild('branchTable') branchTable!: Table;
+  sortedData: EmployeeDetails[] = [];
   moduleinfo: string = '';
   empinfo = {} as IJob;
   reportForm!: FormGroup;
@@ -80,6 +84,9 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   dataload = false;
   isFilterIndicatorActive = false;
   disableBtn = false;
+  originalStandardReportData: EmployeeDetails[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -193,6 +200,10 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
           next: (res: any) => {
             if (res) {
               this.standardReportData = res.standardReports;
+              this.originalStandardReportData = [...this.standardReportData];
+              this.currentSortField = '';
+              this.currentSortOrder = 0;
+              this.sortedData = [];
             }
           },
           error: (err: any) => {
@@ -214,13 +225,15 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   onClickBranchLocationExport() {
     this.spinnerLoader = true;
     setTimeout(() => {
-      let { arrayBuffer, fileName } = this.exportTableToExcel(
-        'branchLocation',
-        'Branch-Wise_Employee_Report'
-      );
+      const dataToExport = this.sortedData.length ? this.sortedData : (this.branchTable?.filteredValue ?? this.branchTable?.value ?? this.standardReportData);
+      let { arrayBuffer, fileName } = this.exportTableToExcel(dataToExport, 'Branch-Wise Employee Report');
       this.uploadReports(arrayBuffer, fileName);
       this.createReportLog('Branch-Wise Employee Report');
     }, 100);
+  }
+
+  onSortChange(event: any): void {
+    this.sortedData = this.branchTable?.filteredValue ?? this.branchTable?.value ?? this.standardReportData;
   }
 
   uploadReports(reportsData: any, fileName: string) {
@@ -289,37 +302,78 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportTableToExcel(tableId: string, name?: string) {
+  exportTableToExcel(data: EmployeeDetails[], name?: string) {
     let { sheetName, fileName } = this.getFileName(name);
-    let targetTableElm = document.getElementById(tableId);
-    
+
     const reportTitle = name ? name.replace(/_/g, ' ') : 'Report';
-    const ws = XLSX.utils.aoa_to_sheet([
-      [reportTitle.toUpperCase()]
+    const ws = XLSX.utils.aoa_to_sheet([[reportTitle.toUpperCase()]]);
+
+    const headers = [
+      'EMPLOYEE ID', 'SALUTATION', 'FIRST NAME', 'MIDDLE NAME', 'LAST NAME', 'EMPLOYEE STATUS',
+      'DATE OF JOINING', 'WORK NUMBER', 'PHONE NUMBER', 'WORK MAIL', 'PERSONAL EMAIL',
+      'ADDRESS LINE 1(CURRENT)', 'ADDRESS LINE 2(CURRENT)', 'CITY(CURRENT)', 'STATE(CURRENT)',
+      'COUNTRY(CURRENT)', 'ZIPCODE(CURRENT)', 'ADDRESS LINE 1(COMMUNICATION)',
+      'ADDRESS LINE 2(COMMUNICATION)', 'CITY(COMMUNICATION)', 'STATE(COMMUNICATION)',
+      'COUNTRY(COMMUNICATION)', 'ZIPCODE(COMMUNICATION)', 'JOB EFFECTIVE DATE', 'BRANCH CODE',
+      'JOB ROLE', 'JOB GRADE', 'DEPARTMENT', 'TEAM', 'TEAM MANAGER', 'REPORTING MANAGER',
+      'LOCATION', 'SUB LOCATION', 'SHIFT', 'SHIFT CODE', 'JOB TYPE'
+    ];
+
+    const rows = data.map(emp => [
+      emp.fusionEmpId || '-',
+      emp.title || '-',
+      emp.firstName || '-',
+      emp.middleName || '-',
+      emp.lastName || '-',
+      emp.empstatus || '-',
+      emp.dateOfJoining ? dayjs(emp.dateOfJoining).format('DD-MMM-YYYY') : '-',
+      this.extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -'),
+      this.extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -'),
+      emp.workEmail || '-',
+      emp.emailaddress || '-',
+      emp.currentaddressline1 || '-',
+      emp.currentaddressline2 || '-',
+      emp.currentcity || '-',
+      emp.currentstate || '-',
+      emp.currentcountry || '-',
+      emp.currentzipcode || '-',
+      emp.permanentaddressline1 || '-',
+      emp.permanentaddressline2 || '-',
+      emp.permanentcity || '-',
+      emp.permanentstate || '-',
+      emp.permanentcountry || '-',
+      emp.permanentzipcode || '-',
+      emp.jobEffectiveDate ? dayjs(emp.jobEffectiveDate).format('DD-MMM-YYYY') : '-',
+      emp.branchcode || '-',
+      emp.jobRole || '-',
+      emp.gradeName || '-',
+      emp.departmentName || '-',
+      emp.subdepartment_name || '-',
+      emp.teammanager || '-',
+      emp.reportingManager || '-',
+      emp.joblocationname || '-',
+      emp.jobsublocationname || '-',
+      emp.shiftname || '-',
+      emp.shiftcode || '-',
+      emp.jobType || '-'
     ]);
-    XLSX.utils.sheet_add_dom(ws, targetTableElm, { origin: 'A2', raw: true });
+
+    XLSX.utils.sheet_add_aoa(ws, [headers, ...rows], { origin: 'A2' });
 
     if (ws['!ref']) {
       const range = XLSX.utils.decode_range(ws['!ref']);
       if (!ws['!merges']) ws['!merges'] = [];
       ws['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: range.e.c } });
-      
-      if (ws['A1']) {
-        ws['A1'].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'left' } };
-      }
+      if (ws['A1']) ws['A1'].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'left' } };
     }
 
     this.convertHeadersToUpperCase(ws, 1);
-    
+
     let wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    
     XLSX.writeFile(wb, `${fileName}.xlsx`);
-    let arrayBuffer = XLSX.write(wb, {
-      bookType: 'xlsx',
-      type: 'array',
-      bookSST: true,
-    });
+
+    let arrayBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array', bookSST: true });
     return { arrayBuffer, fileName };
   }
 
@@ -390,14 +444,49 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       empStatus: ['All']
     });
     this.disableBtn = false;
-    this.isFilterIndicatorActive = false;
     this.standardReportData = [];
   }
 
   closeCanvas() {
     this.offcanvasService.dismiss();
   }
+customSort(event: any): void {
+    const field = event.field;
 
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.standardReportData = [...this.originalStandardReportData];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.branchTable) this.branchTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

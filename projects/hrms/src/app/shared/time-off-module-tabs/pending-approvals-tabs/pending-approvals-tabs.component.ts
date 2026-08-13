@@ -31,7 +31,7 @@ export class PendingApprovalsTabsComponent {
   kraKpiTotalCount = 0;
   nodue_Request_data = [] as any[];
   noDueCount : any;
-  constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService, private accessNav: AccessNavigationService,private readonly signalService: SignalsService) { 
+  constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService, private accessNav: AccessNavigationService,private readonly signalService: SignalsService) {
 
      effect(() => {
       if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
@@ -144,7 +144,7 @@ export class PendingApprovalsTabsComponent {
       { label: 'Offboarding', link: '/pending-approvals/off-boarding', icon: '/images/sepration-request.png', permission: { feature: 'Offboarding main Tab', action: 'view' }, moduleIds: [13, 14] },
       { label: 'Desks', link: '/pending-approvals/desk-approval', icon: '/main-menu-icons/desk-icon.png', permission: { feature: 'Desk Requests Tab', action: 'view' }, moduleIds: [23] },
       { label: 'Expenses', link: '/pending-approvals/claimsandexpenses-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'Claims and Expenses Tab', action: 'view' }, moduleIds: [19] },
-      { label: 'Timesheets', link: '/pending-approvals/time-sheets', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'Time Sheet approval Tab', action: 'view' }, moduleIds: [30] },
+      { label: 'Project Management', link: '/pending-approvals/project-management', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'project management approvals main Tab', action: 'view' }, moduleIds: [30] },
       { label: 'Employee Info', link: '/pending-approvals/employeeinfo-request', icon: '/time-off-icon/employee-info-approvals.png', permission: { feature: 'EmployeeInfo Tab', action: 'view' }, moduleIds: [32] },
       { label: "KRA/KPI's", link: '/pending-approvals/kra-kpi', icon: '/main-menu-icons/kra-kpi.png', permission: { feature: 'KRA KPI approval Tab', action: 'view' }, moduleIds: [], totalCount: 0 }
     ];
@@ -186,6 +186,17 @@ export class PendingApprovalsTabsComponent {
             console.log('Updated onboarding count:', onboardingTab.totalCount);
           }
 
+          const projectManagementTab = this.navTabs.find(tab => tab.label === 'Project Management');
+          if (projectManagementTab) {
+            const resourceApprovalModule = modules.find((m: any) => m.name === 'Resource Approval');
+            const resourceApprovalCount = Number(resourceApprovalModule?.count || 0);
+            const timesheetCount = this.approvalCounts
+              .filter(x => x.moduleId === 30)
+              .reduce((sum: number, x: any) => sum + Number(x.totalCount || 0), 0);
+            projectManagementTab.totalCount = timesheetCount + resourceApprovalCount;
+            console.log('Updated project management count:', projectManagementTab.totalCount);
+          }
+
           this.refreshFilteredTabs();
         }
       },
@@ -216,7 +227,7 @@ export class PendingApprovalsTabsComponent {
           console.log('Final Offboarding Count:', finalCount);
            this.updateTabCounts();
            this.refreshFilteredTabs();
-          
+
 
         }
       });
@@ -284,7 +295,7 @@ export class PendingApprovalsTabsComponent {
   //         const onboardingTab = this.navTabs.find(tab => tab.label === 'Onboarding');
   //         if (onboardingTab) {
   //           onboardingTab.totalCount = response.data.totalCount;
-  //           console.log("Onboarding Total Count: ", onboardingTab.totalCount);  
+  //           console.log("Onboarding Total Count: ", onboardingTab.totalCount);
   //         }
   //         this.refreshFilteredTabs();
   //       }

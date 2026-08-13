@@ -6,3 +6,7 @@
     height: 70dvh;
     justify-content: center;
 }
+
+.dropdown-menu {
+    z-index: 99999 !important;
+}

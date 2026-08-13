@@ -23,55 +23,40 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" [placeholder]="'Search by employee name / desk ID / desk type / location / sub location / shift' | translate"  [(ngModel)]="searchValue" aria-label="search">
+        <input type="search" class="form-control custom-search-input"
+            placeholder="Search by employee name / desk ID / desk type / location / sub location / shift"
+            aria-label="search">
     </div>
 
     <div class="custom-p-multi-select-table">
         @if(!loading){
-        <p-table #deskTable [value]="getFilteredAndSortedDesk()" [scrollable]="true" 
-                 scrollHeight="65dvh" [customSort]="true" (sortFunction)="customSort($event)">
+        <p-table #dt [value]="deskheaderpending" [(selection)]="selectedDeskItems" dataKey="approvalHeader.id"
+            [tableStyle]="{'min-width':'50rem'}" [customSort]="true" (sortFunction)="customSort($event)">
             <ng-template pTemplate="header">
                 <tr>
-                    <th pSortableColumn="deskallocatedtoname">
-                        {{"Employee Name" | translate}}
-                        <p-sortIcon field="deskallocatedtoname"></p-sortIcon>
+                    <th style="width:50px">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                     </th>
-                    <th pSortableColumn="deskname">
-                        {{"Desk ID" | translate}}
-                        <p-sortIcon field="deskname"></p-sortIcon>
-                    </th>
-                    <th pSortableColumn="deskType">
-                        {{"Desk Type" | translate}}
-                        <p-sortIcon field="deskType"></p-sortIcon>
-                    </th>
-                    <th pSortableColumn="locationName">
-                        {{"Location" | translate}}
-                        <p-sortIcon field="locationName"></p-sortIcon>
-                    </th>
-                    <th pSortableColumn="sublocationName">
-                        {{"Sub Location" | translate}}
-                        <p-sortIcon field="sublocationName"></p-sortIcon>
-                    </th>
-                    <th pSortableColumn="shiftName">
-                        {{"Shift" | translate}}
-                        <p-sortIcon field="shiftName"></p-sortIcon>
-                    </th>
-                    <th pSortableColumn="allocatedDate">
-                        {{"Allocated Date" | translate}}
-                        <p-sortIcon field="allocatedDate"></p-sortIcon>
-                    </th>
-                    <th class="text-center">{{"View Desk Details" | translate}}</th>
-                    <th pSortableColumn="approvalStatus">
-                        {{"Desk Status" | translate}}
-                        <p-sortIcon field="approvalStatus"></p-sortIcon>
-                    </th>
-                     @if(rbac.allowedToAccess('For Role (Desk Requests).update') || rbac.allowedToAccess('For Role (Desk Requests).delete')) {
-                    <th class="text-center">{{"Action" | translate}}</th>
-                     }
+                    <th pSortableColumn="deskallocatedtoname">Employee Name <p-sortIcon field="deskallocatedtoname" /></th>
+                    <th pSortableColumn="deskname">Desk ID <p-sortIcon field="deskname" /></th>
+                    <th pSortableColumn="deskType">Desk Type <p-sortIcon field="deskType" /></th>
+                    <th pSortableColumn="locationName">Location <p-sortIcon field="locationName" /></th>
+                    <th pSortableColumn="sublocationName">Sub Location <p-sortIcon field="sublocationName" /></th>
+                    <th pSortableColumn="shiftName">Shift <p-sortIcon field="shiftName" /></th>
+                    <th pSortableColumn="allocatedDate">Allocated Date <p-sortIcon field="allocatedDate" /></th>
+                    <th class="text-center">View Desk Details</th>
+                    <th>Desk Status</th>
+                    @if(rbac.allowedToAccess('For Role (Desk Requests).update') || rbac.allowedToAccess('For Role (Desk
+                    Requests).delete')) {
+                    <th class="text-center">Action</th>
+                    }
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-exp>
                 <tr>
+                    <td>
+                        <p-tableCheckbox [value]="exp"></p-tableCheckbox>
+                    </td>
                     <td>{{exp.entity?.deskallocatedtoname}}</td>
                     <td>{{exp.entity?.deskname}}</td>
                     <td>{{exp.entity?.deskType}}</td>
@@ -79,6 +64,8 @@
                     <td>{{exp.entity?.sublocationName}}</td>
                     <td>{{exp.entity?.shiftName}}</td>
                     <td>{{exp.entity?.allocatedDate | dateformat}}</td>
+                    @if(rbac.allowedToAccess('For Role (Desk Requests).update') || rbac.allowedToAccess('For Role (Desk
+                    Requests).delete')) {
                     <td class="text-center">
                         <div *ngIf="exp.entity?.deskAllocationItemId">
                             <div class="dropdown">
@@ -96,8 +83,8 @@
                             </div>
                         </div>
                     </td>
+                    }
                     <td>{{exp.entity?.approvalStatus}}</td>
-                     @if(rbac.allowedToAccess('For Role (Desk Requests).update') || rbac.allowedToAccess('For Role (Desk Requests).delete')) {
                     <td class="text-center">
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -131,18 +118,18 @@
                             </ul>
                         </div>
                     </td>
-                     }
                 </tr>
             </ng-template>
+
             <ng-template pTemplate="emptymessage">
-                <div class="wrapper">
-                    <tr>
-                        <td colspan="10">
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                </div>
+                <tr>
+                    <td [attr.colspan]="11">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
+                </tr>
             </ng-template>
+
+
         </p-table>
         }
         @else {

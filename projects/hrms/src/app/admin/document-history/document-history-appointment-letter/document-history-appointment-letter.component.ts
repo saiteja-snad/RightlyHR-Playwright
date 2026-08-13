@@ -103,41 +103,6 @@ export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDest
     });
   }
 
-  private getDownloadFileName(contentDisposition: string | null, documentUrl?: string): string {
-    const fileNameFromHeader = this.extractFileNameFromContentDisposition(contentDisposition);
-    if (fileNameFromHeader) {
-      return fileNameFromHeader;
-    }
-
-    if (typeof documentUrl === 'string' && documentUrl.trim()) {
-      const normalizedUrl = documentUrl.split('?')[0];
-      const pathParts = normalizedUrl.split('/').filter(Boolean);
-      const lastPathPart = pathParts[pathParts.length - 1];
-      if (lastPathPart) {
-        return decodeURIComponent(lastPathPart);
-      }
-    }
-
-    return 'document';
-  }
-
-  private extractFileNameFromContentDisposition(contentDisposition: string | null): string | null {
-    if (!contentDisposition) {
-      return null;
-    }
-
-    const utfMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
-    if (utfMatch?.[1]) {
-      return decodeURIComponent(utfMatch[1].replace(/["']/g, '').trim());
-    }
-
-    const standardMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
-    if (standardMatch?.[1]) {
-      return standardMatch[1].trim();
-    }
-
-    return null;
-  }
   getFilteredAndSortedAppointmentLetters(): IAppointmentLetterDetails[] {
     if (!this.searchValue || this.searchValue.trim() === '') {
       return this.offerLetters;
@@ -199,6 +164,41 @@ export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDest
         return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
       }
     });
+  }
+  private getDownloadFileName(contentDisposition: string | null, documentUrl?: string): string {
+    const fileNameFromHeader = this.extractFileNameFromContentDisposition(contentDisposition);
+    if (fileNameFromHeader) {
+      return fileNameFromHeader;
+    }
+
+    if (typeof documentUrl === 'string' && documentUrl.trim()) {
+      const normalizedUrl = documentUrl.split('?')[0];
+      const pathParts = normalizedUrl.split('/').filter(Boolean);
+      const lastPathPart = pathParts[pathParts.length - 1];
+      if (lastPathPart) {
+        return decodeURIComponent(lastPathPart);
+      }
+    }
+
+    return 'document';
+  }
+
+  private extractFileNameFromContentDisposition(contentDisposition: string | null): string | null {
+    if (!contentDisposition) {
+      return null;
+    }
+
+    const utfMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utfMatch?.[1]) {
+      return decodeURIComponent(utfMatch[1].replace(/["']/g, '').trim());
+    }
+
+    const standardMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+    if (standardMatch?.[1]) {
+      return standardMatch[1].trim();
+    }
+
+    return null;
   }
 
   ngOnDestroy(): void {

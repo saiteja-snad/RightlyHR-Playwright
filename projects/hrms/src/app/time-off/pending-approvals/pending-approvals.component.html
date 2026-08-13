@@ -15,7 +15,6 @@
         <div class="component-header">{{componentName}}</div>
       </ng-container>
 
-
       <div class="component-header">
         <!-- {{componentName}} -->
         @if (isTimeOffRoute()) {Time Off}
@@ -24,9 +23,9 @@
         @else if (isOffboardingRoute()) {Offboarding}
         @else if (isDeskRoute()) {Desks}
         @else if (isExpensesRoute()) {Expenses}
-        @else if (router.url === '/pending-approvals/time-sheets') {Timesheets}
         @else if (isEmployeeInfoRoute()) {Employee Info}
         @else if (isKraKpiRoute()) {KRA/KPI's}
+         @else if (isProjectManagementRoute()) {Project Management}
       </div>
       <div>
         <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
@@ -35,7 +34,6 @@
         <app-module-information [moduleInfo]="moduleinfo" />
       </ng-template>
     </div>
-
     }
     @else {
     <div class="heading-content">
@@ -64,10 +62,7 @@
         <ng-container *ngTemplateOutlet="headerRightTemplate"></ng-container>
       </div>
       }
-            <app-applicable-policies-trigger
-        [moduleKey]="applicablePoliciesModuleKey"
-        [subModuleKey]="applicablePoliciesSubModuleKey">
-      </app-applicable-policies-trigger>
+      <app-applicable-policies-trigger [moduleKey]="applicablePoliciesModuleKey" [subModuleKey]="applicablePoliciesSubModuleKey" />
     </div>
     }
     <!-- @if (router.url == '/pending-approvals/time-sheets') {
@@ -103,15 +98,11 @@
       </div>
     </form>
     } -->
-
-
-
     <!-- dropdown for kpi kra -->
-
   </div>
 
   <div class="d-flex gap-3 w-100">
-    @if (isTimeOffRoute() || isContractRoute() || isOffboardingRoute() || isOnboardingRoute()) {
+    @if (isTimeOffRoute() || isContractRoute() || isOffboardingRoute() || isOnboardingRoute() || isProjectManagementRoute()) {
     <div class="component-left-tabs-container">
       @if(isTimeOffRoute()){
       <app-timeoff-approval-tabs />
@@ -124,6 +115,9 @@
       }
       @else if(isOnboardingRoute()) {
       <app-onboarding-approval-tabs />
+      }
+      @else if(isProjectManagementRoute()) {
+      <app-project-management-approval-tabs />
       }
     </div>
     }
@@ -146,8 +140,7 @@
     <div class="offcanvas-filter-content">
       <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range' |
-            translate}}</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range' | translate}}</label>
           <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
@@ -155,29 +148,27 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Project/Phase' |
-            translate}}</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Project/Phase' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="phaseId" [filter]="true"
               [resetFilterOnHide]="true" filterBy="displayName" formControlName="phaseId"
-              defaultLabel="Please select project/phase" class="form-select custom-select" filterPlaceHolder="Search project/phase"
-              (onChange)="onProjectChange($event)" />
+              defaultLabel="Please select project/phase" class="form-select custom-select"
+              filterPlaceHolder="Search project/phase" (onChange)="onProjectChange($event)" />
           </div>
         </div>
 
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Resource' |
-            translate}}</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Resource' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="resourcesList" optionLabel="fullName" optionValue="id" [filter]="true"
-              defaultLabel="Please select resource" [resetFilterOnHide]="true" formControlName="resourceId" filterPlaceHolder="Search resource"
-              class="form-select custom-select " (onChange)="onresourceChange($event)" />
+              defaultLabel="Please select resource" [resetFilterOnHide]="true" formControlName="resourceId"
+              filterPlaceHolder="Search resource" class="form-select custom-select "
+              (onChange)="onresourceChange($event)" />
           </div>
         </div>
 
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Task Type' |
-            translate}}</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Task Type' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="tastType" optionLabel="taskTypeName" filterBy="taskTypeName" optionValue="id"
               formControlName="taskId" defaultLabel="Please select task type" filterPlaceHolder="Search task type"

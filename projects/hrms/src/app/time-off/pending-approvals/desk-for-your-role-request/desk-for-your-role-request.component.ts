@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { HttpService } from '../../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,13 +13,12 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { SignalsService } from '../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
-import { TableModule } from 'primeng/table';
-import { Table } from 'primeng/table';
 import { environment } from '../../../../environments/environment';
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
-
-import { CheckboxModule } from 'primeng/checkbox';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { CheckboxModule } from 'primeng/checkbox';
+import { TableModule } from 'primeng/table';
+import moment from 'moment';
 
 
 @Component({
@@ -30,15 +29,11 @@ import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 })
 
 export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
-  @ViewChild('deskTable') deskTable!: Table;
   employdata: any;
   deskiteam: any;
   updataid: any;
   assiginemploye: any;
   deskheaderpending: any[] = [];
-  originalDeskData = [] as any[]; // Store original unsorted data
-  currentSortField: string = '';
-  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
   deskid: any;
   selectedexpenesid: any;
   loading: boolean = false;
@@ -56,6 +51,11 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
 
   approveForm!: FormGroup;
   spinnerLoader: boolean = false;
+  originalData: any[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
+  @ViewChild('dt') table!: any;
+
   constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService, public rbac: RbacService,
     private fb: FormBuilder, public formValidation: FormValidationService,
     private signalService: SignalsService,) { }
@@ -150,10 +150,9 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
         this.deskheaderpending = (data.data as any[]).filter(
           item =>
             item.approvalHeader.status !== 'Processed' &&
-            item.approvalHeader.status !== 'Rejected' &&
-            item.approvalHeader.status !== 'Approved'
+            item.approvalHeader.status !== 'Rejected'
         );
-        this.originalDeskData = [...this.deskheaderpending]; // Store original data
+        this.originalData = [...this.deskheaderpending];
         // this.filterPendingExpenses()
       }, error: (err) => {
         this.loading = false;
@@ -304,50 +303,62 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
       backdrop: 'static'
     });
   }
-  getFilteredAndSortedDesk(): any[] {
-    const search = this.searchValue?.toLowerCase() ?? '';
-    let desks = this.deskheaderpending ?? [];
-
-    if (search) {
-      desks = desks.filter(item =>
-        item.entity?.deskallocatedtoname?.toLowerCase().includes(search) ||
-        item.entity?.deskname?.toLowerCase().includes(search) ||
-        item.entity?.deskType?.toLowerCase().includes(search) ||
-        item.entity?.locationName?.toLowerCase().includes(search) ||
-        item.entity?.sublocationName?.toLowerCase().includes(search) ||
-        item.entity?.shiftName?.toLowerCase().includes(search)
-      );
-    }
-
-    return desks;
-  }
 
   customSort(event: any): void {
     const field = event.field;
+
+    // Check if all values in the column are the same
+        const allValues = event.data.map((item: any) => {
+          if (field.includes('.')) {
+            const fieldParts = field.split('.');
+            return fieldParts.reduce((obj: any, key: string) => obj?.[key], item);
+          } else {
+            return item.entity?.[field];
+          }
+        });
     
-    // Track current sort state for the clicked field
+        // For date fields, normalize to date-only strings for comparison
+        if (field.includes('allocatedDate') || field.includes('allocatedDate')) {
+          const normalizedValues = allValues.map((val: any) => {
+            if (!val) return null;
+            return moment(val).format('YYYY-MM-DD');
+          });
+          
+          const allSame = normalizedValues.every((val: any) => val === normalizedValues[0]);
+          if (allSame) {
+            // Reset sort state and prevent sorting
+            this.currentSortField = '';
+            this.currentSortOrder = 0;
+            if (this.table) this.table.reset();
+            return;
+          }
+        } else {
+          // For non-date fields, check if all values are the same
+          const allSame = allValues.every((val: any) => val === allValues[0]);
+          if (allSame) {
+            // Reset sort state and prevent sorting
+            this.currentSortField = '';
+            this.currentSortOrder = 0;
+            if (this.table) this.table.reset();
+            return;
+          }
+        }
+
     if (this.currentSortField === field) {
-      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
       if (this.currentSortOrder === 1) {
-        // Currently ascending, change to descending
         this.currentSortOrder = -1;
         event.order = -1;
       } else if (this.currentSortOrder === -1) {
-        // Currently descending, reset to original order
-        this.deskheaderpending = [...this.originalDeskData];
+        this.deskheaderpending = [...this.originalData];
         this.currentSortField = '';
         this.currentSortOrder = 0;
-        if (this.deskTable) {
-          this.deskTable.reset();
-        }
+        if (this.table) this.table.reset();
         return;
       } else {
-        // Currently reset, change to ascending
         this.currentSortOrder = 1;
         event.order = 1;
       }
     } else {
-      // New field clicked - start with ascending
       this.currentSortField = field;
       this.currentSortOrder = 1;
       event.order = 1;
@@ -357,56 +368,24 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
       let val1: any;
       let val2: any;
 
-      // Handle specific field mappings
-      switch (field) {
-        case 'deskallocatedtoname':
-          val1 = a.entity?.deskallocatedtoname;
-          val2 = b.entity?.deskallocatedtoname;
-          break;
-        case 'deskname':
-          val1 = a.entity?.deskname;
-          val2 = b.entity?.deskname;
-          break;
-        case 'deskType':
-          val1 = a.entity?.deskType;
-          val2 = b.entity?.deskType;
-          break;
-        case 'locationName':
-          val1 = a.entity?.locationName;
-          val2 = b.entity?.locationName;
-          break;
-        case 'sublocationName':
-          val1 = a.entity?.sublocationName;
-          val2 = b.entity?.sublocationName;
-          break;
-        case 'shiftName':
-          val1 = a.entity?.shiftName;
-          val2 = b.entity?.shiftName;
-          break;
-        case 'allocatedDate':
-          val1 = a.entity?.allocatedDate;
-          val2 = b.entity?.allocatedDate;
-          break;
-        case 'approvalStatus':
-          val1 = a.entity?.approvalStatus;
-          val2 = b.entity?.approvalStatus;
-          break;
-        default:
-          val1 = a[field];
-          val2 = b[field];
+      if (field.includes('.')) {
+        const fieldParts = field.split('.');
+        val1 = fieldParts.reduce((obj: any, key: string) => obj?.[key], a);
+        val2 = fieldParts.reduce((obj: any, key: string) => obj?.[key], b);
+      } else {
+        val1 = a.entity?.[field];
+        val2 = b.entity?.[field];
       }
 
-      // Handle date sorting
-      if (field === 'allocatedDate') {
-        const date1 = val1 ? new Date(val1) : new Date(0);
-        const date2 = val2 ? new Date(val2) : new Date(0);
-        return event.order * (date1.getTime() - date2.getTime());
+      if (field.includes('Date') || field.includes('date')) {
+        return event.order * ((val1 ? new Date(val1).getTime() : 0) - (val2 ? new Date(val2).getTime() : 0));
       }
 
-      // Handle string sorting for all other fields
-      val1 = String(val1 ?? '').trim();
-      val2 = String(val2 ?? '').trim();
-      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      if (typeof val1 === 'number' && typeof val2 === 'number') {
+        return event.order * (val1 - val2);
+      }
+
+      return event.order * String(val1 ?? '').trim().localeCompare(String(val2 ?? '').trim(), undefined, { sensitivity: 'base' });
     });
   }
 

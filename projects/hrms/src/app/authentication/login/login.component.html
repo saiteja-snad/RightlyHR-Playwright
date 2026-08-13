@@ -19,12 +19,20 @@
       <div class="d-flex flex-column w-100">
         <div class="d-flex justify-content-center mb-4 pb-2">
           <!-- <img src="/logos/snad-Logo-new-latest.png" alt="Logo" class="company-logo"> -->
-                 <img src='/logos/rightlyhr-full-logo.png' alt="RightlyHr Logo" class="company-logo">
+                 <img [src]="tenantService.currentLogo" alt="Company Logo" class="company-logo">
         </div>
         <!-- <div class="mb-5">
           <img src="/logos/logos-microsoft-icon.png" alt="Microsoft Logo" class="microsoft-logo">
         </div> -->
         <div>
+          <!-- Domain error/status messages -->
+          @if(domainVerificationStatus === 'verifying') {
+            <div class="d-flex justify-content-center align-items-center mb-4">
+              <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+              <span class="ms-2">Verifying domain...</span>
+            </div>
+          }
+
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm)">
             <!-- Email -->
             <div class="mb-4">
@@ -61,7 +69,7 @@
             }
 
             <div class="login-button-content pt-2">
-              <button type="submit" class="custom-btn btn-primary w-100" [disabled]="loginForm.invalid || spinnerLoader">
+              <button type="submit" class="custom-btn btn-primary w-100" [disabled]="loginForm.invalid || spinnerLoader || !isDomainVerified">
                 @if(spinnerLoader){
                 <div class="button-loader-content d-flex justify-content-center">
                   <div class="spinner-border button-spinner text-light" role="status"></div>
@@ -93,12 +101,12 @@
           <div class="position-relative google-btn-container">
             <asl-google-signin-button type="icon" size="large" shape="square" theme="outline" class="google-btn-overlay">
             </asl-google-signin-button>
-            <button class="custom-google-btn">
+            <button class="custom-google-btn" [disabled]="!isDomainVerified">
               <img src="/logos/google.png" alt="Google Icon" class="google-icon">
             </button>
           </div>
           <div>
-            <button class="microsoft-login-btn" (click)="goToUserValidate()">
+            <button class="microsoft-login-btn" (click)="goToUserValidate()" [disabled]="!isDomainVerified">
               <img src="/logos/microsoft.png" lt="Microsoft Icon" class="microsoft-icon">
             </button>
           </div>

@@ -21,6 +21,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { combineLatest } from 'rxjs';
 import { Chip } from 'primeng/chip';
 import { PaginatorModule } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-hold-projects',
@@ -39,6 +40,7 @@ import { PaginatorModule } from 'primeng/paginator';
     MultiSelectModule,
     Chip,
     PaginatorModule,
+    TableModule,
   ],
   templateUrl: './hold-projects.component.html',
   styleUrl: './hold-projects.component.scss',
@@ -73,6 +75,11 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     { label: 100, value: 100 },
 
   ];
+
+  // Sorting
+  currentSortField = '';
+  currentSortOrder = 0;
+  currentUIField = '';
   constructor(
     private router: Router,
     private http: HttpService,
@@ -258,6 +265,12 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       url += `&clientId=${clientIds.join(',')}`;
     }
 
+    // Add sorting parameters
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      const sortOrder = this.currentSortOrder === 1 ? 'asc' : 'desc';
+      url += `&sortBy=${this.currentSortField}&sortOrder=${sortOrder}`;
+    }
+
     this.http
       .getData(url)
       .pipe(takeUntil(this.destroy$))
@@ -296,6 +309,12 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
 
     if (clientIds.length > 0) {
       url += `&clientId=${clientIds.join(',')}`;
+    }
+
+    // Add sorting parameters
+    if (this.currentSortField && this.currentSortOrder !== 0) {
+      const sortOrder = this.currentSortOrder === 1 ? 'asc' : 'desc';
+      url += `&sortBy=${this.currentSortField}&sortOrder=${sortOrder}`;
     }
 
     this.http
@@ -526,6 +545,40 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
+    this.getdatabaedonRoute();
+  }
+
+  // Custom sorting for PrimeNG table
+  customSort(event: any): void {
+    const field = event.field;
+    const order = event.order;
+    const nextSortOrder = order === 1 ? 'asc' : 'desc';
+
+    // Prevent duplicate API calls
+    if (
+      this.currentUIField === field &&
+      ((this.currentSortOrder === 1 && nextSortOrder === 'asc') ||
+        (this.currentSortOrder === -1 && nextSortOrder === 'desc'))
+    ) {
+      return;
+    }
+
+    // Cycle: asc → desc → reset
+    if (this.currentUIField === field && this.currentSortOrder === -1) {
+      this.currentSortField = '';
+      this.currentUIField = '';
+      this.currentSortOrder = 0;
+      this.page = 1;
+      this.first = 0;
+      this.getdatabaedonRoute();
+      return;
+    }
+
+    this.currentUIField = field;
+    this.currentSortField = field;
+    this.currentSortOrder = order;
+    this.page = 1;
+    this.first = 0;
     this.getdatabaedonRoute();
   }
 

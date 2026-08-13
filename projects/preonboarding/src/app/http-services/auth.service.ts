@@ -1,16 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { TenantService } from '../common-services/tenant.service';
 @Injectable({
   providedIn: 'root'
 })
 
 export class AuthService {
   token!: any;
-  ApiUrl = environment.ApiUrl;
+  get ApiUrl(): string { return this.tenantService.currentApiUrl; }
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private tenantService: TenantService) { }
 
   login(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);

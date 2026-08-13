@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
@@ -9,6 +9,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
+import { Table, TableModule } from 'primeng/table';
 import { Subscription } from 'rxjs';
 import * as XLSX from 'xlsx-js-style';
 import { environment } from '../../../../environments/environment';
@@ -26,17 +27,19 @@ import { duration } from 'moment';
 @Component({
   selector: 'app-remote-login-report',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, SelectModule, MultiSelectModule, TranslateModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
+    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, TableModule],
   templateUrl: './remote-login-report.component.html',
   styleUrl: './remote-login-report.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class RemoteLoginReportComponent implements OnInit, OnDestroy {
+  @ViewChild('remoteTable') remoteTable!: Table;
   moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
   filteredRemoteRecord: any[] = [];
+  originalFilteredRemoteRecord: any[] = [];
   employeeiddetails: any[] = [];
   teamdetails = [] as any[];
   remoteReportForm!: FormGroup;
@@ -47,6 +50,8 @@ export class RemoteLoginReportComponent implements OnInit, OnDestroy {
   getEmployeeInfo = [] as any;
   localeOptions: any;
   today: Date = new Date();
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -259,6 +264,9 @@ export class RemoteLoginReportComponent implements OnInit, OnDestroy {
     this.reportsService.getRemoteReports(request).subscribe({
       next: (response: any) => {
         this.filteredRemoteRecord = response ?? [];
+        this.originalFilteredRemoteRecord = [...this.filteredRemoteRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
       },
       error: (error) => {
         this.spinnerLoader1 = false;
@@ -273,6 +281,44 @@ export class RemoteLoginReportComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.closeCanvas();
       }
+    });
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.filteredRemoteRecord = [...this.originalFilteredRemoteRecord];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.remoteTable) this.remoteTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+      if (field === 'worked_Date') {
+        return event.order * (new Date(val1 ?? 0).getTime() - new Date(val2 ?? 0).getTime());
+      }
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
     });
   }
 

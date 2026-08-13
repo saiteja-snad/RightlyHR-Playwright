@@ -19,18 +19,20 @@ import { RbacService } from '../../../services/rbac.service';
 import { DocumentData } from '../../../Interfaces/document.model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
-
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { TableModule } from 'primeng/table';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-onboarding-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule,
-    DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent],
+    DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent, TableModule],
   templateUrl: './onboarding-request.component.html',
   styleUrl: './onboarding-request.component.scss'
 })
 
 export class OnboardingRequestComponent implements OnInit, OnDestroy {
+  @ViewChild('documentsTable') documentsTable!: Table;
   documentData = new BehaviorSubject<any[]>([]);
   empinfo = {} as Ipersonal;
   empdata = {} as Ipersonal;
@@ -47,6 +49,11 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   loading: boolean = false;
   // For modal view
   @ViewChild('viewmodel') viewmodel!: NgbModal;
+  
+  // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  originalDocumentData: any[] = [];
 
   constructor(private authService: AuthService, private fb: FormBuilder, private http: HttpService, private router: Router, public formvalidation: FormValidationsService,
     private conformationPopup: OpenModalService, private modalService: NgbModal, public rbac: RbacService) { this.intitalizeForm(); }
@@ -119,6 +126,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`OnBoardingDocuments/${EmpId}`).subscribe({
       next: (data: any) => {
         this.loading = false;
+        this.originalDocumentData = [...data]; // Store original data
         this.documentData.next(data);
         this.subscription = this.documentData.subscribe((documents: any[]) => {
           let disablerejectvalue = !documents.some((element: any) => {
@@ -268,6 +276,110 @@ isSubmitting = false;
     return docs.some((data: DocumentData) =>
       data.status !== 'Verified' && data.status !== 'Rejected' && data.status === 'Submitted' && !!data.documentUrl
     );
+  }
+
+  sortDocuments(field: string): void {
+    const currentData = this.documentData.value;
+    
+    // Determine sort order
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Reset to original order
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        this.documentData.next([...this.originalDocumentData]);
+        return;
+      } else {
+        this.currentSortOrder = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+    }
+
+    // Sort the data
+    const sortedData = [...currentData].sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'submittedDate') {
+        val1 = new Date(a[field] ?? 0).getTime();
+        val2 = new Date(b[field] ?? 0).getTime();
+        return this.currentSortOrder * (val1 - val2);
+      } else if (field === 'referenceNumber') {
+        val1 = parseInt(a[field] ?? 0) || 0;
+        val2 = parseInt(b[field] ?? 0) || 0;
+        return this.currentSortOrder * (val1 - val2);
+      } else {
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return this.currentSortOrder * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
+
+    this.documentData.next(sortedData);
+  }
+
+  getSortIcon(field: string): string {
+    if (this.currentSortField !== field || this.currentSortOrder === 0) {
+      return 'bi-arrow-down-up text-muted'; // Default unsorted icon with muted color
+    }
+    return this.currentSortOrder === 1 ? 'bi-arrow-up text-primary' : 'bi-arrow-down text-primary';
+  }
+
+  customSort(event: any): void {
+    const field = event.field;
+    
+    // Track current sort state for the clicked field
+    if (this.currentSortField === field) {
+      // Same field clicked - cycle through: asc (1) -> desc (-1) -> reset (0)
+      if (this.currentSortOrder === 1) {
+        // Currently ascending, change to descending
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to original order
+        this.documentData.next([...this.originalDocumentData]);
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.documentsTable) {
+          this.documentsTable.reset();
+        }
+        return;
+      } else {
+        // Currently reset, change to ascending
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      // New field clicked - start with ascending
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1: any;
+      let val2: any;
+
+      if (field === 'submittedDate') {
+        val1 = new Date(a[field] ?? 0).getTime();
+        val2 = new Date(b[field] ?? 0).getTime();
+        return event.order * (val1 - val2);
+      } else if (field === 'referenceNumber') {
+        val1 = parseInt(a[field] ?? 0) || 0;
+        val2 = parseInt(b[field] ?? 0) || 0;
+        return event.order * (val1 - val2);
+      } else {
+        val1 = String(a[field] ?? '').trim();
+        val2 = String(b[field] ?? '').trim();
+        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      }
+    });
   }
 
   ngOnDestroy(): void {

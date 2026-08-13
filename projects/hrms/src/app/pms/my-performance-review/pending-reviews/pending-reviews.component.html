@@ -12,27 +12,26 @@
     </div>
     @if(!dataload){
     <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
+        <p-table #pendingReviewsTable [value]="filteredReviews" [customSort]="true" (onSort)="customSort($event)"
+            [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{'Review Cycle Name' | translate}}</th>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th>{{'Employee ID' | translate}}</th>
-                    <th>{{'Department' | translate}}</th>
-                    <th>{{'Team' | translate}}</th>
-                    <th>{{'Location' | translate}}</th>
-                    <th>{{'Sub Location' | translate}}</th>
-                    <th>{{'Due Date' | translate}}</th>
-                    <th>{{'Review Template' | translate}}</th>
-                    <th>{{'Status' | translate}}</th>
+                    <th pSortableColumn="reviewCycleName">{{'Review Cycle Name' | translate}} <p-sortIcon field="reviewCycleName" /></th>
+                    <th pSortableColumn="reviewEmployeeName">{{'Employee Name' | translate}} <p-sortIcon field="reviewEmployeeName" /></th>
+                    <th pSortableColumn="reviewFusionEmployeeId">{{'Employee ID' | translate}} <p-sortIcon field="reviewFusionEmployeeId" /></th>
+                    <th >{{'Department' | translate}}</th>
+                    <th >{{'Team' | translate}} </th>
+                    <th >{{'Location' | translate}} </th>
+                    <th >{{'Sub Location' | translate}}</th>
+                    <th pSortableColumn="assessordueDate">{{'Due Date' | translate}} <p-sortIcon field="assessordueDate" /></th>
+                    <th pSortableColumn="formName">{{'Review Template' | translate}} <p-sortIcon field="formName" /></th>
+                    <th pSortableColumn="rcItemStatus">{{'Status' | translate}} <p-sortIcon field="rcItemStatus" /></th>
                     @if(rbac.allowedToAccess('My Performance Assessment.view')){
                     <th class="text-center">{{'Action' | translate}}</th>
                     }
                 </tr>
-            </thead>
-            <tbody>
-                @if(filteredReviews.length > 0){
-                @for(item of filteredReviews; track item){
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
                 <tr>
                     <td>{{ item.reviewCycleName }}</td>
                     <td>{{item.reviewEmployeeName}}</td>
@@ -53,7 +52,7 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 <li
                                     (click)="selfAssessment(item.reviewCycleItemId, item.currentStage, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                    <a  class="dropdown-item">{{item.assessorType}}
+                                    <a class="dropdown-item">{{item.assessorType}}
                                         {{'Assessment' | translate}}</a>
                                 </li>
                             </ul>
@@ -61,16 +60,11 @@
                         }
                     </td>
                 </tr>
-                }
-                }@else {
-                <tr>
-                    <td colspan="11">
-                        <app-no-data-found></app-no-data-found>
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr><td colspan="11"><app-no-data-found /></td></tr>
+            </ng-template>
+        </p-table>
     </div>
 
     @if(filteredReviews.length > 0){

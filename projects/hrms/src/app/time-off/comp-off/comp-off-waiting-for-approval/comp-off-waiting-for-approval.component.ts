@@ -20,6 +20,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Validators } from '@angular/forms';
+import moment from 'moment';
 @Component({
   selector: 'app-comp-off-waiting-for-approval',
   imports: [
@@ -122,20 +123,39 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     });
   }
 
-  canApprove(item: any): boolean {
-    const currentApproverId =
-      item?.pendingApprovalsHeader?.currentApproverId?.toString();
+ canApprove(item: any): boolean {
+  const loginEmployeeId = Number(this.empinfo?.employeeId);
+  const currentApproverId = Number(item?.currentApproverId);
 
+  return (
+    loginEmployeeId === currentApproverId &&
+    !this.shouldHideApproval(item)
+  );
+}
 
-    const loginId =
-      this.LOGIN.employeeId?.toString();
-    console.log('currentApproverId:', currentApproverId);
-    console.log('loginId:', loginId);
-    console.log('item:', item);
+shouldHideApproval(item: any): boolean {
+  const loginEmployeeId = Number(this.empinfo?.employeeId);
+  const currentApproverId = Number(item?.currentApproverId);
+  const reportingManagerId = Number(item?.reportingManagerId);
+  const teamManagerId = Number(item?.teamManagerId);
 
+  return (
+    loginEmployeeId > 0 &&
+    currentApproverId > 0 &&
+    reportingManagerId > 0 &&
+    teamManagerId > 0 &&
+    reportingManagerId === teamManagerId &&
+    teamManagerId === loginEmployeeId &&
+    loginEmployeeId === currentApproverId
+  );
+}
 
-    return currentApproverId === loginId;
-  }
+hasApprovableItems(): boolean {
+  return this.waitingForApprovalCompOff.some((item: any) =>
+    this.canApprove(item) &&
+    !this.shouldHideApproval(item)
+  );
+}
 
   onRowsChange() {
     this.first = 0;
@@ -453,9 +473,9 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
 
       // Handle date sorting
       if (field === 'startTime' || field === 'requestedDate') {
-        const date1 = val1 ? new Date(val1) : new Date(0);
-        const date2 = val2 ? new Date(val2) : new Date(0);
-        return event.order * (date1.getTime() - date2.getTime());
+        const date1 = val1 ? moment(val1).startOf('day') : moment(0);
+        const date2 = val2 ? moment(val2).startOf('day') : moment(0);
+        return event.order * (date1.valueOf() - date2.valueOf());
       }
 
       // Handle numeric sorting for durationType

@@ -23,7 +23,7 @@
 <app-setup-wizard-button (clicked)="isWizardPopupOpen = !isWizardPopupOpen" />
 
 <ng-template #getstarted  let-modal >
-    <div class="custom-modal-bg" ngbAutofocus>
+    <div id="popupgetstarted" class="custom-modal-bg" ngbAutofocus>
         <div class="container get-started-content">
             <div>
                 <p class="name">Welcome, {{employeeName}}</p>
@@ -45,7 +45,7 @@
 </ng-template>
 
 <ng-template #changepasswordModal let-modal>
-    <div class="custom-modal-bg">
+    <div id="changepasswordModal" class="custom-modal-bg">
         <div class="custom-main-popup-container custom-new-bg" ngbAutofocus>
             <div class="w-50 password-left-content">
                 <p class="name">Welcome, {{employeeName}}</p>

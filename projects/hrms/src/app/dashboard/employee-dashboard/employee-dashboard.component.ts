@@ -48,6 +48,7 @@ export class EmployeeDashboardComponent implements AfterViewInit {
   employeedata: any;
   currentTime: Date = new Date();
   loading = false;
+  
   avaliabletlyloading = false;
   showAvailabilityMessage = false;
   weaklyloghrsloader = false;
@@ -993,9 +994,9 @@ getattendancedatabyentry() {
         this.isAttendanceDataTrue =
           String(data?.[0]?.value).toLowerCase() === 'true';
 
-        if (!this.isAttendanceDataTrue) {
-          this.loadAttendanceDashboardData();
-        }
+        // Load dashboard data even when the mask is displayed.
+        // The mask will sit on top of this data.
+        this.loadAttendanceDashboardData();
       },
 
       error: (err) => {
@@ -1003,6 +1004,9 @@ getattendancedatabyentry() {
           'Error fetching attendance configuration:',
           err
         );
+
+        // Optional: still load dashboard if config API fails
+        this.loadAttendanceDashboardData();
       }
     });
 }

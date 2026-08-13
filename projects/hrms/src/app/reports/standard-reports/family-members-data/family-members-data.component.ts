@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -19,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import dayjs from 'dayjs';
 import { DatePipe } from '@angular/common';
 import { environment } from '../../../../environments/environment';
+import { TableModule, Table } from 'primeng/table';
 
 @Component({
   selector: 'app-family-members-data',
@@ -32,13 +33,16 @@ import { environment } from '../../../../environments/environment';
     DateformatPipe,
     DataLoaderContentComponent,
     ReportsHeaderComponent,
-    TranslateModule
+    TranslateModule,
+    TableModule
 ],
   templateUrl: './family-members-data.component.html',
   styleUrl: './family-members-data.component.scss',
 })
 
 export class FamilyMembersDataComponent implements OnInit, OnDestroy {
+  @ViewChild('familyTable') familyTable!: Table;
+  sortedData: IFamilyDetails[] = [];
   moduleinfo: string = '';
   employeeStatusOptions = [
     { label: 'All Employees', value: 'All' },
@@ -53,6 +57,9 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   disableBtn = false;
   familydata = [] as IFamilyDetails[];
   destroy$: Subject<boolean> = new Subject<boolean>();
+  originalFamilydata: IFamilyDetails[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -107,6 +114,9 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.familydata = data as IFamilyDetails[];
+          this.originalFamilydata = [...this.familydata];
+          this.currentSortField = '';
+          this.currentSortOrder = 0;
         },
         error: (err: any) => {
           this.spinnerLoader1 = false;
@@ -169,206 +179,81 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   exportAsExcelFile(): void {
     this.spinnerLoader2 = true;
     setTimeout(() => {
-      // Define header mappings
-      const HEADER_MAPPINGS: { [key: string]: string } = {
-        employeeId: 'EMPLOYEE ID',
-        firstName: 'FIRST NAME',
-        middleName: 'MIDDLE NAME',
-        lastName: 'LAST NAME',
-        workEmail: 'WORK EMAIL',
-        empStatus: 'EMPLOYEE STATUS',
-        memberName: 'NAME',
-        relation: 'RELATION',
-        memberDateOfBirth: 'DATE OF BIRTH',
-        dependent: 'DEPENDENT',
-      };
-
-      // Define new sequence
-      const NEW_SEQUENCE: string[] = [
-        'EMPLOYEE ID',
-        'FIRST NAME',
-        'MIDDLE NAME',
-        'LAST NAME',
-        'WORK EMAIL',
-        'EMPLOYEE STATUS',
-        'NAME',
-        'RELATION',
-        'DATE OF BIRTH',
-        'DEPENDENT',
-      ];
-
-      // Function to format date based on environment configuration
+      const sortedData: IFamilyDetails[] = this.sortedData.length ? this.sortedData : (this.familyTable?.filteredValue ?? this.familydata);
       const datePipe = new DatePipe('en-US');
       const formatDate = (date: string | Date | undefined) => {
-        if (!date) return '';
-        return datePipe.transform(date, environment.dateformat) || '';
+        if (!date) return '-';
+        return datePipe.transform(date, environment.dateformat) || '-';
       };
 
-      const modifiedData = this.familydata.map((record) => {
-        const modifiedRecord: any = {};
-        NEW_SEQUENCE.forEach((columnName) => {
-          const originalColumnName = Object.keys(HEADER_MAPPINGS).find(
-            (key) => HEADER_MAPPINGS[key] === columnName
-          );
+      const normalizeCell = (value: any) => {
+        if (value === null || value === undefined) return '-';
+        if (typeof value === 'string') {
+          const trimmed = value.trim();
+          return trimmed.length > 0 ? trimmed : '-';
+        }
+        return value;
+      };
 
-          if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-            if (
-              originalColumnName === 'memberDateOfBirth' &&
-              record[originalColumnName]
-            ) {
-              // Format the date to 'DD-MMM-YYYY'
-              modifiedRecord[columnName] = formatDate(record[originalColumnName]);
-            } else {
-              modifiedRecord[columnName] = (record as any)[originalColumnName];
-            }
-          } else {
-            modifiedRecord[columnName] = '';
-          }
-        });
-        return modifiedRecord;
-      });
+      const headers = [
+        'EMPLOYEE ID', 'FIRST NAME', 'MIDDLE NAME', 'LAST NAME',
+        'WORK EMAIL', 'EMPLOYEE STATUS', 'NAME', 'RELATION', 'DATE OF BIRTH', 'DEPENDENT'
+      ];
 
-      // Create worksheet with heading
       const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([
-        ['FAMILY MEMBERS REPORT'], // Add heading
-        [
-          'EMPLOYEE ID',
-          'FIRST NAME',
-          'MIDDLE NAME',
-          'LAST NAME',
-          'WORK EMAIL',
-          'EMPLOYEE STATUS',
-          'NAME',
-          'RELATION',
-          'DATE OF BIRTH',
-          'DEPENDENT',
-        ], // Headers
+        ['FAMILY MEMBERS REPORT'],
+        headers
       ]);
 
-      // Style for heading
-      worksheet['!merges'] = worksheet['!merges'] || [];
-      worksheet['!merges'].push({
-        s: { r: 0, c: 0 },
-        e: { r: 0, c: NEW_SEQUENCE.length - 1 },
-      }); // Merge the heading cell
+      worksheet['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } }];
+      worksheet['A1'].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'left', vertical: 'center' } };
 
-      // Add style to heading
-      worksheet['A1'].s = {
-        font: {
-          bold: true,
-          sz: 14, // Font size
-          color: { rgb: '000000' }, // Font color (black)
-        },
-        alignment: {
-          horizontal: 'left', // Left align
-          vertical: 'center', // Center vertically
-        },
-      };
-
-      // Add style to headers (Row 1)
-      for (let C = 0; C < NEW_SEQUENCE.length; ++C) {
-        let cellAddress = XLSX.utils.encode_cell({ r: 1, c: C });
-        if (worksheet[cellAddress]) {
-          worksheet[cellAddress].s = { font: { bold: true } };
-        }
+      for (let C = 0; C < headers.length; ++C) {
+        const cellAddress = XLSX.utils.encode_cell({ r: 1, c: C });
+        if (worksheet[cellAddress]) worksheet[cellAddress].s = { font: { bold: true } };
       }
 
-      // Set default row height
-      worksheet['!rows'] = worksheet['!rows'] || [];
-      worksheet['!rows'][0] = { hpt: 20 }; // Set row height for heading row
-      worksheet['!rows'][1] = { hpt: 20 }; // Set row height for header row
+      worksheet['!rows'] = [{ hpt: 20 }, { hpt: 20 }];
 
-      let rowIndex = 2; // Start data rows after the header
+      let rowIndex = 2;
 
-      this.familydata.forEach((employee) => {
+      sortedData.forEach((employee) => {
+        const members = employee.familyMembers?.length ? employee.familyMembers : [null];
         const employeeStartRowIndex = rowIndex;
 
-        employee.familyMembers.forEach((member: any, memberIndex: number) => {
-          XLSX.utils.sheet_add_aoa(
-            worksheet,
-            [
-              [
-                memberIndex === 0 ? employee.employeeId : '',
-                memberIndex === 0 ? employee.firstName : '',
-                memberIndex === 0 ? employee.middleName : '',
-                memberIndex === 0 ? employee.lastName : '',
-                memberIndex === 0 ? employee.workEmail : '',
-                memberIndex === 0 ? employee.empStatus : '',
-                member.memberName,
-                member.relation,
-                formatDate(member.memberDateOfBirth), // Use the formatted date here
-                member.dependent,
-              ],
-            ],
-            { origin: -1 }
-          );
-
+        members.forEach((member: any, memberIndex: number) => {
+          XLSX.utils.sheet_add_aoa(worksheet, [[
+            memberIndex === 0 ? normalizeCell(employee.employeeId) : '',
+            memberIndex === 0 ? normalizeCell(employee.firstName) : '',
+            memberIndex === 0 ? normalizeCell(employee.middleName) : '',
+            memberIndex === 0 ? normalizeCell(employee.lastName) : '',
+            memberIndex === 0 ? normalizeCell(employee.workEmail) : '',
+            memberIndex === 0 ? normalizeCell(employee.empStatus) : '',
+            member ? normalizeCell(member.memberName) : '-',
+            member ? normalizeCell(member.relation) : '-',
+            member ? formatDate(member.memberDateOfBirth) : '-',
+            member ? normalizeCell(member.dependent) : '-',
+          ]], { origin: -1 });
           rowIndex++;
         });
 
-        if (employee.familyMembers.length > 1) {
-          worksheet['!merges'] = worksheet['!merges'] || [];
-          worksheet['!merges'].push(
-            {
-              s: { r: employeeStartRowIndex, c: 0 },
-              e: { r: rowIndex - 1, c: 0 },
-            },
-            {
-              s: { r: employeeStartRowIndex, c: 1 },
-              e: { r: rowIndex - 1, c: 1 },
-            },
-            {
-              s: { r: employeeStartRowIndex, c: 2 },
-              e: { r: rowIndex - 1, c: 2 },
-            },
-            {
-              s: { r: employeeStartRowIndex, c: 3 },
-              e: { r: rowIndex - 1, c: 3 },
-            },
-            {
-              s: { r: employeeStartRowIndex, c: 4 },
-              e: { r: rowIndex - 1, c: 4 },
-            },
-            {
-              s: { r: employeeStartRowIndex, c: 5 },
-              e: { r: rowIndex - 1, c: 5 },
-            }
-          );
+        if (members.length > 1) {
+          for (let c = 0; c <= 5; c++) {
+            worksheet['!merges']!.push({
+              s: { r: employeeStartRowIndex, c },
+              e: { r: rowIndex - 1, c }
+            });
+          }
         }
       });
 
-      // Adjust column width to fit data
-      NEW_SEQUENCE.forEach((columnName, index) => {
-        let columnWidth = this.getColumnWidth(modifiedData, columnName);
-        // Increase the width for specific columns
-        if (
-          [
-            'EMPLOYEE ID',
-            'FIRST NAME',
-            'MIDDLE NAME',
-            'LAST NAME',
-            'WORK EMAIL',
-            'EMPLOYEE STATUS',
-            'NAME',
-            'RELATION',
-            'DATE OF BIRTH',
-            'DEPENDENT',
-          ].includes(columnName)
-        ) {
-          columnWidth += 5; // Increase width by 5
-        }
-        worksheet['!cols'] = worksheet['!cols'] || [];
-        worksheet['!cols'][index] = { wch: columnWidth };
-      });
+      worksheet['!cols'] = headers.map(() => ({ wch: 20 }));
 
-      let { fileName } = this.getFileName('Family_Details_Report');
-      const workbook: XLSX.WorkBook = {
-        Sheets: { data: worksheet },
-        SheetNames: ['data'],
-      };
+      let { fileName } = this.getFileName('Family Details Report');
+      const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
       XLSX.writeFile(workbook, `${fileName}.xlsx`);
       this.spinnerLoader2 = false;
-      this.modal.openSuccessModal('Family Details Report exported successfully',);
+      this.modal.openSuccessModal('Family Details Report exported successfully');
     }, 100);
   }
 
@@ -381,6 +266,10 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
       fileName,
     };
   }
+  onSortChange(event: any): void {
+    this.sortedData = this.familyTable?.filteredValue ?? this.familyTable?.value ?? this.familydata;
+  }
+
   navigation() {
     this.router.navigate(['/reports']);
   }
@@ -394,7 +283,44 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
+customSort(event: any): void {
+    const field = event.field;
 
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.familydata = [...this.originalFamilydata];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.familyTable) this.familyTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

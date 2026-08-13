@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
@@ -18,23 +18,26 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { ItsuporrtHeaderTabsComponent } from "../../shared/itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
-import { ApplicablePoliciesTriggerComponent } from '../../shared/policies/applicable-policies-trigger/applicable-policies-trigger.component';
-import { APPLICABLE_POLICIES_KEYS } from '../../shared/policies/policy-visibility.catalog';
+import { Table, TableModule } from 'primeng/table';
+import moment from 'moment';
 @Component({
   selector: 'app-my-tickets',
-  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, NgbPopoverModule, ApplicablePoliciesTriggerComponent,
-    TranslateModule, DateformatPipe, ModuleInformationComponent, ItsuporrtHeaderTabsComponent, DataLoaderContentComponent,ModuleInfoIconComponent],
+  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, NgbPopoverModule,
+    TranslateModule, DateformatPipe, ModuleInformationComponent, ItsuporrtHeaderTabsComponent, DataLoaderContentComponent,ModuleInfoIconComponent, TableModule],
   templateUrl: './my-tickets.component.html',
   styleUrl: './my-tickets.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class MyTicketsComponent implements OnInit,OnDestroy {
-  applicablePolicies = APPLICABLE_POLICIES_KEYS.IT_SUPORRT_TICKETS;
   moduleinfo: string = '';
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
   tickets: any = [];
+  originalTickets: any[] = [];
+  currentSortField = '';
+  currentSortOrder = 0;
+  @ViewChild('dt') dt!: Table;
 
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
@@ -123,71 +126,34 @@ subCategoryDetails=[] as any;
       }
     });
   }
-  //  getsubcategoryName(selecteddata: any): void {
-  //   const selectedId = selecteddata.id; // Get the sno of the selected department
-  //   // Fetch the teams based on the selected department ID
-  //   this.subscription = this.http.getData(`entityAttributeValues/getv1?entity=ItSupport&attribute=SubCategory`).subscribe({
-  //     next: (data: any) => {
-  //        if (data && data.length > 0) {
-  //         // Parse meta if it's a string
-  //         const parsedData = data.map((item:any) => ({
-  //           ...item,
-  //           meta: typeof item.meta === 'string' ? JSON.parse(item.meta) : item.meta
-  //         }));
-
-  //         // Filter subcategories by category meta.id
-  //         this.subCategoryDetails = parsedData.filter(
-  //           (item:any) => item.meta?.id === selectedId
-  //         );
-  //       }else {
-  //         this.subCategoryDetails = []; // Reset if no teams are found
-  //       }
-  //       this.itSupportForm.patchValue({ subcategoryId: null }); // Reset the team selection
-  //     },
-  //     error: (err: any) => {
-  //       this.subCategoryDetails = []; // Reset on error
-  //       this.itSupportForm.patchValue({ subcategoryId: null }); // Reset the team selection
-  //     }
-  //   });
-  //   this.itSupportForm.get('subcategoryId')?.enable();
-  // }
-  getsubcategoryName(selecteddata: any): void {
-  const selectedId = selecteddata.id;
-
-  this.subscription = this.http
-    .getData(`entityAttributeValues/getv1?entity=ItSupport&attribute=SubCategory`)
-    .subscribe({
+   getsubcategoryName(selecteddata: any): void {
+    const selectedId = selecteddata.id; // Get the sno of the selected department
+    // Fetch the teams based on the selected department ID
+    this.subscription = this.http.getData(`entityAttributeValues/getv1?entity=ItSupport&attribute=SubCategory`).subscribe({
       next: (data: any) => {
-        const parsedData = (data || []).map((item: any) => ({
-          ...item,
-          meta: typeof item.meta === 'string' ? JSON.parse(item.meta) : item.meta
-        }));
+         if (data && data.length > 0) {
+          // Parse meta if it's a string
+          const parsedData = data.map((item:any) => ({
+            ...item,
+            meta: typeof item.meta === 'string' ? JSON.parse(item.meta) : item.meta
+          }));
 
-        this.subCategoryDetails = parsedData.filter(
-          (item: any) => item.meta?.id === selectedId
-        );
-
-        const subCatControl = this.itSupportForm.get('subcategoryId');
-
-        // ✅ ALWAYS enable
-        subCatControl?.enable();
-        subCatControl?.reset();
-
-        // ✅ ALWAYS required
-        subCatControl?.setValidators([Validators.required]);
-        subCatControl?.updateValueAndValidity();
+          // Filter subcategories by category meta.id
+          this.subCategoryDetails = parsedData.filter(
+            (item:any) => item.meta?.id === selectedId
+          );
+        }else {
+          this.subCategoryDetails = []; // Reset if no teams are found
+        }
+        this.itSupportForm.patchValue({ subcategoryId: null }); // Reset the team selection
       },
-      error: () => {
-        const subCatControl = this.itSupportForm.get('subcategoryId');
-        this.subCategoryDetails = [];
-        subCatControl?.enable();
-        subCatControl?.setValidators([Validators.required]);
-        subCatControl?.reset();
-        subCatControl?.updateValueAndValidity();
+      error: (err: any) => {
+        this.subCategoryDetails = []; // Reset on error
+        this.itSupportForm.patchValue({ subcategoryId: null }); // Reset the team selection
       }
     });
-}
-
+    this.itSupportForm.get('subcategoryId')?.enable();
+  }
   initiateUpdateModuleInfo() {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -238,7 +204,7 @@ subCategoryDetails=[] as any;
   }
 
   getSelfEmployee() {
-    this.subscription = this.http.getData('Employeedata/ActiveAllEmployees').subscribe({
+    this.subscription = this.http.getData('v2/Employeedata/GetAllEmployees').subscribe({
       next: (data: any) => {
         this.allEmployeesself = data;
         this.allEmployeesself = this.allEmployeesself.map(a => ({
@@ -282,6 +248,7 @@ subCategoryDetails=[] as any;
   }
 
   onTicketRaisedForChange(event: any) {
+    console.log(this.allEmployeesself);
     let value = event;
     this.ticketFor = value;
     this.setConditionalValidators();
@@ -368,16 +335,79 @@ subCategoryDetails=[] as any;
       next: (data: any) => {
         this.dataloader = false;
         this.tickets = data;
+        this.originalTickets = Array.isArray(this.tickets) ? [...this.tickets] : [];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.dt) {
+          this.dt.reset();
+        }
       },
       error: (err: any) => {
         this.dataloader = false;
         console.log(err);
+        this.tickets = [];
+        this.originalTickets = [];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.dt) {
+          this.dt.reset();
+        }
       },
       complete: () => {
         this.dataloader = false;
         // You can perform any additional actions after the data is fetched
       }
     })
+  }
+
+  customSort(event: any): void {
+    const field = String(event.field ?? '');
+    const nextOrder = event.order === 1 ? 1 : -1;
+
+    if (this.currentSortField === field && this.currentSortOrder === -1 && nextOrder === 1) {
+      this.tickets = [...this.originalTickets];
+      this.currentSortField = '';
+      this.currentSortOrder = 0;
+      if (this.dt) {
+        this.dt.reset();
+      }
+      return;
+    }
+
+    this.currentSortField = field;
+    this.currentSortOrder = nextOrder;
+
+    const priorityRank: Record<string, number> = { Urgent: 4, High: 3, Medium: 2, Low: 1 };
+
+    const compare = (a: any, b: any): number => {
+      if (field === 'id') {
+        const n1 = Number(a?.id ?? 0) || 0;
+        const n2 = Number(b?.id ?? 0) || 0;
+        return n1 - n2;
+      }
+      if (field === 'priority') {
+        const p1 = priorityRank[String(a?.priority ?? '')] ?? 0;
+        const p2 = priorityRank[String(b?.priority ?? '')] ?? 0;
+        return p1 - p2;
+      }
+      if (field === 'createdAt' || field === 'updatedAt') {
+        const getDateOnly = (value: any) => {
+          if (!value) return 0;
+          const date = new Date(value);
+          // Ignore time
+          date.setHours(0, 0, 0, 0);
+          return date.getTime();
+        };
+        return getDateOnly(a?.[field]) - getDateOnly(b?.[field]);
+      }
+
+      const s1 = String(a?.[field] ?? '').trim();
+      const s2 = String(b?.[field] ?? '').trim();
+      return s1.localeCompare(s2, undefined, { sensitivity: 'base' });
+    };
+
+    const sorted = [...this.tickets].sort((a, b) => this.currentSortOrder * compare(a, b));
+    this.tickets = sorted;
   }
 
   onSubDepartmentNameChange(selectedSubDepartment: any): void {
@@ -436,11 +466,23 @@ subCategoryDetails=[] as any;
     });
   }
 
-  openModal(content: any) {
-    this.ticketFor = 'Self';
-    this.itSupportForm.patchValue({ employee: 'Self' });
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
-  }
+openModal(content: any) {
+  this.ticketFor = 'Self';
+
+  this.itSupportForm.reset();
+
+  this.itSupportForm.patchValue({
+    employee: 'Self'
+  });
+
+  this.onTicketRaisedForChange('Self');
+
+  this.modalService.open(content, {
+    centered: true,
+    size: 'lg',
+    backdrop: 'static'
+  });
+}
 
   cleardata() {
     this.ngOnInit();

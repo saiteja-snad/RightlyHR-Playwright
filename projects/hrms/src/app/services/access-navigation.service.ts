@@ -91,7 +91,11 @@ import {
   MY_INFO_SEPARATION_REQUEST_ROUTES,
   Employee_INFO_Separation_Request,
   SETTINGS_HELPDESK_MANAGEMENT_TABS,
-  HELPDESK_SUPPORT_TICKETS_TABS
+
+  HELPDESK_SUPPORT_TICKETS_TABS,
+
+  PROJECT_MANAGEMENT_APPROVALS_TABS
+
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -710,7 +714,7 @@ export class AccessNavigationService {
         }
         break;
 
-         case '/project-management/timesheet':
+      case '/project-management/timesheet':
         if (this.rbac.allowedToAccess('Time Sheet.view') || this.rbac.allowedToAccess('Team Time Sheet.view') || this.rbac.allowedToAccess('My Summary.view')) {
           const preferred = this.getPreferredRouteFromPermissionTabs(
             'project-management-timesheets-tabs',
@@ -1662,12 +1666,6 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/pending-approvals/time-sheets':
-        if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
-          return (route = '/pending-approvals/time-sheets');
-        }
-        break;
-
       case '/pending-approvals/kra-kpi':
         if (this.rbac.allowedToAccess('KRA KPI approval Tab.view')) {
           return (route = '/pending-approvals/kra-kpi');
@@ -2055,6 +2053,28 @@ export class AccessNavigationService {
           }
         }
         break;
+      
+      case '/pending-approvals/project-management':
+        if (this.rbac.allowedToAccess('project management approvals main Tab.view')) {
+          for (const item of PROJECT_MANAGEMENT_APPROVALS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/pending-approvals/project-management/time-sheets':
+        if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+          return (route = '/pending-approvals/project-management/time-sheets');
+        }
+        break;
+
+      case '/pending-approvals/project-management/resource-approvals':
+        if (this.rbac.allowedToAccess('Resource Approvals.view')) {
+          return (route = '/pending-approvals/project-management/resource-approvals');
+        }
+        break;
 
       case '/personalinfo/personal':
         if (this.rbac.allowedToAccess('Employee Info Personal Tab.view ') ||
@@ -2254,7 +2274,7 @@ export class AccessNavigationService {
     return route;
   }
 
-   private getPreferredOrderedRoutes(moduleKey: string): string[] {
+  private getPreferredOrderedRoutes(moduleKey: string): string[] {
     const pref = this.menuOrderService.preferenceV2();
     const modules = pref?.tabs?.modules ?? [];
     const mod = modules.find(m => m.moduleKey === moduleKey);

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import dayjs, { Dayjs } from 'dayjs';
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
@@ -22,15 +22,18 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
 import { DatePicker } from 'primeng/datepicker';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { TableModule, Table } from 'primeng/table';
 @Component({
   selector: 'app-job-location-wise-data',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, SelectModule, MultiSelectModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, DateformatPipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, SelectModule, MultiSelectModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, DateformatPipe, TableModule],
   templateUrl: './job-location-wise-data.component.html',
   styleUrls: ['./job-location-wise-data.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 
 export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
+  @ViewChild('jobLocationTable') jobLocationTable!: Table;
+  sortedData: ILocationReportData[] = [];
   moduleinfo : string = '';
   spinnerLoader = false;
   dataload = false;
@@ -44,6 +47,9 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   locationReportList = [] as ILocationReportData[];
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  originalLocationReportList: ILocationReportData[] = [];
+  currentSortField: string = '';
+  currentSortOrder: number = 0;
   employeeStatusOptions = [
     { label: 'All Employees', value: 'All' },
     { label: 'Active', value: 'Active,Trainee Active,Active Contract' },
@@ -314,6 +320,10 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     this.reports.getStandardReports(request).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.locationReportList = res?.standardReports || [];
+        this.originalLocationReportList = [...this.locationReportList];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        this.sortedData = [];
         this.disableBtn= false;
       },
       error: (err: any) => {
@@ -332,43 +342,106 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   onClickJobLocationExport() {
     this.spinnerLoader = true;
     setTimeout(() => {
-      let { arrayBuffer, fileName } = this.exportTableToExcel("jobLocation", "Job_Location_Report")
-      this.uploadReports(arrayBuffer, fileName)
-      this.createReportLog("Job Location Report")
+      const dataToExport = this.sortedData.length ? this.sortedData : (this.jobLocationTable?.filteredValue ?? this.jobLocationTable?.value ?? this.locationReportList);
+      let { arrayBuffer, fileName } = this.exportTableToExcel(dataToExport, 'Job Location Report');
+      this.uploadReports(arrayBuffer, fileName);
+      this.createReportLog('Job Location Report');
     }, 100);
   }
 
-  exportTableToExcel(tableId: string, name?: string) {
+  onSortChange(event: any): void {
+    this.sortedData = this.jobLocationTable?.filteredValue ?? this.jobLocationTable?.value ?? this.locationReportList;
+  }
+
+  exportTableToExcel(data: ILocationReportData[], name?: string) {
     let { sheetName, fileName } = this.getFileName(name);
-    let targetTableElm = document.getElementById(tableId);
-    
+
     const reportTitle = name ? name.replace(/_/g, ' ') : 'Report';
-    const ws = XLSX.utils.aoa_to_sheet([
-      [reportTitle.toUpperCase()]
-    ]);
-    XLSX.utils.sheet_add_dom(ws, targetTableElm, { origin: 'A2', raw: true });
+    const ws = XLSX.utils.aoa_to_sheet([[reportTitle.toUpperCase()]]);
+
+    const headers = [
+      'EMPLOYEE ID', 'SALUTATION', 'FIRST NAME', 'MIDDLE NAME', 'LAST NAME', 'EMPLOYEE STATUS',
+      'DATE OF JOINING', 'WORK NUMBER', 'PHONE NUMBER', 'WORK MAIL', 'PERSONAL EMAIL',
+      'ADDRESS LINE 1(CURRENT)', 'ADDRESS LINE 2(CURRENT)', 'CITY(CURRENT)', 'STATE(CURRENT)',
+      'COUNTRY(CURRENT)', 'ZIPCODE(CURRENT)', 'ADDRESS LINE 1(COMMUNICATION)',
+      'ADDRESS LINE 2(COMMUNICATION)', 'CITY(COMMUNICATION)', 'STATE(COMMUNICATION)',
+      'COUNTRY(COMMUNICATION)', 'ZIPCODE(COMMUNICATION)', 'BRANCH CODE', 'JOB EFFECTIVE DATE',
+      'JOB ROLE', 'JOB GRADE', 'DEPARTMENT', 'TEAM', 'TEAM MANAGER', 'REPORTING MANAGER',
+      'LOCATION', 'SUB LOCATION', 'SHIFT', 'SHIFT CODE', 'JOB TYPE'
+    ];
+
+    const rows = data.map(emp => [
+  emp.fusionEmpId || '-',
+  emp.title || '-',
+  emp.firstName || '-',
+  emp.middleName || '-',
+  emp.lastName || '-',
+  emp.empstatus || '-',
+
+  emp.dateOfJoining ? this.formatDate(new Date(emp.dateOfJoining)) : '-',
+
+  this.extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -'),
+
+  this.extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -'),
+
+  emp.workEmail || '-',
+  emp.emailaddress || '-',
+
+  // Current Address
+  emp.currentaddressline1 || '-',
+  emp.currentaddressline2 || '-',
+  emp.currentcity || '-',
+  emp.currentstate || '-',
+  emp.currentcountry || '-',
+  emp.currentzipcode || '-',
+
+  // Permanent Address
+  emp.permanentaddressline1 || '-',
+  emp.permanentaddressline2 || '-',
+  emp.permanentcity || '-',
+  emp.permanentstate || '-',
+  emp.permanentcountry || '-',
+  emp.permanentzipcode || '-',
+
+  // Job / Org Info
+  emp.branchCode || '-',
+
+  emp.jobeffectivedate ? this.formatDate(new Date(emp.jobeffectivedate)) : '-',
+
+  emp.jobRole || '-',
+  emp.gradeName || '-',
+  emp.departmentName || '-',
+  emp.subdepartment_name || '-',
+
+  emp.teammanager || '-',
+  emp.reportingmanager || '-',
+
+  emp.joblocationname || '-',
+  emp.jobsublocationname || '-',
+
+  emp.shiftname || '-',
+  emp.shiftcode || '-',
+
+  emp.jobType || '-'
+]);
+
+    XLSX.utils.sheet_add_aoa(ws, [headers, ...rows], { origin: 'A2' });
 
     if (ws['!ref']) {
       const range = XLSX.utils.decode_range(ws['!ref']);
       if (!ws['!merges']) ws['!merges'] = [];
       ws['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: range.e.c } });
-      
-      if (ws['A1']) {
-        ws['A1'].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'left' } };
-      }
+      if (ws['A1']) ws['A1'].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: 'left' } };
     }
 
     this.convertHeadersToUpperCase(ws, 1);
 
-    let wb = XLSX.utils.book_new();
+    const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
-
     XLSX.writeFile(wb, `${fileName}.xlsx`);
-    let arrayBuffer = XLSX.write(wb, {
-      bookType: 'xlsx',
-      type: 'array',
-    });
-    return { arrayBuffer, fileName }
+
+    const arrayBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array', bookSST: true });
+    return { arrayBuffer, fileName };
   }
 
   getFileName(name: string | undefined) {
@@ -470,7 +543,44 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
 
   return '';
 }
+customSort(event: any): void {
+    const field = event.field;
 
+    if (this.currentSortField === field) {
+      if (this.currentSortOrder === 1) {
+        this.currentSortOrder = -1;
+        event.order = -1;
+      } else if (this.currentSortOrder === -1) {
+        this.locationReportList = [...this.originalLocationReportList];
+        this.currentSortField = '';
+        this.currentSortOrder = 0;
+        if (this.jobLocationTable) this.jobLocationTable.reset();
+        return;
+      } else {
+        this.currentSortOrder = 1;
+        event.order = 1;
+      }
+    } else {
+      this.currentSortField = field;
+      this.currentSortOrder = 1;
+      event.order = 1;
+    }
+
+    event.data.sort((a: any, b: any) => {
+      let val1 = a[field];
+      let val2 = b[field];
+
+      if (field === 'fusionEmpId') {
+        const num1 = parseInt(String(val1).replace(/\D/g, ''), 10) || 0;
+        const num2 = parseInt(String(val2).replace(/\D/g, ''), 10) || 0;
+        return event.order * (num1 - num2);
+      }
+
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

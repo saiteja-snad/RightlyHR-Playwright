@@ -25,6 +25,7 @@ import { Table } from 'primeng/table';
     FormsModule,
     PaginatorModule,
     DropdownModule,
+    TableModule,
     TranslateModule,
     InfoIconComponent,
     TableModule,
@@ -33,7 +34,7 @@ import { Table } from 'primeng/table';
   styleUrl: './remote-processed.component.scss'
 })
 export class RemoteProcessedComponent implements OnInit,OnDestroy {
-  @ViewChild('remoteProcessedTable') remoteProcessedTable!: Table;
+  @ViewChild('remoteRequestsTable') remoteRequestsTable!: Table;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -43,9 +44,7 @@ export class RemoteProcessedComponent implements OnInit,OnDestroy {
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataLoad = false;
-
-  // Sorting properties
-  originalApprovedRemotes = [] as ICompOff[];
+  originalApprovedRemotes = [] as ICompOff[]; // Store original unsorted data
   currentSortField: string = '';
   currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
 
@@ -129,7 +128,7 @@ export class RemoteProcessedComponent implements OnInit,OnDestroy {
           this.dataLoad = false;
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
-          this.originalApprovedRemotes = [];
+          this.originalApprovedRemotes = []; // Reset original data
         },
       });
   }
@@ -155,7 +154,7 @@ export class RemoteProcessedComponent implements OnInit,OnDestroy {
         error: (error) => {
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
-          this.originalApprovedRemotes = [];
+          this.originalApprovedRemotes = []; // Reset original data
         },
       });
   }
@@ -175,8 +174,8 @@ export class RemoteProcessedComponent implements OnInit,OnDestroy {
         this.approvedRemotes = [...this.originalApprovedRemotes];
         this.currentSortField = '';
         this.currentSortOrder = 0;
-        if (this.remoteProcessedTable) {
-          this.remoteProcessedTable.reset();
+        if (this.remoteRequestsTable) {
+          this.remoteRequestsTable.reset();
         }
         return;
       } else {
@@ -197,41 +196,49 @@ export class RemoteProcessedComponent implements OnInit,OnDestroy {
 
       // Handle different field types
       switch (field) {
-        case 'startTime':
-        case 'requestedDate':
-        case 'processedDate':
-          val1 = new Date(a[field]).getTime();
-          val2 = new Date(b[field]).getTime();
-          return event.order * (val1 - val2);
-        
-        case 'durationType':
-          // Map durationType numbers to sortable values
-          const durationMap: { [key: number]: string } = {
-            1: 'First Half',
-            2: 'Full Day', 
-            3: 'Second Half'
-          };
-          val1 = durationMap[a[field]] || '';
-          val2 = durationMap[b[field]] || '';
+        case 'workedDate':
+          val1 = a.startTime;
+          val2 = b.startTime;
           break;
-        
+        case 'availed':
+          val1 = a.durationType;
+          val2 = b.durationType;
+          break;
+        case 'reason':
+          val1 = a.requestedComments;
+          val2 = b.requestedComments;
+          break;
+        case 'appliedDate':
+          val1 = a.requestedDate;
+          val2 = b.requestedDate;
+          break;
         case 'status':
-        case 'requestedComments':
-        case 'approverComments':
+          val1 = a.status;
+          val2 = b.status;
+          break;
         default:
           val1 = a[field];
           val2 = b[field];
-          break;
       }
 
-      // Handle string sorting for non-date fields
-      if (field !== 'startTime' && field !== 'requestedDate' && field !== 'processedDate') {
-        val1 = String(val1 ?? '').trim();
-        val2 = String(val2 ?? '').trim();
-        return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
+      // Handle date sorting
+      if (field === 'workedDate' || field === 'appliedDate') {
+        const date1 = val1 ? new Date(val1) : new Date(0);
+        const date2 = val2 ? new Date(val2) : new Date(0);
+        return event.order * (date1.getTime() - date2.getTime());
       }
 
-      return 0; // Fallback
+      // Handle duration type sorting (numeric)
+      if (field === 'availed') {
+        const num1 = parseInt(val1 || '0', 10);
+        const num2 = parseInt(val2 || '0', 10);
+        return event.order * (num1 - num2);
+      }
+
+      // Handle string sorting for all other fields
+      val1 = String(val1 ?? '').trim();
+      val2 = String(val2 ?? '').trim();
+      return event.order * val1.localeCompare(val2, undefined, { sensitivity: 'base' });
     });
   }
 

@@ -253,8 +253,26 @@ getApprovalStatusCounts() {
       let val2: any;
 
       if (field === 'appliedDate' || field === 'probationStartDate' || field === 'probationEndDate' || field === 'probationExtendedDate') {
-        val1 = new Date(a[field] ?? 0).getTime();
-        val2 = new Date(b[field] ?? 0).getTime();
+        // Special handling for probationEndDate based on status
+        if (field === 'probationEndDate') {
+          // For 'Processed' status, use empdata.probationEndDate, otherwise use probation.probationEndDate
+          const dateA = a.status === 'Processed' ? this.empdata?.probationEndDate : a[field];
+          const dateB = b.status === 'Processed' ? this.empdata?.probationEndDate : b[field];
+          
+          const date1 = dateA ? new Date(dateA) : new Date(0);
+          const date2 = dateB ? new Date(dateB) : new Date(0);
+          
+          val1 = isNaN(date1.getTime()) ? 0 : date1.getTime();
+          val2 = isNaN(date2.getTime()) ? 0 : date2.getTime();
+        } else {
+          // Handle other date fields normally
+          const date1 = a[field] ? new Date(a[field]) : new Date(0);
+          const date2 = b[field] ? new Date(b[field]) : new Date(0);
+          
+          val1 = isNaN(date1.getTime()) ? 0 : date1.getTime();
+          val2 = isNaN(date2.getTime()) ? 0 : date2.getTime();
+        }
+        
         return event.order * (val1 - val2);
       } else if (field === 'probationDays') {
         val1 = parseInt(a[field] ?? '0') || 0;

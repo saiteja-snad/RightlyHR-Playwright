@@ -1329,7 +1329,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
       'Extra Hours Configuration Tab',
       'Flexible Work Hours Configuration Tab' , 'Biometric Configuration Tab']
   },
-  { title: 'Settings Asset Configuration', disableFn: 'isSettingsEmployeeJobCheckboxDisabled', fieldNames: ['Vendor Details', 'Asset Catagory', 'Asset Sub Catagory'] },
+  { title: 'Settings Asset Configuration', disableFn: 'isSettingsEmployeeJobCheckboxDisabled', fieldNames: ['Vendor Details', 'Asset Category', 'Asset Sub Category'] },
   { title: 'Settings Dynamic Forms', disableFn: 'isDynamicFormsDisabled', fieldNames: ['Active Forms', 'Inactive Forms', 'Draft Forms', 'Form Settings'] },
   { title: 'Draft Form Mark As Active', disableFn: 'isonlyviewfunction', fieldNames: ['Mark As Active Action'] },
 
@@ -1440,11 +1440,10 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   { title: 'On Behalf Of Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (On Behalf Of)', 'Approved (On Behalf Of)', 'Request On Behalf Button', 'Rejected (On Behalf Of)', 'Processed (On Behalf Of)', 'Cancelled (On Behalf Of)', 'My Team On Behalf Of', 'On Behalf Of All Employees', 'Entitlement Summary (On Behalf Of)'] },
   { title: 'Attendance', disableFn: 'isonlyviewfunction', fieldNames: ['Request Regularization', 'Request Leave', 'Attendance Select Employee For Manager', 'Attendance Select Employee For HR'] },
   { title: 'Global Permission', disableFn: 'isonlyviewfunction', fieldNames: ['Global Permissions', 'Request Global Permission Button'] },
-  {title: 'Pending Approvals Sub Tabs',disableFn: 'isonlyviewfunction',fieldNames: [  'Time Off main Tab',  'Onboarding main Tab',  'Contractors main Tab',  'Offboarding main Tab',  'Time Off Tab',  'WFH Tab',  'Remote Login Tab',  'Comp Off Tab',  'Permissions Tab',  'Regularization Tab',  'Extra Hours Tab',  'Separation Request Tab',  'Recall Request Tab',  'Trainee Details Tab',  'No Due Clearence Requests Tab',  'Claims and Expenses Tab',  'Desk Requests Tab',  'Probation Details Tab',  'Time Sheet approval Tab',  'KRA KPI approval Tab',  'Recruitment approval Tab',  'Contractor Details Tab',  'Contract-Conversion Tab',  'EmployeeInfo Tab']},
+  { title: 'Pending Approvals Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Time Off main Tab', 'Onboarding main Tab', 'Contractors main Tab', 'Offboarding main Tab', 'project management approvals main Tab', 'Time Off Tab', 'WFH Tab', 'Remote Login Tab', 'Comp Off Tab', 'Permissions Tab', 'Regularization Tab', 'Extra Hours Tab', 'Separation Request Tab', 'Recall Request Tab', 'Trainee Details Tab', 'No Due Clearence Requests Tab', 'Claims and Expenses Tab', 'Desk Requests Tab', 'Probation Details Tab', 'Time Sheet approval Tab', 'KRA KPI approval Tab', 'Recruitment approval Tab', 'Contractor Details Tab', 'Contract-Conversion Tab', 'EmployeeInfo Tab', 'Resource Approvals'] },
   { title: 'Pending Approval Time Off', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Time Off)', 'For Role (Time Off)'] },
   { title: 'Pending Approval WFH', disableFn: 'isonlycreatfunction', fieldNames: ['For You (WFH)', 'For Role (WFH)'] },
   { title: 'Pending Approval Remote Login', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Remote Login)', 'For Role (Remote Login)'] },
-
   { title: 'Pending Approval Contractors', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Contractors)', 'For Role (Contractors)'] },
   { title: 'Pending Approval Contract-Conversion', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Contract-Conversion)', 'For Role (Contract-Conversion)'] },
   { title: 'Pending Approval Comp Off', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Comp Off)', 'For Role (Comp Off)'] },

@@ -8,110 +8,87 @@
     </div>
     @if(!dataload){
     <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
+        <p-table #teamCompleteReviewsTable [value]="filteredReviews" [customSort]="true" (onSort)="customSort($event)"
+            [sortField]="currentUIField" [sortOrder]="currentSortOrder">
+            <ng-template pTemplate="header">
                 <tr>
-                    <th>{{'Review Cycle Name' | translate}}</th>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th>{{'Employee ID' | translate}}</th>
-                    <th>{{'Department' | translate}}</th>
-                    <th>{{'Team' | translate}}</th>
-                    <th>{{'Location' | translate}}</th>
-                    <th>{{'Sub Location' | translate}}</th>
-                    <th>{{'Due Date' | translate}}</th>
-                    <th>{{'Review Template' | translate}}</th>
-                    <th>{{'Status' | translate}}</th>
+                    <th pSortableColumn="reviewCycleName">{{'Review Cycle Name' | translate}} <p-sortIcon field="reviewCycleName" /></th>
+                    <th pSortableColumn="reviewEmployeeName">{{'Employee Name' | translate}} <p-sortIcon field="reviewEmployeeName" /></th>
+                    <th pSortableColumn="reviewFusionEmployeeId">{{'Employee ID' | translate}} <p-sortIcon field="reviewFusionEmployeeId" /></th>
+                   <th >{{'Department' | translate}}</th>
+                    <th >{{'Team' | translate}} </th>
+                    <th >{{'Location' | translate}} </th>
+                    <th >{{'Sub Location' | translate}}</th>
+                    <th pSortableColumn="assessordueDate">{{'Due Date' | translate}} <p-sortIcon field="assessordueDate" /></th>
+                    <th pSortableColumn="formName">{{'Review Template' | translate}} <p-sortIcon field="formName" /></th>
+                    <th pSortableColumn="rcItemStatus">{{'Status' | translate}} <p-sortIcon field="rcItemStatus" /></th>
                     @if(rbac.allowedToAccess('Team Assessment View.view') || rbac.allowedToAccess('Team Promotion Letter Download.view')
                     || rbac.allowedToAccess('Team Appraisal Letter Download.view')){
                     <th class="text-center">{{'Action' | translate}}</th>
                     }
                 </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="dataload; else maincontent">
-                    <ng-template #loadingSpinner>
-                        <div class="spinner-container text-center">
-                            <div class="spinner-border text-primary d-inline-block ms-3"
-                                style="width: 3rem; height: 3rem" role="status">
-                                <span class="sr-only"></span>
-                            </div>
-                            <p class="mb-4">Loading...</p>
-                        </div>
-                    </ng-template>
-                    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-                </ng-container>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{ item.reviewCycleName }}</td>
+                    <td>{{item.reviewEmployeeName}}</td>
+                    <td>{{item.reviewFusionEmployeeId}}</td>
+                    <td>{{ getDepartments(item.deptName) }}</td>
+                    <td>{{ getSubDepartments(item.subdeptName) }}</td>
+                    <td>{{ getLocations(item.locationName) }}</td>
+                    <td>{{ getSubLocations(item.sublocationName) }}</td>
+                    <td class="text-nowrap">{{ item.assessordueDate | date: 'dd MMM yyyy' }}</td>
+                    <td>{{ item.formName }}</td>
+                    <td>{{ item.rcItemStatus }}</td>
+                    @if(rbac.allowedToAccess('Team Assessment View.view') || rbac.allowedToAccess('Team Promotion Letter Download.view')
+                    || rbac.allowedToAccess('Team Appraisal Letter Download.view')){
+                    <td class="text-center">
+                        @if(showTeamActionDropdown(item)){
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <ng-container *ngIf="item.assessorType==='HR' ;else elseBlock">
+                                    @if(rbac.allowedToAccess('Team Assessment View.view')){
+                                    <li (click)="selfAssessment(item.reviewCycleItemId, item.currentStage,item.assessorType,
+                                        item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
+                                        <a class="dropdown-item">{{item.assessorType}} {{'Assessment View' | translate}}</a>
+                                    </li>
+                                    }
+                                </ng-container>
 
-                <ng-template #maincontent>
-                    @if(filteredReviews.length > 0){
-                    @for(item of filteredReviews; track item){
-                    <tr>
-                        <td>{{ item.reviewCycleName }}</td>
-                        <td>{{item.reviewEmployeeName}}</td>
-                        <td>{{item.reviewFusionEmployeeId}}</td>
-                        <td>{{ getDepartments(item.deptName) }}</td>
-                        <td>{{ getSubDepartments(item.subdeptName) }}</td>
-                        <td>{{ getLocations(item.locationName) }}</td>
-                        <td>{{ getSubLocations(item.sublocationName) }}</td>
-                        <td class="text-nowrap">{{ item.assessordueDate | date: 'dd MMM yyyy' }}</td>
-                        <td>{{ item.formName }}</td>
-                        <td>{{ item.rcItemStatus }}</td>
-                        @if(rbac.allowedToAccess('Team Assessment View.view') || rbac.allowedToAccess('Team Promotion Letter Download.view')
-                        || rbac.allowedToAccess('Team Appraisal Letter Download.view')){
-                        <!-- @if(showTeamActionDropdown(item)){ -->
-                        <td class="text-center">
-                            @if(showTeamActionDropdown(item)){
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <ng-container *ngIf="item.assessorType==='HR' ;else elseBlock">
-                                        @if(rbac.allowedToAccess('Team Assessment View.view')){
-                                        <li (click)="selfAssessment(item.reviewCycleItemId, item.currentStage,item.assessorType,
-                                            item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                            <a class="dropdown-item">{{item.assessorType}} {{'Assessment View' | translate}}</a>
-                                        </li>
-                                        }
-                                    </ng-container>
-
-                                    <ng-template #elseBlock>
-                                        @if(rbac.allowedToAccess('Team Promotion Letter Download.view')){
-                                        <li (click)="selfAssessment(item.reviewCycleItemId, 0,item.assessorType, item.assessorItemId,
-                                        item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                            <a class="dropdown-item">{{item.assessorType}} {{'Assessment View' | translate}}</a>
-                                        </li>
-                                        }
-                                    </ng-template>
+                                <ng-template #elseBlock>
                                     @if(rbac.allowedToAccess('Team Promotion Letter Download.view')){
-                                    <li *ngIf=" item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated'"
-                                        (click)="downloadPromotionletter(item)">
-                                        <a class="dropdown-item">{{'Promotion Letter Download' | translate}}</a>
+                                    <li (click)="selfAssessment(item.reviewCycleItemId, 0,item.assessorType, item.assessorItemId,
+                                    item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
+                                        <a class="dropdown-item">{{item.assessorType}} {{'Assessment View' | translate}}</a>
                                     </li>
                                     }
-                                    @if(rbac.allowedToAccess('Team Appraisal Letter Download.view')){
-                                    <li *ngIf=" item.rcItemStatus === 'Appraisal Letter Sent' || item.rcItemStatus=== 'Appraisal Letter Generated'"
-                                        (click)="downloadletter(item)">
-                                        <a class="dropdown-item">{{'Appraisal Letter Download' | translate}}</a>
-                                    </li>
-                                    }
-                                </ul>
-                            </div>
-                            }
-                        </td>
+                                </ng-template>
+                                @if(rbac.allowedToAccess('Team Promotion Letter Download.view')){
+                                <li *ngIf=" item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated'"
+                                    (click)="downloadPromotionletter(item)">
+                                    <a class="dropdown-item">{{'Promotion Letter Download' | translate}}</a>
+                                </li>
+                                }
+                                @if(rbac.allowedToAccess('Team Appraisal Letter Download.view')){
+                                <li *ngIf=" item.rcItemStatus === 'Appraisal Letter Sent' || item.rcItemStatus=== 'Appraisal Letter Generated'"
+                                    (click)="downloadletter(item)">
+                                    <a class="dropdown-item">{{'Appraisal Letter Download' | translate}}</a>
+                                </li>
+                                }
+                            </ul>
+                        </div>
                         }
-                        <!-- } -->
-                    </tr>
+                    </td>
                     }
-                    }@else {
-                    <tr>
-                        <td colspan="11">
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                    }
-                </ng-template>
-            </tbody>
-        </table>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr><td colspan="11"><app-no-data-found /></td></tr>
+            </ng-template>
+        </p-table>
     </div>
 
     @if(filteredReviews.length > 0){

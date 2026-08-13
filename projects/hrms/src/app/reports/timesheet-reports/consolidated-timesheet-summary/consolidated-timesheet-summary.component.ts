@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription, Subject, takeUntil } from 'rxjs';
@@ -15,6 +15,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PaginatorModule } from 'primeng/paginator';
 import { SelectModule } from 'primeng/select';
+import { Table, TableModule } from 'primeng/table';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ReportsHeaderComponent } from '../../../shared/reports-tabs/reports-header/reports-header.component';
@@ -22,13 +23,15 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-consolidated-timesheet-summary',
-  imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+  imports: [DatePicker, CommonModule, MultiSelectModule, TableModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './consolidated-timesheet-summary.component.html',
   styleUrl: './consolidated-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy {
+  @ViewChild('dt') table!: Table;
+  
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   filteredWeeklyTimesheetRecord: any[] = [];
@@ -70,6 +73,72 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
     return d;
   })();
 
+  // Sorting properties
+  currentSortField: string = '';
+  currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+  currentUIField: string | null = null; // Track the UI field name for visual state
+  suppressNextPageChange = false;
+  
+  // Sort field mapping for server-side sorting
+  readonly sortFieldMap: Record<string, string> = {
+    date: 'date',
+    fusionEmpId: 'fusionEmpId',
+    employee: 'employee',
+    hoursWorked: 'hoursWorked',
+    billableStatus: 'billableStatus',
+    submittedDate: 'submittedDate',
+    approvedBy: 'approvedBy',
+    processedOn: 'processedOn'
+  };
+
+  // Method to handle column header clicks
+  onColumnSort(field: string): void {
+    const backendField = this.sortFieldMap[field] || field;
+
+    // Handle the three-state sorting: none → asc → desc → none
+    if (this.currentUIField === field) {
+      // Same field clicked - cycle through states
+      if (this.currentSortOrder === 0) {
+        // Currently no sort, set to ascending
+        this.currentSortOrder = 1;
+        this.currentSortField = backendField;
+        this.currentUIField = field;
+      } else if (this.currentSortOrder === 1) {
+        // Currently ascending, set to descending
+        this.currentSortOrder = -1;
+        this.currentSortField = backendField;
+      } else if (this.currentSortOrder === -1) {
+        // Currently descending, reset to no sort
+        this.currentSortField = '';
+        this.currentUIField = null;
+        this.currentSortOrder = 0;
+        
+        // Manually reset PrimeNG table sort state
+        if (this.table) {
+          this.table.reset();
+        }
+        
+        // Reset to first page and reload data without sorting
+        this.page = 1;
+        this.first = 0;
+        this.generateWeeklyTimesheetReport(this.page, this.pageSize, true, true);
+        return;
+      }
+    } else {
+      // Different field clicked - start with ascending
+      this.currentUIField = field;
+      this.currentSortField = backendField;
+      this.currentSortOrder = 1; // Always start with ascending for new field
+    }
+
+    // Reset to first page when sorting changes
+    this.page = 1;
+    this.first = 0;
+    
+    // Call generate to refresh data with new sorting
+    this.generateWeeklyTimesheetReport(this.page, this.pageSize, true, true);
+  }
+
   getDefaultDateRange(): [Date, Date] {
     const today = new Date(this.today);
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -85,6 +154,16 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
     private conformationPopup: OpenModalService,
     private offcanvasService: NgbOffcanvas
   ) { }
+
+  customSort(event: any): void {
+    // This method is kept for compatibility but does nothing
+    // We handle sorting through onColumnSort instead
+    return;
+  }
+
+
+
+
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -154,6 +233,26 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
     this.filteredWeeklyTimesheetRecord = [];
     this.collectionSize = 0;
     this.disableBtn = false;
+    
+    // Reset sorting arrows and pagination - use null and 0 for proper reset
+    this.currentSortField = '';
+    this.currentUIField = null;
+    this.currentSortOrder = 0;
+    
+    // Reset pagination to first page
+    this.page = 1;
+    this.first = 0;
+    
+    // Reset the table sort state
+    if (this.table) {
+      this.table.reset();
+    }
+    
+    // Prevent suppression of next page change to ensure proper reset
+    this.suppressNextPageChange = false;
+    
+    // Close the offcanvas after clearing
+    this.closeCanvas();
   }
 
   onGenerate() {
@@ -168,6 +267,11 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
   }
 
   onPageChange(event: any) {
+    if (this.suppressNextPageChange && event?.page === 0 && event?.first === 0) {
+      this.suppressNextPageChange = false;
+      return;
+    }
+    this.suppressNextPageChange = false;
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
@@ -279,7 +383,11 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
     if (showLoader) this.spinnerLoader1 = true;
     const params = this.buildTimesheetReportParams(this.appliedFilters ?? this.WeeklyTimesheetReportForm.value);
     const queryString = new URLSearchParams(params).toString();
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+    
+    // Add sorting to the query string
+    const sortQuery = this.currentSortField && this.currentSortOrder !== 0 ? `&Sorts=${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}` : '';
+    
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}${sortQuery}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.spinnerLoader1 = false;
         if (res.success && res.data?.items) {
@@ -312,9 +420,12 @@ export class ConsolidatedTimesheetSummaryComponent implements OnInit, OnDestroy 
     const params = this.buildTimesheetReportParams(this.appliedFilters ?? this.WeeklyTimesheetReportForm.value);
     const queryString = new URLSearchParams(params).toString();
 
+    // Add sorting to export as well
+    const sortQuery = this.currentSortField && this.currentSortOrder !== 0 ? `&Sorts=${this.currentSortField}:${this.currentSortOrder === 1 ? 'asc' : 'desc'}` : '';
+
     // Ensure your service method returns Observable<HttpResponse<Blob>> 
     // by using { observe: 'response', responseType: 'blob' } in the HttpClient call.
-    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
+    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}${sortQuery}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
         this.downloadLoader = false;
 

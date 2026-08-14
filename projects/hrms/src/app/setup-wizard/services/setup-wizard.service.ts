@@ -10,12 +10,7 @@ import {
   SetupWizardProgressResponse
 } from '../models/setup-wizard-progress.model';
 import { HttpService } from '../../services/http.service';
-import {
-  clearSetupWizardProgress,
-  getCurrentEmployeeId,
-  readSetupWizardProgressFromStorage,
-  writeSetupWizardProgressToStorage
-} from '../utils/setup-wizard-storage.util';
+import { clearLegacySetupWizardProgress } from '../utils/setup-wizard-storage.util';
 
 const PROGRESS_API = 'SetupWizard';
 
@@ -29,9 +24,13 @@ export class SetupWizardService {
     isCompleted: false
   });
 
+  /** Latest progress returned from (or sent to) the API for the current session. */
+  private lastProgress = signal<SetupWizardProgressDto | null>(null);
+
   readonly isLoading = signal(false);
   readonly loadError = signal<string | null>(null);
   readonly isSaving = signal(false);
+  readonly saveError = signal<string | null>(null);
 
   readonly modules = computed(() => this.state().modules);
   readonly currentModuleIndex = computed(() => this.state().currentModuleIndex);
@@ -66,33 +65,20 @@ export class SetupWizardService {
   loadProgress(): Observable<SetupWizardProgressDto | null> {
     this.isLoading.set(true);
     this.loadError.set(null);
-    const employeeId = getCurrentEmployeeId();
-    const cached = readSetupWizardProgressFromStorage(employeeId);
 
     return this.http.getData(PROGRESS_API).pipe(
       map(response => this.unwrapProgress(response)),
-      map(progress => {
-        if (progress?.isCompleted) {
-          return progress;
-        }
-        if (cached?.isCompleted) {
-          return cached;
-        }
-        if (progress && cached) {
-          return this.mergeProgressDto(progress, cached);
-        }
-        return progress ?? cached;
-      }),
       tap(progress => {
         if (progress) {
-          this.applyProgress(progress, employeeId);
+          this.applyProgress(progress);
+        } else {
+          this.resetAll();
+          this.lastProgress.set(null);
         }
       }),
       catchError(() => {
-        if (cached) {
-          this.applyProgress(cached, employeeId);
-        }
-        return of(cached);
+        this.loadError.set('Unable to load setup wizard progress.');
+        return of(null);
       }),
       finalize(() => this.isLoading.set(false))
     );
@@ -100,11 +86,11 @@ export class SetupWizardService {
 
   saveProgress(request: SaveSetupWizardProgressRequest): Observable<SetupWizardProgressDto | null> {
     this.isSaving.set(true);
-    const employeeId = getCurrentEmployeeId();
+    this.saveError.set(null);
     const optimisticProgress = this.buildProgressFromRequest(request);
 
     if (optimisticProgress) {
-      this.applyProgress(optimisticProgress, employeeId);
+      this.applyProgress(optimisticProgress);
     }
 
     const payload: SaveSetupWizardProgressRequest = {
@@ -114,24 +100,14 @@ export class SetupWizardService {
 
     return this.http.putData(PROGRESS_API, payload).pipe(
       map(response => this.unwrapProgress(response)),
-      map(progress => {
-        if (!progress) {
-          return optimisticProgress;
-        }
-        const cached = readSetupWizardProgressFromStorage(employeeId);
-        return cached ? this.mergeProgressDto(progress, cached) : progress;
-      }),
       tap(progress => {
         if (progress) {
-          this.applyProgress(progress, employeeId);
+          this.applyProgress(progress);
         }
       }),
       catchError(() => {
-        if (optimisticProgress) {
-          writeSetupWizardProgressToStorage(optimisticProgress, employeeId);
-          return of(optimisticProgress);
-        }
-        return of(null);
+        this.saveError.set('Unable to save setup wizard progress.');
+        return of(optimisticProgress);
       }),
       finalize(() => this.isSaving.set(false))
     );
@@ -188,15 +164,13 @@ export class SetupWizardService {
       return;
     }
 
-    const employeeId = getCurrentEmployeeId();
-    const cached = readSetupWizardProgressFromStorage(employeeId);
-
+    const cached = this.lastProgress();
     if (cached?.items?.length) {
       const items = cached.items.map(item => ({
         ...item,
         status: this.resolveItemStatus(item, currentModule.route)
       }));
-      this.applyProgress({ ...cached, currentTab: currentModule.route, items }, employeeId);
+      this.applyProgress({ ...cached, currentTab: currentModule.route, items });
       return;
     }
 
@@ -210,7 +184,7 @@ export class SetupWizardService {
     return this.state().modules.findIndex(m => m.route === route);
   }
 
-  applyProgress(progress: SetupWizardProgressDto, employeeId: number | null = getCurrentEmployeeId()): void {
+  applyProgress(progress: SetupWizardProgressDto): void {
     const normalized = this.ensureProgressShape(progress);
     const itemStatusByCode = new Map(
       normalized.items.map(item => [item.tabCode, item.status])
@@ -225,20 +199,21 @@ export class SetupWizardService {
     const completedTabs = modules.filter(module => module.completed).length;
     const totalTabs = normalized.totalTabs || SETUP_MODULES.length;
     const progressPercent = Math.round((completedTabs / totalTabs) * 100);
+    const isCompleted = normalized.isCompleted || completedTabs >= totalTabs;
 
     this.state.set({
       modules,
       currentModuleIndex: currentIndex >= 0 ? currentIndex : 0,
-      isCompleted: normalized.isCompleted || completedTabs >= totalTabs
+      isCompleted
     });
 
-    writeSetupWizardProgressToStorage({
+    this.lastProgress.set({
       ...normalized,
       completedTabs,
       totalTabs,
       progressPercent,
-      isCompleted: normalized.isCompleted || completedTabs >= totalTabs
-    }, employeeId);
+      isCompleted
+    });
   }
 
   setCurrentModule(index: number): void {
@@ -251,15 +226,15 @@ export class SetupWizardService {
       currentModuleIndex: 0,
       isCompleted: false
     });
+    this.lastProgress.set(null);
   }
 
-  clearProgress(employeeId: number | null = getCurrentEmployeeId()): void {
-    clearSetupWizardProgress(employeeId);
+  clearProgress(): void {
+    clearLegacySetupWizardProgress();
     this.resetAll();
   }
 
   markWizardCompleted(): void {
-    const employeeId = getCurrentEmployeeId();
     const items: SetupWizardItemProgress[] = SETUP_MODULES.map((module, index) => ({
       tabOrder: index + 1,
       tabCode: module.route,
@@ -275,7 +250,7 @@ export class SetupWizardService {
       progressPercent: 100,
       isCompleted: true,
       items
-    }, employeeId);
+    });
   }
 
   private unwrapProgress(
@@ -329,64 +304,6 @@ export class SetupWizardService {
     };
   }
 
-  private mergeProgressDto(
-    incoming: SetupWizardProgressDto,
-    local: SetupWizardProgressDto
-  ): SetupWizardProgressDto {
-    const mergedItems = this.mergeItems(incoming.items, local.items);
-    const completedTabs = mergedItems.filter(item => item.status === 'Done').length;
-    const totalTabs = incoming.totalTabs || local.totalTabs || SETUP_MODULES.length;
-
-    return {
-      ...incoming,
-      currentTab: incoming.currentTab || local.currentTab,
-      nextTab: incoming.nextTab ?? local.nextTab ?? null,
-      items: mergedItems,
-      completedTabs,
-      totalTabs,
-      progressPercent: Math.round((completedTabs / totalTabs) * 100),
-      isCompleted: incoming.isCompleted || local.isCompleted || completedTabs >= totalTabs
-    };
-  }
-
-  private mergeItems(
-    incoming: SetupWizardItemProgress[],
-    local: SetupWizardItemProgress[]
-  ): SetupWizardItemProgress[] {
-    const localMap = new Map(local.map(item => [item.tabCode, item.status]));
-    const incomingMap = new Map(incoming.map(item => [item.tabCode, item.status]));
-
-    return SETUP_MODULES.map((module, index) => ({
-      tabOrder: index + 1,
-      tabCode: module.route,
-      tabName: module.title,
-      status: this.pickHigherStatus(
-        localMap.get(module.route),
-        incomingMap.get(module.route)
-      )
-    }));
-  }
-
-  private pickHigherStatus(
-    localStatus?: SetupWizardItemStatus,
-    incomingStatus?: SetupWizardItemStatus
-  ): SetupWizardItemStatus {
-    const rank: Record<SetupWizardItemStatus, number> = {
-      Pending: 0,
-      InProgress: 1,
-      Done: 2
-    };
-
-    const localRank = localStatus ? rank[localStatus] : -1;
-    const incomingRank = incomingStatus ? rank[incomingStatus] : -1;
-
-    if (localRank >= incomingRank && localStatus) {
-      return localStatus;
-    }
-
-    return incomingStatus ?? 'Pending';
-  }
-
   private resolveItemStatus(
     item: SetupWizardItemProgress,
     activeRoute: string
@@ -420,8 +337,7 @@ export class SetupWizardService {
   }
 
   private getExistingItems(): SetupWizardItemProgress[] {
-    const employeeId = getCurrentEmployeeId();
-    const cached = readSetupWizardProgressFromStorage(employeeId);
+    const cached = this.lastProgress();
 
     if (cached?.items?.length) {
       return cached.items.map(item => ({ ...item }));

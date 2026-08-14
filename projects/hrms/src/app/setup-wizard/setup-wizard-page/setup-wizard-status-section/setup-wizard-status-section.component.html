@@ -24,39 +24,24 @@
   <div class="setup-wizard-status-content flex-grow-1 min-w-0">
     @switch (moduleKey()) {
       @case ('shifts') {
-        @if (activeTab() === 'pending') {
-          <app-pending-shifts />
-        } @else {
-          <app-published-shifts />
-        }
+        <app-pending-shifts [class.d-none]="activeTab() !== 'pending'" />
+        <app-published-shifts [class.d-none]="activeTab() !== 'published'" />
       }
       @case ('holidays') {
-        @if (activeTab() === 'pending') {
-          <app-pending-holidays />
-        } @else {
-          <app-published-holidays />
-        }
+        <app-pending-holidays [class.d-none]="activeTab() !== 'pending'" />
+        <app-published-holidays [class.d-none]="activeTab() !== 'published'" />
       }
       @case ('weekends') {
-        @if (activeTab() === 'pending') {
-          <app-pending-weekends />
-        } @else {
-          <app-published-weekends />
-        }
+        <app-pending-weekends [class.d-none]="activeTab() !== 'pending'" />
+        <app-published-weekends [class.d-none]="activeTab() !== 'published'" />
       }
       @case ('policies') {
-        @if (activeTab() === 'pending') {
-          <app-pending-policies />
-        } @else {
-          <app-published-policies />
-        }
+        <app-pending-policies [class.d-none]="activeTab() !== 'pending'" />
+        <app-published-policies [class.d-none]="activeTab() !== 'published'" />
       }
       @case ('leave-category') {
-        @if (activeTab() === 'pending') {
-          <app-pending-leavecategory />
-        } @else {
-          <app-published-leavecategory />
-        }
+        <app-pending-leavecategory [class.d-none]="activeTab() !== 'pending'" />
+        <app-published-leavecategory [class.d-none]="activeTab() !== 'published'" />
       }
     }
   </div>

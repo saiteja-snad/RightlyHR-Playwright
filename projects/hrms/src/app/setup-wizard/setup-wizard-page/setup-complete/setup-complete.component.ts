@@ -64,7 +64,7 @@ export class SetupCompleteComponent implements OnInit {
   private readonly router = inject(Router);
 
   ngOnInit(): void {
-    this.wizardService.markWizardCompleted();
+    this.wizardService.loadProgress().subscribe();
   }
 
   onGoToDashboard(): void {

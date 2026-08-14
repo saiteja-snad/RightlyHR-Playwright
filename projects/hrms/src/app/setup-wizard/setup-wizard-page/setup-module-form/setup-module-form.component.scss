@@ -64,6 +64,31 @@
 
   ::ng-deep .custom-main-component-container {
     padding: 0;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  ::ng-deep .custom-table-content {
+    height: auto !important;
+    max-height: none !important;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+  }
+
+  ::ng-deep .custom-table-content table {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  ::ng-deep .wizard-status-empty-state .no-data-placeholder-container {
+    position: relative;
+    inset: auto;
+    top: auto;
+    left: auto;
+    width: 100%;
+    height: auto;
   }
 
   ::ng-deep .custom-settings-add-input {

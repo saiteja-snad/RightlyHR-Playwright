@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,8 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
 import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
+import { SETUP_WIZARD_STATUS_MODULES } from '../../../../setup-wizard/models/setup-wizard-status-modules.constants';
+import { filterItemsByStatus, toArray } from '../../../../setup-wizard/utils/setup-wizard-status-filter.util';
 
 @Component({
   selector: 'app-pending-holidays',
@@ -19,8 +21,11 @@ import { SetupWizardFormModalService } from '../../../../setup-wizard/services/s
   styleUrl: './pending-holidays.component.scss'
 })
 
-export class PendingHolidaysComponent {
-  subscription!: Subscription
+export class PendingHolidaysComponent implements OnInit, OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  subscription!: Subscription;
+  refreshSubscription?: Subscription;
   allHolidays = [] as any;
 loading = false;
  message: any;
@@ -31,17 +36,24 @@ loading = false;
 
   ngOnInit() {
     this.getAllHolidays();
+    this.refreshSubscription = this.http.refresh$.subscribe(() => this.getAllHolidays());
   }
 
   getAllHolidays() {
+    this.subscription?.unsubscribe();
     this.loading = true;
     this.subscription = this.http.getData('orgHolidays').subscribe({
       next: (data: any) => {
+        this.allHolidays = filterItemsByStatus(
+          toArray(data),
+          SETUP_WIZARD_STATUS_MODULES.holidays.pendingStatus
+        ).reverse();
         this.loading = false;
-        this.allHolidays = data.filter((status: { status: string; }) => status.status === 'Pending for submission').reverse();
+        this.cdr.markForCheck();
       }, error: (err: any) => {
         console.error(err);
         this.loading = false;
+        this.cdr.markForCheck();
       }
     })
   }
@@ -68,6 +80,7 @@ loading = false;
 
         // Close delete popup
         modal.close();
+        this.http.triggerRefresh();
 
         // Open success popup
         this.confirmation.openSuccessModal('Holiday deleted successfully');
@@ -94,8 +107,7 @@ loading = false;
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.subscription?.unsubscribe();
+    this.refreshSubscription?.unsubscribe();
   }
 }

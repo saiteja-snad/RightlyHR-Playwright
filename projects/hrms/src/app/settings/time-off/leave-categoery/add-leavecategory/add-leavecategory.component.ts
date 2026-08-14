@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -21,9 +21,10 @@ import { SetupWizardNavigationService } from '../../../../setup-wizard/services/
   encapsulation:ViewEncapsulation.None
 })
 
-export class AddLeavecategoryComponent {
+export class AddLeavecategoryComponent implements OnDestroy {
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
+  refreshSubscription?: Subscription;
   years: { label: string; value: number }[] = [];
   jobLocationDropDownData: any[] = [];
   subLocationsDropdown: any[] = [];
@@ -103,6 +104,7 @@ export class AddLeavecategoryComponent {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.jobLocationList();
+    this.refreshSubscription = this.http.refresh$.subscribe(() => this.jobLocationList());
     // this.getOrgLeavesCategories();
     this.getLeaveTypes();
     const currentYear = new Date().getFullYear();
@@ -741,8 +743,7 @@ export class AddLeavecategoryComponent {
   ngOnDestroy(): void {
       this.destroy$.next(true);
     this.destroy$.unsubscribe();
-    if(this.subscription){
-      this.subscription.unsubscribe();
-    }
+    this.subscription?.unsubscribe();
+    this.refreshSubscription?.unsubscribe();
   }
 }

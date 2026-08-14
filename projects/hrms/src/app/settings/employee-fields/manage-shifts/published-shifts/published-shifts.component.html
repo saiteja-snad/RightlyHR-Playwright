@@ -8,6 +8,7 @@
 
     <div class="custom-table-content">
         @if(!loading){
+        @if (publishedshifts.length > 0) {
         <table class="w-100">
             <thead>
                 <tr>
@@ -21,7 +22,6 @@
                 </tr>
             </thead>
             <tbody>
-                @if (shiftsData!.length > 0) {
                 @for (shift of publishedshifts; track shift.id) {
                 <tr>
                     <td>{{ shift.applicableyear }}</td>
@@ -29,7 +29,6 @@
                     <td>{{ shift.subLocationName }}</td>
                     <td class="text-center">
                         <div>
-                            <!-- <div>{{ shift.orgWeekendItems.length }}</div> -->
                             <div [ngbPopover]="popContent" *ngIf="getShiftNames(shift) !== null">
                                 <app-info-icon />
                             </div>
@@ -65,15 +64,13 @@
                     </td>
                 </tr>
                 }
-                } @else {
-                <tr>
-                    <td colspan="6">
-                        <app-no-data-found></app-no-data-found>
-                    </td>
-                </tr>
-                }
             </tbody>
         </table>
+        } @else {
+        <div class="wizard-status-empty-state">
+            <app-no-data-found></app-no-data-found>
+        </div>
+        }
         }
         @else {
         <app-data-loader-content />

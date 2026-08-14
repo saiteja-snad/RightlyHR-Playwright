@@ -9,6 +9,7 @@ import {
   SetupWizardStatusTabConfig,
   SetupWizardStatusTabId
 } from '../../models/setup-wizard-status-modules.constants';
+import { filterItemsByStatus, toArray } from '../../utils/setup-wizard-status-filter.util';
 import { PendingShiftsComponent } from '../../../settings/employee-fields/manage-shifts/pending-shifts/pending-shifts.component';
 import { PublishedShiftsComponent } from '../../../settings/employee-fields/manage-shifts/published-shifts/published-shifts.component';
 import { PendingHolidaysComponent } from '../../../settings/employee-fields/manage-holidays/pending-holidays/pending-holidays.component';
@@ -44,7 +45,8 @@ export class SetupWizardStatusSectionComponent implements OnInit, OnDestroy {
   private readonly http = inject(HttpService);
   readonly rbac = inject(RbacService);
 
-  private subscription?: Subscription;
+  private refreshSubscription?: Subscription;
+  private countsSubscription?: Subscription;
 
   readonly activeTab = signal<SetupWizardStatusTabId>('pending');
   readonly pendingCount = signal(0);
@@ -61,6 +63,9 @@ export class SetupWizardStatusSectionComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadCounts();
     this.setDefaultTab();
+    this.refreshSubscription = this.http.refresh$.subscribe(() => {
+      this.loadCounts();
+    });
   }
 
   setActiveTab(tabId: SetupWizardStatusTabId): void {
@@ -87,15 +92,15 @@ export class SetupWizardStatusSectionComponent implements OnInit, OnDestroy {
   private loadCounts(): void {
     const config = this.moduleConfig();
 
-    this.subscription?.unsubscribe();
-    this.subscription = this.http.getData(config.apiUrl).subscribe({
+    this.countsSubscription?.unsubscribe();
+    this.countsSubscription = this.http.getData(config.apiUrl).subscribe({
       next: (data: any) => {
-        const items = Array.isArray(data) ? data : [];
+        const items = toArray<{ status?: string }>(data);
         this.pendingCount.set(
-          items.filter(item => item.status === config.pendingStatus).length
+          filterItemsByStatus(items, config.pendingStatus).length
         );
         this.publishedCount.set(
-          items.filter(item => item.status === config.publishedStatus).length
+          filterItemsByStatus(items, config.publishedStatus).length
         );
       },
       error: () => {
@@ -106,6 +111,7 @@ export class SetupWizardStatusSectionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
+    this.refreshSubscription?.unsubscribe();
+    this.countsSubscription?.unsubscribe();
   }
 }

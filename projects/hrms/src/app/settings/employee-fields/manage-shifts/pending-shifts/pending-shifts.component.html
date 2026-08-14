@@ -8,33 +8,29 @@
 
   <div class="custom-table-content">
     @if(!loading){
-    <table class="w-100">
-      <thead>
-        <tr>
-          <th>{{'Year'|translate}}</th>
-          <th>{{'Location'|translate}}</th>
-          <th>{{'Sub Location'|translate}}</th>
-          <th class="text-center">{{'Shift Name'|translate}}</th>
-          <th>{{'Status'|translate}}</th>
-          <th>{{'Added By'|translate}}</th>
-          @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
-          <th class="text-center">{{'Action'|translate}}</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @if (shiftsData!.length > 0) {
+      @if (pendingsubmittedshifts.length > 0) {
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>{{'Year'|translate}}</th>
+            <th>{{'Location'|translate}}</th>
+            <th>{{'Sub Location'|translate}}</th>
+            <th class="text-center">{{'Shift Name'|translate}}</th>
+            <th>{{'Status'|translate}}</th>
+            <th>{{'Added By'|translate}}</th>
+            @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
+            <th class="text-center">{{'Action'|translate}}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
         @for (shift of pendingsubmittedshifts; track shift.id) {
         <tr>
           <td>{{ shift.applicableyear }}</td>
           <td>{{ shift.locationName }}</td>
           <td>{{ shift.subLocationName }}</td>
-          <!-- <td>
-              <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip" title="{{getShiftNames(shift)}}"></i>
-            </td> -->
           <td class="text-center">
             <div>
-              <!-- <div>{{ shift.orgWeekendItems.length }}</div> -->
               <div [ngbPopover]="popContent" *ngIf="getShiftNames(shift) !== null">
                 <app-info-icon />
               </div>
@@ -45,7 +41,6 @@
               </div>
             </ng-template>
           </td>
-          <!-- <td>{{ shift.shiftName }}</td> -->
           <td>{{ shift.status }}</td>
           <td>{{ shift.addedbyName }}</td>
            @if(rbac.allowedToAccess('Shifts Pending Tab.update') || rbac.allowedToAccess('Shifts Pending Tab.delete')){
@@ -58,7 +53,6 @@
                 @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
                 <li>
                   <a class="dropdown-item" (click)="updateShift(shift.id)">
-
                       <i class="bi bi-pencil-fill me-2"></i>{{'Update' | translate}}
                   </a>
                 </li>
@@ -76,15 +70,13 @@
           }
         </tr>
         }
-        } @else {
-        <tr>
-          <td colspan="6">
-            <app-no-data-found></app-no-data-found>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+      } @else {
+        <div class="wizard-status-empty-state">
+          <app-no-data-found></app-no-data-found>
+        </div>
+      }
     }
     @else {
     <app-data-loader-content />

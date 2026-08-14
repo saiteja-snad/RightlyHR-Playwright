@@ -54,6 +54,7 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     this.handleFormValueChanges();
     this.getAllYears();
     this.getAllLocations();
+    this.http.refresh$.pipe(takeUntil(this.destroy$)).subscribe(() => this.getAllLocations());
   }
 
   navigate() {

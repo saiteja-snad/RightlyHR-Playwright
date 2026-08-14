@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -21,13 +21,14 @@ import { SetupWizardFormModalService } from '../../../../setup-wizard/services/s
   templateUrl: './add-shift.component.html',
   styleUrl: './add-shift.component.scss'
 })
-export class AddShiftComponent {
+export class AddShiftComponent implements OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   shiftForm!: FormGroup;
   years: number[] = [];
   locations: any[] = [];
   subLocations: any[] = [];
   subscription!: Subscription;
+  refreshSubscription?: Subscription;
   Employeeinfo = {} as any;
   currentYear: number = new Date().getFullYear();
   sublocatiodis = false;
@@ -58,6 +59,7 @@ export class AddShiftComponent {
     this.initializeForm();
     this.yearsList();
     this.geAllLocations();
+    this.refreshSubscription = this.http.refresh$.subscribe(() => this.geAllLocations());
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
   }
 
@@ -206,7 +208,8 @@ restrictShiftName(event: KeyboardEvent) {
       this.http.postdata(`orgShifts/Post/Shift/OrgShift`, payload).subscribe({
         next: (data: any) => {
           this.conformationPopup.openSuccessModal('Shift Added successfully');
-          this.nagvition()
+          this.http.triggerRefresh();
+          this.nagvition(true);
         },
         error: (error: any) => {
           // Handle error if needed
@@ -220,6 +223,7 @@ restrictShiftName(event: KeyboardEvent) {
   }
 
   geAllLocations() {
+    this.subscription?.unsubscribe();
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
         this.locations = data;
@@ -293,7 +297,16 @@ restrictShiftName(event: KeyboardEvent) {
     modal.dismiss();
   }
 
-  nagvition() {
+  nagvition(saved = false) {
+    if (saved) {
+      this.wizardNav.completeWizardFormOrNavigateBack(['/settings/employee-fields/manage-shifts/pending-for-submit'], this.route);
+      return;
+    }
     this.wizardNav.closeWizardFormOrNavigateBack(['/settings/employee-fields/manage-shifts/pending-for-submit'], this.route);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.refreshSubscription?.unsubscribe();
   }
 }

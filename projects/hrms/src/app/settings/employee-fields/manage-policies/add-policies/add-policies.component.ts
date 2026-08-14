@@ -78,6 +78,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
     this.getAllYears();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getjobLocationList();
+    this.http.refresh$.pipe(takeUntil(this.destroy$)).subscribe(() => this.getjobLocationList());
     this.policiesForm = this.fb.group({
       year: [new Date().getFullYear(), Validators.required],
       location: ['', Validators.required],

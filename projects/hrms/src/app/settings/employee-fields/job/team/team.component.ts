@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -20,9 +20,12 @@ import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-i
   styleUrl: './team.component.scss'
 })
 export class TeamComponent implements OnInit, OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   departmentdetails = [] as any;
   teamDetails = [] as any[];
   subscription!: Subscription;
+  refreshSubscription?: Subscription;
   departments = [] as any;
   teamManagerDetails = [] as any;
   updateDepartmentDetails: any;
@@ -61,6 +64,10 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.getDepartmentName();
     this.getTeam();
     this.getTable();
+    this.refreshSubscription = this.http.refresh$.subscribe(() => {
+      this.getDepartmentName();
+      this.getTable();
+    });
 
     this.AddForm = this.fb.group({
       teamName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
@@ -76,9 +83,10 @@ export class TeamComponent implements OnInit, OnDestroy {
   }
 
   getDepartmentName() {
-    this.subscription = this.http.getData('Department').subscribe({
+    this.http.getData('Department').subscribe({
       next: (data: any) => {
         this.deptdetails = data as [];
+        this.cdr.markForCheck();
       },
       error: (reason: any) => {
         console.log(reason);
@@ -87,6 +95,7 @@ export class TeamComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
+    this.getDepartmentName();
     this.modalService.open(this.addpopup, {
       backdrop: 'static',
       centered: true
@@ -190,12 +199,14 @@ export class TeamComponent implements OnInit, OnDestroy {
           this.AddForm.reset();
           this.getDepartmentName();
           this.getTable();
+          this.http.triggerRefresh();
         }
       });
     }
   }
 
   openupdateDialog(team: any) {
+    this.getDepartmentName();
     this.updateDepartmentDetails = team;
     console.log(team);
     console.log(this.deptdetails);
@@ -246,6 +257,7 @@ export class TeamComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Team updated successfully');
           this.updateForm.reset();
           this.getTable();
+          this.http.triggerRefresh();
         },
         error: (error: any) => {
           const errorMessage = error.error?.Message ? error.error?.Message : 'Failed to update Team';
@@ -326,6 +338,7 @@ export class TeamComponent implements OnInit, OnDestroy {
         // Refresh both data sources to ensure UI is updated
         this.getDepartmentName();
         this.getTable();
+        this.http.triggerRefresh();
       },
       error: (error: any) => {
         const errorMessage = error.error?.Message;
@@ -355,8 +368,7 @@ export class TeamComponent implements OnInit, OnDestroy {
   // }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.subscription?.unsubscribe();
+    this.refreshSubscription?.unsubscribe();
   }
 }

@@ -29,6 +29,7 @@ export class PendingLeavecategoryComponent {
   ngOnInit(): void {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHRUser') || '{}');
     this.getOrgLeavesCategories();
+    this.http.refresh$.subscribe(() => this.getOrgLeavesCategories());
   }
 
   navigateToAddLeaveCategory() {

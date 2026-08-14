@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { SetupWizardService } from '../services/setup-wizard.service';
 import { SetupWizardStepperComponent } from './setup-wizard-stepper/setup-wizard-stepper.component';
+import { clearLegacySetupWizardProgress } from '../utils/setup-wizard-storage.util';
 
 @Component({
   selector: 'app-setup-wizard-page',
@@ -19,6 +20,7 @@ export class SetupWizardPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    clearLegacySetupWizardProgress();
     this.wizardService.loadProgress().subscribe(progress => {
       if (!progress || this.isCompletePage) {
         return;

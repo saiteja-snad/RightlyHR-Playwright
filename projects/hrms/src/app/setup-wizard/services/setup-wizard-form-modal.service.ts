@@ -1,6 +1,7 @@
 import { Injectable, Type, inject, signal } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { SetupWizardFormModalShellComponent } from '../setup-wizard-page/setup-wizard-form-modal-shell/setup-wizard-form-modal-shell.component';
+import { HttpService } from '../../services/http.service';
 
 export type SetupWizardFormKey =
   | 'add-shifts'
@@ -21,6 +22,7 @@ export interface SetupWizardFormDefinition {
 
 export interface OpenWizardFormOptions {
   onClosed?: () => void;
+  onSaved?: () => void;
 }
 
 const SETUP_WIZARD_FORM_DEFINITIONS: Record<SetupWizardFormKey, SetupWizardFormDefinition> = {
@@ -99,6 +101,7 @@ const SETUP_WIZARD_FORM_DEFINITIONS: Record<SetupWizardFormKey, SetupWizardFormD
 @Injectable({ providedIn: 'root' })
 export class SetupWizardFormModalService {
   private readonly modalService = inject(NgbModal);
+  private readonly http = inject(HttpService);
   private activeRef: NgbModalRef | null = null;
   readonly isModalOpen = signal(false);
 
@@ -113,7 +116,7 @@ export class SetupWizardFormModalService {
     }
 
     definition.loadComponent().then((component: Type<unknown>) => {
-      this.openModal(component, definition.title, options.onClosed);
+      this.openModal(component, definition.title, options);
     });
   }
 
@@ -133,7 +136,11 @@ export class SetupWizardFormModalService {
     return true;
   }
 
-  private openModal(formComponent: Type<unknown>, title: string, onClosed?: () => void): void {
+  private openModal(
+    formComponent: Type<unknown>,
+    title: string,
+    options: OpenWizardFormOptions = {}
+  ): void {
     this.activeRef = this.modalService.open(SetupWizardFormModalShellComponent, {
       size: 'xl',
       scrollable: true,
@@ -150,13 +157,32 @@ export class SetupWizardFormModalService {
 
     this.isModalOpen.set(true);
 
-    this.activeRef.closed.subscribe(() => {
-      onClosed?.();
-      this.resetModalState();
+    this.activeRef.closed.subscribe((result) => {
+      this.handleModalClosed(result, options);
     });
     this.activeRef.dismissed.subscribe(() => {
-      onClosed?.();
-      this.resetModalState();
+      this.handleModalDismissed(options);
+    });
+  }
+
+  private handleModalClosed(result: unknown, options: OpenWizardFormOptions): void {
+    const saved = result === 'saved';
+    this.resetModalState();
+
+    setTimeout(() => {
+      if (saved) {
+        this.http.triggerRefresh(400);
+        options.onSaved?.();
+      }
+      options.onClosed?.();
+    });
+  }
+
+  private handleModalDismissed(options: OpenWizardFormOptions): void {
+    this.resetModalState();
+
+    setTimeout(() => {
+      options.onClosed?.();
     });
   }
 

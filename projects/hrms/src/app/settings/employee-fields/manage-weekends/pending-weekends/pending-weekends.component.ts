@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { IWeekends } from './weekends.model';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -15,6 +15,8 @@ import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-i
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
 import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
+import { SETUP_WIZARD_STATUS_MODULES } from '../../../../setup-wizard/models/setup-wizard-status-modules.constants';
+import { filterItemsByStatus, toArray } from '../../../../setup-wizard/utils/setup-wizard-status-filter.util';
 @Component({
    selector: 'app-pending-weekends',
    imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, SettingsUpdateIconComponent],
@@ -23,8 +25,11 @@ import { SetupWizardFormModalService } from '../../../../setup-wizard/services/s
 })
 
 export class PendingWeekendsComponent implements OnInit, OnDestroy {
+   private readonly cdr = inject(ChangeDetectorRef);
+
    weekendsList: IWeekends[] = [];
    destroy$: Subject<boolean> = new Subject<boolean>();
+   dataSubscription?: Subscription;
    loading = false;
    message: any;
    successModalRef: any;
@@ -41,6 +46,7 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
 
    ngOnInit(): void {
       this.getAllWeekend();
+      this.http.refresh$.pipe(takeUntil(this.destroy$)).subscribe(() => this.getAllWeekend());
    }
 
    addWeekends() {
@@ -61,14 +67,20 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
    }
 
    getAllWeekend() {
+      this.dataSubscription?.unsubscribe();
       this.loading = true;
-      this.http.getData(`OrgWeekendHeader/getAll`).pipe(takeUntil(this.destroy$)).subscribe({
+      this.dataSubscription = this.http.getData(`OrgWeekendHeader/getAll`).subscribe({
          next: (data: any) => {
+            this.weekendsList = filterItemsByStatus(
+              toArray(data),
+              SETUP_WIZARD_STATUS_MODULES.weekends.pendingStatus
+            );
             this.loading = false;
-            this.weekendsList = data.filter((item: any) => item.status === 'Pending for submission');
+            this.cdr.markForCheck();
          },
           error: (error) => {
             this.loading = false;
+            this.cdr.markForCheck();
             console.error('Error fetching weekends:', error);
          }
 
@@ -76,6 +88,9 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
    }
 
    getShiftNames(shift: any) {
+      if (!shift?.orgWeekendItems?.length) {
+         return null;
+      }
       return shift.orgWeekendItems.map((item: any) => item.weekday).join(', ');
    }
   Weekenddata: any;
@@ -91,6 +106,7 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
 
             // Close delete popup
             modal.close();
+            this.http.triggerRefresh();
 
             // Open success popup
             this.confirmation.openSuccessModal('Weekend deleted successfully');
@@ -109,6 +125,7 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
       });
    }
    ngOnDestroy(): void {
+      this.dataSubscription?.unsubscribe();
       this.destroy$.next(true);
       this.destroy$.unsubscribe();
    }

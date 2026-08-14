@@ -220,7 +220,11 @@ export class HttpService {
   // set attendancelocking count
   private refreshTrigger = new Subject<void>();
   refresh$ = this.refreshTrigger.asObservable();
-  triggerRefresh() {
+  triggerRefresh(delayMs = 0) {
+    if (delayMs > 0) {
+      setTimeout(() => this.refreshTrigger.next(), delayMs);
+      return;
+    }
     this.refreshTrigger.next();
   }
 

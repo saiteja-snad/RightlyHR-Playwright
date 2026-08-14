@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Select } from 'primeng/select';
 import { forkJoin, Subscription } from 'rxjs';
@@ -17,8 +17,9 @@ import { SetupWizardNavigationService } from '../../../../setup-wizard/services/
   styleUrl: './add-holidays.component.scss'
 })
 
-export class AddHolidaysComponent {
+export class AddHolidaysComponent implements OnDestroy {
   subscription!: Subscription;
+  refreshSubscription?: Subscription;
   holidayForm!: FormGroup;
   jobLocationDropDownData: any = [];
   subLocationsDropdown: any = [];
@@ -42,6 +43,7 @@ export class AddHolidaysComponent {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getjobLocationList();
+    this.refreshSubscription = this.http.refresh$.subscribe(() => this.getjobLocationList());
     const currentYear = new Date().getFullYear();
     this.holidayForm = this.fb.group({
       year: [{ name: currentYear, value: currentYear },Validators.required],
@@ -365,6 +367,7 @@ getShiftBYid(selectedSubLocation: any): void {
 
   //component destroy
   ngOnDestroy() {
-
+    this.subscription?.unsubscribe();
+    this.refreshSubscription?.unsubscribe();
   }
 }

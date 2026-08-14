@@ -156,7 +156,7 @@
     --popup-accordian-th-color: #EEF3FB;
 
     --grid-border-color: #BCD4F0;
-    --tour-guide-color:#5b7294;
+    --tour-guide-color: #5b7294;
 }
 
 * {
@@ -1175,6 +1175,7 @@ select:focus {
     .dropdown-item:hover {
         background-color: #FFFFFF;
     }
+
     .custom-icon {
         width: 1rem;
         height: 1rem;
@@ -1437,8 +1438,6 @@ select:focus {
     }
 
     .letter-page-content:has(.soft-copy-letter) {
-        background-image: url('/images/water-mark.png');
-
         .letter-footer {
             display: block !important;
         }
@@ -2991,7 +2990,7 @@ input[type=number]::-webkit-outer-spin-button {
     height: 100dvh;
     overflow-y: auto;
 
-     .offcanvas-filter-header-content {
+    .offcanvas-filter-header-content {
         position: sticky;
         top: 0;
         z-index: 5;
@@ -3078,7 +3077,7 @@ input[type=number]::-webkit-outer-spin-button {
     flex-direction: column !important;
 }
 
-.clone-offcanvas-panel .custom-filter-container .offcanvas-filter-content form > div:not(.offcanvas-footer-content) {
+.clone-offcanvas-panel .custom-filter-container .offcanvas-filter-content form>div:not(.offcanvas-footer-content) {
     flex-shrink: 0 !important;
 }
 
@@ -3385,9 +3384,17 @@ input[type=number]::-webkit-outer-spin-button {
         z-index: 1;
     }
 
-    .border-right-top::after { background: linear-gradient(to top, var(--grid-border-color, #BCD4F0), white); }
-    .border-right-middle::after { background: linear-gradient(to bottom, var(--grid-border-color, #BCD4F0), var(--grid-border-color, #BCD4F0)); }
-    .border-right-bottom::after { background: linear-gradient(to bottom, var(--grid-border-color, #BCD4F0), white); }
+    .border-right-top::after {
+        background: linear-gradient(to top, var(--grid-border-color, #BCD4F0), white);
+    }
+
+    .border-right-middle::after {
+        background: linear-gradient(to bottom, var(--grid-border-color, #BCD4F0), var(--grid-border-color, #BCD4F0));
+    }
+
+    .border-right-bottom::after {
+        background: linear-gradient(to bottom, var(--grid-border-color, #BCD4F0), white);
+    }
 
     .border-bottom-left::before,
     .border-bottom-middle::before,
@@ -3401,9 +3408,17 @@ input[type=number]::-webkit-outer-spin-button {
         z-index: 1;
     }
 
-    .border-bottom-left::before { background: linear-gradient(to left, var(--grid-border-color, #BCD4F0), white); }
-    .border-bottom-middle::before { background: linear-gradient(to right, var(--grid-border-color, #BCD4F0), var(--grid-border-color, #BCD4F0)); }
-    .border-bottom-right::before { background: linear-gradient(to right, var(--grid-border-color, #BCD4F0), white); }
+    .border-bottom-left::before {
+        background: linear-gradient(to left, var(--grid-border-color, #BCD4F0), white);
+    }
+
+    .border-bottom-middle::before {
+        background: linear-gradient(to right, var(--grid-border-color, #BCD4F0), var(--grid-border-color, #BCD4F0));
+    }
+
+    .border-bottom-right::before {
+        background: linear-gradient(to right, var(--grid-border-color, #BCD4F0), white);
+    }
 }
 
 .rhr-tour-popover {
@@ -3450,7 +3465,7 @@ input[type=number]::-webkit-outer-spin-button {
         flex-grow: 1 !important;
     }
 
-    .driver-popover-navigation-btns button + button {
+    .driver-popover-navigation-btns button+button {
         margin-left: 0 !important;
     }
 
@@ -3650,6 +3665,7 @@ input[type=number]::-webkit-outer-spin-button {
         transform: rotate(1turn)
     }
 }
+
 // PrimeNG Table Styling for Leave Carry Forward Report
 .custom-table-content .p-datatable {
     width: 100%;
@@ -3660,7 +3676,7 @@ input[type=number]::-webkit-outer-spin-button {
         min-width: max-content;
     }
 
-    .p-datatable-thead > tr > th {
+    .p-datatable-thead>tr>th {
         background-color: var(--table-header-bg-color) !important;
         color: var(--table-header-color) !important;
         font-weight: 500 !important;
@@ -3672,15 +3688,15 @@ input[type=number]::-webkit-outer-spin-button {
         text-transform: capitalize !important;
     }
 
-    .p-datatable-thead > tr > th:first-child {
+    .p-datatable-thead>tr>th:first-child {
         border-top-left-radius: 0.5rem;
     }
 
-    .p-datatable-thead > tr > th:last-child {
+    .p-datatable-thead>tr>th:last-child {
         border-top-right-radius: 0.5rem;
     }
 
-    .p-datatable-tbody > tr > td {
+    .p-datatable-tbody>tr>td {
         font-weight: 400 !important;
         font-size: var(--fontsize14) !important;
         color: var(--table-data-color) !important;
@@ -3692,7 +3708,7 @@ input[type=number]::-webkit-outer-spin-button {
         vertical-align: middle !important;
     }
 
-    .p-datatable-tbody > tr:last-child > td {
+    .p-datatable-tbody>tr:last-child>td {
         border-bottom: none !important;
     }
 

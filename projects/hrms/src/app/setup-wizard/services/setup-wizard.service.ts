@@ -102,7 +102,7 @@ export class SetupWizardService {
       map(response => this.unwrapProgress(response)),
       tap(progress => {
         if (progress) {
-          this.applyProgress(progress);
+          this.applyProgress(this.mergeProgressResponse(progress, request, optimisticProgress));
         }
       }),
       catchError(() => {
@@ -355,6 +355,39 @@ export class SetupWizardService {
           ? 'InProgress'
           : 'Pending'
     }));
+  }
+
+  private mergeProgressResponse(
+    progress: SetupWizardProgressDto,
+    request: SaveSetupWizardProgressRequest,
+    optimistic: SetupWizardProgressDto | null
+  ): SetupWizardProgressDto {
+    const fromRequest = optimistic ?? this.buildProgressFromRequest(request);
+
+    if (request.action === 'finish') {
+      return {
+        ...progress,
+        ...(fromRequest ?? {}),
+        isCompleted: true,
+        currentTab: SETUP_MODULES[SETUP_MODULES.length - 1].route,
+        nextTab: null,
+        items: fromRequest?.items?.length ? fromRequest.items : progress.items
+      };
+    }
+
+    if (request.currentTab && fromRequest) {
+      return {
+        ...progress,
+        currentTab: request.currentTab,
+        nextTab: request.nextTab ?? progress.nextTab,
+        completedTabs: fromRequest.completedTabs,
+        progressPercent: fromRequest.progressPercent,
+        isCompleted: fromRequest.isCompleted,
+        items: fromRequest.items
+      };
+    }
+
+    return progress;
   }
 
   private buildProgressFromRequest(request: SaveSetupWizardProgressRequest): SetupWizardProgressDto | null {

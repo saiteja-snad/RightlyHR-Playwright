@@ -208,14 +208,11 @@ export class LeaveAlloctaionComponent implements OnInit, OnDestroy {
     });
     console.log(rres);
     this.subscription = this.http.postdata('LeavePolicy', rres).subscribe({
-      next: (res: any) => {
-        console.log(res);
+      next: () => {
         this.confirmation.openSuccessModal('Data updated successfully');
-        setTimeout(function () {
-          window.location.reload();
-        }, 2000);
+        this.http.triggerRefresh();
       },
-      error: (reason) => this.confirmation.openSuccessModal(reason.error.message)
+      error: (reason) => this.confirmation.openErrorModal(reason.error?.message ?? 'Failed to save leave allocation')
     });
   }
 

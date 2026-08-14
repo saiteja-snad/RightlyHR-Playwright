@@ -53,6 +53,12 @@
     max-height: none;
     overflow: visible;
 
+    .p-accordionpanel,
+    .p-accordioncontent,
+    .p-accordioncontent-content {
+      overflow: visible !important;
+    }
+
     .p-accordioncontent-content {
       overflow: visible;
     }
@@ -61,6 +67,12 @@
 
 .accordion-panel-body {
   padding: 1rem;
+  overflow: visible;
+
+  ::ng-deep .wizard-employee-creation,
+  ::ng-deep .wizard-employee-creation .custom-main-component-container {
+    overflow: visible;
+  }
 
   ::ng-deep .custom-main-component-container {
     padding: 0;
@@ -209,4 +221,23 @@
   margin-top: 0.25rem;
   border-top: 1px solid #f3f4f6;
   background: var(--white-color);
+}
+
+.module-form-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.step-validation-hint {
+  font-size: var(--fontsize13, 0.8125rem);
+  color: #6b7280;
+  max-width: 28rem;
+  line-height: 1.35;
+
+  .missing-sections {
+    color: var(--error-msg-color);
+    font-weight: 600;
+  }
 }

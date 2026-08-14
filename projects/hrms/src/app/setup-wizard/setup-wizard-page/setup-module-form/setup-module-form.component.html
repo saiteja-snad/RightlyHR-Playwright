@@ -37,6 +37,17 @@
   <hr class="divider" />
 
   <div class="module-form-footer">
+    @if (!canProceed() && !isValidatingStep()) {
+      <p class="step-validation-hint mb-0">
+        Add data in all required sections to continue.
+        @if (missingSectionLabels().length) {
+          <span class="missing-sections">({{ missingSectionLabels().join(', ') }})</span>
+        }
+      </p>
+    } @else {
+      <span></span>
+    }
+    <div class="module-form-footer-actions">
     <button
       type="button"
       class="custom-btn btn-secondary"
@@ -48,7 +59,7 @@
     <button
       type="button"
       class="custom-btn btn-primary"
-      [disabled]="spinnerLoader || wizardService.isSaving()"
+      [disabled]="spinnerLoader || wizardService.isSaving() || isValidatingStep() || !canProceed()"
       (click)="onNext()"
     >
       @if (spinnerLoader) {
@@ -60,5 +71,6 @@
         Next
       }
     </button>
+    </div>
   </div>
 </div>

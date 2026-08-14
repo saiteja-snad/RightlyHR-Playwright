@@ -44,4 +44,27 @@ export type SetupWizardSectionKey =
   | 'org-hierarchy'
   | 'leave-category'
   | 'leave-allocation'
-  | 'signature-authority';
+  | 'signature-authority'
+  | 'employee-creation';
+
+export interface SetupWizardBulkEmployee {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  personalEmailId: string;
+  contactnumber: number;
+  contactNumberCountryCode: string;
+  contactNumberCountryFlag: string;
+  designation: string;
+  designationId: number;
+  employmentType: string;
+  location: string;
+  locationId: number;
+  sublocation: string;
+  sublocationId: number;
+  isCredentialsRequired: boolean;
+}
+
+export interface SetupWizardBulkUploadRequest {
+  employees: SetupWizardBulkEmployee[];
+}

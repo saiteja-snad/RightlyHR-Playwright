@@ -41,38 +41,28 @@ export const SETUP_MODULES: SetupModule[] = [
   },
   {
     id: 4,
-    title: 'Employee Configuration',
-    subtitle: 'Configure employee master data, job details and compensation',
+    title: 'Employee Master Data',
+    subtitle: 'Add employee master data and optionally generate credentials',
     category: 'EMPLOYEE FIELDS',
     completed: false,
     route: 'employee-config',
     accordions: [
       {
-        id: 'employee-master-data',
+        id: 'employee-creation',
         label: 'Employee Master Data',
-        sections: ['salutation', 'gender', 'status', 'maritalstatus', 'degree']
-      },
-      {
-        id: 'job-details',
-        label: 'Job Details',
-        sections: ['jobrole', 'jobtype', 'probationstatus']
-      },
-      {
-        id: 'compensation',
-        label: 'Compensation',
-        sections: ['paytype', 'grade', 'compensation-reason']
+        sections: ['employee-creation']
       }
     ]
   },
   {
     id: 5,
     title: 'Org Hierarchy',
-    subtitle: 'Review and configure organization hierarchy',
+    subtitle: 'Assign reporting managers and team managers',
     category: 'ORG HIERARCHY',
     completed: false,
     route: 'org-hierarchy',
     accordions: [
-      { id: 'org-hierarchy', label: 'Org Hierarchy', sections: ['org-hierarchy'] }
+      { id: 'org-hierarchy', label: 'Assign RM & TM', sections: ['org-hierarchy'] }
     ]
   },
   {

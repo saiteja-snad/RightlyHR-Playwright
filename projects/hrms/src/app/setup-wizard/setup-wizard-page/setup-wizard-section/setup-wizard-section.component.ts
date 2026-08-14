@@ -16,9 +16,10 @@ import { ProbationstatusComponent } from '../../../settings/employee-fields/job/
 import { PaytypeComponent } from '../../../settings/employee-fields/job/paytype/paytype.component';
 import { GradeComponent } from '../../../settings/employee-fields/job/grade/grade.component';
 import { CompensationReasonComponent } from '../../../settings/employee-fields/job/compensation-reason/compensation-reason.component';
-import { OrganizationchartComponent } from '../../../organizationchart/organizationchart/organizationchart.component';
 import { LeaveAlloctaionComponent } from '../../../settings/time-off/leave-alloctaion/leave-alloctaion.component';
 import { SignatureAuthorityComponent } from '../../../settings/employee-fields/job/signature-authority/signature-authority.component';
+import { SetupWizardEmployeeCreationComponent } from '../setup-wizard-employee-creation/setup-wizard-employee-creation.component';
+import { SetupWizardManagerAssignmentComponent } from '../setup-wizard-manager-assignment/setup-wizard-manager-assignment.component';
 import { SetupWizardSectionKey } from '../../models/setup-wizard.model';
 
 @Component({
@@ -41,9 +42,10 @@ import { SetupWizardSectionKey } from '../../models/setup-wizard.model';
     PaytypeComponent,
     GradeComponent,
     CompensationReasonComponent,
-    OrganizationchartComponent,
     LeaveAlloctaionComponent,
-    SignatureAuthorityComponent
+    SignatureAuthorityComponent,
+    SetupWizardEmployeeCreationComponent,
+    SetupWizardManagerAssignmentComponent
   ],
   templateUrl: './setup-wizard-section.component.html',
   styleUrl: './setup-wizard-section.component.scss'

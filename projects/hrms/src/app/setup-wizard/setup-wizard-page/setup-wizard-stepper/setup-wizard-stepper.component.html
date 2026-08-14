@@ -8,7 +8,7 @@
             [ngClass]="getStepState(i)"
           >
             <span class="step-indicator">
-              @if (getStepState(i) === 'completed') {
+              @if (showStepCheckmark(i)) {
                 <i class="bi bi-check-lg"></i>
               } @else {
                 {{ module.id }}

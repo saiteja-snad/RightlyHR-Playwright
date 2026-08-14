@@ -97,13 +97,68 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   }
 
   onModuleChange() {
+    const modId = this.importForm.get('moduleId')?.value;
+    if (modId) {
+      localStorage.setItem('bulkImportModuleId', String(modId));
+    }
     const subs = this.currentSubmodules;
+    const subId = (subs && subs.length > 0) ? subs[0].id : '';
     this.importForm.patchValue({
-      submoduleId: (subs && subs.length > 0) ? subs[0].id : null
+      submoduleId: subId
     });
+    if (subId) {
+      localStorage.setItem('bulkImportSubmoduleId', String(subId));
+    }
   }
 
   onSubmoduleChange() {
+    const subId = this.importForm.get('submoduleId')?.value;
+    if (subId) {
+      localStorage.setItem('bulkImportSubmoduleId', String(subId));
+    }
+  }
+
+  downloadErrorReport() {
+    const invalidRows = this.store.invalidRows();
+    if (!invalidRows || invalidRows.length === 0) {
+      this.conformationPopup.openErrorModal('No error records found to download.');
+      return;
+    }
+
+    const cols = this.displayColumns();
+    const headers = cols.map(c => this.formatHeader(c));
+    if (!headers.includes('Error / Warning')) {
+      headers.push('Error / Warning');
+    }
+
+    let csvContent = headers.join(',') + '\n';
+
+    invalidRows.forEach(row => {
+      const rowValues = cols.map(c => {
+        let val = row[c] ?? '';
+        if (typeof val === 'string') {
+          val = `"${val.replace(/"/g, '""')}"`;
+        }
+        return val;
+      });
+      if (!cols.includes('errorMessage')) {
+        let errVal = row.errorMessage ?? '';
+        if (typeof errVal === 'string') {
+          errVal = `"${errVal.replace(/"/g, '""')}"`;
+        }
+        rowValues.push(errVal);
+      }
+      csvContent += rowValues.join(',') + '\n';
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const modName = (this.selectedModuleName || 'Bulk_Import').replace(/\s+/g, '_');
+    link.download = `${modName}_Error_Report_${this.http.formattedDate || new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 
   @ViewChild('confirmModal') confirmModal!: TemplateRef<any>;
@@ -175,13 +230,9 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     return rows.filter(row => row?.isValid).length;
   });
   readonly isSubmitDisabled = computed(() => {
-    const stats = this.store.stats();
-    const summary = this.store.summary();
-    const invalidCount = stats.invalid || (summary?.invalidRows ?? 0);
     return this.store.loading()
       || !this.store.response()
-      || this.validRowsCount() === 0
-      || invalidCount > 0;
+      || this.validRowsCount() === 0;
   });
 
   private searchTerm = signal('');
@@ -222,6 +273,17 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.employeeId = this.empdata?.employeeId;
     this.updateModuleInfo();
+
+    const savedModuleId = localStorage.getItem('bulkImportModuleId');
+    const savedSubmoduleId = localStorage.getItem('bulkImportSubmoduleId');
+    const initialModId = savedModuleId ? Number(savedModuleId) : 1001;
+    const initialSubId = savedSubmoduleId ? Number(savedSubmoduleId) : 10011;
+
+    this.importForm.patchValue({
+      moduleId: initialModId,
+      submoduleId: initialSubId
+    });
+
     const savedStep = localStorage.getItem('bulkImportStep');
     this.progress = savedStep ? +savedStep : 1;
     const savedJobId = this.store.jobId();

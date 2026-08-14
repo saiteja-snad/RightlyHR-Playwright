@@ -260,6 +260,33 @@
 
 .border-table {
    border: 1px solid var(--border-color);
+   overflow: auto;
+}
+
+.custom-table-content {
+   width: 100%;
+   overflow: auto;
+
+   table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+
+      thead {
+         position: sticky;
+         top: 0;
+         z-index: 10;
+
+         th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: inset 0 -1px 0 var(--border-color);
+         }
+      }
+   }
 }
 
 .timesheet-chip {

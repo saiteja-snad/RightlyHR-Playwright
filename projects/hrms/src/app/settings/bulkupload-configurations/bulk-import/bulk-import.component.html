@@ -39,6 +39,14 @@
                 <i class="bi bi-x-circle me-1"></i>{{"Invalid" }} :
                 <span class="total-duration ms-1">{{formatCount(store.stats().invalid)}}</span>
             </div>
+            @if (store.stats().invalid > 0) {
+            <button type="button"
+                class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 py-1 px-2 text-nowrap rounded-2 ms-1"
+                (click)="downloadErrorReport()" title="Download Error Log">
+                <i class="bi bi-download"></i>
+                <span class="small font-weight-600">Download Error Report</span>
+            </button>
+            }
         </div>
     </div>
     }

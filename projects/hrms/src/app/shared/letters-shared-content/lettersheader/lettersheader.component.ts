@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TenantService } from '../../../services/tenant.service';
-
+import { LetterLogoService } from '../../../services/letter-logo.service';
 
 @Component({
   selector: 'app-lettersheader',
@@ -9,22 +8,13 @@ import { TenantService } from '../../../services/tenant.service';
   styleUrl: './lettersheader.component.scss'
 })
 export class LettersheaderComponent implements OnInit {
-
-  companyLogo: string = '';
-
-  constructor(public tenantService: TenantService) {}
+  constructor(public letterLogoService: LetterLogoService) {}
 
   ngOnInit(): void {
-    this.tenantService.logo$.subscribe(logo => {
-      this.companyLogo = logo || this.tenantService.currentLogo;
+    this.letterLogoService.ensureLogoLoaded();
+  }
 
-      console.log('Offer Letter Dynamic Logo:', this.companyLogo);
-    });
-
-    if (!this.tenantService.isLogoLoaded) {
-      this.tenantService.verifyDomain(
-        this.tenantService.currentDomain
-      ).subscribe();
-    }
+  get companyLogo(): string {
+    return this.letterLogoService.companyLogo || this.letterLogoService.fallbackLogo;
   }
 }

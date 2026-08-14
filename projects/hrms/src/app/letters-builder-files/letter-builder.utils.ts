@@ -51,6 +51,7 @@ export function applyLetterPageSetup(docDef: any, options: LetterPageSetupOption
             image: 'letterBg',
             width: wmW,
             height: wmH,
+            opacity: 0.18,
             absolutePosition: { x: (pW - wmW) / 2, y: (pH - wmH) / 2 },
           },
           {

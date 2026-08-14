@@ -1,13 +1,150 @@
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import { customVfs } from './custom-fonts-vfs';
 
-export function fetchImageAsBase64(url: string): Promise<string> {
-  return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
+const DEFAULT_LETTER_LOGO = '/logos/rightlyhr-full-logo.png';
+
+export interface LetterAssetLoaderOptions {
+  downloadBlob?: (filePath: string) => Promise<Blob | null>;
+  viewUrl?: string;
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => resolve(reader.result as string);
     reader.onerror = reject;
     reader.readAsDataURL(blob);
-  }));
+  });
+}
+
+function extractBlobFilePath(logoUrl: string, viewUrl?: string): string | null {
+  if (!logoUrl || logoUrl.startsWith('/')) {
+    return null;
+  }
+
+  if (!logoUrl.startsWith('http')) {
+    return logoUrl.replace(/^\/+/, '');
+  }
+
+  if (viewUrl && logoUrl.startsWith(viewUrl)) {
+    return logoUrl.slice(viewUrl.length).replace(/^\/+/, '');
+  }
+
+  try {
+    const url = new URL(logoUrl);
+    const parts = url.pathname.split('/').filter(Boolean);
+    if (parts.length >= 2) {
+      return parts.slice(1).join('/');
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function loadImageWithCanvas(url: string): Promise<string | undefined> {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth || img.width;
+        canvas.height = img.naturalHeight || img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(undefined);
+          return;
+        }
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      } catch (error) {
+        console.warn('Canvas logo conversion failed:', error);
+        resolve(undefined);
+      }
+    };
+    img.onerror = () => resolve(undefined);
+    img.src = url;
+  });
+}
+
+function getBase64FromDomImage(url: string): string | undefined {
+  const images = Array.from(
+    document.querySelectorAll<HTMLImageElement>('img.company-logo, img.letter-watermark')
+  );
+
+  for (const img of images) {
+    if (img.src !== url || !img.complete || img.naturalWidth <= 0) {
+      continue;
+    }
+
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        continue;
+      }
+      ctx.drawImage(img, 0, 0);
+      return canvas.toDataURL('image/png');
+    } catch {
+      continue;
+    }
+  }
+
+  return undefined;
+}
+
+export async function fetchImageAsBase64(
+  url: string,
+  options?: LetterAssetLoaderOptions & { allowDefaultFallback?: boolean }
+): Promise<string | undefined> {
+  if (!url) {
+    return undefined;
+  }
+
+  const allowDefaultFallback = options?.allowDefaultFallback ?? true;
+  const filePath = extractBlobFilePath(url, options?.viewUrl);
+
+  if (filePath && options?.downloadBlob) {
+    try {
+      const blob = await options.downloadBlob(filePath);
+      if (blob) {
+        return await blobToDataUrl(blob);
+      }
+    } catch (error) {
+      console.warn('API logo download failed:', filePath, error);
+    }
+  }
+
+  if (url.startsWith('/') && !url.startsWith('//')) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        return await blobToDataUrl(await response.blob());
+      }
+    } catch (error) {
+      console.warn('Local logo fetch failed:', url, error);
+    }
+  }
+
+  const fromCanvas = await loadImageWithCanvas(url);
+  if (fromCanvas) {
+    return fromCanvas;
+  }
+
+  const fromDom = getBase64FromDomImage(url);
+  if (fromDom) {
+    return fromDom;
+  }
+
+  if (allowDefaultFallback && url !== DEFAULT_LETTER_LOGO && !url.endsWith(DEFAULT_LETTER_LOGO)) {
+    return fetchImageAsBase64(DEFAULT_LETTER_LOGO, { allowDefaultFallback: false });
+  }
+
+  return undefined;
 }
 
 export async function getFileBase64(url: string): Promise<string | null> {
@@ -31,25 +168,35 @@ export interface LetterAssets {
   headerLogoBase64?: string;
 }
 
-// export async function fetchLetterAssets(isSoftCopy: boolean): Promise<LetterAssets> {
-//   if (!isSoftCopy) return {};
-//   const [backgroundImageBase64, headerLogoBase64] = await Promise.all([
-//     fetchImageAsBase64('/images/water-mark.png'),
-//     fetchImageAsBase64('/logos/rightlyhr-full-logo.png'),
-//   ]);
-//   return { backgroundImageBase64, headerLogoBase64 };
-// }
+let letterLogoContext: {
+  companyLogo?: string;
+  loaderOptions?: LetterAssetLoaderOptions;
+} = {};
+
+export function setLetterLogoContext(
+  companyLogo: string,
+  loaderOptions: LetterAssetLoaderOptions
+): void {
+  letterLogoContext = { companyLogo, loaderOptions };
+}
 
 export async function fetchLetterAssets(
   isSoftCopy: boolean,
-  companyLogo?: string
+  companyLogo?: string,
+  loaderOptions?: LetterAssetLoaderOptions
 ): Promise<LetterAssets> {
+  if (!isSoftCopy) {
+    return {};
+  }
 
-  if (!isSoftCopy) return {};
-
-  const dynamicLogo = companyLogo
-    ? await fetchImageAsBase64(companyLogo)
-    : undefined;
+  const resolvedLogo = companyLogo ?? letterLogoContext.companyLogo;
+  const resolvedOptions = loaderOptions ?? letterLogoContext.loaderOptions;
+  const hasCustomLogo = Boolean(resolvedLogo);
+  const logoUrl = resolvedLogo || DEFAULT_LETTER_LOGO;
+  const dynamicLogo = await fetchImageAsBase64(logoUrl, {
+    ...resolvedOptions,
+    allowDefaultFallback: !hasCustomLogo
+  });
 
   return {
     backgroundImageBase64: dynamicLogo,

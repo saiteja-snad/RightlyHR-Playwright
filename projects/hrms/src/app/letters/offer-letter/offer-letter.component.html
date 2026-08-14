@@ -205,7 +205,7 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Salary (Cost to Company)' | translate}}<span class="error-msg">*</span></label>
           <input type="number" class="form-control custom-input"
-            (input)="formvalidators.restrictAlphabets(employeeForm.get('amount')?.value)" formControlName="amount"
+            (keypress)="formvalidators.restrictAlphabets($event)" formControlName="amount"
             minlength="0" maxlength="10" placeholder="Please enter salary" (ngModelChange)="onclickCTC($event)" />
           <!-- <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched" class="error-msg">
             Salary is required</div> -->
@@ -241,7 +241,7 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Variable Amount' | translate}}<span class="error-msg">*</span></label>
           <input type="text" class="form-control custom-input" formControlName="variablePayAmount"
-            (input)="formvalidators.restrictAlphabets(employeeForm.get('amount')?.value)"
+            (keypress)="formvalidators.restrictAlphabets($event)"
             (ngModelChange)="onVariablePayChangeAmount($event)" placeholder="Please enter variable amount" />
           <div class="error-msg"
             *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">

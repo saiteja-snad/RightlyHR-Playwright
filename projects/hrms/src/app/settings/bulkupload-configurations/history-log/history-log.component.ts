@@ -53,7 +53,7 @@ interface StageFile {
 @Component({
   selector: 'app-history-log',
   imports: [CommonModule, FormsModule, RouterModule, PaginatorModule, TabsModule, DateformatPipe, DataLoaderContentComponent, NoDataFoundComponent,
-    TranslateModule, BulkuploadSidebarTabsComponent, ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, DownloadIconComponent],
+    TranslateModule, ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, DownloadIconComponent],
   templateUrl: './history-log.component.html',
   styleUrl: './history-log.component.scss'
 })

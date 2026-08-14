@@ -12,9 +12,11 @@ import { environment } from '../../../../environments/environment';
 import { HttpResponse } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { BulkuploadSidebarTabsComponent } from '../bulkupload-sidebar-tabs/bulkupload-sidebar-tabs.component';
+
 @Component({
   selector: 'app-bulkupload-config-layout',
-  imports: [RouterModule, SettingsHeaderComponent, CommonModule, DownloadIconComponent],
+  imports: [RouterModule, SettingsHeaderComponent, CommonModule, DownloadIconComponent, BulkuploadSidebarTabsComponent],
   templateUrl: './bulkupload-config-layout.component.html',
   styleUrl: './bulkupload-config-layout.component.scss'
 })

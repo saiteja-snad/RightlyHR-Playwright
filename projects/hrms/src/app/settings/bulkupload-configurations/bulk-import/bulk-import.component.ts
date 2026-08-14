@@ -9,7 +9,7 @@ import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
@@ -25,7 +25,7 @@ import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-bulk-import',
-  imports: [BulkuploadSidebarTabsComponent, CommonModule,
+  imports: [CommonModule, ReactiveFormsModule,
     NoDataFoundComponent, InfoIconComponent,
     DateformatPipe, NgbPopoverModule, FormsModule, ConfirmationIconComponent,
     ModuleInformationComponent, ModuleInfoIconComponent, DataLoaderContentComponent, PaginatorModule, DownloadIconComponent, Select],
@@ -77,8 +77,19 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     // }
   ];
 
-  selectedModuleId: number = 1001;
-  selectedSubmoduleId: number = 10011;
+  private fb = inject(FormBuilder);
+  importForm: FormGroup = this.fb.group({
+    moduleId: [1001, Validators.required],
+    submoduleId: [10011, Validators.required]
+  });
+
+  get selectedModuleId(): number | null {
+    return this.importForm?.get('moduleId')?.value ?? null;
+  }
+
+  get selectedSubmoduleId(): number | null {
+    return this.importForm?.get('submoduleId')?.value ?? null;
+  }
 
   get currentSubmodules() {
     const mod = this.modules.find(m => m.id === Number(this.selectedModuleId));
@@ -97,16 +108,15 @@ export class BulkImportComponent implements OnInit, OnDestroy {
 
   onModuleChange() {
     const subs = this.currentSubmodules;
-    if (subs && subs.length > 0) {
-      this.selectedSubmoduleId = subs[0].id;
-    } else {
-      this.selectedSubmoduleId = 0;
-    }
+    this.importForm.patchValue({
+      submoduleId: (subs && subs.length > 0) ? subs[0].id : null
+    });
   }
 
   onSubmoduleChange() {
   }
 
+  @ViewChild('confirmModal') confirmModal!: TemplateRef<any>;
   destroy$: Subject<boolean> = new Subject<boolean>();
   empdata = {} as any;
   employeeId: any;

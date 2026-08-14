@@ -2,6 +2,13 @@
     height: calc(100dvh - 8rem) !important;
 }
 
+.component-left-tabs-container {
+    width: 8.5rem;
+    flex-shrink: 0;
+    height: 100%;
+}
+
 .custom-setting-right-content {
+    width: calc(100% - 8.5rem);
     height: 100%;
 }

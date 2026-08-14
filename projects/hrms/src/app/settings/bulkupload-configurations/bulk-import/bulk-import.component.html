@@ -1,34 +1,4 @@
-<div class="custom-main-component-container">
-    <!-- <div class="component-header-content  d-flex justify-content-between">
-        <div>
-            @if(progress === 1){
-            <button class="custom-btn btn-secondary d-flex align-items-center gap-1" (click)="downloadTemplate()">
-                @if (isDownloadingTemplate) {
-                Downloading...
-                } @else {
-                <app-download-icon /> {{'Download Template'}}
-                }
-            </button>
-            }
-            @if(progress === 2){
-            @if (store.response()) {
-            <div>
-                <button class="float-end custom-btn btn-secondary" (click)="reUploadInput.click()">
-                    <i class="bi bi-arrow-clockwise me-2"></i>{{'Re-Upload Timesheet'}}</button>
-                <input #reUploadInput type="file" hidden accept=".xlsx, .xls, .csv"
-                    (change)="onModalFileSelected($event, true)">
-            </div>
-            }
-            }
-        </div>
-    </div> -->
-
-    <div class="main-content d-flex w-100 gap-3">
-        <div class="component-left-tabs-container">
-            <app-bulkupload-sidebar-tabs />
-        </div>
-
-        <div class="timesheet-right-content">
+<div class="timesheet-right-content w-100">
             <div class="d-flex justify-content-center py-3">
                 <div class="client-progress-bar-container w-75">
                     <div class="progress" role="progress" [ngClass]="{'active': progress}" aria-valuenow="33"
@@ -81,34 +51,36 @@
                 <div *ngIf="progress === 1" class="w-100 d-flex flex-column align-items-center py-2">
                     <div class="w-75">
                         <!-- Card 1: Select Module & Submodule -->
-                        <div class="card border border-light-subtle rounded-3 p-4 mb-4 shadow-sm bg-white">
-                            <div class="d-flex align-items-center gap-2 mb-3">
-                                <div class="progress-number active-circle">1</div>
-                                <h6 class="fw-bold mb-0 text-dark">Select Module & Submodule</h6>
-                            </div>
-                            <div class="row g-4">
-                                <div class="col-md-6">
-                                    <label class="form-label text-secondary fw-semibold small">MODULE <span
-                                            class="text-danger">*</span></label>
-                                    <div class="custom-p-select-content">
-                                        <p-select [options]="modules" optionLabel="name" [filter]="true"
-                                            [resetFilterOnHide]="true" filterBy="name" [(ngModel)]="selectedModuleId"
-                                            (change)="onModuleChange()" placeholder="Please select module"
-                                            class="form-select custom-select"></p-select>
+                        <form [formGroup]="importForm">
+                            <div class="card border border-light-subtle rounded-3 p-4 mb-4 shadow-sm bg-white">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <div class="progress-number active-circle">1</div>
+                                    <h6 class="fw-bold mb-0 text-dark">Select Module & Submodule</h6>
+                                </div>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-secondary fw-semibold small">MODULE <span
+                                                class="text-danger">*</span></label>
+                                        <div class="custom-p-select-content">
+                                            <p-select [options]="modules" optionLabel="name" optionValue="id" [filter]="true"
+                                                [resetFilterOnHide]="true" filterBy="name" formControlName="moduleId"
+                                                (onChange)="onModuleChange()" placeholder="Please select module"
+                                                class="form-select custom-select"></p-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text-secondary fw-semibold small">SUBMODULE <span
+                                                class="text-danger">*</span></label>
+                                        <div class="custom-p-select-content">
+                                            <p-select [options]="currentSubmodules" optionLabel="name" optionValue="id" [filter]="true"
+                                                [resetFilterOnHide]="true" filterBy="name" formControlName="submoduleId"
+                                                (onChange)="onSubmoduleChange()" placeholder="Please select submodule"
+                                                class="form-select custom-select"></p-select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-secondary fw-semibold small">SUBMODULE <span
-                                            class="text-danger">*</span></label>
-                                    <div class="custom-p-select-content">
-                                        <p-select [options]="currentSubmodules" optionLabel="name" [filter]="true"
-                                            [resetFilterOnHide]="true" filterBy="name" [(ngModel)]="selectedSubmoduleId"
-                                            (change)="onSubmoduleChange()" placeholder="Please select module"
-                                            class="form-select custom-select"></p-select>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
+                        </form>
 
                         <!-- Card 2: Template Download & Guidelines Banner -->
                         <div class="template-download-card rounded-3 p-4 mb-4">
@@ -159,7 +131,7 @@
                         <!-- Next Button -->
                         <div class="d-flex justify-content-end mt-4">
                             <button class="custom-btn btn-primary px-4 py-2 d-flex align-items-center gap-2"
-                                [disabled]="!selectedSubmoduleId" (click)="nextStep()">
+                                [disabled]="importForm.invalid || !selectedSubmoduleId || !selectedModuleId" (click)="nextStep()">
                                 <span>Next: Upload File</span>
                                 <i class="bi bi-arrow-right"></i>
                             </button>
@@ -387,12 +359,6 @@
                         <div class="footer-content">
                             <button type="submit" class="custom-btn btn-primary"
                                 (click)="navigateToHistoryView()">{{'Close'}}</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <ng-template #confirmModal let-modal>

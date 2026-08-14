@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ILeavePolicyData, Iorgcategoryleaves, Igradeid } from '../../../Interfaces/timoff-model';
 import { ILocation, ISubLocation } from '../flexible-leave-allocation/leave-allocation.model';
@@ -16,11 +16,8 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './leave-alloctaion.component.scss'
 })
 
-export class LeaveAlloctaionComponent implements OnInit, OnDestroy {
-  private readonly cdr = inject(ChangeDetectorRef);
-
+export class LeaveAlloctaionComponent {
   subscription!: Subscription;
-  refreshSubscription?: Subscription;
   Leavescat = {} as ILeavePolicyData;
   Leaves = [] as Iorgcategoryleaves[];
   selectedCategory = {} as Iorgcategoryleaves;
@@ -37,7 +34,6 @@ export class LeaveAlloctaionComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getLocationDetails();
-    this.refreshSubscription = this.http.refresh$.subscribe(() => this.getLocationDetails());
     this.yearsList = this._employeeService.getYears()
     this.getGradeid();
     this.Leavescat.subLocationId = -1;
@@ -47,11 +43,10 @@ export class LeaveAlloctaionComponent implements OnInit, OnDestroy {
   }
 
   getLocationDetails(): void {
-    this.subscription?.unsubscribe();
     this.subscription = this.http.getData(`JobLocation`).subscribe({
       next: (data: any) => {
+        console.log(data);
         this.locationDetails = data.jobLocations as ILocation[];
-        this.cdr.markForCheck();
       },
     });
   }
@@ -208,16 +203,14 @@ export class LeaveAlloctaionComponent implements OnInit, OnDestroy {
     });
     console.log(rres);
     this.subscription = this.http.postdata('LeavePolicy', rres).subscribe({
-      next: () => {
+      next: (res: any) => {
+        console.log(res);
         this.confirmation.openSuccessModal('Data updated successfully');
-        this.http.triggerRefresh();
+        setTimeout(function () {
+          window.location.reload();
+        }, 2000);
       },
-      error: (reason) => this.confirmation.openErrorModal(reason.error?.message ?? 'Failed to save leave allocation')
+      error: (reason) => this.confirmation.openSuccessModal(reason.error.message)
     });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
-    this.refreshSubscription?.unsubscribe();
   }
 }

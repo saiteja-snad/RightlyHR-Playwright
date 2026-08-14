@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -12,10 +12,6 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
 import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
-import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
-import { SETUP_WIZARD_STATUS_MODULES } from '../../../../setup-wizard/models/setup-wizard-status-modules.constants';
-import { filterItemsByStatus, toArray } from '../../../../setup-wizard/utils/setup-wizard-status-filter.util';
 
 @Component({
   selector: 'app-pending-shifts',
@@ -23,52 +19,43 @@ import { filterItemsByStatus, toArray } from '../../../../setup-wizard/utils/set
   templateUrl: './pending-shifts.component.html',
   styleUrl: './pending-shifts.component.scss'
 })
-export class PendingShiftsComponent implements OnInit, OnDestroy {
-
-  private readonly cdr = inject(ChangeDetectorRef);
+export class PendingShiftsComponent {
 
   empinfo: any
   subscription!: Subscription;
-  refreshSubscription?: Subscription;
   shiftsData: any[] = [];
-  pendingsubmittedshifts: any[] = [];
+  pendingsubmittedshifts: any;
   loading = false;
   successModalRef: any;
   deleteModalRef: any;
    constructor(public router: Router, private http: HttpService, public rbac: RbacService,private confirmation: OpenModalService,
-  private modalService: NgbModal, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
+  private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getShifts();
-    this.refreshSubscription = this.http.refresh$.subscribe(() => this.getShifts());
   }
 
   getShiftNames(shift: any) {
-    if (!shift?.orgShiftsItems?.length) {
-      return null;
-    }
     return shift.orgShiftsItems.map((item: any) => item.shiftName).join(', ');
   }
 
   getShifts(): void {
-    this.subscription?.unsubscribe();
     this.loading = true;
     this.subscription = this.http.getData(`orgShifts`).subscribe({
       next: (data: any) => {
-        this.shiftsData = toArray(data);
-        this.pendingsubmittedshifts = filterItemsByStatus(
-          this.shiftsData,
-          SETUP_WIZARD_STATUS_MODULES.shifts.pendingStatus
-        ).map((item: any) => ({
-          ...item,
-          shiftName: item.orgShiftsItems?.[0]?.shiftName || 'N/A'
-        }));
+        this.shiftsData = data;
         this.loading = false;
-        this.cdr.markForCheck();
+        // this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
+        this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission")
+          .map((item: any) => {
+            return {
+              ...item,
+              shiftName: item.orgShiftsItems?.[0]?.shiftName || 'N/A' // fallback if missing
+            };
+          });
       }, error:(err)=> {
         this.loading = false;
-        this.cdr.markForCheck();
         console.log("expensesheadererror", err)
       },
     });
@@ -77,10 +64,6 @@ export class PendingShiftsComponent implements OnInit, OnDestroy {
   updateShift(id: any): void {
     const shift = this.shiftsData.find((item : any) => item.id == id);
     localStorage.setItem('selectedShift', JSON.stringify(shift));
-    if (this.wizardNav.isInsideWizardRoute()) {
-      this.wizardFormModal.openWizardForm('update-shifts', { onClosed: () => this.getShifts() });
-      return;
-    }
     this.router.navigate(['/settings/employee-fields/updateshifts', id]);
   }
   shiftsddata:any
@@ -116,14 +99,11 @@ export class PendingShiftsComponent implements OnInit, OnDestroy {
       });
    }
    nagvition() {
-    if (this.wizardNav.isInsideWizardRoute()) {
-      this.wizardFormModal.openWizardForm('add-shifts', { onClosed: () => this.getShifts() });
-      return;
-    }
     this.router.navigate(['/settings/employee-fields/addshifts']);
   }
   ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
-    this.refreshSubscription?.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

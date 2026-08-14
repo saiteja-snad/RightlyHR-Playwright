@@ -8,10 +8,8 @@
 
   <div class="custom-table-content">
     @if (!loading) {
-      @if (submissiondata.length > 0) {
     <table class="w-100">
       <thead>
-        <tr>
         <th>{{ 'Year' | translate }}</th>
         <th>{{ 'Location' | translate }}</th>
         <th>{{ 'Sub Location' | translate }}</th>
@@ -23,9 +21,9 @@
         <th>{{ 'Expires After (Days)' | translate }}</th>
         <th>{{ 'Status' | translate }}</th>
         <th *ngIf="rbac.allowedToAccess('Leave Category Published Tab.create') || rbac.allowedToAccess('Leave Category Published Tab.view')">{{ 'Action' | translate }}</th>
-        </tr>
       </thead>
       <tbody>
+        <ng-container *ngIf="(submissiondata).length; else noResults">
           <tr *ngFor="let details of submissiondata">
             <td>{{details.applicableYear}}</td>
             <td>{{details.locationName}}</td>
@@ -60,13 +58,15 @@
               </div>
             </td>
           </tr>
+        </ng-container>
+        <ng-template #noResults>
+          <tr>
+            <td colspan="9"><app-no-data-found></app-no-data-found></td>
+          </tr>
+        </ng-template>
       </tbody>
     </table>
-      } @else {
-        <div class="wizard-status-empty-state">
-          <app-no-data-found></app-no-data-found>
-        </div>
-      }
+  
     }
   @else {
      <app-data-loader-content />

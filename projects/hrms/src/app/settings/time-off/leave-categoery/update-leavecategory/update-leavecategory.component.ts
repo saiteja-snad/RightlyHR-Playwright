@@ -6,15 +6,13 @@ import { MultiSelect } from 'primeng/multiselect';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { ILetterType } from '../../../../Interfaces/leave-type.model';
 import { TranslateModule } from '@ngx-translate/core';
-import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
-import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 @Component({
   selector: 'app-update-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule, MultiSelectModule],
@@ -98,19 +96,8 @@ export class UpdateLeavecategoryComponent {
     private http: HttpService,
     private confirmation: OpenModalService,
     private router: Router,
-    private route: ActivatedRoute,
-    private modalService: NgbModal,
-    private wizardNav: SetupWizardNavigationService,
-    readonly wizardFormModal: SetupWizardFormModalService
+    private modalService: NgbModal
   ) { }
-
-  get isWizardModal(): boolean {
-    return this.wizardFormModal.isModalContext();
-  }
-
-  get parentBreadcrumb(): string {
-    return this.wizardNav.getParentBreadcrumb('Leave Category', this.route);
-  }
 
   ngOnInit(): void {
     this.intializeForm();
@@ -466,13 +453,10 @@ export class UpdateLeavecategoryComponent {
       this.getOrgLeavesCategories(locationId, sublocationId, year, shiftId);
     }
   }
-  navigate(saved = false) {
-    const path = ['/settings/timeoff-configurations/leave-categoery/pendingleavecategory'];
-    if (saved) {
-      this.wizardNav.completeWizardFormOrNavigateBack(path, this.route);
-      return;
-    }
-    this.wizardNav.closeWizardFormOrNavigateBack(path, this.route);
+  navigate() {
+    this.router.navigate([
+      '/settings/timeoff-configurations/leave-categoery/pendingleavecategory',
+    ]);
   }
   getSubLocationByid(locationID: any) {
     let sublocid = locationID ?? this.updateLeaveCategoryData.locationID;
@@ -965,7 +949,9 @@ export class UpdateLeavecategoryComponent {
           this.confirmation.openSuccessModal(
             'Leave Category updated successfully'
           );
-          this.navigate(true);
+          this.router.navigate([
+            '/settings/timeoff-configurations/leave-categoery/pendingleavecategory',
+          ]);
           this.leavePolicyForm.reset();
           this.leavePolicyForm.markAsPristine();
         },
@@ -1094,7 +1080,9 @@ export class UpdateLeavecategoryComponent {
         this.confirmation.openSuccessModal(
           'Leave Category published successfully'
         );
-        this.navigate(true);
+        this.router.navigate([
+          '/settings/timeoff-configurations/leave-categoery/publishedleavecategory',
+        ]);
         this.leavePolicyForm.reset();
       },
       error: (err: any) => {
@@ -1128,7 +1116,9 @@ export class UpdateLeavecategoryComponent {
   }
 
   cancel() {
-    this.navigate();
+    this.router.navigate([
+      '/settings/timeoff-configurations/leave-categoery/pendingleavecategory',
+    ]);
     this.leavePolicyForm.reset();
   }
 

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { Subject, takeUntil } from 'rxjs';
@@ -9,7 +9,6 @@ import { HttpService } from '../../../../services/http.service';
 import { ILocation, IShiftHeader, ISubLocation } from '../pending-weekends/weekends.model';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
 
 @Component({
   selector: 'app-add-weekend',
@@ -36,17 +35,11 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
   
   constructor(
     private router: Router,
-    private route: ActivatedRoute,
     private fb: FormBuilder,
     private http: HttpService,
     private modal: OpenModalService,
-    private modalService: NgbModal,
-    private wizardNav: SetupWizardNavigationService
+    private modalService: NgbModal
   ) { }
-
-  get parentBreadcrumb(): string {
-    return this.wizardNav.getParentBreadcrumb('Manage Weekends', this.route);
-  }
 
   ngOnInit() {
     this.employeedetails = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}')
@@ -54,11 +47,10 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     this.handleFormValueChanges();
     this.getAllYears();
     this.getAllLocations();
-    this.http.refresh$.pipe(takeUntil(this.destroy$)).subscribe(() => this.getAllLocations());
   }
 
   navigate() {
-    this.wizardNav.closeWizardFormOrNavigateBack(['/settings/employee-fields/manage-weekends'], this.route);
+    this.router.navigate(['/settings/employee-fields/manage-weekends']);
   }
 
   initializeForm() {
@@ -277,7 +269,7 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     this.navigate();
   }
   navigation(){
-    this.wizardNav.completeWizardFormOrNavigateBack(['/settings/employee-fields/manage-weekends/pending-for-submission'], this.route);
+    this.router.navigate(['/settings/employee-fields/manage-weekends/pending-for-submission']);
   }
 
   ngOnDestroy(): void {

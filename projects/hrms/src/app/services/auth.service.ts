@@ -8,7 +8,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
 import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
 import { TenantService } from './tenant.service';
-import { SetupWizardService } from '../setup-wizard/services/setup-wizard.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -138,9 +137,7 @@ export class AuthService {
 
     const completeLogout = () => {
       const tenantService = this.injector.get(TenantService);
-      const wizardService = this.injector.get(SetupWizardService);
       const domain = tenantService.currentDomain;
-      wizardService.clearProgress();
       tenantService.reset();
       // Preserve tenant data across logout
       const tenantDomain = localStorage.getItem('tenantDomain');
@@ -266,7 +263,6 @@ export class AuthService {
     const accessToken = token?.accessToken || localStorage.getItem('accessToken') || '';
 
     const navigateToLogin = () => {
-      this.injector.get(SetupWizardService).clearProgress();
       localStorage.clear();
       sessionStorage.clear();
       if (tenantDomain) localStorage.setItem('tenantDomain', tenantDomain);

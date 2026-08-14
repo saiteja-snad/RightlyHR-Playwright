@@ -1,18 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ILetterType } from '../../../../Interfaces/leave-type.model';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
 @Component({
   selector: 'app-add-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule,TranslateModule, MultiSelectModule],
@@ -21,10 +20,9 @@ import { SetupWizardNavigationService } from '../../../../setup-wizard/services/
   encapsulation:ViewEncapsulation.None
 })
 
-export class AddLeavecategoryComponent implements OnDestroy {
+export class AddLeavecategoryComponent {
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
-  refreshSubscription?: Subscription;
   years: { label: string; value: number }[] = [];
   jobLocationDropDownData: any[] = [];
   subLocationsDropdown: any[] = [];
@@ -93,18 +91,12 @@ export class AddLeavecategoryComponent implements OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   empinfo = {} as IJob;
   constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,
-    private router: Router, private route: ActivatedRoute, private modalService: NgbModal,
-    private wizardNav: SetupWizardNavigationService) {
-  }
-
-  get parentBreadcrumb(): string {
-    return this.wizardNav.getParentBreadcrumb('Leave Category', this.route);
+    private router: Router, private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.jobLocationList();
-    this.refreshSubscription = this.http.refresh$.subscribe(() => this.jobLocationList());
     // this.getOrgLeavesCategories();
     this.getLeaveTypes();
     const currentYear = new Date().getFullYear();
@@ -584,7 +576,7 @@ export class AddLeavecategoryComponent implements OnDestroy {
   }
 
   navigate() {
-    this.wizardNav.closeWizardFormOrNavigateBack(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory'], this.route);
+    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
   }
 
   // Patch form values (for edit mode)
@@ -717,7 +709,7 @@ export class AddLeavecategoryComponent implements OnDestroy {
     this.http.postdata('OrgLeavesCategories', payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Leave Category added successfully');
-        this.wizardNav.completeWizardFormOrNavigateBack(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory'], this.route);
+        this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
         this.leavePolicyForm.reset();
       },
       error: (err: any) => {
@@ -731,7 +723,7 @@ export class AddLeavecategoryComponent implements OnDestroy {
   }
 
   cancel() {
-    this.wizardNav.closeWizardFormOrNavigateBack(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory'], this.route);
+    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
     this.leavePolicyForm.reset();
 
   }
@@ -743,7 +735,8 @@ export class AddLeavecategoryComponent implements OnDestroy {
   ngOnDestroy(): void {
       this.destroy$.next(true);
     this.destroy$.unsubscribe();
-    this.subscription?.unsubscribe();
-    this.refreshSubscription?.unsubscribe();
+    if(this.subscription){
+      this.subscription.unsubscribe();
+    }
   }
 }

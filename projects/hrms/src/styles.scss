@@ -3721,20 +3721,3 @@ input[type=number]::-webkit-outer-spin-button {
         border: none !important;
     }
 }
-
-.setup-wizard-form-modal-window .modal-dialog {
-    max-width: min(1200px, calc(100vw - 2rem));
-    width: calc(100vw - 2rem);
-    margin: 1rem auto;
-}
-
-.setup-wizard-form-modal-window .modal-content {
-    border: none;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
-}
-
-.setup-wizard-form-modal-window .modal-body {
-    padding: 0;
-}

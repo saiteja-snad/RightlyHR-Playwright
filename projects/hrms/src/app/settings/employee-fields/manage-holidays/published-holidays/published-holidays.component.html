@@ -8,7 +8,6 @@
 
   <div class="custom-table-content">
     @if(!loading){
-      @if (allHolidays.length > 0) {
     <table class="w-100">
       <thead>
         <tr>
@@ -22,6 +21,7 @@
         </tr>
       </thead>
       <tbody>
+        @if (allHolidays.length > 0) {
         @for (item of allHolidays; track item.id) {
         <tr>
           <td>{{item.applicableyear}}</td>
@@ -54,13 +54,14 @@
           </td>
         </tr>
         }
+        }
+        @else {
+        <tr>
+          <td colspan="9"><app-no-data-found></app-no-data-found></td>
+        </tr>
+        }
       </tbody>
     </table>
-      } @else {
-        <div class="wizard-status-empty-state">
-          <app-no-data-found></app-no-data-found>
-        </div>
-      }
     }
     @else {
     <app-data-loader-content />

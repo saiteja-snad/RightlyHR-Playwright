@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -21,12 +21,8 @@ import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-i
   templateUrl: './sub-location.component.html',
   styleUrl: './sub-location.component.scss'
 })
-export class SubLocationComponent implements OnInit, OnDestroy {
-  private readonly cdr = inject(ChangeDetectorRef);
-
+export class SubLocationComponent {
   subscription!: Subscription;
-  refreshSubscription?: Subscription;
-  locationSubscription?: Subscription;
   SubLocationdetails = [] as any;
   JobroleDetails = [] as any;
   loader = false;
@@ -63,22 +59,16 @@ export class SubLocationComponent implements OnInit, OnDestroy {
     });
     this.getSubLocation();
     this.getLocation();
-    this.refreshSubscription = this.http.refresh$.subscribe(() => {
-      this.getLocation();
-      this.getSubLocation();
-    });
   }
-
   getLocation() {
-    this.locationSubscription?.unsubscribe();
-    this.locationSubscription = this.http.getData('JobLocation/GetJobLocations').subscribe((data: any) => {
-      this.locationDetail = data ?? [];
-      this.cdr.markForCheck();
+    this.http.getData('JobLocation/GetJobLocations').subscribe((data: any) => {
+      this.locationDetail = data;
+      // this.locationDetail = data.map((item: any) => item.jobLocationName);
+      console.log("joblocation", this.locationDetail);
     });
   }
   // // Method to open the add modal dialog
   openDialog() {
-    this.getLocation();
     this.modalService.open(this.addpopup, {
       backdrop: 'static',
       centered: true
@@ -87,11 +77,11 @@ export class SubLocationComponent implements OnInit, OnDestroy {
 
   getSubLocation() {
     this.loader = true;
-    this.subscription?.unsubscribe();
     this.subscription = this.http.getData('SubLocation/GetLocationNames').subscribe({
       next: (data: any) => {
         this.loader = false;
-        this.SubLocationdetails = (data ?? []).sort((a: any, b: any) => {
+        console.log(data);
+        this.SubLocationdetails = data.sort((a: any, b: any) => {
           // First sort by location name
           const locationComparison = a.jobLocationName.localeCompare(b.jobLocationName);
           // If location names are the same, sort by sub-location name
@@ -100,11 +90,10 @@ export class SubLocationComponent implements OnInit, OnDestroy {
           }
           return locationComparison;
         });
-        this.cdr.markForCheck();
       },
       error: (error: any) => {
         this.loader = false;
-        this.cdr.markForCheck();
+
       }
     });
   }
@@ -121,7 +110,6 @@ export class SubLocationComponent implements OnInit, OnDestroy {
       next: () => {
 
         this.getSubLocation();
-        this.http.triggerRefresh();
         modal.close();
         this.conformationPopup.openSuccessModal('Sub location added successfully');
 
@@ -139,7 +127,6 @@ export class SubLocationComponent implements OnInit, OnDestroy {
   }
   // Method to open the update modal dialog
   openupdateDialog(jobroletypelist: any) {
-    this.getLocation();
     this.selectedId = jobroletypelist.id;
     this.updateForm.patchValue({
       updateLocation: jobroletypelist.jobLocationId,
@@ -166,7 +153,6 @@ export class SubLocationComponent implements OnInit, OnDestroy {
       this.subscription = this.http.postdata('SubLocation/UPDATER', request).subscribe({
         next: () => {
           this.getSubLocation();
-          this.http.triggerRefresh();
           modal.close();
           this.conformationPopup.openSuccessModal('Sub location updated successfully');
           this.resetForm();
@@ -192,7 +178,6 @@ export class SubLocationComponent implements OnInit, OnDestroy {
         next: () => {
           modal.close();
           this.getSubLocation();
-          this.http.triggerRefresh();
           this.conformationPopup.openSuccessModal('Sub location deleted successfully');
         },
         error: (error: any) => {
@@ -213,8 +198,8 @@ export class SubLocationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
-    this.refreshSubscription?.unsubscribe();
-    this.locationSubscription?.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

@@ -21,6 +21,7 @@ import { IAssertsType } from '../../Interfaces/job-model';
 import { SignalsService } from '../../services/signals.service';
 import { DateformatPipe } from '../../pipes/dateformat.pipe';
 import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
+import { LetterLogoService } from '../../services/letter-logo.service';
 @Component({
   selector: 'app-appointment-letter',
   imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent],
@@ -58,13 +59,13 @@ export class AppointmentLetterComponent implements OnInit, OnDestroy {
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
-
   constructor(
     private http: HttpService,
     private router: Router,
     private authService: AuthService,
     private conformationPopup: OpenModalService,
     private signalService: SignalsService,
+    private letterLogoService: LetterLogoService,
     private fb: FormBuilder) { }
 
   ngOnInit(): void {
@@ -74,6 +75,7 @@ export class AppointmentLetterComponent implements OnInit, OnDestroy {
     this.getAllBranchLocations();
     this.getAssertType();
     this.getAuthorityDetails();
+    this.letterLogoService.ensureLogoLoaded();
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
   }
@@ -312,11 +314,12 @@ export class AppointmentLetterComponent implements OnInit, OnDestroy {
     const fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${Date.now()}_AppointmentLetter_Unsigned.pdf`;
     const isSoftCopy = f.value.documentType?.value === true;
 
-    const [assets, pm] = await Promise.all([
-      fetchLetterAssets(isSoftCopy),
-      setupLetterPdfMake(),
-    ]);
-    const docDef = buildAppointmentLetterDoc({
+    try {
+      const [assets, pm] = await Promise.all([
+        fetchLetterAssets(isSoftCopy),
+        setupLetterPdfMake(),
+      ]);
+      const docDef = buildAppointmentLetterDoc({
       employeeFullname: this.employeeFullname,
       appointmentDate: f.value.appointmentdate,
       addressLine1: this.appointmentletter.addressLine1 || '',
@@ -336,7 +339,6 @@ export class AppointmentLetterComponent implements OnInit, OnDestroy {
       useAutographyFont: true,
     });
 
-    try {
       const blob: Blob = await pm.createPdf(docDef).getBlob();
 
       const link = document.createElement('a');
@@ -350,20 +352,10 @@ export class AppointmentLetterComponent implements OnInit, OnDestroy {
       this.uploadAppointLetter();
     } catch (err) {
       console.error('PDF generation failed:', err);
-      this.spinnerLoader = false;
       this.conformationPopup.openErrorModal('Failed to generate Appointment Letter');
+    } finally {
+      this.spinnerLoader = false;
     }
-  }
-
-  private fetchImageAsBase64(url: string): Promise<string> {
-    return fetch(url)
-      .then(res => res.blob())
-      .then(blob => new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      }));
   }
 
   private async getFileBase64(url: string): Promise<string | null> {

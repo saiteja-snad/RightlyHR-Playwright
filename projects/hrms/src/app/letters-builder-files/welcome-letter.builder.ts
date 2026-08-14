@@ -109,6 +109,7 @@ export function buildWelcomeLetterDoc(data: WelcomeLetterData): any {
       image: 'letterBg',
       width: 620,
       height: 870,
+      opacity: 0.18,
       absolutePosition: { x: -12, y: -14 },
     });
   }

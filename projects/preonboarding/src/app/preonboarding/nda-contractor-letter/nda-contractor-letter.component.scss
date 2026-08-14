@@ -40,11 +40,28 @@
         height: 380mm;
         width: 270mm;
         position: relative;
-        background-image: url(/images/water-mark.png);
-        background-repeat: no-repeat;
-        background-position: center;
+        background: transparent;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
         overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: var(--watermark-image, none);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 72% auto;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .letter-page-sub-content,
+        .letter-footer {
+            position: relative;
+            z-index: 1;
+        }
 
         .letter-page-sub-content {
             padding: 1.25rem 3.75rem;

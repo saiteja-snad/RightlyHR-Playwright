@@ -3,9 +3,9 @@ import { BulkUploadResponse } from '../../../../Interfaces/bulk-upload.models';
 
 export type FilterType = 'ALL' | 'VALID' | 'INVALID' | 'INSERT' | 'UPDATE' | 'SKIP';
 
-const JOB_ID_KEY = 'timesheetImportJobId';
-const STAGE_KEY = 'timesheetImportStage';
-const SUBMISSION_JOB_ID_KEY = 'timesheetImportSubmissionJobId';
+const JOB_ID_KEY = 'bulkImportJobId';
+const STAGE_KEY = 'bulkImportStage';
+const SUBMISSION_JOB_ID_KEY = 'bulkImportSubmissionJobId';
 
 @Injectable({
   providedIn: 'root'

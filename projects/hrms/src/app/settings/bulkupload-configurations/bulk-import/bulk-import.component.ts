@@ -1,5 +1,4 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
-import { BulkuploadSidebarTabsComponent } from "../bulkupload-sidebar-tabs/bulkupload-sidebar-tabs.component";
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -19,9 +18,9 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { PaginatorModule } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
-import { environment } from '../../../../environments/environment';
 import { HttpResponse } from '@angular/common/http';
 import { Select } from 'primeng/select';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-bulk-import',
@@ -43,20 +42,11 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   progress = 1;
 
   modules = [
-    // {
-    //   id: 1000,
-    //   name: 'Employee Data',
-    //   submodules: [
-    //     { id: 10001, name: 'Personal Details & Contact' },
-    //     { id: 10002, name: 'Job & Employment Details' },
-    //     { id: 10003, name: 'Bank & Statutory Info' }
-    //   ]
-    // },
     {
-      id: 1001,
+      id: environment.compensationImportId,
       name: 'Compensation',
       submodules: [
-        { id: 10011, name: 'Compensation Import' }
+        { id: environment.compensationImportId, name: 'Compensation Import' }
       ]
     },
     // {
@@ -79,8 +69,8 @@ export class BulkImportComponent implements OnInit, OnDestroy {
 
   private fb = inject(FormBuilder);
   importForm: FormGroup = this.fb.group({
-    moduleId: [1001, Validators.required],
-    submoduleId: [10011, Validators.required]
+    moduleId: ['', Validators.required],
+    submoduleId: ['', Validators.required]
   });
 
   get selectedModuleId(): number | null {
@@ -161,8 +151,8 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     }
     const rows = this.store.filteredRows();
     if (rows && rows.length > 0) {
-      const ignoreKeys = ['isValid', 'action', 'errorCode', 'errorField', 'suggestedFix', 'projectMeta', 'clientMeta', 'phaseMeta'];
-      return Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k));
+      const ignoreKeys = ['isValid', 'action', 'errorCode', 'errorField', 'suggestedFix', 'projectMeta', 'clientMeta', 'phaseMeta', 'compensationAmount', 'isVariablePay'];
+      return Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k) && !k.startsWith('parsed'));
     }
     return [];
   });
@@ -174,8 +164,8 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     }
     const rows = this.submissionRows();
     if (rows && rows.length > 0) {
-      const ignoreKeys = ['timesheetEntryId', 'projectMeta', 'clientMeta', 'phaseMeta', 'employeeId', 'employeeMeta', 'id', 'isValid', 'action', 'errorCode', 'errorField', 'errorMessage', 'suggestedFix'];
-      return Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k));
+      const ignoreKeys = ['timesheetEntryId', 'projectMeta', 'clientMeta', 'phaseMeta', 'employeeId', 'employeeMeta', 'id', 'isValid', 'action', 'errorCode', 'errorField', 'errorMessage', 'suggestedFix', 'compensationAmount', 'isVariablePay'];
+      return Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k) && !k.startsWith('parsed'));
     }
     return [];
   });
@@ -185,9 +175,13 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     return rows.filter(row => row?.isValid).length;
   });
   readonly isSubmitDisabled = computed(() => {
+    const stats = this.store.stats();
+    const summary = this.store.summary();
+    const invalidCount = stats.invalid || (summary?.invalidRows ?? 0);
     return this.store.loading()
       || !this.store.response()
-      || this.validRowsCount() === 0;
+      || this.validRowsCount() === 0
+      || invalidCount > 0;
   });
 
   private searchTerm = signal('');
@@ -237,7 +231,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       const savedSubmissionJobId = this.store.submissionJobId();
       if (savedSubmissionJobId) {
         this.submissionJobId = savedSubmissionJobId;
-        this.loadTimesheetDetails();
+        this.loadSubmittedDetails();
       } else {
         this.store.reset();
         localStorage.removeItem('bulkImportStep');
@@ -297,7 +291,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.submissionPage = 1;
       this.submissionFirst = 0;
-      this.loadTimesheetDetails();
+      this.loadSubmittedDetails();
     });
   }
 
@@ -306,7 +300,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.pageSize = event.rows;
     this.rows = event.rows;
     this.first = event.first;
-    this.loadTimesheetDetails();
+    this.loadSubmittedDetails();
   }
 
   onPageSizeChange(newPageSize: number) {
@@ -314,7 +308,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.loadTimesheetDetails();
+    this.loadSubmittedDetails();
   }
 
   updateModuleInfo() {
@@ -361,11 +355,14 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     return n < 10 ? `0${n}` : String(n);
   }
 
-  confirmUpload(content: any, event?: Event) {
+  confirmUpload(content?: any, event?: Event) {
     if (event && event.target) {
       (event.target as HTMLElement).blur();
     }
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    const modalRef = content || this.confirmModal;
+    if (modalRef) {
+      this.modalService.open(modalRef, { centered: true, backdrop: 'static' });
+    }
   }
 
   private handleModalFile(file: File, isReupload = false) {
@@ -509,7 +506,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
             this.submissionFirst = 0;
             this.submissionSearchValue = '';
             this.setStep(4);
-            this.loadTimesheetDetails();
+            this.loadSubmittedDetails();
           } else {
             this.conformationPopup.openErrorModal(importRes.message || 'Failed to upload data');
           }
@@ -522,29 +519,23 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       });
   }
 
-  loadTimesheetDetails() {
-    if (!this.submissionJobId) return;
-    this.store.setLoading(true);
-    const payload = {
-      employeeIds: String(this.employeeId),
-      jobIds: String(this.submissionJobId),
-      searchQuery: this.submissionSearchValue.trim(),
-      page: this.page,
-      pageSize: this.pageSize,
-    };
-    this.http.postdata('Timesheet/details', payload).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.store.setLoading(false);
-        this.submissionRows.set(Array.isArray(res?.data?.items) ? res.data?.items : []);
-        this.submissionTotalCount = res?.data?.page?.totalItems ?? res?.data?.page?.totalItems ?? 0;
-        this.collectionSize = this.submissionTotalCount;
-      },
-      error: (err: any) => {
-        this.store.setLoading(false);
-        this.submissionRows.set([]);
-        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to load submitted records');
-      }
-    });
+  loadSubmittedDetails() {
+    this.store.setLoading(false);
+    const validRows = this.store.validRows() ?? [];
+    this.submissionTotalCount = this.totalSuccessCount || validRows.length;
+    
+    const search = (this.submissionSearchValue || '').trim().toLowerCase();
+    let filtered = validRows;
+    if (search) {
+      filtered = validRows.filter((row: any) =>
+        Object.values(row).some(v => v !== null && v !== undefined && String(v).toLowerCase().includes(search))
+      );
+    }
+    
+    this.collectionSize = filtered.length;
+    const start = (this.submissionPage - 1) * this.submissionPageSize;
+    const end = start + this.submissionPageSize;
+    this.submissionRows.set(filtered.slice(start, end));
   }
 
   onSubmissionSearchChange() {
@@ -555,7 +546,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.submissionPage = event.page + 1;
     this.submissionPageSize = event.rows;
     this.submissionFirst = event.first;
-    this.loadTimesheetDetails();
+    this.loadSubmittedDetails();
   }
 
   onSearchChange() {

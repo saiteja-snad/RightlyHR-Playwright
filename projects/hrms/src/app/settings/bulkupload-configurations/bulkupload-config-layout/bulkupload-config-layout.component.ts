@@ -35,16 +35,10 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.router.events
-      .pipe(filter((event: any) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
   }
-
-  updateModuleInfo() {
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
   }
-
   downloadTemplate() {
     this.isDownloadingTemplate = true;
     this.bulkUploadService.downloadTemplate(1001, 'csv')

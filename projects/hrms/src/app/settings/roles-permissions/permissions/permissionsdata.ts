@@ -7,9 +7,10 @@ export const permissionsData = [
   { fields: 'Dynamic Forms Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Bulk Upload Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Ats Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Helpdesk Configuration Module', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Employee Fields Config Update Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Fields Config Update Module', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'Locking System Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rate Card Configuration Module', View: false, Update: false, Create: false, Delete: false },
@@ -222,7 +223,7 @@ export const permissionsData = [
   { fields: 'Pending Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Processed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected Tab', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Expense Clarifications Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expense Clarifications Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Org Hirarchy Tabs Section
   { fields: 'Organization Hierarchy - HR', View: false, Update: false, Create: false, Delete: false },
@@ -579,21 +580,21 @@ export const permissionsData = [
   // { fields: 'Asset Report', View: false, Update: false, Create: false, Delete: false },
 
   //Standard Reports Section
-{ fields: 'Employee Overview Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Employee Overview Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Employee Overview Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Overview Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Overview Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Overview Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Job Location Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Job Location Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Job Location Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Job Location Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Job Location Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Job Location Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Branch-Wise Employee Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Branch-Wise Employee Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Branch-Wise Employee Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Branch-Wise Employee Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Branch-Wise Employee Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Branch-Wise Employee Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Family Details Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Family Details Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Family Details Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Family Details Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Family Details Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Family Details Report - Export', View: false, Update: false, Create: false, Delete: false },
 
   //Custome Reports Section
   { fields: 'Custom Reports - Generate', View: false, Update: false, Create: false, Delete: false },
@@ -647,62 +648,62 @@ export const permissionsData = [
   { fields: 'My Team Report(Leave Carry Forward & Encashment)', View: false, Update: false, Create: false, Delete: false },
 
   // Attendance Reports Section
-{ fields: 'Leave Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Leave Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Leave Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Leave Summary Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Leave Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Leave Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Summary Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Comp Off Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Comp Off Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Comp Off Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Comp Off Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Comp Off Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Comp Off Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'WFH Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'WFH Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'WFH Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'WFH Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'WFH Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'WFH Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Inactive Employee Leave Summary Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Inactive Employee Leave Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Inactive Employee Leave Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Inactive Employee Leave Summary Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Inactive Employee Leave Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Inactive Employee Leave Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Yearly Summary Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Yearly Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Yearly Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Yearly Summary Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Yearly Summary Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Yearly Summary Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Permission Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Permission Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Permission Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Permission Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Permission Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Permission Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Employee Exit Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Employee Exit Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Employee Exit Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Exit Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Exit Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Exit Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Regularization Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Regularization Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Regularization Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Regularization Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Regularization Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Regularization Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Leave Carry Forward & Encashment Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Leave Carry Forward & Encashment Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Leave Carry Forward & Encashment Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Carry Forward & Encashment Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Carry Forward & Encashment Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Carry Forward & Encashment Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-// Added Missing
-{ fields: 'Late Login Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Late Login Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Late Login Report - Export', View: false, Update: false, Create: false, Delete: false },
+  // Added Missing
+  { fields: 'Late Login Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Late Login Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Late Login Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Exceeded Break Hours Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Exceeded Break Hours Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Exceeded Break Hours Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Exceeded Break Hours Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Exceeded Break Hours Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Exceeded Break Hours Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Remote Login Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Remote Login Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Remote Login Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Remote Login Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Remote Login Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Remote Login Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Extra Log Hours Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Extra Log Hours Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Extra Log Hours Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Log Hours Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Log Hours Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Log Hours Report - Export', View: false, Update: false, Create: false, Delete: false },
 
   // Timesheet Reports Section
   { fields: 'My Timesheet Report', View: false, Update: false, Create: false, Delete: false },
@@ -1184,7 +1185,7 @@ export const permissionsData = [
   { fields: 'Timesheet Bulk Export', View: false, Update: false, Create: false, Delete: false },
   { fields: 'View History Export Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'View History Import Tab', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Timesheet Clone', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Timesheet Clone', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'On Behalf Of', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of WFH', View: false, Update: false, Create: false, Delete: false },

@@ -9,10 +9,10 @@
                 <app-download-icon /> {{'Download Template'}}
                 }
             </button> -->
-            @if (store.response()) {
+            @if (store.response() && !isActiveRoute('/settings/bulkupload-configurations/historylog') ) {
             <div>
                 <button class="float-end custom-btn btn-secondary" (click)="reUploadInput.click()">
-                    <i class="bi bi-arrow-clockwise me-2"></i>{{'Re-Upload Timesheet'}}
+                    <i class="bi bi-arrow-clockwise me-2"></i>{{'Re-Upload'}}
                 </button>
                 <input #reUploadInput type="file" hidden accept=".xlsx, .xls, .csv"
                     (change)="onModalFileSelected($event, true)">

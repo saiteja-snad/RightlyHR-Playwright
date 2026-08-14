@@ -31,13 +31,30 @@ export interface LetterAssets {
   headerLogoBase64?: string;
 }
 
-export async function fetchLetterAssets(isSoftCopy: boolean): Promise<LetterAssets> {
+// export async function fetchLetterAssets(isSoftCopy: boolean): Promise<LetterAssets> {
+//   if (!isSoftCopy) return {};
+//   const [backgroundImageBase64, headerLogoBase64] = await Promise.all([
+//     fetchImageAsBase64('/images/water-mark.png'),
+//     fetchImageAsBase64('/logos/rightlyhr-full-logo.png'),
+//   ]);
+//   return { backgroundImageBase64, headerLogoBase64 };
+// }
+
+export async function fetchLetterAssets(
+  isSoftCopy: boolean,
+  companyLogo?: string
+): Promise<LetterAssets> {
+
   if (!isSoftCopy) return {};
-  const [backgroundImageBase64, headerLogoBase64] = await Promise.all([
-    fetchImageAsBase64('/images/water-mark.png'),
-    fetchImageAsBase64('/logos/rightlyhr-full-logo.png'),
-  ]);
-  return { backgroundImageBase64, headerLogoBase64 };
+
+  const dynamicLogo = companyLogo
+    ? await fetchImageAsBase64(companyLogo)
+    : undefined;
+
+  return {
+    backgroundImageBase64: dynamicLogo,
+    headerLogoBase64: dynamicLogo
+  };
 }
 
 export async function setupLetterPdfMake(): Promise<any> {

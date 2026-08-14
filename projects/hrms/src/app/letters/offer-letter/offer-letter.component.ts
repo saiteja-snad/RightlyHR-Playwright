@@ -22,6 +22,7 @@ import { LetterFooterComponent } from "../../shared/letters-shared-content/lette
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
+import { TenantService } from '../../services/tenant.service';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent, ConfirmationIconComponent],
@@ -36,6 +37,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   isStartDateValid = true;
   isStartDateValidofexpected: boolean = true;
   prospectiveEmpData = {} as any; //offer letter form object
+  companyLogo: string = '';
   offerLetterTemplate: any | string | ArrayBuffer | null = null; //offer letter template
   docDefinition: any; //for doc to PDF conversion
   result = {} as any;
@@ -124,7 +126,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   expiryDatevalidate: any;
 
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService, public formvalidators: FormValidationService
+    private authService: AuthService, private conformationPopup: OpenModalService, public formvalidators: FormValidationService, public tenantService: TenantService
     // private _userAcessService: UserAccessService,
   ) { this.initializeForm(); }
 
@@ -133,6 +135,15 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     // this._userAcessService.checkRouteAccess('Dashboard.view');
     this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
     this.initializeForm();
+    this.subscription = this.tenantService.logo$.subscribe(logo => {
+      this.companyLogo = logo || this.tenantService.currentLogo;
+    });
+
+    if (!this.tenantService.isLogoLoaded) {
+      this.tenantService.verifyDomain(
+        this.tenantService.currentDomain
+      ).subscribe();
+    }
     this.getJobtype();
     this.getTitle();
     this.getgender();
@@ -191,7 +202,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
     const isSoftCopy = true;
     const [assets, pm] = await Promise.all([
-      fetchLetterAssets(isSoftCopy),
+      fetchLetterAssets(isSoftCopy, this.companyLogo),
       setupLetterPdfMake(),
     ]);
     const docDef = buildOfferLetterDoc({
@@ -236,7 +247,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       esicContribution: data.esicContribution,
       esiPerAnnum: data.esiPerAnnum,
       backgroundImageBase64: assets.backgroundImageBase64,
-      headerLogoBase64: assets.headerLogoBase64,
+      headerLogoBase64: this.companyLogo
+        ? await this.fetchImageAsBase64(this.companyLogo)
+        : assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });
@@ -1150,10 +1163,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
     const isSoftCopy = true;
     const [assets, pm] = await Promise.all([
-      fetchLetterAssets(isSoftCopy),
+      fetchLetterAssets(isSoftCopy, this.companyLogo),
       setupLetterPdfMake(),
     ]);
-
 
     const docDef = buildOfferLetterDoc({
       firstName: data.firstName,
@@ -1197,7 +1209,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       esicContribution: data.esicContribution,
       esiPerAnnum: data.esiPerAnnum,
       backgroundImageBase64: assets.backgroundImageBase64,
-      headerLogoBase64: assets.headerLogoBase64,
+      headerLogoBase64: this.companyLogo
+        ? await this.fetchImageAsBase64(this.companyLogo)
+        : assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });

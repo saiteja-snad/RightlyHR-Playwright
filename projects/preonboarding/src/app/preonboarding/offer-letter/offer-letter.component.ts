@@ -14,6 +14,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { fetchLetterAssets, setupLetterPdfMake } from '../../../../../hrms/src/app/letters-builder-files/letter-pdf.utils';
+import { TenantService } from '../../common-services/tenant.service';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, DateFormatPipe, ReactiveFormsModule, DetailedStepProgressbarComponent],
@@ -45,14 +46,25 @@ export class OfferLetterComponent implements OnInit {
   @ViewChild('rejectpopup') rejectpopup: any;
   updateempdata = {} as any;
   currentDate = moment();
+  companyLogo: string = '';
 
   constructor(private router: Router, private http: HttpService, private modalService: NgbModal,
-    private fb: FormBuilder, private confiramtionpopups: PopupService) { }
+    private fb: FormBuilder, public tenantService: TenantService, private confiramtionpopups: PopupService) { }
 
   ngOnInit(): void {
     const storedstep = 3;
     localStorage.setItem('currentStep', storedstep.toString());
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
+    this.subscription = this.tenantService.logo$.subscribe(logo => {
+      this.companyLogo = logo || this.tenantService.currentLogo;
+      console.log('COMPANY LOGO:', this.companyLogo);
+    });
+
+    if (!this.tenantService.isLogoLoaded) {
+      this.tenantService.verifyDomain(
+        this.tenantService.currentDomain
+      ).subscribe();
+    }
     this.getOfferLetterDetails();
     this.getprospectivempdata();
     this.offeraccepteddata = localStorage.getItem("offeraccepteddata");
@@ -168,7 +180,7 @@ export class OfferLetterComponent implements OnInit {
         this.offerLetterData.note = this.getofferdata.note
         if (this.employeeaddress?.employeeAddresses?.length > 0) {
           this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() ==
-          this.getofferdata.addressType.toLowerCase())
+            this.getofferdata.addressType.toLowerCase())
         }
         this.offerLetterData.addressLine1 = this.address.addressLine1
         this.offerLetterData.addressLine2 = this.address.addressLine2
@@ -506,7 +518,7 @@ export class OfferLetterComponent implements OnInit {
     const isSoftCopy = true;
 
     const [assets, pm] = await Promise.all([
-      fetchLetterAssets(isSoftCopy),
+      fetchLetterAssets(isSoftCopy, this.companyLogo),
       setupLetterPdfMake(),
     ]);
 
@@ -588,7 +600,7 @@ export class OfferLetterComponent implements OnInit {
     const isSoftCopy = true;
 
     const [assets, pm] = await Promise.all([
-      fetchLetterAssets(isSoftCopy),
+      fetchLetterAssets(isSoftCopy, this.companyLogo),
       setupLetterPdfMake(),
     ]);
     const docDef = buildOfferLetterDoc({

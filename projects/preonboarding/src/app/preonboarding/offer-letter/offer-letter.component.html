@@ -7,14 +7,16 @@
         <div class="component-header mb-4">Offer Letter</div>
 
         <div class="card custom-main-sub-content p-4">
-            <div class="letter-data-content p-4">
+            <div class="letter-data-content p-4"
+                [style.--watermark-image]="companyLogo ? 'url(' + companyLogo + ')' : null">
                 <div class="d-flex justify-content-center">
                     <div>
-                        <div class="letter-page-content my-4" id="pdfContent1">
+                        <div class="letter-page-content my-4" id="pdfContent1"
+                            [style.--watermark-image]="'url(' + companyLogo + ')'">
                             <div class="letter-page-sub-content">
                                 <br />
                                 <div class="d-flex justify-content-end">
-                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                    <img [src]="companyLogo" alt="Company Logo" class="logo-image">
                                 </div>
                                 <div class="w-100 mt-5 mb-4">
                                     <p class="letter-header text-center mb-0">OFFER LETTER</p>
@@ -36,37 +38,47 @@
                                         <ng-template #address>
                                             <li>{{ offerLetterData.addressLine1}},</li>
                                             @if(offerLetterData.addressLine2){
-                                                <li>{{ offerLetterData.addressLine2}},</li>
+                                            <li>{{ offerLetterData.addressLine2}},</li>
                                             }
                                             <li>{{ offerLetterData.city}}, {{ offerLetterData.state}},</li>
                                             <li>{{ offerLetterData.country}} - {{ offerLetterData.zipCode}}.</li>
                                         </ng-template>
                                     </ul>
                                 </div>
-                                <p class="mb-3"><b>Dear {{offerLetterData.firstName}} {{offerLetterData.middleName}} {{offerLetterData.lastName}}</b>,</p>
+                                <p class="mb-3"><b>Dear {{offerLetterData.firstName}} {{offerLetterData.middleName}}
+                                        {{offerLetterData.lastName}}</b>,</p>
                                 <div class="watermark">
                                     <p class="mb-3">Congratulations and Welcome to RightlyHR!!!</p>
-                                    <p class="mb-3">Further to your application for employment with us, and the subsequent
-                                        selection process, we are delighted to offer you the role of <b>{{offerLetterData.jobRole}}</b> in our organization and
-                                        your <b>CTC</b> will be <b>INR {{(+offerLetterData.salary || 0) + (+offerLetterData.variablePayAmount || 0)}}</b> per
+                                    <p class="mb-3">Further to your application for employment with us, and the
+                                        subsequent
+                                        selection process, we are delighted to offer you the role of
+                                        <b>{{offerLetterData.jobRole}}</b> in our organization and
+                                        your <b>CTC</b> will be <b>INR {{(+offerLetterData.salary || 0) +
+                                            (+offerLetterData.variablePayAmount || 0)}}</b> per
                                         annum.
                                     </p>
                                     <p class="mb-3">RightlyHR is formed as an INDIAN Spin-off of RightlyHR., a US based
-                                        organization for providing Software Development and Services to various IT Organizations across
+                                        organization for providing Software Development and Services to various IT
+                                        Organizations across
                                         the globe. We are a core team of engineers with
                                         a mindset to excel as a family under the guidance of our superior leadership.
                                     </p>
-                                    <p class="mb-3">Your reporting location will be <b> RightlyHR, Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    <p class="mb-3">Your reporting location will be <b> RightlyHR, Vijaya Krishna
+                                            Towers, Floor#16, Madhava Reddy Colony,
                                             Gachibowli, Hyderabad, Telangana - 500032, India. Your date of joining would
                                             be {{offerLetterData.dateOfJoining | dateFormat}}.</b></p>
                                     <p class="mb-3">Your respective <strong>Cost to Company</strong> as applicable has
-                                        been detailed in Annexure 2 of this letter. On your joining, you are expected to enter into an agreement,
-                                        which specifies the details of the scope, terms, and conditions of your employment.
+                                        been detailed in Annexure 2 of this letter. On your joining, you are expected to
+                                        enter into an agreement,
+                                        which specifies the details of the scope, terms, and conditions of your
+                                        employment.
                                     </p>
                                     <ol class="liststylenumber">
                                         <li class="mb-3"><b>Offer Letter Valid Period:</b> The currently issued offer
-                                            letter will be valid up to {{offerLetterData.offerExpiryDate | dateFormat}}.<b> </b> The
-                                            accepted offer letter along with the list of documents should be provided at least 30 days before
+                                            letter will be valid up to {{offerLetterData.offerExpiryDate |
+                                            dateFormat}}.<b> </b> The
+                                            accepted offer letter along with the list of documents should be provided at
+                                            least 30 days before
                                             the
                                             Joining Date for performing
                                             the necessary Background verification and initial setup.
@@ -115,7 +127,8 @@
                             </div>
                             <div class="letter-footer text-center">
                                 <p class="company-name">RightlyHR</p>
-                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony,
+                                    Gachibowli, HYD - 500032</p>
                             </div>
                         </div>
 
@@ -123,7 +136,7 @@
                             <div class="letter-page-sub-content">
                                 <br />
                                 <div class="d-flex justify-content-end">
-                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                    <img [src]="companyLogo" alt="Company Logo" class="logo-image">
                                 </div>
                                 <ol style="list-style: decimal;" type="1" start="5" class="pt-5">
                                     <li class="mb-3"><b>Other Terms & Conditions of this Offer</b></li>
@@ -254,7 +267,7 @@
                             <div class="letter-page-sub-content">
                                 <br />
                                 <div class="d-flex justify-content-end">
-                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                    <img [src]="companyLogo" alt="Company Logo" class="logo-image">
                                 </div>
                                 <div class="my-5 py-5">
                                     <p class="mb-3">Yours Sincerely,</p>
@@ -277,13 +290,15 @@
                                     <p class="mb-3">I accept this offer letter and will complete all the necessary
                                         documents
                                         as required.</p>
-                                    <p class="mb-3 mt-4 ">Signature: <span class="authority-signature">{{ offerLetterData.firstName ??''}} {{offerLetterData.middleName??''}}
-                                                {{offerLetterData.lastName ??''}}</span> </p>
+                                    <p class="mb-3 mt-4 ">Signature: <span class="authority-signature">{{
+                                            offerLetterData.firstName ??''}} {{offerLetterData.middleName??''}}
+                                            {{offerLetterData.lastName ??''}}</span> </p>
                                     <p class="mb-3">Name:{{ offerLetterData.firstName}} {{offerLetterData.middleName}}
-                                                {{offerLetterData.lastName}} </p>
+                                        {{offerLetterData.lastName}} </p>
                                     <p class="mb-3">Date:{{currentDate|dateFormat}} </p>
                                     <p class="mb-3">Place: </p>
-                                    <p class="mb-5">My Date of joining will be {{offerLetterData.dateOfJoining | dateFormat}} (If different
+                                    <p class="mb-5">My Date of joining will be {{offerLetterData.dateOfJoining |
+                                        dateFormat}} (If different
                                         from
                                         the joining Date above)</p>
                                 </div>
@@ -299,7 +314,7 @@
                             <div class="letter-page-sub-content">
                                 <br />
                                 <div class="d-flex justify-content-end">
-                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                    <img [src]="companyLogo" alt="Company Logo" class="logo-image">
                                 </div>
                                 <div class="">
                                     <div class="letter-header text-center w-100 my-5"><b>ANNEXURE - 1</b></div>
@@ -412,19 +427,21 @@
                             <div class="letter-page-sub-content">
                                 <br />
                                 <div class="d-flex justify-content-end">
-                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                    <img [src]="companyLogo" alt="Company Logo" class="logo-image">
                                 </div>
                                 <div class="my-5">
                                     <div class="letter-header text-center"><b>ANNEXURE - 2</b></div>
                                     <div class="letter-header text-center">STRICTLY PRIVATE & CONFIDENTIAL</div>
                                     <div class="row">
                                         <div class="p-2 border-box col-md-2">NAME</div>
-                                        <div class="p-2 border-box col-md-4">{{offerLetterData.firstName}} {{offerLetterData.middleName}}
+                                        <div class="p-2 border-box col-md-4">{{offerLetterData.firstName}}
+                                            {{offerLetterData.middleName}}
                                             {{offerLetterData.lastName}}</div>
                                         <div class="p-2 border-box col-md-2">Designation</div>
                                         <div class="p-2 border-box col-md-4">{{offerLetterData.jobRole}}</div>
                                     </div>
-                                    <p class="text-center mb-3"><b>Compensation Details</b> <span class="text-font">(All figures in Rs.)</span></p>
+                                    <p class="text-center mb-3"><b>Compensation Details</b> <span class="text-font">(All
+                                            figures in Rs.)</span></p>
                                     <!-- table start -->
                                     <div class="salary-details-table mb-3">
                                         <table class="w-100">
@@ -701,9 +718,9 @@
                                             from your monthly salary.</li>
                                     </ol>
                                     <p class="note">Note: The above compensation package is strictly confidential
-                                            between
-                                            you and the Company and should not be discussed with anyone nor divulged to
-                                            anyone in any manner whatsoever.</p>
+                                        between
+                                        you and the Company and should not be discussed with anyone nor divulged to
+                                        anyone in any manner whatsoever.</p>
                                 </div>
                             </div>
                             <div class="letter-footer text-center">
@@ -740,7 +757,7 @@
                 <button class="custom-btn secondary-btn px-5" (click)="navigatefirst()">Close</button>
                 }
                 @if(this.updatedOfferLetterDetails.candidateStatus!=='Offer Letter Rejected'){
-                    <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
                 }
 
                 @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
@@ -765,11 +782,11 @@
                     @if(!loadingcircle){ Yes }
                     @else {
                     <div class="button-loader-content">
-                      <div *ngIf="loadingcircle" class="spinner-border button-spinner text-light" role="status"></div>
-                      <div> Submitting</div>
+                        <div *ngIf="loadingcircle" class="spinner-border button-spinner text-light" role="status"></div>
+                        <div> Submitting</div>
                     </div>
                     }
-                  </button>
+                </button>
             </div>
         </div>
     </div>
@@ -789,14 +806,16 @@
                             class="error-msg">*</span></label>
                     <textarea type="note" name="rejectReason" class="form-control custom-input"
                         formControlName="rejectReason" placeholder="Please enter reject reason" maxlength="250"
-                        id="rejectReason" autocomplete="off"
-                        required></textarea>
-                    <div class="error-msg py-1" *ngIf="rejectForm.get('rejectReason')?.invalid && rejectForm.get('rejectReason')?.touched ">
-                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['required']">Reject reason is required</ng-container>
-                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['pattern']">Leading spaces are not allowed</ng-container>
+                        id="rejectReason" autocomplete="off" required></textarea>
+                    <div class="error-msg py-1"
+                        *ngIf="rejectForm.get('rejectReason')?.invalid && rejectForm.get('rejectReason')?.touched ">
+                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['required']">Reject reason is
+                            required</ng-container>
+                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['pattern']">Leading spaces are not
+                            allowed</ng-container>
 
                     </div>
-                      <!-- <div class="error-msg"  *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" >
+                    <!-- <div class="error-msg"  *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" >
                         <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['required']"> {{'Reject Reason is required'| translate}}</ng-container>
                         <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['pattern']">Leading spaces are not allowed</ng-container>
                     </div> -->

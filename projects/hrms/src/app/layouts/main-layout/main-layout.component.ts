@@ -107,25 +107,52 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     return newPassword === confirmPassword ? null : { passwordMismatch: true };
   }
 
+  // onSubmit(): void {
+  //   const payload = {
+  //     password: this.changePasswordForm.value.newPassword,
+  //     employeeId: this.empinfo.employeeId,
+  //   };
+  //   this.http.postdata('Employeedata/internal-update-password', payload).subscribe({
+  //     next: (response: any) => {
+  //       this.modalService.dismissAll();
+  //       this.conformationPopup.openSuccessModal('Your password has been reset successfully. Please log in again using your new password.');
+  //       this.resetPasswordIcons();
+  //       setTimeout(() => {
+  //         this.onLogout();
+  //       }, 3000);
+  //     },
+  //     error: (error: any) => {
+  //       this.conformationPopup.openErrorModal('Failed to change password. Please try again later.');
+  //     },
+  //   });
+  // }
+
   onSubmit(): void {
-    const payload = {
-      password: this.changePasswordForm.value.newPassword,
-      employeeId: this.empinfo.employeeId,
-    };
-    this.http.postdata('Employeedata/internal-update-password', payload).subscribe({
-      next: (response: any) => {
-        this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Your password has been reset successfully. Please log in again using your new password.');
-        this.resetPasswordIcons();
-        setTimeout(() => {
-          this.onLogout();
-        }, 3000);
-      },
-      error: (error: any) => {
-        this.conformationPopup.openErrorModal('Failed to change password. Please try again later.');
-      },
-    });
-  }
+  const payload = {
+    password: this.changePasswordForm.value.newPassword,
+    employeeId: this.empinfo.employeeId,
+  };
+
+  this.http.postdata('Employeedata/internal-update-password', payload).subscribe({
+    next: (response: any) => {
+
+      this.modalService.dismissAll();
+
+      this.conformationPopup.openSuccessModal(
+        'Your password has been changed successfully.'
+      );
+
+      this.resetPasswordIcons();
+      this.changePasswordForm.reset();
+
+    },
+    error: (error: any) => {
+      this.conformationPopup.openErrorModal(
+        'Failed to change password. Please try again later.'
+      );
+    },
+  });
+}
 
   onLogout() {
     this.modalService.dismissAll();

@@ -62,30 +62,46 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       return rows;
     }
     return rows.filter((row: any) => {
-      const parts: string[] = [];
-      parts.push(row.rowNumber != null ? String(row.rowNumber) : '');
-      parts.push(row.clientName || '');
-      parts.push(row.projectName || '');
-      parts.push(row.projectCode || '');
-      parts.push(row.phaseName || '');
-      parts.push(row.taskName || '');
-
-      const billableRaw = row.billable;
-      let billableText = '';
-      if (typeof billableRaw === 'boolean') {
-        billableText = billableRaw ? 'yes' : 'no';
-      } else if (billableRaw != null) {
-        billableText = String(billableRaw);
-      }
-      parts.push(billableText);
-
       const statusText = row.isValid ? 'valid' : 'invalid';
-      parts.push(statusText);
-
-      const haystack = parts.join(' ').toLowerCase();
-      return haystack.includes(term);
+      const rowValues = Object.keys(row)
+        .filter(key => key !== 'projectMeta' && key !== 'clientMeta' && key !== 'phaseMeta')
+        .map(key => {
+          const val = row[key];
+          if (val === null || val === undefined) return '';
+          if (typeof val === 'boolean') return val ? 'yes valid' : 'no invalid';
+          return String(val).toLowerCase();
+        });
+      rowValues.push(statusText);
+      return rowValues.some(val => val.includes(term));
     });
   });
+
+  readonly displayColumns = computed(() => {
+    const cols = this.store.columns();
+    if (cols && cols.length > 0) {
+      return cols;
+    }
+    const rows = this.store.filteredRows();
+    if (rows && rows.length > 0) {
+      const ignoreKeys = ['isValid', 'action', 'errorCode', 'errorField', 'suggestedFix', 'projectMeta', 'clientMeta', 'phaseMeta'];
+      return Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k));
+    }
+    return [];
+  });
+
+  readonly displaySubmissionColumns = computed(() => {
+    const cols = this.store.columns();
+    if (cols && cols.length > 0) {
+      return cols.filter(c => c !== 'errorMessage' && c !== 'errorCode' && c !== 'suggestedFix');
+    }
+    const rows = this.submissionRows();
+    if (rows && rows.length > 0) {
+      const ignoreKeys = ['timesheetEntryId', 'projectMeta', 'clientMeta', 'phaseMeta', 'employeeId', 'employeeMeta', 'id', 'isValid', 'action', 'errorCode', 'errorField', 'errorMessage', 'suggestedFix'];
+      return Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k));
+    }
+    return [];
+  });
+
   readonly validRowsCount = computed(() => {
     const rows = this.store.allRows() ?? [];
     return rows.filter(row => row?.isValid).length;
@@ -170,6 +186,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
                   skipCount: previewData.skipCount,
                   fileName: previewData.fileName,
                   filePath: previewData.filePath,
+                  columns: previewData.columns ?? [],
                   rows: previewData.rows ?? [],
                 }
               } as any);
@@ -345,6 +362,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
                 skipCount: previewData.skipCount,
                 fileName: previewData.fileName,
                 filePath: previewData.filePath,
+                columns: previewData.columns ?? [],
                 rows: previewData.rows ?? [],
               }
             } as any);
@@ -541,6 +559,79 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
     const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  }
+
+  hasStatusColumn(): boolean {
+    const cols = this.displayColumns();
+    return cols.includes('isValid') || cols.includes('status');
+  }
+
+  isCenteredColumn(col: string): boolean {
+    if (!col) return false;
+    const centeredCols = [
+      'rowNumber', 'isValid', 'status', 'errorMessage', 'action',
+      'effectiveDate', 'entryDate', 'createdAt', 'nextCompensationReviewDate',
+      'payType', 'frequency', 'billable', 'isBillable', 'overtimeEligibility',
+      'duration', 'amountYearlyCtc', 'variablePayAmount', 'compensationAmount'
+    ];
+    return centeredCols.includes(col) || col.toLowerCase().includes('date') || col.toLowerCase().includes('status');
+  }
+
+  isDateColumn(col: string): boolean {
+    if (!col) return false;
+    const dateCols = ['effectiveDate', 'entryDate', 'createdAt', 'nextCompensationReviewDate', 'submittedDate'];
+    return dateCols.includes(col) || col.toLowerCase().includes('date');
+  }
+
+  formatHeader(col: string): string {
+    if (!col) return '';
+    const customHeaders: { [key: string]: string } = {
+      rowNumber: 'Row #',
+      employeeId: 'Employee ID',
+      employeeName: 'Employee Name',
+      workEmail: 'Work Email',
+      effectiveDate: 'Effective Date',
+      reason: 'Reason',
+      payType: 'Pay Type',
+      overtimeEligibility: 'Overtime Eligibility',
+      frequency: 'Frequency',
+      amountYearlyCtc: 'Amount / Yearly CTC',
+      variablePay: 'Variable Pay',
+      variablePayAmount: 'Variable Pay Amount',
+      nextCompensationReviewDate: 'Next Compensation Review Date',
+      errorMessage: 'Error / Warning',
+      isValid: 'Status',
+      action: 'Action',
+      clientName: 'Client',
+      projectName: 'Project',
+      projectCode: 'Project Code',
+      phaseName: 'Phase',
+      duration: 'Duration (HH:MM)',
+      billable: 'Billable (Yes/No)',
+      taskName: 'Task Type',
+      createdAt: 'Submitted Date'
+    };
+    if (customHeaders[col]) {
+      return customHeaders[col];
+    }
+    const result = col
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/_/g, ' ')
+      .trim();
+    return result.charAt(0).toUpperCase() + result.slice(1);
+  }
+
+  formatCellValue(row: any, col: string): string {
+    if (!row) return '-';
+    let value = row[col];
+
+    if (value === null || value === undefined || value === '') {
+      return '-';
+    }
+    if (typeof value === 'boolean') {
+      return value ? 'Yes' : 'No';
+    }
+    return String(value);
   }
 
   ngOnDestroy(): void {

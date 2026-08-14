@@ -45,12 +45,12 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
 
   downloadTemplate() {
     this.isDownloadingTemplate = true;
-    this.bulkUploadService.downloadTemplate(environment.timesheetModuleId, 'csv')
+    this.bulkUploadService.downloadTemplate(1001, 'csv')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: HttpResponse<Blob>) => {
           this.isDownloadingTemplate = false;
-          let filename = `Timesheet_Import_Template - ${this.http.formattedDate}.csv`;
+          let filename = `Compensation_Import_Template - ${this.http.formattedDate}.csv`;
 
           const contentDisposition = response?.headers?.get('content-disposition');
           if (contentDisposition) {
@@ -121,8 +121,8 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
 
     const start$ = isReupload
       ? this.bulkUploadService.executeImportStage('RE_UPLOAD', employeeId, previousJobId ?? undefined, file, true).pipe(
-          switchMap(() => this.bulkUploadService.executeImportStage('UPLOAD', employeeId, undefined, file))
-        )
+        switchMap(() => this.bulkUploadService.executeImportStage('UPLOAD', employeeId, undefined, file))
+      )
       : this.bulkUploadService.executeImportStage('UPLOAD', employeeId, undefined, file);
 
     start$

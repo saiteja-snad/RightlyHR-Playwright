@@ -23,6 +23,7 @@ export class BulkUploadStore {
   readonly summary = computed(() => this.response()?.data);
   readonly allRows = computed(() => this.response()?.data.rows ?? []);
   readonly fileName = computed(() => this.response()?.data.fileName);
+  readonly columns = computed(() => this.response()?.data?.columns ?? []);
   readonly validRows = computed(() => this.allRows().filter(r => r.isValid));
 
   readonly stats = computed(() => {

@@ -11,13 +11,13 @@ import { BulkUploadResponse } from '../Interfaces/bulk-upload.models';
 export class BulkUploadService {
   private http = inject(HttpClient);
   private apiUrl = environment.ApiUrl;
-  private moduleId = environment.timesheetModuleId;
+  private moduleId = 1001;
 
   executeImportStage(stage: string, employeeId: number, jobId?: number, file?: File, isReupload = false): Observable<any> {
     const formData = new FormData();
     if (jobId) formData.append('JobId', String(jobId));
     formData.append('Stage', stage);
-    formData.append('Module', 'Timesheet');
+    formData.append('Module', 'Compensation');
     formData.append('ModuleId', this.moduleId.toString());
     formData.append('PerformedBy', String(employeeId));
     formData.append('IsReupload', String(isReupload));
@@ -45,7 +45,7 @@ export class BulkUploadService {
     );
   }
 
-  confirmUpload(rows: any[], employeeId: number, uploadedByEmployeeId?: number,filePath?:string): Observable<any> {
+  confirmUpload(rows: any[], employeeId: number, uploadedByEmployeeId?: number, filePath?: string): Observable<any> {
     const payload = {
       rows,
       employeeId,
@@ -59,10 +59,10 @@ export class BulkUploadService {
     );
   }
 
-  downloadTemplate(moduleId:number,format:string): Observable<HttpResponse<Blob>> {
+  downloadTemplate(moduleId: number, format: string): Observable<HttpResponse<Blob>> {
     return this.http.get(
       `${this.apiUrl}Import/template/download?moduleId=${moduleId}&format=${format}`,
-      { responseType: 'blob',observe: 'response'  }
+      { responseType: 'blob', observe: 'response' }
     );
 
   }

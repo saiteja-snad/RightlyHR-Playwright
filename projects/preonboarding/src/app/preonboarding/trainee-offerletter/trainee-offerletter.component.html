@@ -6,7 +6,7 @@
     <div class="component-data-content">
         <div class="component-header mb-3">Offer Letter</div>
         <div class="card custom-main-sub-content p-4">
-            <div class="letter-data-content p-4">
+            <div class="letter-data-content p-4" [style.--watermark-image]="companyLogo ? 'url(' + companyLogo + ')' : null">
                 <div class="d-flex justify-content-center">
                     <div>
                         <div class="letter-page-content" id="pdfContent1">

@@ -19,6 +19,7 @@ import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { PopupService } from '../../common-services/popup.service';
 import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';
 import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
+import { TenantService } from '../../common-services/tenant.service';
 @Component({
   selector: 'app-nda-contractor-letter',
   imports: [CommonModule, TranslateModule, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, 
@@ -29,6 +30,7 @@ import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pip
 
 export class NdaContractorLetterComponent implements OnInit, OnDestroy{
   subscription!: Subscription;
+  companyLogo: string = '';
   doxImageUrl!: any;
   prosempdata = {} as any;
   offeraccepteddata = {} as any;
@@ -55,12 +57,18 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
   panDetails={} as any;
 
   constructor(private router: Router, private http: HttpService, private modalService: NgbModal, 
-    private fb: FormBuilder, private confiramtionpopups: PopupService) { }
+    private fb: FormBuilder, private confiramtionpopups: PopupService, public tenantService: TenantService) { }
 
   ngOnInit(): void {
     const storedstep = 7;
     localStorage.setItem('currentStep', storedstep.toString());
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
+    this.subscription = this.tenantService.logo$.subscribe(logo => {
+      this.companyLogo = logo || this.tenantService.currentLogo;
+    });
+    if (!this.tenantService.isLogoLoaded) {
+      this.tenantService.verifyDomain(this.tenantService.currentDomain).subscribe();
+    }
     this.getndaLetterDetails();
     this.getprospectivempdata();
     this.offeraccepteddata = localStorage.getItem("offeraccepteddata");

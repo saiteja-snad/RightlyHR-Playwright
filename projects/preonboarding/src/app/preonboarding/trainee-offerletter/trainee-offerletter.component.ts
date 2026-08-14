@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { fetchLetterAssets, setupLetterPdfMake } from '../../../../../hrms/src/app/letters-builder-files/letter-pdf.utils';
+import { TenantService } from '../../common-services/tenant.service';
 @Component({
   selector: 'app-trainee-offerletter',
   imports: [DateformatPipe, ReactiveFormsModule, CommonModule, DetailedStepProgressbarComponent],
@@ -23,6 +24,7 @@ import { fetchLetterAssets, setupLetterPdfMake } from '../../../../../hrms/src/a
 
 export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
+  companyLogo: string = '';
   doxImageUrl!: any;
   prosempdata = {} as any;
   traineeEmpData = {} as any;
@@ -49,7 +51,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   stipendAmountmonthly!: number;
 
   constructor(private http: HttpService, private router: Router, config: NgbModalConfig, private modalService: NgbModal,
-    private fb: FormBuilder, private openPopup: PopupService,) {
+    private fb: FormBuilder, private openPopup: PopupService, public tenantService: TenantService) {
     config.backdrop = 'static';
     config.keyboard = false;
   }
@@ -58,6 +60,12 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     const storedstep = 3;
     localStorage.setItem('currentStep', storedstep.toString());
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
+    this.subscription = this.tenantService.logo$.subscribe(logo => {
+      this.companyLogo = logo || this.tenantService.currentLogo;
+    });
+    if (!this.tenantService.isLogoLoaded) {
+      this.tenantService.verifyDomain(this.tenantService.currentDomain).subscribe();
+    }
     this.getOfferLetterDetails();
     this.offeraccepteddata = localStorage.getItem("offeraccepteddata");
     this.traineeEmpData = this.prosempdata

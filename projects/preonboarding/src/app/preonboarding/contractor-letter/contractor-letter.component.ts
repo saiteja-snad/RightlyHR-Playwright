@@ -21,6 +21,7 @@ import { DetailedStepProgressbarComponent } from '../../shared/detailed-step-pro
 import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { fetchLetterAssets, setupLetterPdfMake } from '../../../../../hrms/src/app/letters-builder-files/letter-pdf.utils';
+import { TenantService } from '../../common-services/tenant.service';
 
 @Component({
   selector: 'app-contractor-letter',
@@ -30,6 +31,7 @@ import { fetchLetterAssets, setupLetterPdfMake } from '../../../../../hrms/src/a
 })
 export class ContractorLetterComponent {
   subscription!: Subscription;
+  companyLogo: string = '';
   doxImageUrl!: any;
   prosempdata = {} as any;
   offeraccepteddata = {} as any;
@@ -54,12 +56,18 @@ export class ContractorLetterComponent {
   currentDate = moment();
   selectedSymbol: string = '';
 
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private confiramtionpopups: PopupService, private sanitizer: DomSanitizer) { }
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private confiramtionpopups: PopupService, private sanitizer: DomSanitizer, public tenantService: TenantService) { }
 
   ngOnInit(): void {
     const storedstep = 3;
     localStorage.setItem('currentStep', storedstep.toString());
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
+    this.subscription = this.tenantService.logo$.subscribe(logo => {
+      this.companyLogo = logo || this.tenantService.currentLogo;
+    });
+    if (!this.tenantService.isLogoLoaded) {
+      this.tenantService.verifyDomain(this.tenantService.currentDomain).subscribe();
+    }
     this.getOfferLetterDetails();
     this.getprospectivempdata();
     this.offeraccepteddata = localStorage.getItem("offeraccepteddata");

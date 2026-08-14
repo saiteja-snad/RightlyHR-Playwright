@@ -15,6 +15,7 @@ import { TenantService } from './tenant.service';
 })
 export class LetterLogoService {
   companyLogo = '';
+  readonly fallbackLogo = '/logos/rightlyhr-full-logo.png';
 
   constructor(
     private readonly tenantService: TenantService,
@@ -22,7 +23,7 @@ export class LetterLogoService {
   ) {
     this.syncLogoContext(this.tenantService.currentLogo);
     this.tenantService.logo$.subscribe(logo => {
-      this.syncLogoContext(logo || this.tenantService.currentLogo);
+      this.syncLogoContext(logo);
     });
     this.ensureLogoLoaded();
   }
@@ -44,9 +45,10 @@ export class LetterLogoService {
     return fetchLetterAssets(isSoftCopy, this.companyLogo, this.getAssetLoaderOptions());
   }
 
-  private syncLogoContext(logo: string): void {
-    this.companyLogo = logo;
-    setLetterLogoContext(logo, this.getAssetLoaderOptions());
+  private syncLogoContext(logo?: string): void {
+    const resolvedLogo = logo || this.tenantService.currentLogo || this.fallbackLogo;
+    this.companyLogo = resolvedLogo;
+    setLetterLogoContext(resolvedLogo, this.getAssetLoaderOptions());
   }
 
   private downloadLogoBlob(filePath: string): Promise<Blob | null> {

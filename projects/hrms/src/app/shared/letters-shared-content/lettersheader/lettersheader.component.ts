@@ -15,6 +15,6 @@ export class LettersheaderComponent implements OnInit {
   }
 
   get companyLogo(): string {
-    return this.letterLogoService.companyLogo;
+    return this.letterLogoService.companyLogo || this.letterLogoService.fallbackLogo;
   }
 }

@@ -6,7 +6,7 @@ import { HttpService } from '../../../services/http.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
-import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
+import { BulkuploadSidebarTabsComponent } from '../bulkupload-sidebar-tabs/bulkupload-sidebar-tabs.component';
 import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
 import { Router, RouterModule } from '@angular/router';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
@@ -53,7 +53,7 @@ interface StageFile {
 @Component({
   selector: 'app-history-log',
   imports: [CommonModule, FormsModule, RouterModule, PaginatorModule, TabsModule, DateformatPipe, DataLoaderContentComponent, NoDataFoundComponent,
-    TranslateModule, TimesheetsTabsComponent, ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, DownloadIconComponent],
+    TranslateModule, BulkuploadSidebarTabsComponent, ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, DownloadIconComponent],
   templateUrl: './history-log.component.html',
   styleUrl: './history-log.component.scss'
 })
@@ -81,7 +81,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
   filteredTabs: any[] = [];
   navTabs = [
     { label: 'Import', link: '/settings/bulkupload-configurations/historylog', permission: { feature: 'View History Import Tab', action: 'view' } },
-    { label: 'Export', link: '/settings/bulkupload-configurations/export-history', permission: { feature: 'View History Export Tab', action: 'view' } },
+    // { label: 'Export', link: '/settings/bulkupload-configurations/export-history', permission: { feature: 'View History Export Tab', action: 'view' } },
   ];
   searchSubject = new Subject<string>();
   searchValue: any;
@@ -130,7 +130,8 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
     }
     this.dataload = true;
     const payload = {
-      employeeIds: String(employeeId),
+      // employeeIds: String(employeeId),
+      moduleId: 1001,
       jobIds: '',
       jobType: 'IMPORT',
       status: 'completed',
@@ -151,15 +152,6 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
           this.dataload = false;
         }
       });
-  }
-
-  getTransferStatusChipClass(status: string | null | undefined): Record<string, boolean> {
-    const type = (status ?? '').trim().toUpperCase();
-    return {
-      'timesheet-chip--success': type === 'COMPLETED',
-      'timesheet-chip--failure': type === 'FAILURE',
-      'timesheet-chip--default': type !== 'COMPLETED' && type !== 'FAILURE'
-    };
   }
 
   onPageChange(event: any) {
@@ -188,16 +180,6 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   }
-
-  getTransferTypeChipClass(transferType: string | null | undefined): Record<string, boolean> {
-    const type = (transferType ?? '').trim().toUpperCase();
-    return {
-      'timesheet-chip--import': type === 'IMPORT',
-      'timesheet-chip--export': type === 'EXPORT',
-      'timesheet-chip--default': type !== 'IMPORT' && type !== 'EXPORT'
-    };
-  }
-
   updateModuleInfo() {
     const urlWithoutQuery = this.router.url.split('?')[0];
     this.routeToInfoMap = {

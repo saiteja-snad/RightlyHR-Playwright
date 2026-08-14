@@ -4,7 +4,7 @@ import { SettingsHeaderComponent } from '../../../shared/settings-tabs/settings-
 import { CommonModule } from '@angular/common';
 import { filter, Subject, switchMap, takeUntil } from 'rxjs';
 import { DownloadIconComponent } from '../../../icons/download-icon/download-icon.component';
-import { BulkUploadService } from '../../../services/bulk-upload.service';
+import { BulkUploadConfigService } from '../../../services/bulk-upload-config.service';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -26,7 +26,7 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
   constructor(
     public readonly router: Router,
     public store: BulkUploadStore,
-    private bulkUploadService: BulkUploadService,
+    private bulkUploadService: BulkUploadConfigService,
     private http: HttpService,
     private conformationPopup: OpenModalService,
     private modalService: NgbModal
@@ -167,7 +167,8 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
                 rows: previewData.rows ?? [],
               }
             } as any);
-            localStorage.setItem('timesheetImportStep', '2');
+            localStorage.setItem('bulkImportStep', '2');
+            this.conformationPopup.openSuccessModal('File reuploaded successfully')
           }
           this.store.setLoading(false);
           this.store.setUploadProgress(0);

@@ -11,13 +11,13 @@ import { BulkUploadResponse } from '../Interfaces/bulk-upload.models';
 export class BulkUploadService {
   private http = inject(HttpClient);
   private apiUrl = environment.ApiUrl;
-  private moduleId = 1001;
+  private moduleId = environment.timesheetModuleId;
 
   executeImportStage(stage: string, employeeId: number, jobId?: number, file?: File, isReupload = false): Observable<any> {
     const formData = new FormData();
     if (jobId) formData.append('JobId', String(jobId));
     formData.append('Stage', stage);
-    formData.append('Module', 'Compensation');
+    formData.append('Module', 'Timesheet');
     formData.append('ModuleId', this.moduleId.toString());
     formData.append('PerformedBy', String(employeeId));
     formData.append('IsReupload', String(isReupload));

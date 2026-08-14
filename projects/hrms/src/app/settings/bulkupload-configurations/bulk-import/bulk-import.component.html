@@ -25,14 +25,14 @@
 
     <div class="main-content d-flex w-100 gap-3">
         <div class="component-left-tabs-container">
-            <!-- <app-timesheets-tabs /> -->
+            <app-bulkupload-sidebar-tabs />
         </div>
 
         <div class="timesheet-right-content">
             <div class="d-flex justify-content-center py-3">
                 <div class="client-progress-bar-container w-75">
                     <div class="progress" role="progress" [ngClass]="{'active': progress}" aria-valuenow="33"
-                        aria-valuemin="0" aria-valuemax="100" [style.width.%]="progress * 50"></div>
+                        aria-valuemin="0" aria-valuemax="100" [style.width.%]="(progress - 1) * 33.33"></div>
                     <div class="progress" role="progress" [ngClass]="{'inactive': progress}" aria-valuemin="0"
                         aria-valuemax="100" [style.width.%]="100"></div>
                     <!-- Steps -->
@@ -47,7 +47,7 @@
                 </div>
             </div>
 
-            @if(progress === 2){
+            @if(progress === 3){
             @if (store.response()) {
             <div class="d-flex align-items-center justify-content-between px-4">
                 <div>
@@ -77,31 +77,101 @@
             }
 
             <div class="step-content p-3">
-                <!-- STEP 1 -->
-                <div *ngIf="progress === 1">
-                    <div class="upload-section">
-                        <div class="file-upload-container py-4">
-                            <div class="info-section mb-4 w-75 p-4">
-                                <div class="info-header">
-                                    <img src="icons/info-icon.png" alt="alert Icon" class="alert-icon">
-                                    <span>Note:</span>
+                <!-- STEP 1: Select & Template -->
+                <div *ngIf="progress === 1" class="w-100 d-flex flex-column align-items-center py-2">
+                    <div class="w-75">
+                        <!-- Card 1: Select Module & Submodule -->
+                        <div class="card border border-light-subtle rounded-3 p-4 mb-4 shadow-sm bg-white">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <div class="progress-number active-circle">1</div>
+                                <h6 class="fw-bold mb-0 text-dark">Select Module & Submodule</h6>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-semibold small">MODULE <span
+                                            class="text-danger">*</span></label>
+                                    <div class="custom-p-select-content">
+                                        <p-select [options]="modules" optionLabel="name" [filter]="true"
+                                            [resetFilterOnHide]="true" filterBy="name" [(ngModel)]="selectedModuleId"
+                                            (change)="onModuleChange()" placeholder="Please select module"
+                                            class="form-select custom-select"></p-select>
+                                    </div>
                                 </div>
-                                <ul class="info-list">
-                                    <li>{{'Use the provided template to ensure correct column headers and format'}}</li>
-                                    <li>{{'Upload your timesheet file to import entries and save them as drafts'}}</li>
-                                    <li>{{'Enter all date fields in '}} <b>{{'MM-DD-YYYY'}}</b> {{'format'}}</li>
-                                    <li>{{'Ensure all mandatory fields are filled with valid data'}}</li>
-                                    <li>{{'Invalid or unmapped project codes and duplicate records will be flagged
-                                        during validation'}}</li>
-                                    <li>{{'If errors are found, the system will display them, and the file must be
-                                        corrected and re-uploaded'}}</li>
-                                    <li>{{'When the fields'}} <b>{{'Client Name, Project Name, Project Code, and Phase
-                                            Name'}}</b> {{' are not filled in the Excel sheet, the corresponding records
-                                        will automatically be categorized under'}} <b>{{'“No Client / No
-                                            Project.”'}}</b> {{' '}}</li>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary fw-semibold small">SUBMODULE <span
+                                            class="text-danger">*</span></label>
+                                    <div class="custom-p-select-content">
+                                        <p-select [options]="currentSubmodules" optionLabel="name" [filter]="true"
+                                            [resetFilterOnHide]="true" filterBy="name" [(ngModel)]="selectedSubmoduleId"
+                                            (change)="onSubmoduleChange()" placeholder="Please select module"
+                                            class="form-select custom-select"></p-select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Template Download & Guidelines Banner -->
+                        <div class="template-download-card rounded-3 p-4 mb-4">
+                            <div
+                                class="d-flex justify-content-between align-items-start gap-3 flex-wrap flex-md-nowrap">
+                                <div class="d-flex gap-3">
+                                    <div class="template-info-icon-wrapper flex-shrink-0">
+                                        <i class="bi bi-info-circle-fill fs-5 text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-1">
+                                            Download Template for {{ selectedModuleName }} ({{ selectedSubmoduleName }})
+                                        </h6>
+                                        <p class="text-muted small mb-0">
+                                            Download the standard formatted file template, populate your records
+                                            according to the rules below, and proceed to upload.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button
+                                    class="btn btn-outline-secondary bg-white text-dark d-flex align-items-center gap-2 px-3 py-2 text-nowrap rounded-2 border-secondary-subtle"
+                                    (click)="downloadTemplate()">
+                                    @if (isDownloadingTemplate) {
+                                    <span>Downloading...</span>
+                                    } @else {
+                                    <app-download-icon /> <span>Download Template (.XLSX)</span>
+                                    }
+                                </button>
+                            </div>
+
+                            <hr class="my-3 border-warning opacity-25">
+
+                            <div class="guidelines-section">
+                                <p class="fw-bold text-warning-emphasis mb-2 small">Important Guidelines:</p>
+                                <ul class="guidelines-list mb-0 ps-3">
+                                    <li class="small text-muted mb-1">Do not modify or remove column header titles in
+                                        the downloaded sheet.</li>
+                                    <li class="small text-muted mb-1">Dates must follow the format <b>MM-DD-YYYY</b>
+                                        (e.g. 08-15-2026).</li>
+                                    <li class="small text-muted mb-1">Mandatory fields marked with red asterisks must
+                                        not be left blank.</li>
+                                    <li class="small text-muted">Maximum file size allowed is 5 MB (.xlsx, .csv format).
+                                    </li>
                                 </ul>
                             </div>
-                            <div class="drop-zone shadow-sm w-75 py-4" (dragover)="onDragOver($event)"
+                        </div>
+
+                        <!-- Next Button -->
+                        <div class="d-flex justify-content-end mt-4">
+                            <button class="custom-btn btn-primary px-4 py-2 d-flex align-items-center gap-2"
+                                [disabled]="!selectedSubmoduleId" (click)="nextStep()">
+                                <span>Next: Upload File</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Upload File -->
+                <div *ngIf="progress === 2">
+                    <div class="upload-section">
+                        <div class="file-upload-container py-4">
+                            <div class="drop-zone shadow-sm w-75 py-5" (dragover)="onDragOver($event)"
                                 (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" [class.dragging]="isDragging"
                                 (click)="fileInput.click()">
                                 <div class="upload-content py-4">
@@ -122,15 +192,16 @@
                             </div>
                             }
                         </div>
-                        <div class="footer-content">
+                        <div class="footer-content d-flex gap-2">
+                            <button class="custom-btn btn-secondary px-4" (click)="prevStep()">Back</button>
                             <button class="custom-btn btn-primary px-5" (click)="nextStep()"
-                                [disabled]="!store.response()">Next</button>
+                                [disabled]="!store.response()">Next: Validate File</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- STEP 2 -->
-                <div *ngIf="progress === 2">
+                <!-- STEP 3: Validation & Re-verify -->
+                <div *ngIf="progress === 3">
                     <div class="validate-section">
                         <div class="d-flex flex-column">
                             @if(store.response()){
@@ -139,12 +210,12 @@
                                         class="bi bi-search"></i></span>
                                 <input type="search" #search="ngModel" [(ngModel)]="searchValue"
                                     (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
-                                    placeholder="Search by keyword..."
-                                    aria-label="Search" aria-describedby="basic-addon1">
+                                    placeholder="Search by keyword..." aria-label="Search"
+                                    aria-describedby="basic-addon1">
                             </div>
                             }
                             <div class="custom-table-content border-table"
-                                [ngClass]="{ 'preview-table-height': progress === 2}">
+                                [ngClass]="{ 'preview-table-height': progress === 3}">
                                 @if (store.loading()) {
                                 <app-data-loader-content />
                                 }@else {
@@ -152,7 +223,8 @@
                                     <thead>
                                         <tr>
                                             @for (col of displayColumns(); track col) {
-                                            <th [ngClass]="{'text-center': isCenteredColumn(col)}">{{ formatHeader(col) }}</th>
+                                            <th [ngClass]="{'text-center': isCenteredColumn(col)}">{{ formatHeader(col)
+                                                }}</th>
                                             }
                                             @if (!hasStatusColumn()) {
                                             <th class="text-center">{{'Status'}}</th>
@@ -166,25 +238,25 @@
                                             @for (col of displayColumns(); track col) {
                                             <td [ngClass]="{'text-center': isCenteredColumn(col)}">
                                                 @if (col === 'isValid' || col === 'status') {
-                                                    @if (row.isValid) {
-                                                    <img src="/icons/check-approve-icon.png" class="action-img"
-                                                        alt="Valid" />
-                                                    } @else {
-                                                    <img src="/icons/cancel-circle.png" class="action-img" alt="Invalid" />
-                                                    }
-                                                } @else if (col === 'errorMessage') {
-                                                    <div *ngIf="row.errorMessage; else noError" type="button"
-                                                        [ngbPopover]="errorMessagePop">
-                                                        <app-info-icon />
-                                                    </div>
-                                                    <ng-template #errorMessagePop>
-                                                        <p class="mb-0">{{ row.errorMessage }}</p>
-                                                    </ng-template>
-                                                    <ng-template #noError>-</ng-template>
-                                                } @else if (isDateColumn(col)) {
-                                                    {{ row[col] ? (row[col] | dateformat) : '-' }}
+                                                @if (row.isValid) {
+                                                <img src="/icons/check-approve-icon.png" class="action-img"
+                                                    alt="Valid" />
                                                 } @else {
-                                                    {{ formatCellValue(row, col) }}
+                                                <img src="/icons/cancel-circle.png" class="action-img" alt="Invalid" />
+                                                }
+                                                } @else if (col === 'errorMessage') {
+                                                <div *ngIf="row.errorMessage; else noError" type="button"
+                                                    [ngbPopover]="errorMessagePop">
+                                                    <app-info-icon />
+                                                </div>
+                                                <ng-template #errorMessagePop>
+                                                    <p class="mb-0">{{ row.errorMessage }}</p>
+                                                </ng-template>
+                                                <ng-template #noError>-</ng-template>
+                                                } @else if (isDateColumn(col)) {
+                                                {{ row[col] ? (row[col] | dateformat) : '-' }}
+                                                } @else {
+                                                {{ formatCellValue(row, col) }}
                                                 }
                                             </td>
                                             }
@@ -212,23 +284,22 @@
                                 }
                             </div>
                         </div>
-                        <div class="footer-content">
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="custom-btn btn-primary" [disabled]="isSubmitDisabled()"
-                                    (click)="confirmUpload(confirmModal, $event)">
-                                    @if (store.loading()) {
-                                    Loading...
-                                    } @else {
-                                    {{'Submit'}}
-                                    }
-                                </button>
-                            </div>
+                        <div class="footer-content d-flex gap-2">
+                            <!-- <button class="custom-btn btn-secondary px-4" (click)="prevStep()">Back</button> -->
+                            <button type="submit" class="custom-btn btn-primary" [disabled]="isSubmitDisabled()"
+                                (click)="confirmUpload(confirmModal, $event)">
+                                @if (store.loading()) {
+                                Loading...
+                                } @else {
+                                {{'Submit'}}
+                                }
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- STEP 3 -->
-                <div *ngIf="progress === 3">
+                <!-- STEP 4: Submission -->
+                <div *ngIf="progress === 4">
                     <div class="success-alert-card mb-3">
                         <img src="/icons/check-approve-icon.png" class="success-img" alt="Valid" />
                         <span class="success-message">
@@ -242,11 +313,11 @@
                                     class="bi bi-search"></i></span>
                             <input type="search" [(ngModel)]="submissionSearchValue"
                                 (ngModelChange)="onSubmissionSearchChange()" class="form-control custom-search-input"
-                                placeholder="Search by keyword..."
-                                aria-label="Search" aria-describedby="submission-search">
+                                placeholder="Search by keyword..." aria-label="Search"
+                                aria-describedby="submission-search">
                         </div>
                         <div class="custom-table-content border-table"
-                            [ngClass]="{'preview-table-height': progress === 3}">
+                            [ngClass]="{'preview-table-height': progress === 4}">
                             @if (store.loading()) {
                             <app-data-loader-content />
                             }@else {
@@ -254,7 +325,8 @@
                                 <thead>
                                     <tr>
                                         @for (col of displaySubmissionColumns(); track col) {
-                                        <th [ngClass]="{'text-center': isCenteredColumn(col)}">{{ formatHeader(col) }}</th>
+                                        <th [ngClass]="{'text-center': isCenteredColumn(col)}">{{ formatHeader(col) }}
+                                        </th>
                                         }
                                     </tr>
                                 </thead>
@@ -265,17 +337,19 @@
                                         @for (col of displaySubmissionColumns(); track col) {
                                         <td [ngClass]="{'text-center': isCenteredColumn(col)}">
                                             @if (isDateColumn(col)) {
-                                                {{ row[col] ? (row[col] | dateformat) : '-' }}
-                                            } @else if (col === 'description' || col === 'errorMessage' || col === 'reason') {
-                                                <div *ngIf="row[col]; else noTextPop" type="button" [ngbPopover]="textPopover">
-                                                    <app-info-icon />
-                                                </div>
-                                                <ng-template #textPopover>
-                                                    <p class="mb-0">{{ row[col] }}</p>
-                                                </ng-template>
-                                                <ng-template #noTextPop><span>-</span></ng-template>
+                                            {{ row[col] ? (row[col] | dateformat) : '-' }}
+                                            } @else if (col === 'description' || col === 'errorMessage' || col ===
+                                            'reason') {
+                                            <div *ngIf="row[col]; else noTextPop" type="button"
+                                                [ngbPopover]="textPopover">
+                                                <app-info-icon />
+                                            </div>
+                                            <ng-template #textPopover>
+                                                <p class="mb-0">{{ row[col] }}</p>
+                                            </ng-template>
+                                            <ng-template #noTextPop><span>-</span></ng-template>
                                             } @else {
-                                                {{ formatCellValue(row, col) }}
+                                            {{ formatCellValue(row, col) }}
                                             }
                                         </td>
                                         }

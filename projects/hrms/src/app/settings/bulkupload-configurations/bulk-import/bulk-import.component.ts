@@ -1,11 +1,10 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
-import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
+import { BulkuploadSidebarTabsComponent } from "../bulkupload-sidebar-tabs/bulkupload-sidebar-tabs.component";
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
-import { BulkUploadService } from '../../../services/bulk-upload.service';
+import { BulkUploadConfigService } from '../../../services/bulk-upload-config.service';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
@@ -21,24 +20,93 @@ import { PaginatorModule } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 import { environment } from '../../../../environments/environment';
+import { HttpResponse } from '@angular/common/http';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-bulk-import',
-  imports: [TimesheetsTabsComponent, CommonModule,
+  imports: [BulkuploadSidebarTabsComponent, CommonModule,
     NoDataFoundComponent, InfoIconComponent,
     DateformatPipe, NgbPopoverModule, FormsModule, ConfirmationIconComponent,
-    ModuleInformationComponent, ModuleInfoIconComponent, DataLoaderContentComponent, PaginatorModule, DownloadIconComponent],
+    ModuleInformationComponent, ModuleInfoIconComponent, DataLoaderContentComponent, PaginatorModule, DownloadIconComponent, Select],
   templateUrl: './bulk-import.component.html',
   styleUrl: './bulk-import.component.scss'
 })
 
 export class BulkImportComponent implements OnInit, OnDestroy {
   steps = [
-    { id: 1, name: 'Upload File' },
-    { id: 2, name: 'Validation' },
-    { id: 3, name: 'Submission' }
+    { id: 1, name: 'Select & Template' },
+    { id: 2, name: 'Upload File' },
+    { id: 3, name: 'Validation & Re-verify' },
+    { id: 4, name: 'Submission' }
   ];
   progress = 1;
+
+  modules = [
+    // {
+    //   id: 1000,
+    //   name: 'Employee Data',
+    //   submodules: [
+    //     { id: 10001, name: 'Personal Details & Contact' },
+    //     { id: 10002, name: 'Job & Employment Details' },
+    //     { id: 10003, name: 'Bank & Statutory Info' }
+    //   ]
+    // },
+    {
+      id: 1001,
+      name: 'Compensation',
+      submodules: [
+        { id: 10011, name: 'Compensation Import' }
+      ]
+    },
+    // {
+    //   id: 1002,
+    //   name: 'Timesheet',
+    //   submodules: [
+    //     { id: 10021, name: 'Timesheet Entries' },
+    //     { id: 10022, name: 'Project Task Allocations' }
+    //   ]
+    // },
+    // {
+    //   id: 1003,
+    //   name: 'Attendance & Leave',
+    //   submodules: [
+    //     { id: 10031, name: 'Attendance Logs' },
+    //     { id: 10032, name: 'Leave Balances & Allocations' }
+    //   ]
+    // }
+  ];
+
+  selectedModuleId: number = 1001;
+  selectedSubmoduleId: number = 10011;
+
+  get currentSubmodules() {
+    const mod = this.modules.find(m => m.id === Number(this.selectedModuleId));
+    return mod ? mod.submodules : [];
+  }
+
+  get selectedModuleName(): string {
+    const mod = this.modules.find(m => m.id === Number(this.selectedModuleId));
+    return mod ? mod.name : 'Module';
+  }
+
+  get selectedSubmoduleName(): string {
+    const sub = this.currentSubmodules.find(s => s.id === Number(this.selectedSubmoduleId));
+    return sub ? sub.name : 'Submodule';
+  }
+
+  onModuleChange() {
+    const subs = this.currentSubmodules;
+    if (subs && subs.length > 0) {
+      this.selectedSubmoduleId = subs[0].id;
+    } else {
+      this.selectedSubmoduleId = 0;
+    }
+  }
+
+  onSubmoduleChange() {
+  }
+
   destroy$: Subject<boolean> = new Subject<boolean>();
   empdata = {} as any;
   employeeId: any;
@@ -141,7 +209,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   constructor(private conformationPopup: OpenModalService,
     private modalService: NgbModal,
     public store: BulkUploadStore,
-    private service: BulkUploadService,
+    private service: BulkUploadConfigService,
     private router: Router,
     private http: HttpService,
   ) { }
@@ -150,22 +218,22 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.employeeId = this.empdata?.employeeId;
     this.updateModuleInfo();
-    const savedStep = localStorage.getItem('timesheetImportStep');
+    const savedStep = localStorage.getItem('bulkImportStep');
     this.progress = savedStep ? +savedStep : 1;
     const savedJobId = this.store.jobId();
     const savedStage = this.store.currentStage();
 
-    if (savedStep === '3' && savedStage === 'IMPORT') {
+    if (savedStep === '4' && savedStage === 'IMPORT') {
       const savedSubmissionJobId = this.store.submissionJobId();
       if (savedSubmissionJobId) {
         this.submissionJobId = savedSubmissionJobId;
         this.loadTimesheetDetails();
       } else {
         this.store.reset();
-        localStorage.removeItem('timesheetImportStep');
+        localStorage.removeItem('bulkImportStep');
         this.progress = 1;
       }
-    } else if (savedStep === '2' && savedJobId && savedStage === 'VALIDATE') {
+    } else if (savedStep === '3' && savedJobId && savedStage === 'VALIDATE') {
       this.store.setLoading(true);
       this.service.getImportPreview(savedJobId)
         .pipe(takeUntil(this.destroy$))
@@ -195,14 +263,14 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           },
           error: () => {
             this.store.reset();
-            localStorage.removeItem('timesheetImportStep');
+            localStorage.removeItem('bulkImportStep');
             this.progress = 1;
             this.store.setLoading(false);
           }
         });
     } else {
       this.store.reset();
-      localStorage.removeItem('timesheetImportStep');
+      localStorage.removeItem('bulkImportStep');
     }
     this.searchSubject.pipe(
       debounceTime(300),
@@ -315,12 +383,14 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.conformationPopup.openLoaderModal('Uploading...');
 
     const previousJobId = isReupload ? this.store.jobId() : undefined;
+    const modId = Number(this.selectedModuleId) || 1001;
+    const modName = this.selectedModuleName || 'Compensation';
 
     const start$ = isReupload
-      ? this.service.executeImportStage('RE_UPLOAD', this.employeeId, previousJobId ?? undefined, file, true).pipe(
-          switchMap(() => this.service.executeImportStage('UPLOAD', this.employeeId, undefined, file))
-        )
-      : this.service.executeImportStage('UPLOAD', this.employeeId, undefined, file);
+      ? this.service.executeImportStage('RE_UPLOAD', this.employeeId, previousJobId ?? undefined, file, true, modId, modName).pipe(
+        switchMap(() => this.service.executeImportStage('UPLOAD', this.employeeId, undefined, file, false, modId, modName))
+      )
+      : this.service.executeImportStage('UPLOAD', this.employeeId, undefined, file, false, modId, modName);
 
     start$
       .pipe(
@@ -330,12 +400,12 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           this.store.setJobId(jobId);
           this.store.setCurrentStage('UPLOAD');
           if (modal) modal.close();
-          return this.service.executeImportStage('PARSE', this.employeeId, jobId);
+          return this.service.executeImportStage('PARSE', this.employeeId, jobId, undefined, false, modId, modName);
         }),
         switchMap(() => {
           const jobId = this.store.jobId()!;
           this.store.setCurrentStage('PARSE');
-          return this.service.executeImportStage('VALIDATE', this.employeeId, jobId);
+          return this.service.executeImportStage('VALIDATE', this.employeeId, jobId, undefined, false, modId, modName);
         }),
         switchMap(() => {
           const jobId = this.store.jobId()!;
@@ -366,7 +436,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
                 rows: previewData.rows ?? [],
               }
             } as any);
-            this.setStep(2);
+            this.setStep(3);
           }
           this.store.setLoading(false);
           this.store.setUploadProgress(0);
@@ -401,12 +471,15 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     }
 
     const jobId = this.store.jobId()!;
+    const modId = Number(this.selectedModuleId) || 1001;
+    const modName = this.selectedModuleName || 'Compensation';
+
     this.store.setLoading(true);
-    this.service.executeImportStage('TRANSFORM', this.employeeId, jobId)
+    this.service.executeImportStage('TRANSFORM', this.employeeId, jobId, undefined, false, modId, modName)
       .pipe(
         switchMap((transformRes: any) => {
           const currentJobId = transformRes?.data?.jobId ?? jobId;
-          return this.service.executeImportStage('IMPORT', this.employeeId, currentJobId);
+          return this.service.executeImportStage('IMPORT', this.employeeId, currentJobId, undefined, false, modId, modName);
         }),
         takeUntil(this.destroy$)
       ).subscribe({
@@ -414,7 +487,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           this.store.setLoading(false);
           this.modalService.dismissAll();
           if (importRes?.success !== false) {
-            this.conformationPopup.openSuccessModal("Timesheet entiries submitted successfully")
+            this.conformationPopup.openSuccessModal("Data submitted successfully")
             this.totalSuccessCount = importRes.data?.successCount || 0;
             this.failureCount = importRes.data?.failureCount || 0;
             this.totalCount = importRes.data?.totalRows || 0;
@@ -425,7 +498,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
             this.submissionPage = 1;
             this.submissionFirst = 0;
             this.submissionSearchValue = '';
-            this.setStep(3);
+            this.setStep(4);
             this.loadTimesheetDetails();
           } else {
             this.conformationPopup.openErrorModal(importRes.message || 'Failed to upload data');
@@ -481,12 +554,15 @@ export class BulkImportComponent implements OnInit, OnDestroy {
 
   downloadTemplate() {
     this.isDownloadingTemplate = true;
-    this.service.downloadTemplate(environment.timesheetModuleId, 'csv')
+    const targetModuleId = Number(this.selectedModuleId) || 1001;
+    const targetModuleName = this.selectedModuleName || 'Import';
+
+    this.service.downloadTemplate(targetModuleId, 'csv')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: HttpResponse<Blob>) => {
           this.isDownloadingTemplate = false;
-          let filename = `Timesheet_Import_Template - ${this.http.formattedDate}.csv`;
+          let filename = `${targetModuleName.replace(/\s+/g, '_')}_Import_Template - ${this.http.formattedDate}.csv`;
 
           const contentDisposition = response?.headers?.get('content-disposition');
           if (contentDisposition) {
@@ -523,7 +599,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.searchValue = '';
     this.searchTerm.set('');
     this.setStep(1);
-    localStorage.removeItem('timesheetImportStep');
+    localStorage.removeItem('bulkImportStep');
   }
 
   navigateToHistoryView() {
@@ -534,11 +610,11 @@ export class BulkImportComponent implements OnInit, OnDestroy {
 
   setStep(step: number) {
     this.progress = step;
-    localStorage.setItem('timesheetImportStep', step.toString());
+    localStorage.setItem('bulkImportStep', step.toString());
   }
 
   nextStep() {
-    if (this.progress < 3) {
+    if (this.progress < 4) {
       this.setStep(this.progress + 1);
     }
   }

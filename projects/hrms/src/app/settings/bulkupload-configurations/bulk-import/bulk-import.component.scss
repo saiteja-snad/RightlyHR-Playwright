@@ -306,3 +306,26 @@
    height: calc(100dvh - 17rem);
    overflow-y: auto;
 }
+
+.template-download-card {
+   background-color: #fffdf0;
+   border: 1px solid #ffe58f;
+
+   .template-info-icon-wrapper {
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      background-color: #fff3c4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
+
+   .guidelines-list {
+      li {
+         list-style-type: disc;
+         color: #666;
+         font-size: 13px;
+      }
+   }
+}

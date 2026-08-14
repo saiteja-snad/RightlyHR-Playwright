@@ -2,13 +2,13 @@
     <div class="component-header-content d-flex justify-content-between align-items-center">
         <app-settings-header />
         <div class="d-flex align-items-center gap-2">
-            <button class="custom-btn btn-secondary d-flex align-items-center gap-1" (click)="downloadTemplate()">
+            <!-- <button class="custom-btn btn-secondary d-flex align-items-center gap-1" (click)="downloadTemplate()">
                 @if (isDownloadingTemplate) {
                 Downloading...
                 } @else {
                 <app-download-icon /> {{'Download Template'}}
                 }
-            </button>
+            </button> -->
             @if (store.response()) {
             <div>
                 <button class="float-end custom-btn btn-secondary" (click)="reUploadInput.click()">

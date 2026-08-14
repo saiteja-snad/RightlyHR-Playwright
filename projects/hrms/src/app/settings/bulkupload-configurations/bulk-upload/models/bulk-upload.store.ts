@@ -6,6 +6,7 @@ export type FilterType = 'ALL' | 'VALID' | 'INVALID' | 'INSERT' | 'UPDATE' | 'SK
 const JOB_ID_KEY = 'bulkImportJobId';
 const STAGE_KEY = 'bulkImportStage';
 const SUBMISSION_JOB_ID_KEY = 'bulkImportSubmissionJobId';
+const PARENT_JOB_ID_KEY = 'bulkImportParentJobId';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class BulkUploadStore {
   readonly jobId = signal<number | null>(+localStorage.getItem(JOB_ID_KEY)! || null);
   readonly currentStage = signal<string>(localStorage.getItem(STAGE_KEY) || '');
   readonly submissionJobId = signal<number | null>(+localStorage.getItem(SUBMISSION_JOB_ID_KEY)! || null);
+  readonly parentJobId = signal<number | null>(+localStorage.getItem(PARENT_JOB_ID_KEY)! || null);
 
   readonly summary = computed(() => this.response()?.data);
   readonly allRows = computed(() => this.response()?.data.rows ?? []);
@@ -80,6 +82,12 @@ export class BulkUploadStore {
     else localStorage.removeItem(SUBMISSION_JOB_ID_KEY);
   }
 
+  setParentJobId(id: number | null) {
+    this.parentJobId.set(id);
+    if (id != null) localStorage.setItem(PARENT_JOB_ID_KEY, String(id));
+    else localStorage.removeItem(PARENT_JOB_ID_KEY);
+  }
+
   reset() {
     this.response.set(null);
     this.error.set(null);
@@ -89,5 +97,6 @@ export class BulkUploadStore {
     this.setJobId(null);
     this.setCurrentStage('');
     this.setSubmissionJobId(null);
+    this.setParentJobId(null);
   }
 }

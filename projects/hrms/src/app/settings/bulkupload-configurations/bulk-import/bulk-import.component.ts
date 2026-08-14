@@ -134,19 +134,16 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     let csvContent = headers.join(',') + '\n';
 
     invalidRows.forEach(row => {
+      const combinedErrors = this.formatErrorsForCsv(row);
       const rowValues = cols.map(c => {
-        let val = row[c] ?? '';
+        let val = c === 'errorMessage' ? combinedErrors : (row[c] ?? '');
         if (typeof val === 'string') {
           val = `"${val.replace(/"/g, '""')}"`;
         }
         return val;
       });
       if (!cols.includes('errorMessage')) {
-        let errVal = row.errorMessage ?? '';
-        if (typeof errVal === 'string') {
-          errVal = `"${errVal.replace(/"/g, '""')}"`;
-        }
-        rowValues.push(errVal);
+        rowValues.push(`"${combinedErrors.replace(/"/g, '""')}"`);
       }
       csvContent += rowValues.join(',') + '\n';
     });
@@ -162,6 +159,9 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   }
 
   @ViewChild('confirmModal') confirmModal!: TemplateRef<any>;
+  @ViewChild('errorsModal') errorsModal!: TemplateRef<any>;
+  selectedErrorRow: any = null;
+  selectedRowErrors: { field: string; message: string; suggestedFix: string }[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   empdata = {} as any;
   employeeId: any;
@@ -192,6 +192,11 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           const val = row[key];
           if (val === null || val === undefined) return '';
           if (typeof val === 'boolean') return val ? 'yes valid' : 'no invalid';
+          if (Array.isArray(val)) {
+            return val.map((item: any) =>
+              item && typeof item === 'object' ? Object.values(item).join(' ') : String(item)
+            ).join(' ').toLowerCase();
+          }
           return String(val).toLowerCase();
         });
       rowValues.push(statusText);
@@ -200,26 +205,30 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   });
 
   readonly displayColumns = computed(() => {
-    const cols = this.store.columns();
-    if (cols && cols.length > 0) {
-      return cols;
+    const ignoreKeys = ['isValid', 'action', 'errorCode', 'errorField', 'suggestedFix', 'projectMeta', 'clientMeta', 'phaseMeta', 'compensationAmount', 'isVariablePay', 'errors', 'hasErrors'];
+    let cols = this.store.columns() ?? [];
+    if (cols.length > 0) {
+      cols = cols.filter(k => !ignoreKeys.includes(k) && !k.startsWith('parsed'));
+    } else {
+      const rows = this.store.filteredRows();
+      if (rows && rows.length > 0) {
+        cols = Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k) && !k.startsWith('parsed'));
+      }
     }
-    const rows = this.store.filteredRows();
-    if (rows && rows.length > 0) {
-      const ignoreKeys = ['isValid', 'action', 'errorCode', 'errorField', 'suggestedFix', 'projectMeta', 'clientMeta', 'phaseMeta', 'compensationAmount', 'isVariablePay'];
-      return Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k) && !k.startsWith('parsed'));
+    if (cols.length > 0 && !cols.includes('errorMessage')) {
+      cols = [...cols, 'errorMessage'];
     }
-    return [];
+    return cols;
   });
 
   readonly displaySubmissionColumns = computed(() => {
     const cols = this.store.columns();
     if (cols && cols.length > 0) {
-      return cols.filter(c => c !== 'errorMessage' && c !== 'errorCode' && c !== 'suggestedFix');
+      return cols.filter(c => c !== 'errorMessage' && c !== 'errorCode' && c !== 'errorField' && c !== 'suggestedFix' && c !== 'errors' && c !== 'hasErrors');
     }
     const rows = this.submissionRows();
     if (rows && rows.length > 0) {
-      const ignoreKeys = ['timesheetEntryId', 'projectMeta', 'clientMeta', 'phaseMeta', 'employeeId', 'employeeMeta', 'id', 'isValid', 'action', 'errorCode', 'errorField', 'errorMessage', 'suggestedFix', 'compensationAmount', 'isVariablePay'];
+      const ignoreKeys = ['timesheetEntryId', 'projectMeta', 'clientMeta', 'phaseMeta', 'employeeId', 'employeeMeta', 'id', 'isValid', 'action', 'errorCode', 'errorField', 'errorMessage', 'suggestedFix', 'compensationAmount', 'isVariablePay', 'errors', 'hasErrors'];
       return Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k) && !k.startsWith('parsed'));
     }
     return [];
@@ -334,9 +343,12 @@ export class BulkImportComponent implements OnInit, OnDestroy {
             this.store.setLoading(false);
           }
         });
+    } else if (savedStep === '2' && this.store.parentJobId()) {
+      this.progress = 2;
     } else {
       this.store.reset();
       localStorage.removeItem('bulkImportStep');
+      this.progress = 1;
     }
     this.searchSubject.pipe(
       debounceTime(300),
@@ -452,6 +464,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.conformationPopup.openLoaderModal('Uploading...');
 
     const previousJobId = isReupload ? this.store.jobId() : undefined;
+    const parentJobId = !isReupload ? (this.store.parentJobId() ?? undefined) : undefined;
     const modId = Number(this.selectedModuleId) || 1001;
     const modName = this.selectedModuleName || 'Compensation';
 
@@ -459,7 +472,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       ? this.service.executeImportStage('RE_UPLOAD', this.employeeId, previousJobId ?? undefined, file, true, modId, modName).pipe(
         switchMap(() => this.service.executeImportStage('UPLOAD', this.employeeId, undefined, file, false, modId, modName))
       )
-      : this.service.executeImportStage('UPLOAD', this.employeeId, undefined, file, false, modId, modName);
+      : this.service.executeImportStage('UPLOAD', this.employeeId, undefined, file, false, modId, modName, parentJobId);
 
     start$
       .pipe(
@@ -467,6 +480,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           const jobId = uploadRes?.data?.jobId ?? uploadRes?.jobId;
           if (!jobId) throw new Error('Upload failed: no job ID returned');
           this.store.setJobId(jobId);
+          this.store.setParentJobId(null);
           this.store.setCurrentStage('UPLOAD');
           if (modal) modal.close();
           return this.service.executeImportStage('PARSE', this.employeeId, jobId, undefined, false, modId, modName);
@@ -771,6 +785,50 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       return value ? 'Yes' : 'No';
     }
     return String(value);
+  }
+
+  getRowErrors(row: any): { field: string; message: string; suggestedFix: string }[] {
+    if (!row) return [];
+    if (Array.isArray(row.errors) && row.errors.length > 0) {
+      return row.errors.map((err: any) => ({
+        field: err?.field || err?.errorField || '-',
+        message: err?.message || err?.errorMessage || '-',
+        suggestedFix: err?.suggestedFix || '-'
+      }));
+    }
+    if (row.errorMessage) {
+      return [{
+        field: row.errorField || '-',
+        message: row.errorMessage,
+        suggestedFix: row.suggestedFix || '-'
+      }];
+    }
+    return [];
+  }
+
+  hasRowErrors(row: any): boolean {
+    return this.getRowErrors(row).length > 0;
+  }
+
+  openErrorsModal(row: any, event?: Event) {
+    event?.preventDefault();
+    event?.stopPropagation();
+    this.selectedErrorRow = row;
+    this.selectedRowErrors = this.getRowErrors(row);
+    if (!this.errorsModal || this.selectedRowErrors.length === 0) {
+      return;
+    }
+    this.modalService.open(this.errorsModal, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
+  }
+
+  formatErrorsForCsv(row: any): string {
+    return this.getRowErrors(row)
+      .map(err => `${err.field}: ${err.message}${err.suggestedFix && err.suggestedFix !== '-' ? ` (${err.suggestedFix})` : ''}`)
+      .join('; ');
   }
 
   ngOnDestroy(): void {

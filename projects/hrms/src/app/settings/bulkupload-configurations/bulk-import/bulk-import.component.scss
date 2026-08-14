@@ -352,3 +352,49 @@
       }
    }
 }
+
+.error-view-link {
+   color: var(--primary-color);
+   font-weight: 600;
+   font-size: var(--fontsize12);
+   text-decoration: underline;
+   cursor: pointer;
+
+   &:hover {
+      color: var(--primary-color);
+      opacity: 0.8;
+   }
+}
+
+.errors-modal-table.popup-table-wrapper {
+   border-radius: 0.5rem;
+
+   .popup-table-scroll-container {
+      border-bottom: 1px solid var(--accordian-table-border-color) !important;
+      border-radius: 0.5rem;
+   }
+
+   th:first-child {
+      border-top-left-radius: 0.325rem;
+   }
+
+   th:last-child {
+      border-top-right-radius: 0.325rem;
+   }
+
+   .popup-table {
+      table-layout: auto;
+      width: max-content;
+      min-width: 100%;
+
+      th,
+      td {
+         white-space: nowrap;
+      }
+
+      td:nth-child(2),
+      td:nth-child(3) {
+         white-space: normal;
+      }
+   }
+}

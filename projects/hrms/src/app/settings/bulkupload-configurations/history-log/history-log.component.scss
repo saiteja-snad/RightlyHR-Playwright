@@ -62,3 +62,21 @@
     min-width: 40px;
     display: inline-block;
 }
+
+.job-details-table.popup-table-wrapper {
+    .popup-table-scroll-container {
+        border-bottom: 1px solid var(--accordian-table-border-color) !important;
+        border-radius: 0.5rem;
+        max-height: 50vh;
+    }
+
+    .popup-table {
+        table-layout: auto;
+        min-width: 100%;
+
+        th:first-child,
+        td:first-child {
+            white-space: nowrap;
+        }
+    }
+}

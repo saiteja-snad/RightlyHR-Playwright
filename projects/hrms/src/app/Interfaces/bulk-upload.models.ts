@@ -1,3 +1,10 @@
+export interface BulkUploadRowError {
+  field?: string;
+  code?: string;
+  message?: string;
+  suggestedFix?: string;
+}
+
 export interface BulkUploadRow {
   rowNumber?: number;
   employeeId?: string;
@@ -54,6 +61,8 @@ export interface BulkUploadRow {
   errorField?: string;
   errorMessage?: string;
   suggestedFix?: string;
+  hasErrors?: boolean;
+  errors?: BulkUploadRowError[];
   existingEntryStatus?: string;
   taskName?: string;
   [key: string]: any;

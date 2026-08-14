@@ -1,27 +1,34 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
-import { BulkuploadSidebarTabsComponent } from '../bulkupload-sidebar-tabs/bulkupload-sidebar-tabs.component';
 import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
 import { Router, RouterModule } from '@angular/router';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { PaginatorModule } from 'primeng/paginator';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
+
+interface ChildJob {
+  jobId: number;
+  jobReference?: string;
+  status?: string;
+}
 
 interface HistoryBatchItem {
   jobId: number;
   jobReference: string;
   moduleName: string;
+  moduleId?: number;
   status: string;
   currentStage: string;
   jobType: string;
@@ -29,6 +36,10 @@ interface HistoryBatchItem {
   totalRows: number;
   successRows: number;
   failureRows: number;
+  hasErrors?: boolean;
+  hasChildJobs?: boolean;
+  parentJobId?: number | null;
+  childJobs?: (ChildJob | number | string)[];
   createdBy: { id: number; name: string; fusionEmpId: string; workMail: string };
   createdOn: string;
   lastUpdatedOn?: string;
@@ -38,7 +49,7 @@ interface HistoryBatchItem {
   subStatus: string;
 }
 
-type FileType = 'ERROR_DETAILS' | 'SUCCESS_DETAILS' | 'SUMMARY';
+type FileType = 'ERROR_DETAILS' | 'SUCCESS_DETAILS' | 'SUMMARY' | 'FAILED_ROWS' | 'SUCCESS_ROWS' | 'INPUT';
 
 interface StageFile {
   id: number;
@@ -85,8 +96,18 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
   ];
   searchSubject = new Subject<string>();
   searchValue: any;
+  @ViewChild('jobDetailsModal') jobDetailsModal!: TemplateRef<any>;
+  selectedParentJob: HistoryBatchItem | null = null;
+  detailJobs: HistoryBatchItem[] = [];
+  detailsLoading = false;
 
-  constructor(private http: HttpService, private router: Router, private rbac: RbacService) { }
+  constructor(
+    private http: HttpService,
+    private router: Router,
+    private rbac: RbacService,
+    private store: BulkUploadStore,
+    private modalService: NgbModal
+  ) { }
 
   navigatetomy() {
     this.router.navigate(['project-management/timesheet/mytimesheet']);
@@ -142,8 +163,9 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
     this.http.postdata('jobs/query', payload)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          this.historylog = Array.isArray(res?.data) ? res.data : [];
-          this.collectionSize = res?.paginatedData?.totalRecords ?? 0;
+          const jobs: HistoryBatchItem[] = Array.isArray(res?.data) ? res.data : [];
+          this.historylog = jobs.filter(job => !job.parentJobId);
+          this.collectionSize = res?.paginatedData?.totalRecords ?? this.historylog.length;
           this.dataload = false;
         },
         error: () => {
@@ -209,19 +231,42 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       });
   }
 
-  downloadErrorFile(item: HistoryBatchItem) {
-    const errorFile = item.stageFiles?.find(
-      f => f.fileType === 'ERROR_DETAILS' && f.stageName === 'VALIDATE'
-    );
+  getStageFile(item: HistoryBatchItem, fileType: FileType): StageFile | undefined {
+    return item?.stageFiles?.find(f => f.fileType === fileType);
+  }
 
-    if (!errorFile?.filePath) {
-      console.warn('No error file available');
+  hasStageFile(item: HistoryBatchItem, fileType: FileType): boolean {
+    return !!this.getStageFile(item, fileType)?.filePath;
+  }
+
+  downloadStageFile(item: HistoryBatchItem, fileType: FileType) {
+    const stageFile = this.getStageFile(item, fileType);
+    if (!stageFile?.filePath) {
       return;
     }
 
-    const filepath = errorFile.filePath;
-    const fileName = `${item.jobReference}_Failed_Records.csv`;
+    const defaultNames: Record<string, string> = {
+      SUCCESS_ROWS: `${item.jobReference}_Success_Records.csv`,
+      FAILED_ROWS: `${item.jobReference}_Failed_Records.csv`,
+      ERROR_DETAILS: `${item.jobReference}_Failed_Records.csv`
+    };
+    const fileName = stageFile.fileName || defaultNames[fileType] || 'download';
+    this.downloadNamedFile(stageFile.filePath, fileName);
+  }
 
+  downloadErrorFile(item: HistoryBatchItem) {
+    const failedRows = this.getStageFile(item, 'FAILED_ROWS');
+    const errorDetails = this.getStageFile(item, 'ERROR_DETAILS');
+    const stageFile = failedRows?.filePath ? failedRows : errorDetails;
+
+    if (!stageFile?.filePath) {
+      return;
+    }
+
+    this.downloadNamedFile(stageFile.filePath, stageFile.fileName || `${item.jobReference}_Failed_Records.csv`);
+  }
+
+  private downloadNamedFile(filepath: string, fileName: string) {
     this.http.DownloadDataWithQuery('FileSystem/Downloadfile', filepath)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -236,6 +281,68 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
         },
         error: (reason) => console.log(reason),
       });
+  }
+
+  canRetry(item: HistoryBatchItem): boolean {
+    return item?.hasErrors === true && item?.hasChildJobs === false;
+  }
+
+  canViewDetails(item: HistoryBatchItem): boolean {
+    return item?.hasChildJobs === true;
+  }
+
+  hasActions(item: HistoryBatchItem): boolean {
+    return this.canRetry(item) || this.canViewDetails(item);
+  }
+
+  getJobType(item: HistoryBatchItem): string {
+    if (this.selectedParentJob && item.jobId === this.selectedParentJob.jobId) {
+      return 'Parent';
+    }
+    return item.parentJobId ? 'Child' : 'Parent';
+  }
+
+  openJobDetails(item: HistoryBatchItem) {
+    this.selectedParentJob = item;
+    this.detailJobs = [item];
+    this.detailsLoading = true;
+    this.modalService.open(this.jobDetailsModal, { centered: true, size: 'lg', backdrop: 'static' });
+
+    this.http.postdata('jobs/query', {
+      moduleId: 1001,
+      jobIds: '',
+      jobType: 'IMPORT',
+      parentJobId: item.jobId,
+      pageNumber: 1,
+      pageSize: 50,
+      searchTerm: ''
+    }).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (childRes: any) => {
+        const children: HistoryBatchItem[] = (Array.isArray(childRes?.data) ? childRes.data : [])
+          .filter((child: HistoryBatchItem) => child.jobId !== item.jobId);
+        this.detailJobs = [item, ...children];
+        this.detailsLoading = false;
+      },
+      error: () => {
+        this.detailsLoading = false;
+      }
+    });
+  }
+
+  retryJob(item: HistoryBatchItem) {
+    const parentJobId = Number(item?.jobId);
+    if (!parentJobId || !this.canRetry(item)) {
+      return;
+    }
+
+    this.store.reset();
+    this.store.setParentJobId(parentJobId);
+    localStorage.setItem('bulkImportStep', '2');
+    if (item.moduleId) {
+      localStorage.setItem('bulkImportModuleId', String(item.moduleId));
+    }
+
+    this.router.navigate(['/settings/bulkupload-configurations/bulk-import']);
   }
 
   isActiveRoute(link: string): boolean {

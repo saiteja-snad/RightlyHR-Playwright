@@ -35,6 +35,7 @@
                         <th class="text-center">{{'Imported On' | translate }}</th>
                         <th class="text-center">{{'Imported By' | translate }}</th>
                         <th class="text-center">{{'Status' | translate }}</th>
+                        <th class="text-center">{{'Action' | translate }}</th>
                     </thead>
                     <tbody>
                         <ng-container *ngIf="historylog.length > 0; else noDataTemplate">
@@ -51,12 +52,23 @@
                                     <ng-template #noData>-</ng-template>
                                 </td>
                                 <td class="text-center">{{item.totalRows || '-'}}</td>
-                                <td class="text-center">{{item.successRows || '-'}}</td>
                                 <td class="text-center">
                                     <div class="d-flex align-items-center justify-content-center">
-                                        <span class="failure-count ">{{ item.failureRows || '-' }}</span>
-                                        @if (item.failureRows > 0) {
-                                        <span class="cursor-pointer" (click)="downloadErrorFile(item)">
+                                        <span class="failure-count">{{ item.successRows || '-' }}</span>
+                                        @if (hasStageFile(item, 'SUCCESS_ROWS')) {
+                                        <span class="cursor-pointer" (click)="downloadStageFile(item, 'SUCCESS_ROWS')"
+                                            title="Download Success Records">
+                                            <app-download-icon />
+                                        </span>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <span class="failure-count">{{ item.failureRows || '-' }}</span>
+                                        @if (item.failureRows > 0 && (hasStageFile(item, 'FAILED_ROWS') || hasStageFile(item, 'ERROR_DETAILS'))) {
+                                        <span class="cursor-pointer" (click)="downloadErrorFile(item)"
+                                            title="Download Failed Records">
                                             <app-download-icon />
                                         </span>
                                         }
@@ -65,6 +77,31 @@
                                 <td class="text-center">{{item.createdOn ? (item.createdOn | dateformat) : '-'}}</td>
                                 <td class="text-center">{{item.createdBy?.name ?? '-'}}</td>
                                 <td class="text-center">{{ toTitleCase(item.status) }}</td>
+                                <td class="text-center">
+                                    @if (hasActions(item)) {
+                                    <div class="dropdown">
+                                        <a data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </a>
+                                        <ul class="dropdown-menu custom-dropdown-menu">
+                                            @if (canRetry(item)) {
+                                            <li>
+                                                <a class="dropdown-item" (click)="retryJob(item)">
+                                                    <i class="bi bi-arrow-clockwise me-2"></i>{{ 'Retry' | translate }}
+                                                </a>
+                                            </li>
+                                            }
+                                            @if (canViewDetails(item)) {
+                                            <li>
+                                                <a class="dropdown-item" (click)="openJobDetails(item)">
+                                                    <i class="bi bi-eye me-2"></i>{{ 'View Details' | translate }}
+                                                </a>
+                                            </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    }
+                                </td>
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>
@@ -93,6 +130,96 @@
                 </div>
             </div>
 </div>
+
+<ng-template #jobDetailsModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Job Details</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper job-details-table">
+                <div class="popup-table-scroll-container">
+                    @if (detailsLoading) {
+                    <app-data-loader-content />
+                    } @else {
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Job ID' | translate }}</th>
+                                <th>{{ 'Type' | translate }}</th>
+                                <th>{{ 'Source File' | translate }}</th>
+                                <th>{{ 'Total Records' | translate }}</th>
+                                <th>{{ 'Success Records' | translate }}</th>
+                                <th>{{ 'Failed Records' | translate }}</th>
+                                <th>{{ 'Imported On' | translate }}</th>
+                                <th>{{ 'Imported By' | translate }}</th>
+                                <th>{{ 'Status' | translate }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (detailJobs.length > 0) {
+                            @for (job of detailJobs; track job.jobId) {
+                            <tr>
+                                <td>{{ job.jobReference || job.jobId || '-' }}</td>
+                                <td>{{ getJobType(job) }}</td>
+                                <td>
+                                    @if (job.filePath) {
+                                    <span (click)="downloadFile(job.filePath!)">
+                                        <img *ngIf="job.filePath.endsWith('.xlsx') || job.filePath.endsWith('.xls')"
+                                            src="/project-mangement-icons/excel-icon.png" alt="Excel" class="image-icon">
+                                        <img *ngIf="job.filePath.endsWith('.csv')"
+                                            src="/project-mangement-icons/csv-icon.png" alt="CSV" class="image-icon">
+                                    </span>
+                                    } @else {
+                                    -
+                                    }
+                                </td>
+                                <td>{{ job.totalRows || '-' }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <span class="failure-count">{{ job.successRows || '-' }}</span>
+                                        @if (hasStageFile(job, 'SUCCESS_ROWS')) {
+                                        <span class="cursor-pointer" (click)="downloadStageFile(job, 'SUCCESS_ROWS')"
+                                            title="Download Success Records">
+                                            <app-download-icon />
+                                        </span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <span class="failure-count">{{ job.failureRows || '-' }}</span>
+                                        @if (job.failureRows > 0 && (hasStageFile(job, 'FAILED_ROWS') || hasStageFile(job, 'ERROR_DETAILS'))) {
+                                        <span class="cursor-pointer" (click)="downloadErrorFile(job)"
+                                            title="Download Failed Records">
+                                            <app-download-icon />
+                                        </span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>{{ job.createdOn ? (job.createdOn | dateformat) : '-' }}</td>
+                                <td>{{ job.createdBy?.name ?? '-' }}</td>
+                                <td>{{ toTitleCase(job.status) }}</td>
+                            </tr>
+                            }
+                            } @else {
+                            <tr>
+                                <td colspan="9">-</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
 
 <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />

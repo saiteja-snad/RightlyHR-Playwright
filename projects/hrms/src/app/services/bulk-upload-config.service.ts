@@ -18,7 +18,8 @@ export class BulkUploadConfigService {
     file?: File,
     isReupload = false,
     moduleId?: number,
-    moduleName?: string
+    moduleName?: string,
+    parentJobId?: number
   ): Observable<any> {
     const formData = new FormData();
     if (jobId) formData.append('JobId', String(jobId));
@@ -27,6 +28,9 @@ export class BulkUploadConfigService {
     formData.append('ModuleId', (moduleId ?? this.defaultModuleId).toString());
     formData.append('PerformedBy', String(employeeId));
     formData.append('IsReupload', String(isReupload));
+    if (parentJobId && stage === 'UPLOAD' && !isReupload) {
+      formData.append('ParentJobId', String(parentJobId));
+    }
     if (file) formData.append('File', file);
     return this.http.post(`${this.apiUrl}Import/execute`, formData);
   }

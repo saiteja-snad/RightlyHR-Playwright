@@ -4,6 +4,7 @@ import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
+import { SetupWizardService } from '../../setup-wizard/services/setup-wizard.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -69,7 +70,8 @@ export class SidenavComponent implements OnInit, OnDestroy {
     private menuRegistry: MenuRegistryService,
     private appRef: ApplicationRef,
     private injector: EnvironmentInjector,
-    public userTourService: UserTourService
+    public userTourService: UserTourService,
+    private wizardService: SetupWizardService
   ) {
     effect(() => {
       const order = this.menuOrderService.menuOrder();
@@ -459,6 +461,7 @@ private positionOverlay(): void {
 
   onLogout() {
     this.authService.removeToken();
+    this.wizardService.clearProgress();
     localStorage.clear();
     window.location.href = "https://login.microsoftonline.com/common/oauth2/v2.0/logout";
   }

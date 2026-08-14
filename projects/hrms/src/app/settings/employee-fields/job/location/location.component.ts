@@ -94,6 +94,7 @@ export class LocationComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.getLocation();
+          this.http.triggerRefresh();
           this.conformationPopup.openSuccessModal(
             'Location added successfully'
           );
@@ -120,6 +121,7 @@ export class LocationComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.getLocation();
+            this.http.triggerRefresh();
             modal.close();
             this.updateForm.reset();
             this.conformationPopup.openSuccessModal(
@@ -169,6 +171,7 @@ export class LocationComponent implements OnInit, OnDestroy {
     this.http.postdata('JobLocation/UPDATER', deleteRequest).subscribe({
       next: () => {
         this.getLocation();
+        this.http.triggerRefresh();
         modal.close();
         this.conformationPopup.openSuccessModal(
           'Location deleted successfully'

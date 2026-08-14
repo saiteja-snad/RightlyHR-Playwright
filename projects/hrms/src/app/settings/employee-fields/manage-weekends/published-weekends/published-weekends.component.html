@@ -7,6 +7,7 @@
     </div>
     <div class="custom-table-content">
         @if (!loading) {
+          @if(weekendsList.length > 0){
         <table class="w-100">
             <thead>
                 <tr>
@@ -21,7 +22,6 @@
                 </tr>
             </thead>
             <tbody>
-                @if(weekendsList.length > 0){
                 @for(weekend of weekendsList; track weekend){
                 <tr>
                     <td>{{ weekend.applicableyear }}</td>
@@ -65,13 +65,13 @@
                     </td>
                 </tr>
                 }
-                }@else {
-                <tr>
-                    <app-no-data-found></app-no-data-found>
-                </tr>
-                }
             </tbody>
         </table>
+          } @else {
+            <div class="wizard-status-empty-state">
+              <app-no-data-found></app-no-data-found>
+            </div>
+          }
         }
         @else {
         <app-data-loader-content />

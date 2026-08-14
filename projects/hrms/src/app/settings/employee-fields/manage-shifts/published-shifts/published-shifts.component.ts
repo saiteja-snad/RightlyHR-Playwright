@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
@@ -9,6 +10,10 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DocumentViewIconComponent } from '../../../../icons/document-view-icon/document-view-icon.component';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
+import { SETUP_WIZARD_STATUS_MODULES } from '../../../../setup-wizard/models/setup-wizard-status-modules.constants';
+import { filterItemsByStatus, toArray } from '../../../../setup-wizard/utils/setup-wizard-status-filter.util';
 
 @Component({
   selector: 'app-published-shifts',
@@ -17,37 +22,53 @@ import { DocumentViewIconComponent } from '../../../../icons/document-view-icon/
   styleUrl: './published-shifts.component.scss'
 })
 
-export class PublishedShiftsComponent {
+export class PublishedShiftsComponent implements OnInit, OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   shiftsData: any[] = [];
-  subscription: any;
+  subscription?: Subscription;
+  refreshSubscription?: Subscription;
   empinfo: any
-  pendingsubmittedshifts: any = [];
-  publishedshifts: any = [];
-  publishedCount: any;
+  pendingsubmittedshifts: any[] = [];
+  publishedshifts: any[] = [];
+  publishedCount = 0;
   viewClicked: boolean | undefined;
   loading = false;
-  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService, private wizardNav: SetupWizardNavigationService, private wizardFormModal: SetupWizardFormModalService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getShifts();
+    this.refreshSubscription = this.http.refresh$.subscribe(() => this.getShifts());
   }
 
   getShiftNames(shift: any) {
+    if (!shift?.orgShiftsItems?.length) {
+      return null;
+    }
     return shift.orgShiftsItems.map((item: any) => item.shiftName).join(', ');
   }
 
   getShifts(): void {
+    this.subscription?.unsubscribe();
     this.loading = true;
     this.subscription = this.http.getData(`orgShifts`).subscribe({
       next: (data: any) => {
-        this.loading = false;
-        this.shiftsData = data;
-        this.publishedshifts = data.filter((item: any) => item.status === "Published");
+        this.shiftsData = toArray(data);
+        this.publishedshifts = filterItemsByStatus(
+          this.shiftsData,
+          SETUP_WIZARD_STATUS_MODULES.shifts.publishedStatus
+        );
         this.publishedCount = this.publishedshifts.length;
-        this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
+        this.pendingsubmittedshifts = filterItemsByStatus(
+          this.shiftsData,
+          SETUP_WIZARD_STATUS_MODULES.shifts.pendingStatus
+        );
+        this.loading = false;
+        this.cdr.markForCheck();
       }, error: (err) => {
         this.loading = false;
+        this.cdr.markForCheck();
         console.log("expensesheadererror", err)
       },
     });
@@ -82,7 +103,7 @@ view(id: any): void {
   };
 
   localStorage.setItem('viewShiftData', JSON.stringify(transformedShift));
-  this.router.navigate(['/settings/employee-fields/viewshifts', id]);
+  this.wizardNav.navigateToSettings(['/settings/employee-fields/viewshifts', id]);
 }
 
   cloneshiftsPolicy1(id: any): void {
@@ -109,10 +130,19 @@ view(id: any): void {
     }))
   };
     localStorage.setItem('clonedShiftData', JSON.stringify(transformedShift));
-    this.router.navigate(['/settings/employee-fields/cloneshifts', id]);
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/cloneshifts', id]);
   }
 
   nagvition() {
-    this.router.navigate(['/settings/employee-fields/addshifts']);
+    if (this.wizardNav.isInsideWizardRoute()) {
+      this.wizardFormModal.openWizardForm('add-shifts', { onClosed: () => this.getShifts() });
+      return;
+    }
+    this.wizardNav.navigateToSettings(['/settings/employee-fields/addshifts']);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.refreshSubscription?.unsubscribe();
   }
 }

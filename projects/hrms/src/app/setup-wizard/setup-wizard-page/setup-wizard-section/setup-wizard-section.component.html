@@ -1,0 +1,26 @@
+@switch (sectionKey()) {
+  @case ('location') { <app-location /> }
+  @case ('sub-location') { <app-sub-location /> }
+  @case ('shifts') { <app-setup-wizard-status-section moduleKey="shifts" /> }
+  @case ('holidays') { <app-setup-wizard-status-section moduleKey="holidays" /> }
+  @case ('weekends') { <app-setup-wizard-status-section moduleKey="weekends" /> }
+  @case ('policies') { <app-setup-wizard-status-section moduleKey="policies" /> }
+  @case ('department') { <app-department /> }
+  @case ('team') { <app-team /> }
+  @case ('salutation') { <app-salutation /> }
+  @case ('gender') { <app-gender /> }
+  @case ('status') { <app-status /> }
+  @case ('maritalstatus') { <app-maritalstatus /> }
+  @case ('degree') { <app-degree /> }
+  @case ('jobrole') { <app-jobrole /> }
+  @case ('jobtype') { <app-jobtype /> }
+  @case ('probationstatus') { <app-probationstatus /> }
+  @case ('paytype') { <app-paytype /> }
+  @case ('grade') { <app-grade /> }
+  @case ('compensation-reason') { <app-compensation-reason /> }
+  @case ('org-hierarchy') { <app-setup-wizard-manager-assignment /> }
+  @case ('leave-category') { <app-setup-wizard-status-section moduleKey="leave-category" /> }
+  @case ('leave-allocation') { <app-leave-alloctaion /> }
+  @case ('signature-authority') { <app-signature-authority /> }
+  @case ('employee-creation') { <app-setup-wizard-employee-creation /> }
+}

@@ -1,0 +1,53 @@
+<div class="wizard-popup" [@popupAnim]>
+  <!-- Header -->
+  <div class="wizard-popup-header">
+    <div class="header-left">
+      <i class="bi bi-list-check header-icon"></i>
+      <div>
+        <p class="wizard-title">Setup Wizard</p>
+        <p class="wizard-subtitle">
+          {{ wizardService.completedCount() }} of {{ wizardService.totalCount() }} tasks completed
+        </p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="onClose()" type="button">
+      <i class="bi bi-chevron-down"></i>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="wizard-popup-body">
+    <!-- Required Action Card -->
+    <div class="section-label">REQUIRED ACTION</div>
+    <div class="required-action-card">
+      <p class="action-category">{{ wizardService.currentModule().category }}</p>
+      <p class="action-title">{{ wizardService.currentModule().title }}</p>
+      <p class="action-progress">{{ wizardService.progressPercent() }}% complete</p>
+      <button class="resume-btn" (click)="onResumeSetup()" type="button">
+        Resume Setup <i class="bi bi-arrow-right ms-1"></i>
+      </button>
+    </div>
+
+    <!-- Checklist -->
+    <div class="section-label mt-3">CHECKLIST</div>
+    <ul class="checklist">
+      @for (module of wizardService.modules(); track module.id) {
+        <li
+          class="checklist-item"
+          [class.completed]="module.completed"
+          [class.active]="isCurrentStep($index)"
+        >
+          <span class="check-box" [class.checked]="module.completed">
+            @if (module.completed) {
+              <i class="bi bi-check"></i>
+            }
+          </span>
+          <div class="checklist-text">
+            <span class="checklist-title">{{ module.title }}</span>
+            <span class="checklist-sub">{{ module.subtitle }}</span>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</div>

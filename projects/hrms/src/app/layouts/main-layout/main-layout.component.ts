@@ -13,14 +13,19 @@ import { Subscription } from 'rxjs';
 import { PredefinedThemesService } from '../../services/theme-service/predefined-themes.service';
 import { MenuOrderService } from '../../services/theme-service/menu-order.service';
 import { UserPreferenceService } from '../../services/user-preference.service';
+import { SetupWizardButtonComponent } from '../../setup-wizard/setup-wizard-button/setup-wizard-button.component';
+import { SetupWizardPopupComponent } from '../../setup-wizard/setup-wizard-popup/setup-wizard-popup.component';
+import { SetupWizardService } from '../../setup-wizard/services/setup-wizard.service';
+import { TenantService } from '../../services/tenant.service';
 @Component({
   selector: 'app-main-layout',
-  imports: [SidenavComponent, HeaderComponent, RouterOutlet, CommonModule, ReactiveFormsModule,],
+  imports: [SidenavComponent, HeaderComponent, RouterOutlet, CommonModule, ReactiveFormsModule, SetupWizardButtonComponent, SetupWizardPopupComponent],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
 
 export class MainLayoutComponent implements OnInit, OnDestroy {
+  isWizardPopupOpen = false;
   changePasswordForm!: FormGroup;
   getStartedForm!: FormGroup;
   empinfo = {} as IJob;
@@ -36,13 +41,18 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     private modalService: NgbModal, private conformationPopup: OpenModalService, public formsValidation: FormValidationsService,
     private predefinedThemesService: PredefinedThemesService,
     private menuOrderService: MenuOrderService,
-    private userPrefService: UserPreferenceService) { }
+    private userPrefService: UserPreferenceService,
+    private wizardService: SetupWizardService,
+    public tenantService: TenantService) { }
 
   async ngOnInit() {
     this.intilaizeChangePasswordForm();
     this.intializeGetStartedForm();
     this.empinfo = JSON.parse(localStorage.getItem('currentUser') || '{}');
     this.employeeName = this.empinfo.name;
+    if (this.tenantService.shouldShowSetupWizard) {
+      this.wizardService.loadProgress().subscribe();
+    }
      this.getUserPreference(this.empinfo.employeeId);
     await this.predefinedThemesService.initTheme();
     await this.predefinedThemesService.initFont();
@@ -129,6 +139,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   onLogout() {
     this.modalService.dismissAll();
+    this.wizardService.clearProgress();
     this.router.navigate(['/login']);
     localStorage.clear();
   }

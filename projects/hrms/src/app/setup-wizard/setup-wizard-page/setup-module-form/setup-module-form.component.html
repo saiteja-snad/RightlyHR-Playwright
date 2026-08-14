@@ -1,0 +1,76 @@
+<div class="module-form-card">
+  <div class="module-form-header">
+    <h5 class="module-title">{{ currentModule?.title }}</h5>
+    <p class="module-subtitle">{{ currentModule?.subtitle }}</p>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="module-form-body">
+    <div class="custom-accordians">
+      <div class="custom-accordian-data-content">
+        <p-accordion [multiple]="true" [(activeIndex)]="activeAccordionIndex">
+          @for (accordion of accordions; track accordion.id; let i = $index) {
+            <p-accordion-panel [value]="i">
+              <p-accordion-header>
+                <div class="d-flex align-items-center gap-2">
+                  <span>{{ accordion.label }}</span>
+                  @if (accordion.optional) {
+                    <span class="optional-badge">Optional</span>
+                  }
+                </div>
+              </p-accordion-header>
+              <p-accordion-content>
+                <div class="accordion-panel-body">
+                  @for (section of accordion.sections; track section) {
+                    <app-setup-wizard-section [sectionKey]="asSectionKey(section)" />
+                  }
+                </div>
+              </p-accordion-content>
+            </p-accordion-panel>
+          }
+        </p-accordion>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="module-form-footer">
+    @if (!canProceed() && !isValidatingStep()) {
+      <p class="step-validation-hint mb-0">
+        Add data in all required sections to continue.
+        @if (missingSectionLabels().length) {
+          <span class="missing-sections">({{ missingSectionLabels().join(', ') }})</span>
+        }
+      </p>
+    } @else {
+      <span></span>
+    }
+    <div class="module-form-footer-actions">
+    <button
+      type="button"
+      class="custom-btn btn-secondary"
+      [disabled]="isFirst || spinnerLoader || wizardService.isSaving()"
+      (click)="onBack()"
+    >
+      Previous
+    </button>
+    <button
+      type="button"
+      class="custom-btn btn-primary"
+      [disabled]="spinnerLoader || wizardService.isSaving() || isValidatingStep() || !canProceed()"
+      (click)="onNext()"
+    >
+      @if (spinnerLoader) {
+        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+        Submitting...
+      } @else if (isLast) {
+        Submit
+      } @else {
+        Next
+      }
+    </button>
+    </div>
+  </div>
+</div>

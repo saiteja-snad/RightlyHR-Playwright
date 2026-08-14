@@ -8,6 +8,7 @@ export interface DomainVerificationResponse {
   tenantId?: string;
   tenantName?: string;
   logo?: string;
+  isPredefinedData?: boolean;
   [key: string]: any;
 }
 
@@ -109,6 +110,30 @@ export class TenantService {
     return this.apiUrl;
   }
 
+  get isPredefinedData(): boolean {
+    const response = this.verificationResponseSubject.value;
+    if (!response) {
+      return false;
+    }
+
+    return response.isPredefinedData === true;
+  }
+
+  get shouldShowSetupWizard(): boolean {
+    return this.isPredefinedData;
+  }
+
+  private normalizeVerificationResponse(
+    response: DomainVerificationResponse
+  ): DomainVerificationResponse {
+    const isPredefinedData = response.isPredefinedData ?? response['IsPredefinedData'];
+
+    return {
+      ...response,
+      isPredefinedData: isPredefinedData === true
+    };
+  }
+
   /**
    * Calls the verify-domain API with the given domain.
    */
@@ -125,9 +150,10 @@ export class TenantService {
       `${this.apiUrl}Tenant/verify-domain?domain=${encodeURIComponent(domain)}`
     ).pipe(
       tap((response) => {
-        this.verificationResponseSubject.next(response);
+        const normalized = this.normalizeVerificationResponse(response);
+        this.verificationResponseSubject.next(normalized);
         this.verificationStatusSubject.next('verified');
-        const logo = response?.logo || '';
+        const logo = normalized?.logo || '';
         const fullLogoUrl = logo
           ? (logo.startsWith('http') ? logo : `${environment.viewUrl}${logo}`)
           : this.defaultLogo;

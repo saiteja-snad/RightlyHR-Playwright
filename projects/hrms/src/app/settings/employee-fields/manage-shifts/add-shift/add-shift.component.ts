@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
@@ -11,6 +11,8 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 @Component({
   selector: 'app-add-shift',
@@ -19,13 +21,14 @@ import { FormValidationsService } from '../../../../services/form-validations.se
   templateUrl: './add-shift.component.html',
   styleUrl: './add-shift.component.scss'
 })
-export class AddShiftComponent {
+export class AddShiftComponent implements OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   shiftForm!: FormGroup;
   years: number[] = [];
   locations: any[] = [];
   subLocations: any[] = [];
   subscription!: Subscription;
+  refreshSubscription?: Subscription;
   Employeeinfo = {} as any;
   currentYear: number = new Date().getFullYear();
   sublocatiodis = false;
@@ -34,17 +37,29 @@ export class AddShiftComponent {
 
   constructor(
     public router: Router,
+    private route: ActivatedRoute,
     private fb: FormBuilder,
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
-    public formValidations: FormValidationsService
+    public formValidations: FormValidationsService,
+    private wizardNav: SetupWizardNavigationService,
+    readonly wizardFormModal: SetupWizardFormModalService
   ) { }
+
+  get isWizardModal(): boolean {
+    return this.wizardFormModal.isModalContext();
+  }
+
+  get parentBreadcrumb(): string {
+    return this.wizardNav.getParentBreadcrumb('Manage Shifts', this.route);
+  }
 
   ngOnInit(): void {
     this.initializeForm();
     this.yearsList();
     this.geAllLocations();
+    this.refreshSubscription = this.http.refresh$.subscribe(() => this.geAllLocations());
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
   }
 
@@ -193,7 +208,8 @@ restrictShiftName(event: KeyboardEvent) {
       this.http.postdata(`orgShifts/Post/Shift/OrgShift`, payload).subscribe({
         next: (data: any) => {
           this.conformationPopup.openSuccessModal('Shift Added successfully');
-          this.nagvition()
+          this.http.triggerRefresh();
+          this.nagvition(true);
         },
         error: (error: any) => {
           // Handle error if needed
@@ -207,6 +223,7 @@ restrictShiftName(event: KeyboardEvent) {
   }
 
   geAllLocations() {
+    this.subscription?.unsubscribe();
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
         this.locations = data;
@@ -280,7 +297,16 @@ restrictShiftName(event: KeyboardEvent) {
     modal.dismiss();
   }
 
-  nagvition() {
-    this.router.navigate(['/settings/employee-fields/manage-shifts/pending-for-submit']);
+  nagvition(saved = false) {
+    if (saved) {
+      this.wizardNav.completeWizardFormOrNavigateBack(['/settings/employee-fields/manage-shifts/pending-for-submit'], this.route);
+      return;
+    }
+    this.wizardNav.closeWizardFormOrNavigateBack(['/settings/employee-fields/manage-shifts/pending-for-submit'], this.route);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.refreshSubscription?.unsubscribe();
   }
 }

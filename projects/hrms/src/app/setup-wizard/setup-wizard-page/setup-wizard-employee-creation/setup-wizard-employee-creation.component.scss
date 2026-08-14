@@ -1,0 +1,115 @@
+.wizard-employee-creation {
+  width: 100%;
+  overflow: visible;
+}
+
+.employee-rows-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.employee-row-card {
+  border: 1px solid var(--table-main-content-border-color, var(--border-color, #e5e7eb));
+  border-radius: 0.5rem;
+  overflow: visible;
+  background-color: var(--white-color);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+}
+
+.employee-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--table-header-bg-color);
+  border-bottom: 1px solid var(--table-main-content-border-color, var(--border-color, #e5e7eb));
+}
+
+.employee-row-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.employee-row-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 0.375rem;
+  border-radius: 999px;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  font-weight: 700;
+  font-size: var(--fontsize14);
+  line-height: 1;
+}
+
+.employee-row-title {
+  font-weight: 600;
+  font-size: var(--fontsize16);
+  line-height: 100%;
+  color: var(--primary-color);
+}
+
+.employee-row-body {
+  padding: 1rem 1rem 0.25rem;
+  background-color: var(--white-color);
+  overflow: visible;
+
+  .custom-p-select-content {
+    overflow: visible;
+    position: relative;
+  }
+}
+
+.credentials-toggle {
+  .form-check-input {
+    cursor: pointer;
+  }
+
+  .form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+
+  .form-check-label {
+    font-size: var(--fontsize14, 0.875rem);
+    font-weight: 500;
+    color: var(--primary-color);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+}
+
+.wizard-employee-remove-btn {
+  font-weight: 700;
+  font-size: var(--fontsize16);
+  line-height: 100%;
+  color: var(--error-msg-color);
+  cursor: pointer;
+  white-space: nowrap;
+
+  i {
+    font-size: var(--fontsize16);
+  }
+}
+
+.wizard-employee-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--ash-color-100, #f3f4f6);
+}
+
+@media (max-width: 768px) {
+  .employee-row-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

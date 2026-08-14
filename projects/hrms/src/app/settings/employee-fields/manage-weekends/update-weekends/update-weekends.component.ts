@@ -1,6 +1,6 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, ReactiveFormsModule, AbstractControl, ValidatorFn } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
@@ -9,6 +9,8 @@ import { ILocation, ISubLocation, IShiftHeader, IWeekends } from '../pending-wee
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
+import { SetupWizardNavigationService } from '../../../../setup-wizard/services/setup-wizard-navigation.service';
+import { SetupWizardFormModalService } from '../../../../setup-wizard/services/setup-wizard-form-modal.service';
 
 @Component({
   selector: 'app-update-weekends',
@@ -36,11 +38,22 @@ export class UpdateWeekendsComponent {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private fb: FormBuilder,
     private http: HttpService,
     private modal: OpenModalService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private wizardNav: SetupWizardNavigationService,
+    readonly wizardFormModal: SetupWizardFormModalService
   ) { }
+
+  get isWizardModal(): boolean {
+    return this.wizardFormModal.isModalContext();
+  }
+
+  get parentBreadcrumb(): string {
+    return this.wizardNav.getParentBreadcrumb('Manage Weekends', this.route);
+  }
 
   ngOnInit() {
     this.employeedetails = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
@@ -52,7 +65,7 @@ export class UpdateWeekendsComponent {
   }
 
   navigate() {
-    this.router.navigate(['/settings/employee-fields/manage-weekends']);
+    this.navigation();
   }
 
   navigateToClone() {
@@ -314,7 +327,7 @@ export class UpdateWeekendsComponent {
       next: (response: any) => {
         this.modal.openSuccessModal('Weekends updated successfully')
         setTimeout(() => {
-          this.closeWeekend();
+          this.closeWeekend(true);
         }, 2000)
       },
       error: (err: any) => {
@@ -333,7 +346,7 @@ export class UpdateWeekendsComponent {
         next: (response: any) => {
           this.modal.openSuccessModal('Weekends published successfully')
           setTimeout(() => {
-            this.closeWeekend();
+            this.closeWeekend(true);
           }, 2000)
         },
         error: (err: any) => {
@@ -351,17 +364,22 @@ export class UpdateWeekendsComponent {
     this.navigation();
   }
 
-  navigation(){
-    this.router.navigate(['/settings/employee-fields/manage-weekends/pending-for-submission']);
+  navigation(saved = false){
+    const path = ['/settings/employee-fields/manage-weekends/pending-for-submission'];
+    if (saved) {
+      this.wizardNav.completeWizardFormOrNavigateBack(path, this.route);
+      return;
+    }
+    this.wizardNav.closeWizardFormOrNavigateBack(path, this.route);
   }
 
   Cancel() {
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
 
-  closeWeekend() {
+  closeWeekend(saved = false) {
     this.modalService.dismissAll();
-    this.navigate();
+    this.navigation(saved);
     localStorage.removeItem('weekend-update');
   }
 

@@ -1,0 +1,23 @@
+<div class="wizard-side-stepper">
+  <div class="component-side-nav-tabs-container py-3">
+    <ul class="nav flex-column">
+      @for (module of wizardService.modules(); track module.id; let i = $index) {
+        <li class="nav-item">
+          <span
+            class="nav-link wizard-step-link"
+            [ngClass]="getStepState(i)"
+          >
+            <span class="step-indicator">
+              @if (showStepCheckmark(i)) {
+                <i class="bi bi-check-lg"></i>
+              } @else {
+                {{ module.id }}
+              }
+            </span>
+            <span class="step-label">{{ module.title }}</span>
+          </span>
+        </li>
+      }
+    </ul>
+  </div>
+</div>

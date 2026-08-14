@@ -86,6 +86,7 @@ export class DepartmentComponent {
     this.subscription = this.http.postdata('Department', request).subscribe({
       next: () => {
         this.getDepartment();
+        this.http.triggerRefresh();
         this.conformationPopup.openSuccessModal(
           'Department added successfully'
         );
@@ -117,6 +118,7 @@ export class DepartmentComponent {
         .subscribe({
           next: () => {
             this.getDepartment();
+            this.http.triggerRefresh();
             this.modalService.dismissAll();
             this.updateForm.reset();
             this.conformationPopup.openSuccessModal(
@@ -174,6 +176,7 @@ export class DepartmentComponent {
     this.http.postdata('Department/UPDATER', deleteRequest).subscribe({
       next: () => {
         this.getDepartment();
+        this.http.triggerRefresh();
         modal.close();
         this.conformationPopup.openSuccessModal(
           'Department deleted successfully'

@@ -1,0 +1,250 @@
+<div class="custom-main-component-container wizard-employee-creation">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div><span class="component-sub-header">{{ 'Add Employees' | translate }}</span></div>
+    <div class="custom-add-btn" (click)="addRow()">
+      <i class="bi bi-plus plus-icon me-1"></i>{{ 'Add Row' | translate }}
+    </div>
+  </div>
+
+  <form [formGroup]="employeesForm" (ngSubmit)="saveEmployees()">
+    <div class="employee-rows-list" formArrayName="rows">
+      @for (row of rows.controls; track row.value.rowId; let i = $index) {
+        <div class="employee-row-card" [formGroupName]="i">
+          <div class="employee-row-header">
+            <div class="employee-row-heading">
+              <span class="employee-row-badge">{{ i + 1 }}</span>
+              <span class="employee-row-title">{{ 'Employee' | translate }} {{ i + 1 }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+              <div class="form-check form-switch credentials-toggle mb-0">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="credentialsRequired-{{ i }}"
+                  formControlName="isCredentialsRequired"
+                />
+                <label class="form-check-label" [for]="'credentialsRequired-' + i">
+                  {{ 'Is Credentials Required' | translate }}
+                </label>
+              </div>
+              @if (rows.length > 1) {
+                <div class="wizard-employee-remove-btn" (click)="removeRow(i)">
+                  <i class="bi bi-trash3 me-1"></i>{{ 'Remove' | translate }}
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="employee-row-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label custom-label mb-2">
+                {{ 'First Name' | translate }}<span class="error-msg">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="firstName"
+                [placeholder]="'Please enter first name' | translate"
+              />
+              @if (rowGroup(i).get('firstName')?.invalid && rowGroup(i).get('firstName')?.touched) {
+                <div class="error-msg">
+                  @if (rowGroup(i).get('firstName')?.hasError('required')) {
+                    {{ 'First Name is required' | translate }}
+                  }
+                  @if (rowGroup(i).get('firstName')?.hasError('pattern')) {
+                    {{ 'First Name should not contain any spaces and numbers' | translate }}
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label custom-label mb-2">{{ 'Middle Name' | translate }}</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="middleName"
+                [placeholder]="'Please enter middle name' | translate"
+              />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label custom-label mb-2">
+                {{ 'Last Name' | translate }}<span class="error-msg">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="lastName"
+                [placeholder]="'Please enter last name' | translate"
+              />
+              @if (rowGroup(i).get('lastName')?.invalid && rowGroup(i).get('lastName')?.touched) {
+                <div class="error-msg">{{ 'Last Name is required' | translate }}</div>
+              }
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label custom-label mb-2">
+                {{ 'Work Email' | translate }}<span class="error-msg">*</span>
+              </label>
+              <input
+                type="email"
+                class="form-control custom-input"
+                formControlName="personalEmail"
+                [placeholder]="'Please enter work email' | translate"
+              />
+              @if (rowGroup(i).get('personalEmail')?.invalid && rowGroup(i).get('personalEmail')?.touched) {
+                <div class="error-msg">
+                  @if (rowGroup(i).get('personalEmail')?.hasError('required')) {
+                    {{ 'Work Email is required' | translate }}
+                  }
+                  @if (rowGroup(i).get('personalEmail')?.hasError('email')) {
+                    {{ 'Please enter a valid email address' | translate }}
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label custom-label mb-2">
+                {{ 'Work Number' | translate }}<span class="error-msg">*</span>
+              </label>
+              <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+                <lib-country-list
+                  class="country-input"
+                  [selectedCountryConfig]="selectedCountryConfig"
+                  [countryListConfig]="countryListConfig"
+                  [selectedCountryCode]="rowGroup(i).get('contactNumberCountryFlag')?.value"
+                  (onCountryChange)="onContactCountryChange($event, i)"
+                />
+                <input
+                  type="text"
+                  class="form-control custom-input"
+                  formControlName="contactNumber"
+                  (input)="onContactNumberInput(i)"
+                  (keypress)="formValidation.restrictAlphabets($event)"
+                  [placeholder]="'Please enter work number' | translate"
+                  autocomplete="off"
+                />
+              </div>
+              @if (rowGroup(i).get('contactNumber')?.invalid && rowGroup(i).get('contactNumber')?.touched) {
+                <div class="error-msg">
+                  @if (rowGroup(i).get('contactNumber')?.hasError('required')) {
+                    {{ 'Work number is required' | translate }}
+                  }
+                  @if (rowGroup(i).get('contactNumber')?.hasError('invalidPhoneNumber')) {
+                    {{ 'The phone number is not valid for the selected country' | translate }}
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label custom-label mb-2">
+                {{ 'Designation' | translate }}<span class="error-msg">*</span>
+              </label>
+              <div class="custom-p-select-content">
+                <p-select
+                  [options]="jobRoleDetails"
+                  optionLabel="designationName"
+                  [filter]="true"
+                  filterBy="designationName"
+                  [placeholder]="'Please select designation' | translate"
+                  formControlName="designation"
+                  class="custom-select w-100"
+                  appendTo="body"
+                  [autoZIndex]="true"
+                  [baseZIndex]="1100"
+                />
+              </div>
+              @if (rowGroup(i).get('designation')?.invalid && rowGroup(i).get('designation')?.touched) {
+                <div class="error-msg">{{ 'Designation is required' | translate }}</div>
+              }
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label custom-label mb-2">
+                {{ 'Employment Type' | translate }}<span class="error-msg">*</span>
+              </label>
+              <div class="custom-p-select-content">
+                <p-select
+                  [options]="employmentTypes"
+                  optionValue="name"
+                  optionLabel="name"
+                  formControlName="employmentType"
+                  [placeholder]="'Please select employment type' | translate"
+                  class="form-select custom-select w-100"
+                  appendTo="body"
+                  [autoZIndex]="true"
+                  [baseZIndex]="1100"
+                />
+              </div>
+              @if (rowGroup(i).get('employmentType')?.invalid && rowGroup(i).get('employmentType')?.touched) {
+                <div class="error-msg">{{ 'Employment Type is required' | translate }}</div>
+              }
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label custom-label mb-2">
+                {{ 'Location' | translate }}<span class="error-msg">*</span>
+              </label>
+              <div class="custom-p-select-content">
+                <p-select
+                  [options]="jobLocationDropDownData"
+                  optionValue="id"
+                  optionLabel="jobLocationName"
+                  [placeholder]="'Please select location' | translate"
+                  formControlName="location"
+                  class="form-select custom-select w-100"
+                  appendTo="body"
+                  [autoZIndex]="true"
+                  [baseZIndex]="1100"
+                  (onChange)="onLocationChange(i, $event)"
+                />
+              </div>
+              @if (rowGroup(i).get('location')?.invalid && rowGroup(i).get('location')?.touched) {
+                <div class="error-msg">{{ 'Location is required' | translate }}</div>
+              }
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label custom-label mb-2">
+                {{ 'Sublocation' | translate }}<span class="error-msg">*</span>
+              </label>
+              <div class="custom-p-select-content">
+                <p-select
+                  [options]="subLocationsForRow(i)"
+                  optionValue="id"
+                  optionLabel="jobSubLocationName"
+                  [placeholder]="'Please select sublocation' | translate"
+                  formControlName="subLocation"
+                  class="form-select custom-select w-100"
+                  appendTo="body"
+                  [autoZIndex]="true"
+                  [baseZIndex]="1100"
+                />
+              </div>
+              @if (rowGroup(i).get('subLocation')?.invalid && rowGroup(i).get('subLocation')?.touched) {
+                <div class="error-msg">{{ 'Sublocation is required' | translate }}</div>
+              }
+            </div>
+          </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="wizard-employee-actions">
+      <button type="button" class="custom-btn btn-primary" [disabled]="saving || !canSaveEmployees" (click)="saveEmployees()">
+        @if (saving) {
+          <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          {{ 'Saving...' | translate }}
+        } @else {
+          {{ 'Save Employees' | translate }}
+        }
+      </button>
+    </div>
+  </form>
+</div>

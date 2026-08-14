@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { LetterLogoService } from '../../services/letter-logo.service';
 import { LettersInfoComponent } from "../../shared/letters-shared-content/letters-info/letters-info.component";
 @Component({
   selector: 'app-letters-layout',
@@ -10,5 +11,7 @@ import { LettersInfoComponent } from "../../shared/letters-shared-content/letter
 })
 
 export class LettersLayoutComponent {
-
+  constructor(private letterLogoService: LetterLogoService) {
+    this.letterLogoService.ensureLogoLoaded();
+  }
 }

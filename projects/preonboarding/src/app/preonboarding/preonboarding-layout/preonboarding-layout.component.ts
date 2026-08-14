@@ -5,6 +5,7 @@ import { HeaderComponent } from "../../shared/header/header.component";
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/module-info';
+import { TenantService } from '../../../../../hrms/src/app/services/tenant.service';
 
 @Component({
   selector: 'app-preonboarding-layout',
@@ -15,10 +16,20 @@ import { MODULE_INFOS } from '../../shared/module-info';
 
 export class PreonboardingLayoutComponent implements OnInit{
   moduleinfo : string = '';
-
-  constructor(public router: Router) { }
+  companyLogo: string = '';
+  constructor(public router: Router, public tenantService: TenantService) { }
 
   ngOnInit(): void {
+      this.tenantService.logo$.subscribe(logo => {
+      this.companyLogo = logo || this.tenantService.currentLogo;
+    });
+
+    if (!this.tenantService.isLogoLoaded) {
+      this.tenantService.verifyDomain(
+        this.tenantService.currentDomain
+      ).subscribe();
+    }
+
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
   }

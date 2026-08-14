@@ -22,7 +22,7 @@ import { LetterFooterComponent } from "../../shared/letters-shared-content/lette
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { fetchLetterAssets, setupLetterPdfMake } from '../../letters-builder-files/letter-pdf.utils';
-import { TenantService } from '../../services/tenant.service';
+import { LetterLogoService } from '../../services/letter-logo.service';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent, ConfirmationIconComponent],
@@ -37,7 +37,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   isStartDateValid = true;
   isStartDateValidofexpected: boolean = true;
   prospectiveEmpData = {} as any; //offer letter form object
-  companyLogo: string = '';
   offerLetterTemplate: any | string | ArrayBuffer | null = null; //offer letter template
   docDefinition: any; //for doc to PDF conversion
   result = {} as any;
@@ -126,7 +125,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   expiryDatevalidate: any;
 
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService, public formvalidators: FormValidationService, public tenantService: TenantService
+    private authService: AuthService, private conformationPopup: OpenModalService, public formvalidators: FormValidationService,
+    private letterLogoService: LetterLogoService
     // private _userAcessService: UserAccessService,
   ) { this.initializeForm(); }
 
@@ -135,15 +135,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     // this._userAcessService.checkRouteAccess('Dashboard.view');
     this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
     this.initializeForm();
-    this.subscription = this.tenantService.logo$.subscribe(logo => {
-      this.companyLogo = logo || this.tenantService.currentLogo;
-    });
-
-    if (!this.tenantService.isLogoLoaded) {
-      this.tenantService.verifyDomain(
-        this.tenantService.currentDomain
-      ).subscribe();
-    }
+    this.letterLogoService.ensureLogoLoaded();
     this.getJobtype();
     this.getTitle();
     this.getgender();
@@ -198,14 +190,17 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
 
   //download document
   async downLoadDocument(EmpValue: any) {
-    const data = this.prospectiveEmpData;
-    const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
-    const isSoftCopy = true;
-    const [assets, pm] = await Promise.all([
-      fetchLetterAssets(isSoftCopy, this.companyLogo),
-      setupLetterPdfMake(),
-    ]);
-    const docDef = buildOfferLetterDoc({
+    this.loading = true;
+
+    try {
+      const data = this.prospectiveEmpData;
+      const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
+      const isSoftCopy = true;
+      const [assets, pm] = await Promise.all([
+        fetchLetterAssets(isSoftCopy),
+        setupLetterPdfMake(),
+      ]);
+      const docDef = buildOfferLetterDoc({
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
@@ -247,33 +242,22 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       esicContribution: data.esicContribution,
       esiPerAnnum: data.esiPerAnnum,
       backgroundImageBase64: assets.backgroundImageBase64,
-      headerLogoBase64: this.companyLogo
-        ? await this.fetchImageAsBase64(this.companyLogo)
-        : assets.headerLogoBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });
 
-    try {
       const blob: Blob = await pm.createPdf(docDef).getBlob();
       this.generatedfile = new File([blob], fileName, { type: 'application/pdf' });
       this.generatingEmployeeId = this.prospectiveEmpData.empId;
-      this.loading = false;
-      this.disableFieldsForApproval = false;
       this.offerletterUpload(EmpValue?.empId, this.generatedfile);
     } catch (err) {
       console.error('PDF generation failed:', err);
+      this.conformationPopup.openErrorModal('Failed to generate offer letter. Please try again.');
+    } finally {
       this.loading = false;
+      this.disableFieldsForApproval = false;
     }
-  }
-
-  private fetchImageAsBase64(url: string): Promise<string> {
-    return fetch(url).then(res => res.blob()).then(blob => new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    }));
   }
 
   private async getFileBase64(url: string): Promise<string | null> {
@@ -1159,15 +1143,17 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   async generateDocument() {
     this.loading = true;
     this.disableFieldsForApproval = true;
-    const data = this.prospectiveEmpData;
-    const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
-    const isSoftCopy = true;
-    const [assets, pm] = await Promise.all([
-      fetchLetterAssets(isSoftCopy, this.companyLogo),
-      setupLetterPdfMake(),
-    ]);
 
-    const docDef = buildOfferLetterDoc({
+    try {
+      const data = this.prospectiveEmpData;
+      const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_OfferLetter.pdf`;
+      const isSoftCopy = true;
+      const [assets, pm] = await Promise.all([
+        fetchLetterAssets(isSoftCopy),
+        setupLetterPdfMake(),
+      ]);
+
+      const docDef = buildOfferLetterDoc({
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
@@ -1209,14 +1195,11 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       esicContribution: data.esicContribution,
       esiPerAnnum: data.esiPerAnnum,
       backgroundImageBase64: assets.backgroundImageBase64,
-      headerLogoBase64: this.companyLogo
-        ? await this.fetchImageAsBase64(this.companyLogo)
-        : assets.headerLogoBase64,
+      headerLogoBase64: assets.headerLogoBase64,
       useVerdanaFont: true,
       useAutographyFont: true,
     });
 
-    try {
       const blob: Blob = await pm.createPdf(docDef).getBlob();
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -1225,11 +1208,11 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       URL.revokeObjectURL(link.href);
       this.generatedfile = new File([blob], fileName, { type: 'application/pdf' });
       this.generatingEmployeeId = this.prospectiveEmpData.empId;
-      this.loading = false;
-      this.disableFieldsForApproval = false;
       this.conformationPopup.openSuccessModal('Offer letter generated successfully');
     } catch (err) {
       console.error('PDF generation failed:', err);
+      this.conformationPopup.openErrorModal('Failed to generate offer letter. Please try again.');
+    } finally {
       this.loading = false;
       this.disableFieldsForApproval = false;
     }

@@ -1228,7 +1228,9 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
       'Recruitment Configuration Module',
       'Helpdesk Configuration Module',
       'Employee Fields Config Update Module',
-      'Bulk Upload Configuration Module'
+      'Bulk Upload Configuration Module',
+      'View History',
+      'Bulk Upload'
     ]
   }, {
     title: 'Dashboard Widgets',

@@ -599,7 +599,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.store.setLoading(false);
     const validRows = this.store.validRows() ?? [];
     this.submissionTotalCount = this.totalSuccessCount || validRows.length;
-    
+
     const search = (this.submissionSearchValue || '').trim().toLowerCase();
     let filtered = validRows;
     if (search) {
@@ -607,7 +607,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
         Object.values(row).some(v => v !== null && v !== undefined && String(v).toLowerCase().includes(search))
       );
     }
-    
+
     this.collectionSize = filtered.length;
     const start = (this.submissionPage - 1) * this.submissionPageSize;
     const end = start + this.submissionPageSize;

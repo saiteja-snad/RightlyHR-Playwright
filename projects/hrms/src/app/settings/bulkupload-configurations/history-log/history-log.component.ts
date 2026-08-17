@@ -91,8 +91,8 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
   ];
   filteredTabs: any[] = [];
   navTabs = [
-    { label: 'Import', link: '/settings/bulkupload-configurations/historylog', permission: { feature: 'View History Import Tab', action: 'view' } },
-    // { label: 'Export', link: '/settings/bulkupload-configurations/export-history', permission: { feature: 'View History Export Tab', action: 'view' } },
+    { label: 'Import', link: '/settings/bulkupload-configurations/historylog', permission: { feature: 'View History', action: 'view' } },
+    // { label: 'Export', link: '/settings/bulkupload-configurations/export-history', permission: { feature: 'View History', action: 'view' } },
   ];
   searchSubject = new Subject<string>();
   searchValue: any;
@@ -104,7 +104,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
   constructor(
     private http: HttpService,
     private router: Router,
-    private rbac: RbacService,
+    public rbac: RbacService,
     private store: BulkUploadStore,
     private modalService: NgbModal
   ) { }
@@ -245,12 +245,21 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const defaultNames: Record<string, string> = {
-      SUCCESS_ROWS: `${item.jobReference}_Success_Records.csv`,
-      FAILED_ROWS: `${item.jobReference}_Failed_Records.csv`,
-      ERROR_DETAILS: `${item.jobReference}_Failed_Records.csv`
-    };
-    const fileName = stageFile.fileName || defaultNames[fileType] || 'download';
+    const ext = stageFile.filePath.endsWith('.xlsx') ? 'xlsx' : 'csv';
+    const prefix = item?.jobReference ? `${item.jobReference}_` : '';
+
+    let fileName = '';
+    if (fileType === 'SUCCESS_ROWS') {
+      fileName = `${prefix}SUCCESS_Import_Records.${ext}`;
+    } else if (fileType === 'FAILED_ROWS' || fileType === 'ERROR_DETAILS') {
+      fileName = `${prefix}Failed_Import_Records.${ext}`;
+    } else {
+      const rawName = stageFile.fileName && !['success_rows', 'failed_rows', 'success_rows.csv', 'failed_rows.csv', 'success_details', 'error_details'].includes(stageFile.fileName.toLowerCase())
+        ? stageFile.fileName
+        : `${prefix}Import_Records.${ext}`;
+      fileName = rawName;
+    }
+
     this.downloadNamedFile(stageFile.filePath, fileName);
   }
 
@@ -263,7 +272,11 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.downloadNamedFile(stageFile.filePath, stageFile.fileName || `${item.jobReference}_Failed_Records.csv`);
+    const ext = stageFile.filePath.endsWith('.xlsx') ? 'xlsx' : 'csv';
+    const prefix = item?.jobReference ? `${item.jobReference}_` : '';
+    const fileName = `${prefix}Failed_Import_Records.${ext}`;
+
+    this.downloadNamedFile(stageFile.filePath, fileName);
   }
 
   private downloadNamedFile(filepath: string, fileName: string) {

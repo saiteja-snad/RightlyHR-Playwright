@@ -8,6 +8,8 @@ export const permissionsData = [
   { fields: 'Attendance Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Bulk Upload Configuration Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View History', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Bulk Upload', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Ats Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Helpdesk Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Fields Config Update Module', View: false, Update: false, Create: false, Delete: false },

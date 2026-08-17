@@ -12,7 +12,7 @@
 }
 
 .preview-table-height {
-   height: calc(100dvh - 30rem) !important;
+   height: calc(100dvh - 25rem) !important;
 }
 
 .client-progress-bar-container {
@@ -80,6 +80,7 @@
 }
 
 .inactive-step {
+
    .progress-name,
    .progress-number {
       opacity: 0.5;

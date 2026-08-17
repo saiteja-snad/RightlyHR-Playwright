@@ -464,13 +464,13 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.conformationPopup.openLoaderModal('Uploading...');
 
     const previousJobId = isReupload ? this.store.jobId() : undefined;
-    const parentJobId = !isReupload ? (this.store.parentJobId() ?? undefined) : undefined;
+    const parentJobId = this.store.parentJobId() ?? undefined;
     const modId = Number(this.selectedModuleId) || 1001;
     const modName = this.selectedModuleName || 'Compensation';
 
     const start$ = isReupload
-      ? this.service.executeImportStage('RE_UPLOAD', this.employeeId, previousJobId ?? undefined, file, true, modId, modName).pipe(
-        switchMap(() => this.service.executeImportStage('UPLOAD', this.employeeId, undefined, file, false, modId, modName))
+      ? this.service.executeImportStage('RE_UPLOAD', this.employeeId, previousJobId ?? undefined, file, true, modId, modName, parentJobId).pipe(
+        switchMap(() => this.service.executeImportStage('UPLOAD', this.employeeId, previousJobId ?? undefined, file, false, modId, modName, parentJobId))
       )
       : this.service.executeImportStage('UPLOAD', this.employeeId, undefined, file, false, modId, modName, parentJobId);
 
@@ -479,8 +479,11 @@ export class BulkImportComponent implements OnInit, OnDestroy {
         switchMap((uploadRes: any) => {
           const jobId = uploadRes?.data?.jobId ?? uploadRes?.jobId;
           if (!jobId) throw new Error('Upload failed: no job ID returned');
+          const responseParentId = uploadRes?.data?.parentJobId ?? uploadRes?.parentJobId;
+          if (responseParentId && !String(responseParentId).toUpperCase().startsWith('JOB-')) {
+            this.store.setParentJobId(Number(responseParentId));
+          }
           this.store.setJobId(jobId);
-          this.store.setParentJobId(null);
           this.store.setCurrentStage('UPLOAD');
           if (modal) modal.close();
           return this.service.executeImportStage('PARSE', this.employeeId, jobId, undefined, false, modId, modName);
@@ -680,6 +683,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   }
 
   navigateToHistoryView() {
+    this.store.setParentJobId(null);
     this.reset();
     localStorage.removeItem('bulkImportBatchId');
     this.router.navigate(['/settings/bulkupload-configurations/historylog']);

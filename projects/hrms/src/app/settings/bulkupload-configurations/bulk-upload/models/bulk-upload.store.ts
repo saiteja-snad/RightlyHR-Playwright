@@ -97,6 +97,5 @@ export class BulkUploadStore {
     this.setJobId(null);
     this.setCurrentStage('');
     this.setSubmissionJobId(null);
-    this.setParentJobId(null);
   }
 }

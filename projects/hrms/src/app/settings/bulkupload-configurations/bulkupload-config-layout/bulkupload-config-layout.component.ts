@@ -114,18 +114,23 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
     this.conformationPopup.openLoaderModal('Uploading...');
 
     const previousJobId = isReupload ? this.store.jobId() : undefined;
+    const parentJobId = this.store.parentJobId() ?? undefined;
 
     const start$ = isReupload
-      ? this.bulkUploadService.executeImportStage('RE_UPLOAD', employeeId, previousJobId ?? undefined, file, true).pipe(
-        switchMap(() => this.bulkUploadService.executeImportStage('UPLOAD', employeeId, undefined, file))
+      ? this.bulkUploadService.executeImportStage('RE_UPLOAD', employeeId, previousJobId ?? undefined, file, true, 1001, 'Compensation', parentJobId).pipe(
+        switchMap(() => this.bulkUploadService.executeImportStage('UPLOAD', employeeId, previousJobId ?? undefined, file, false, 1001, 'Compensation', parentJobId))
       )
-      : this.bulkUploadService.executeImportStage('UPLOAD', employeeId, undefined, file);
+      : this.bulkUploadService.executeImportStage('UPLOAD', employeeId, undefined, file, false, 1001, 'Compensation', parentJobId);
 
     start$
       .pipe(
         switchMap((uploadRes: any) => {
           const jobId = uploadRes?.data?.jobId ?? uploadRes?.jobId;
           if (!jobId) throw new Error('Upload failed: no job ID returned');
+          const responseParentId = uploadRes?.data?.parentJobId ?? uploadRes?.parentJobId;
+          if (responseParentId && !String(responseParentId).toUpperCase().startsWith('JOB-')) {
+            this.store.setParentJobId(Number(responseParentId));
+          }
           this.store.setJobId(jobId);
           this.store.setCurrentStage('UPLOAD');
           return this.bulkUploadService.executeImportStage('PARSE', employeeId, jobId);

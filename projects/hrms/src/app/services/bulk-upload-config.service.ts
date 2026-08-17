@@ -28,7 +28,7 @@ export class BulkUploadConfigService {
     formData.append('ModuleId', (moduleId ?? this.defaultModuleId).toString());
     formData.append('PerformedBy', String(employeeId));
     formData.append('IsReupload', String(isReupload));
-    if (parentJobId && stage === 'UPLOAD' && !isReupload) {
+    if (parentJobId && (stage === 'UPLOAD' || stage === 'RE_UPLOAD')) {
       formData.append('ParentJobId', String(parentJobId));
     }
     if (file) formData.append('File', file);

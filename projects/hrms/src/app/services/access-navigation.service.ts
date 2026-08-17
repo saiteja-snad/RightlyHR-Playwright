@@ -318,7 +318,7 @@ export class AccessNavigationService {
           }
         }
 
-        if (this.rbac.allowedToAccess('Bulk Upload Configuration Module.view') || this.rbac.allowedToAccess('Bulk Upload.view') || this.rbac.allowedToAccess('View History.view')) {
+        if (this.rbac.allowedToAccess('Bulk Import/Upload Configuration Module.view') || this.rbac.allowedToAccess('Bulk Import/Upload.view') || this.rbac.allowedToAccess('View History.view')) {
           for (const item of SETTINGS_BULKUPLOAD_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1413,7 +1413,7 @@ export class AccessNavigationService {
       case '/settings/bulkupload-configurations':
       case '/settings/bulkupload-configurations/bulk-import':
       case '/settings/bulkupload-configurations/historylog':
-        if (this.rbac.allowedToAccess('Bulk Upload Configuration Module.view')) {
+        if (this.rbac.allowedToAccess('Bulk Import/Upload Configuration Module.view')) {
           for (const item of SETTINGS_BULKUPLOAD_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return actualRoute === '/settings/bulkupload-configurations' ? item.route : actualRoute;

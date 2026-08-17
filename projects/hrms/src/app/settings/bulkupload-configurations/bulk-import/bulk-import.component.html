@@ -169,12 +169,12 @@
                 <div class="footer-content d-flex gap-2">
                     <button class="custom-btn btn-secondary px-4" (click)="prevStep()">Back</button>
                     <button class="custom-btn btn-primary px-5" (click)="nextStep()"
-                        [disabled]="!store.response()">Next: Validate File</button>
+                        [disabled]="!store.response()">Next</button>
                 </div>
             </div>
         </div>
 
-        <!-- STEP 3: Validation & Re-verify -->
+        <!-- STEP 3: Validation -->
         <div *ngIf="progress === 3">
             <div class="validate-section">
                 <div class="d-flex flex-column">
@@ -222,6 +222,15 @@
                                         } @else {
                                         <span>-</span>
                                         }
+                                        } @else if (col === 'description' || col === 'reason') {
+                                        <div *ngIf="row[col]; else noTextPop" type="button" [ngbPopover]="textPopover"
+                                            container="body">
+                                            <app-info-icon />
+                                        </div>
+                                        <ng-template #textPopover>
+                                            <p class="mb-0">{{ row[col] }}</p>
+                                        </ng-template>
+                                        <ng-template #noTextPop><span>-</span></ng-template>
                                         } @else if (isDateColumn(col)) {
                                         {{ row[col] ? (row[col] | dateformat) : '-' }}
                                         } @else {
@@ -306,7 +315,8 @@
                                     {{ row[col] ? (row[col] | dateformat) : '-' }}
                                     } @else if (col === 'description' || col === 'errorMessage' || col ===
                                     'reason') {
-                                    <div *ngIf="row[col]; else noTextPop" type="button" [ngbPopover]="textPopover">
+                                    <div *ngIf="row[col]; else noTextPop" type="button" [ngbPopover]="textPopover"
+                                        container="body">
                                         <app-info-icon />
                                     </div>
                                     <ng-template #textPopover>
@@ -366,7 +376,7 @@
                 @if (store.stats().invalid > 0) {
                 {{'Some records have validation errors. Do you want to continue with the valid records?'}}
                 } @else {
-                {{'Are you sure you want to submit entries?'}}
+                {{'Are you sure you want to submit valid records?'}}
                 }
             </p>
         </div>
@@ -403,7 +413,7 @@
         <div class="loading-content">
             <img src="/gifs/dot-loader.gif" alt="" class="loading-gif">
         </div>
-        <p class="confirmation-text pt-4">{{'Submitting your entries. Please wait…'}}</p>
+        <p class="confirmation-text pt-4">{{'Submitting your records. Please wait…'}}</p>
     </div>
 </ng-template>
 

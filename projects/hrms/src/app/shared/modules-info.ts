@@ -371,5 +371,5 @@ export const MODULE_INFOS = {
 
   THEME_PERSONALIZATION_MODULE_INFO: "This module allows users to customize the application appearance by selecting preferred theme colors and font styles. It helps enhance the visual experience and align the interface with user preferences.",
   MENU_PERSONALIZATION_MODULE_INFO: "This module allows users to customize and organize the application menu based on their preferences, improving accessibility and navigation. Users can manage primary and additional menu items by rearranging, enabling, or configuring them as needed.",
-  SETTINGS_BULK_UPLOAD_CONFIGURATION_MODULE_INFO: "Configure and manage bulk upload settings, templates, validation rules, and history logs for data imports across various modules."
+  SETTINGS_BULK_UPLOAD_CONFIGURATION_MODULE_INFO: "The Bulk Import / Upload Data feature enables users to upload large volumes of HR and organizational data at once using supported file formats such as Excel or CSV. It simplifies bulk data entry by allowing users to upload records across different areas of the application, with built-in validation to identify errors and ensure the data is accurate before it is imported."
 }

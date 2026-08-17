@@ -243,9 +243,10 @@
                         </p-accordion-panel>
                     </li>
                     }
-                    @if(rbac.allowedToAccess('Bulk Upload Configuration Module.view') || rbac.allowedToAccess('Bulk
+                    @if(rbac.allowedToAccess('Bulk Import/Upload Configuration Module.view') ||
+                    rbac.allowedToAccess('Bulk
                     Upload.view') || rbac.allowedToAccess('View History.view')){
-                    <!--Bulk Upload Configurations-->
+                    <!--Bulk Import/Upload Configurations-->
                     <li class="accordian-list-item"
                         (click)="navigateToAccessedRoute('/settings/bulkupload-configurations', 'settings-panel-12')"
                         id="settings-panel-12">

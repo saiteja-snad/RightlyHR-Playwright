@@ -24,10 +24,10 @@ export class BulkuploadSidebarTabsComponent implements OnInit {
   allTabs: StatusTab[] = [
     {
       tabId: '/settings/bulkupload-configurations/bulk-import',
-      label: 'Bulk Upload',
+      label: 'Bulk Import/Upload',
       link: '/settings/bulkupload-configurations/bulk-import',
       icon: 'icons/file-upload-icon.png',
-      permission: { feature: 'Bulk Upload', action: 'view' }
+      permission: { feature: 'Bulk Import/Upload', action: 'view' }
     },
     {
       tabId: '/settings/bulkupload-configurations/historylog',

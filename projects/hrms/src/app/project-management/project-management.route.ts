@@ -140,7 +140,7 @@ export default [
             { path: 'summary', component: TimesheetsSummaryViewComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Timesheet Summary' } },
             { path: 'mysummary', component: TimesheetsSummaryViewComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'My Timesheet Summary' } },
             { path: 'resourcesummary', component: TimesheetsResourceSummaryComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Resource Summary' } },
-            { path: 'bulk-upload', component: BulkImportComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Bulk Upload' } },
+            { path: 'bulk-upload', component: BulkImportComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Bulk Import/Upload' } },
             { path: 'bulk-export', component: BulkExportComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Bulk Export' } },
             { path: 'historylog', component: HistoryLogComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'History Log' } },
             { path: 'export-history', component: ExportHistoryComponent, data: { auditModule: 'Project Management >> Timesheets', auditPage: 'Export History' } },

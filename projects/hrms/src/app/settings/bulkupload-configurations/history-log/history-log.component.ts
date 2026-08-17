@@ -47,6 +47,8 @@ interface HistoryBatchItem {
   completedAt?: string;
   stageFiles: StageFile[];
   subStatus: string;
+  parentModuleName?: string;
+  subModuleName?: string
 }
 
 type FileType = 'ERROR_DETAILS' | 'SUCCESS_DETAILS' | 'SUMMARY' | 'FAILED_ROWS' | 'SUCCESS_ROWS' | 'INPUT';

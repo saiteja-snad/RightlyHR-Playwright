@@ -358,7 +358,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
     }
     else if (url.startsWith('/settings/bulkupload-configurations/historylog')) {
       this.moduleName = 'Bulk Import / Upload Configurations';
-      this.componentName = 'View History Log';
+      this.componentName = 'View History';
     }
     else if (url.startsWith('/settings/bulkupload-configurations')) {
       this.moduleName = 'Bulk Import / Upload Configurations';

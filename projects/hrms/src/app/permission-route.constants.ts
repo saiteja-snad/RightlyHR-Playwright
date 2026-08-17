@@ -224,7 +224,7 @@ export const SETTINGS_RATECARD_TABS = [
 ]
 
 export const SETTINGS_BULKUPLOAD_TABS = [
-  { route: '/settings/bulkupload-configurations/bulk-import', permission: 'Bulk Upload.view' },
+  { route: '/settings/bulkupload-configurations/bulk-import', permission: 'Bulk Import/Upload.view' },
   { route: '/settings/bulkupload-configurations/historylog', permission: 'View History.view' },
 ]
 
@@ -809,14 +809,14 @@ export const PERFORMANCE_REVIEW_TABS = [
 
 export const RECRUITMENT_JOBS_ROUTES = [
   { route: '/recruitment/jobs/active', permission: 'Active Jobs.view' },
-  { route: '/recruitment/jobs/inactive', permission: 'Inactive Jobs.view'}
+  { route: '/recruitment/jobs/inactive', permission: 'Inactive Jobs.view' }
 ];
 
 export const RECRUITMENT_MAIN_ROUTES = [
   { route: '/recruitment/jobs', permission: 'Job Openings.view' },
   { route: '/recruitment/interview-process', permission: 'Interview Review.view' },
-  { route: '/recruitment/recruiter-dashboard', permission: 'Recruiter Dashboard.view'},
-  { route: '/recruitment/recruitment-dashboard', permission: 'Recruitment Dashboard.view'}
+  { route: '/recruitment/recruiter-dashboard', permission: 'Recruiter Dashboard.view' },
+  { route: '/recruitment/recruitment-dashboard', permission: 'Recruitment Dashboard.view' }
 ];
 
 export const INTERVIEW_PROCESS_TABS = [

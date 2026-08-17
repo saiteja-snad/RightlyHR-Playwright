@@ -36,17 +36,17 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   steps = [
     { id: 1, name: 'Select Module' },
     { id: 2, name: 'Upload File' },
-    { id: 3, name: 'Validation & Re-verify' },
+    { id: 3, name: 'Validation' },
     { id: 4, name: 'Submission' }
   ];
   progress = 1;
 
   modules = [
     {
-      id: environment.compensationImportId,
-      name: 'Compensation',
+      id: (environment as any).compensationImportId || 1001,
+      name: 'Employees',
       submodules: [
-        { id: environment.compensationImportId, name: 'Compensation Import' }
+        { id: (environment as any).compensationImportId || 1001, name: 'Compensation' }
       ]
     },
     // {
@@ -152,7 +152,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    const modName = (this.selectedModuleName || 'Bulk_Import').replace(/\s+/g, '_');
+    const modName = (this.selectedSubmoduleName || 'Bulk_Import').replace(/\s+/g, '_');
     link.download = `${modName}_Error_Report_${this.http.formattedDate || new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     window.URL.revokeObjectURL(url);
@@ -466,7 +466,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     const previousJobId = isReupload ? this.store.jobId() : undefined;
     const parentJobId = this.store.parentJobId() ?? undefined;
     const modId = Number(this.selectedModuleId) || 1001;
-    const modName = this.selectedModuleName || 'Compensation';
+    const modName = this.selectedSubmoduleName || 'Compensation';
 
     const start$ = isReupload
       ? this.service.executeImportStage('RE_UPLOAD', this.employeeId, previousJobId ?? undefined, file, true, modId, modName, parentJobId).pipe(
@@ -558,7 +558,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
 
     const jobId = this.store.jobId()!;
     const modId = Number(this.selectedModuleId) || 1001;
-    const modName = this.selectedModuleName || 'Compensation';
+    const modName = this.selectedSubmoduleName || 'Compensation';
 
     this.store.setLoading(true);
     this.service.executeImportStage('TRANSFORM', this.employeeId, jobId, undefined, false, modId, modName)
@@ -573,7 +573,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           this.store.setLoading(false);
           this.modalService.dismissAll();
           if (importRes?.success !== false) {
-            this.conformationPopup.openSuccessModal("Data submitted successfully")
+            this.conformationPopup.openSuccessModal("Data imported successfully")
             this.totalSuccessCount = importRes.data?.successCount || 0;
             this.failureCount = importRes.data?.failureCount || 0;
             this.totalCount = importRes.data?.totalRows || 0;
@@ -635,7 +635,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   downloadTemplate() {
     this.isDownloadingTemplate = true;
     const targetModuleId = Number(this.selectedModuleId) || 1001;
-    const targetModuleName = this.selectedModuleName || 'Import';
+    const targetModuleName = this.selectedSubmoduleName || 'Import';
 
     this.service.downloadTemplate(targetModuleId, 'csv')
       .pipe(takeUntil(this.destroy$))
@@ -686,7 +686,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.store.setParentJobId(null);
     this.reset();
     localStorage.removeItem('bulkImportBatchId');
-    this.router.navigate(['/settings/bulkupload-configurations/historylog']);
+    this.router.navigate(['/settings/bulkupload-configurations/bulk-import']);
   }
 
   setStep(step: number) {
@@ -729,7 +729,8 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       'rowNumber', 'isValid', 'status', 'errorMessage', 'action',
       'effectiveDate', 'entryDate', 'createdAt', 'nextCompensationReviewDate',
       'payType', 'frequency', 'billable', 'isBillable', 'overtimeEligibility',
-      'duration', 'amountYearlyCtc', 'variablePayAmount', 'compensationAmount'
+      'duration', 'amountYearlyCtc', 'variablePay', 'variablePayAmount', 'compensationAmount',
+      'reason', 'description'
     ];
     return centeredCols.includes(col) || col.toLowerCase().includes('date') || col.toLowerCase().includes('status');
   }
@@ -743,7 +744,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   formatHeader(col: string): string {
     if (!col) return '';
     const customHeaders: { [key: string]: string } = {
-      rowNumber: 'Sno',
+      rowNumber: 'S.No',
       employeeId: 'Employee ID',
       employeeName: 'Employee Name',
       workEmail: 'Work Email',
@@ -756,7 +757,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       variablePay: 'Variable Pay',
       variablePayAmount: 'Variable Pay Amount',
       nextCompensationReviewDate: 'Next Compensation Review Date',
-      errorMessage: 'Validations Errors',
+      errorMessage: 'Validation Errors',
       isValid: 'Status',
       action: 'Action',
       clientName: 'Client',
@@ -781,6 +782,16 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   formatCellValue(row: any, col: string): string {
     if (!row) return '-';
     let value = row[col];
+
+    if (col === 'rowNumber' || col.toLowerCase() === 'rownumber' || col.toLowerCase() === 's.no') {
+      const num = Number(value);
+      if (!isNaN(num) && num >= 2) {
+        return String(num - 1);
+      }
+      if (!isNaN(num) && num >= 1) {
+        return String(num);
+      }
+    }
 
     if (value === null || value === undefined || value === '') {
       return '-';

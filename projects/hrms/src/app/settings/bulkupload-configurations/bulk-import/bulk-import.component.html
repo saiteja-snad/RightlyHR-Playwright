@@ -131,7 +131,7 @@
                     <button class="custom-btn btn-primary px-4 py-2 d-flex align-items-center gap-2"
                         [disabled]="importForm.invalid || !selectedSubmoduleId || !selectedModuleId"
                         (click)="nextStep()">
-                        <span>Next: Upload File</span>
+                        <span>Next</span>
                         <i class="bi bi-arrow-right"></i>
                     </button>
                 </div>
@@ -156,7 +156,8 @@
                             (change)="onModalFileSelected($event)">
                     </div>
                     @if (store.parentJobId()) {
-                    <p class="small text-muted mt-3 mb-0">Upload the corrected failed-rows file to retry remaining errors.</p>
+                    <p class="small text-muted mt-3 mb-0">Upload the corrected failed-rows file to retry remaining
+                        errors.</p>
                     }
                     @if (store.response()) {
                     <div class="my-3">
@@ -370,8 +371,7 @@
             </p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary"
-                (click)="modal.dismiss();">No</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
             <button type="submit" class="custom-btn btn-primary" [disabled]="store.loading()"
                 (click)="onConfirmUpload()">
                 @if (store.loading()) {
@@ -386,13 +386,11 @@
 <ng-template #backnavigation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="/project-mangement-icons/alert.png" alt="failure icon"
-                class="confirmation-delete-icon">
+            <img src="/project-mangement-icons/alert.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text mb-4 mt-1">{{'Are you sure you want to exit?'}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary"
-                (click)="modal.dismiss();">No</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="navigatetomy()">
                 Yes
             </button>

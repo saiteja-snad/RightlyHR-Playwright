@@ -34,7 +34,7 @@ import { environment } from '../../../../environments/environment';
 
 export class BulkImportComponent implements OnInit, OnDestroy {
   steps = [
-    { id: 1, name: 'Select & Template' },
+    { id: 1, name: 'Select Module' },
     { id: 2, name: 'Upload File' },
     { id: 3, name: 'Validation & Re-verify' },
     { id: 4, name: 'Submission' }
@@ -743,7 +743,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   formatHeader(col: string): string {
     if (!col) return '';
     const customHeaders: { [key: string]: string } = {
-      rowNumber: 'Row #',
+      rowNumber: 'Sno',
       employeeId: 'Employee ID',
       employeeName: 'Employee Name',
       workEmail: 'Work Email',
@@ -756,7 +756,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       variablePay: 'Variable Pay',
       variablePayAmount: 'Variable Pay Amount',
       nextCompensationReviewDate: 'Next Compensation Review Date',
-      errorMessage: 'Error / Warning',
+      errorMessage: 'Validations Errors',
       isValid: 'Status',
       action: 'Action',
       clientName: 'Client',

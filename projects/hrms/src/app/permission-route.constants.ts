@@ -223,6 +223,11 @@ export const SETTINGS_RATECARD_TABS = [
   { route: '/settings/employee-rate-card/rate-card/rate-card-inactive', permission: 'Rate Card Inactive Tab.view' },
 ]
 
+export const SETTINGS_BULKUPLOAD_TABS = [
+  { route: '/settings/bulkupload-configurations/bulk-import', permission: 'Bulk Upload.view' },
+  { route: '/settings/bulkupload-configurations/historylog', permission: 'View History.view' },
+]
+
 export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/leave-report', permission: 'Leave Report.view' },
   { route: '/reports/attendence-reports/leave-summary-report', permission: 'Leave Summary Report.view' },

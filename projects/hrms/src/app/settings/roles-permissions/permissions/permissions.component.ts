@@ -1228,9 +1228,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
       'Recruitment Configuration Module',
       'Helpdesk Configuration Module',
       'Employee Fields Config Update Module',
-      'Bulk Import/Upload Configuration Module',
-      'View History',
-      'Bulk Import/Upload'
+      'Bulk Import/Upload Configuration Module'
     ]
   }, {
     title: 'Dashboard Widgets',
@@ -1262,6 +1260,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
     ]
   },
   { title: 'Rate Card Configuration Module', disableFn: 'israteCardCheckboxDisabled', fieldNames: ['Rate Card Active Tab', 'Rate Card In-active Tab'] },
+  { title: 'Bulk Import/Upload Configuration Module', disableFn: 'isonlyviewfunction', fieldNames: ['Bulk Import/Upload', 'View History'] },
   { title: 'Employee Fields', disableFn: 'isemployeeCheckboxDisabled', fieldNames: ['Personal Tab', 'Job Tab', 'Document Tab', 'Manage Shifts Tab', 'Manage Policies Tab', 'Manage Holidays Tab', 'Manage Weekends Tab', 'Manage DST Tab', 'Manage Benefits Tab', 'Expense Tab', 'NoDue Clearance Tab'] },
   { title: 'Employee Fields Config Update', disableFn: 'isemployeeCheckboxDisabled', fieldNames: ['Personal Config Update Tab', 'Job Config Update Tab', 'Document Config Update Tab'] },
   {

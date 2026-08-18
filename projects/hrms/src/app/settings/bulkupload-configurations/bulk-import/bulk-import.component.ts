@@ -438,7 +438,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       file.name.endsWith('.csv');
 
     if (!isValidExtension) {
-      this.conformationPopup.openErrorModal('Please upload a valid Excel file (.xlsx or .xls) or .csv file');
+      this.conformationPopup.openErrorModal('Invalid file format. Please upload a valid Excel file (.xlsx / .xls / .csv)');
       return;
     }
 

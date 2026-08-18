@@ -255,21 +255,21 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   submissionRows = signal<any[]>([]);
   submissionTotalCount = 0;
   submissionPage = 1;
-  submissionPageSize = 15;
+  submissionPageSize = 50;
   submissionFirst = 0;
   submissionSearchValue = '';
   private submissionJobId: number | null = null;
   private submissionSearchSubject = new Subject<string>();
   page = 1;
-  pageSize = 15;
+  pageSize = 50;
   first = 0;
-  rows = 15;
+  rows = 50;
   collectionSize = 0;
   options = [
-    { label: '15', value: 15 },
-    { label: '30', value: 30 },
-    { label: '45', value: 45 },
-    { label: '60', value: 60 },
+    { label: 50, value: 50 },
+    { label: 100, value: 100 },
+    { label: 150, value: 150 },
+    { label: 200, value: 200 }
   ];
 
   constructor(private conformationPopup: OpenModalService,
@@ -306,8 +306,9 @@ export class BulkImportComponent implements OnInit, OnDestroy {
 
     if (savedStep === '4' && savedStage === 'IMPORT') {
       const savedSubmissionJobId = this.store.submissionJobId();
-      if (savedSubmissionJobId) {
-        this.submissionJobId = savedSubmissionJobId;
+      const restoreJobId = savedSubmissionJobId || savedJobId;
+      if (restoreJobId) {
+        this.submissionJobId = restoreJobId;
         this.loadSubmittedDetails();
       } else {
         this.store.reset();
@@ -369,25 +370,26 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
       takeUntil(this.destroy$)
     ).subscribe(() => {
-      this.submissionPage = 1;
-      this.submissionFirst = 0;
+      this.resetSubmissionPaging();
       this.loadSubmittedDetails();
     });
   }
 
   onPageChange(event: any) {
     this.page = event.page + 1;
-    this.pageSize = event.rows;
-    this.rows = event.rows;
+    this.pageSize = Number(event.rows);
+    this.rows = this.pageSize;
     this.first = event.first;
+    this.syncSubmissionPaging();
     this.loadSubmittedDetails();
   }
 
   onPageSizeChange(newPageSize: number) {
-    this.pageSize = newPageSize;
-    this.rows = newPageSize;
+    this.pageSize = Number(newPageSize);
+    this.rows = this.pageSize;
     this.page = 1;
     this.first = 0;
+    this.syncSubmissionPaging();
     this.loadSubmittedDetails();
   }
 
@@ -587,8 +589,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
             this.submissionJobId = resolvedJobId;
             this.store.setSubmissionJobId(resolvedJobId);
             this.store.setCurrentStage('IMPORT');
-            this.submissionPage = 1;
-            this.submissionFirst = 0;
+            this.resetSubmissionPaging();
             this.submissionSearchValue = '';
             this.setStep(4);
             this.loadSubmittedDetails();
@@ -605,8 +606,55 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   }
 
   loadSubmittedDetails() {
-    this.store.setLoading(false);
     const validRows = this.store.validRows() ?? [];
+    if (this.store.response()) {
+      this.applySubmissionPaging(validRows);
+      return;
+    }
+
+    const jobId = this.submissionJobId || this.store.jobId();
+    if (!jobId) {
+      this.applySubmissionPaging([]);
+      return;
+    }
+
+    this.store.setLoading(true);
+    this.service.getImportPreview(jobId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (previewRes: any) => {
+          const previewData = previewRes?.data;
+          if (previewData) {
+            this.store.setResponse({
+              success: true,
+              statusCode: 200,
+              message: 'Preview loaded',
+              data: {
+                totalRows: previewData.totalRows,
+                validRows: previewData.validRows,
+                invalidRows: previewData.invalidRows,
+                insertCount: previewData.insertCount,
+                updateCount: previewData.updateCount,
+                skipCount: previewData.skipCount,
+                fileName: previewData.fileName,
+                filePath: previewData.filePath,
+                columns: previewData.columns ?? [],
+                rows: previewData.rows ?? [],
+              }
+            } as any);
+          }
+          this.store.setLoading(false);
+          this.applySubmissionPaging(this.store.validRows() ?? []);
+        },
+        error: () => {
+          this.store.setLoading(false);
+          this.applySubmissionPaging([]);
+        }
+      });
+  }
+
+  private applySubmissionPaging(validRows: any[]) {
+    this.store.setLoading(false);
     this.submissionTotalCount = this.totalSuccessCount || validRows.length;
 
     const search = (this.submissionSearchValue || '').trim().toLowerCase();
@@ -617,10 +665,25 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       );
     }
 
+    const pageSize = Number(this.pageSize) || 50;
     this.collectionSize = filtered.length;
-    const start = (this.submissionPage - 1) * this.submissionPageSize;
-    const end = start + this.submissionPageSize;
+    const start = (this.page - 1) * pageSize;
+    const end = start + pageSize;
     this.submissionRows.set(filtered.slice(start, end));
+  }
+
+  private resetSubmissionPaging() {
+    this.page = 1;
+    this.first = 0;
+    this.submissionPage = 1;
+    this.submissionFirst = 0;
+    this.syncSubmissionPaging();
+  }
+
+  private syncSubmissionPaging() {
+    this.submissionPage = this.page;
+    this.submissionPageSize = Number(this.pageSize) || 50;
+    this.submissionFirst = this.first;
   }
 
   onSubmissionSearchChange() {
@@ -628,10 +691,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   }
 
   onSubmissionPageChange(event: any) {
-    this.submissionPage = event.page + 1;
-    this.submissionPageSize = event.rows;
-    this.submissionFirst = event.first;
-    this.loadSubmittedDetails();
+    this.onPageChange(event);
   }
 
   onSearchChange() {
@@ -684,6 +744,11 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.store.reset();
     this.searchValue = '';
     this.searchTerm.set('');
+    this.submissionSearchValue = '';
+    this.submissionRows.set([]);
+    this.submissionTotalCount = 0;
+    this.collectionSize = 0;
+    this.resetSubmissionPaging();
     this.setStep(1);
     localStorage.removeItem('bulkImportStep');
   }

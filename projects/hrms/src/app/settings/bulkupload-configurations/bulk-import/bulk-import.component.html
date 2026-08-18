@@ -348,7 +348,7 @@
                     }
                 </div>
                 <div class="pagination-content" *ngIf="submissionRows().length > 0 && collectionSize > 0">
-                    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    <div class="d-flex justify-content-between align-items-center w-100 flex-nowrap gap-2">
                         <div class="d-flex align-items-center gap-3 p-2">
                             <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
                                 (ngModelChange)="onPageSizeChange($event)">
@@ -360,12 +360,15 @@
                                 : (+first + +rows) }} of {{ collectionSize }}
                             </span>
                         </div>
-                        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-                            (onPageChange)="onPageChange($event)" />
+                        <div class="d-flex align-items-center gap-3 pe-2">
+                            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                                (onPageChange)="onPageChange($event)" />
+                            <button type="button" class="custom-btn btn-primary"
+                                (click)="navigateToHistoryView()">{{'Close'}}</button>
+                        </div>
                     </div>
                 </div>
-
-                <div class="footer-content">
+                <div class="submission-close-only" *ngIf="!(submissionRows().length > 0 && collectionSize > 0)">
                     <button type="button" class="custom-btn btn-primary"
                         (click)="navigateToHistoryView()">{{'Close'}}</button>
                 </div>

@@ -25,6 +25,15 @@ export class BulkUploadStore {
   readonly summary = computed(() => this.response()?.data);
   readonly allRows = computed(() => this.response()?.data.rows ?? []);
   readonly fileName = computed(() => this.response()?.data.fileName);
+  readonly displayFileName = computed(() => this.response()?.data.displayFileName || this.response()?.data.fileName);
+  readonly moduleLabel = computed(() => {
+    const data = this.response()?.data;
+    if (!data) return '';
+    const parent = data.parentModuleName || '';
+    const sub = data.subModuleName || '';
+    if (!parent && !sub) return '';
+    return `Module: ${parent} / Submodule: ${sub}`;
+  });
   readonly columns = computed(() => this.response()?.data?.columns ?? []);
   readonly validRows = computed(() => this.allRows().filter(r => r.isValid));
 
@@ -60,6 +69,31 @@ export class BulkUploadStore {
   setResponse(response: BulkUploadResponse) {
     this.response.set(response);
     this.error.set(null);
+  }
+
+  setPreview(previewData: any, uploadData?: any) {
+    if (!previewData) return;
+    this.setResponse({
+      success: true,
+      statusCode: 200,
+      message: 'Preview loaded',
+      data: {
+        totalRows: previewData.totalRows,
+        validRows: previewData.validRows,
+        invalidRows: previewData.invalidRows,
+        insertCount: previewData.insertCount,
+        updateCount: previewData.updateCount,
+        skipCount: previewData.skipCount,
+        fileName: previewData.fileName || uploadData?.fileName,
+        displayFileName: previewData.displayFileName || uploadData?.displayFileName || previewData.fileName || uploadData?.fileName,
+        filePath: previewData.filePath,
+        moduleName: previewData.moduleName || uploadData?.moduleName,
+        subModuleName: previewData.subModuleName || uploadData?.subModuleName,
+        parentModuleName: previewData.parentModuleName || uploadData?.parentModuleName,
+        columns: previewData.columns ?? [],
+        rows: previewData.rows ?? [],
+      }
+    } as BulkUploadResponse);
   }
 
   setFilter(filter: FilterType) { this.activeFilter.set(filter); }

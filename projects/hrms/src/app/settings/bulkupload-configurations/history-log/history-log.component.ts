@@ -33,6 +33,8 @@ interface HistoryBatchItem {
   currentStage: string;
   jobType: string;
   filePath?: string;
+  sourceFileName?: string;
+  displayFileName?: string;
   totalRows: number;
   successRows: number;
   failureRows: number;
@@ -216,15 +218,14 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }
 
-  downloadFile(filepath: string) {
+  downloadFile(filepath: string, downloadName?: string) {
     this.http.DownloadDataWithQuery('FileSystem/Downloadfile', filepath)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          let filename = filepath.split('/')[filepath.split('/').length - 1] || 'download';
-          if (!filename) {
-            filename = filepath.split('/')[filepath.split('/').length - 1] || 'download';
-          }
+          let filename = downloadName
+            || filepath.split('/')[filepath.split('/').length - 1]
+            || 'download';
           const blob: Blob = res.body as Blob;
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');

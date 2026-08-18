@@ -17,13 +17,17 @@
         </div>
     </div>
 
-    @if(progress === 3){
+    @if(progress === 3 || progress === 4){
     @if (store.response()) {
     <div class="d-flex align-items-center justify-content-between px-4">
         <div>
             <span class="total-hrs border-0 px-0">{{'Uploaded File Name:'}}</span>
-            <span class="file-name"> {{store.fileName() ?? '-'}}</span>
+            <span class="file-name" [title]="store.fileName() || ''">{{ store.displayFileName() ?? '-' }}</span>
+            @if (store.moduleLabel()) {
+            <div class="file-module-line">{{ store.moduleLabel() }}</div>
+            }
         </div>
+        @if (progress === 3) {
         <div class="d-flex align-items-center gap-3">
             <div class="total-hrs cursor-pointer badge-total"
                 [class.active-filter-badge]="store.activeFilter() === 'ALL'" (click)="store.setFilter('ALL')">
@@ -40,6 +44,7 @@
                 <span class="total-duration ms-1">{{formatCount(store.stats().invalid)}}</span>
             </div>
         </div>
+        }
     </div>
     }
     }
@@ -162,7 +167,7 @@
                     @if (store.response()) {
                     <div class="my-3">
                         <span class="total-hrs">{{'Uploaded File Name:'}}</span>
-                        <span class="total-duration ms-1"> {{store.fileName() ?? '-'}}</span>
+                        <span class="file-name total-duration ms-1" [title]="store.fileName() || ''">{{ store.displayFileName() ?? '-' }}</span>
                     </div>
                     }
                 </div>
@@ -193,12 +198,11 @@
                         @if (store.loading()) {
                         <app-data-loader-content />
                         }@else {
-                        <table class="w-100 ">
+                        <table class="w-100">
                             <thead>
                                 <tr>
                                     @for (col of displayColumns(); track col) {
-                                    <th [ngClass]="{'text-center': isCenteredColumn(col)}">{{ formatHeader(col)
-                                        }}</th>
+                                    <th class="text-center">{{ formatHeader(col) }}</th>
                                     }
                                     @if (!hasStatusColumn()) {
                                     <th class="text-center">{{'Status'}}</th>
@@ -210,7 +214,7 @@
                                 @for (row of filteredRows(); track (row.rowNumber || $index)) {
                                 <tr>
                                     @for (col of displayColumns(); track col) {
-                                    <td [ngClass]="{'text-center': isCenteredColumn(col)}">
+                                    <td class="text-center">
                                         @if (col === 'isValid' || col === 'status') {
                                         @if (row.isValid) {
                                         <img src="/icons/check-approve-icon.png" class="action-img" alt="Valid" />
@@ -294,16 +298,16 @@
                         placeholder="Search by employee id, employee name, work mail, frequency, amount"
                         aria-label="Search" aria-describedby="submission-search">
                 </div>
-                <div class="custom-table-content border-table" [ngClass]="{'preview-table-height': progress === 4}">
+                <div class="custom-table-content border-table"
+                    [ngClass]="{'preview-table-height': progress === 4, 'table-with-pagination': submissionRows().length > 0 && collectionSize > 0}">
                     @if (store.loading()) {
                     <app-data-loader-content />
                     }@else {
-                    <table class="w-100 ">
+                    <table class="w-100">
                         <thead>
                             <tr>
                                 @for (col of displaySubmissionColumns(); track col) {
-                                <th [ngClass]="{'text-center': isCenteredColumn(col)}">{{ formatHeader(col) }}
-                                </th>
+                                <th class="text-center">{{ formatHeader(col) }}</th>
                                 }
                             </tr>
                         </thead>
@@ -312,7 +316,7 @@
                             @for (row of submissionRows(); track ($index)) {
                             <tr>
                                 @for (col of displaySubmissionColumns(); track col) {
-                                <td [ngClass]="{'text-center': isCenteredColumn(col)}">
+                                <td class="text-center">
                                     @if (isDateColumn(col)) {
                                     {{ row[col] ? (row[col] | dateformat) : '-' }}
                                     } @else if (col === 'description' || col === 'errorMessage' || col ===

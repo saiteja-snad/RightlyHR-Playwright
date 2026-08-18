@@ -109,6 +109,11 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (file.name.length > 255) {
+      this.conformationPopup.openErrorModal('File name must not exceed 255 characters.');
+      return;
+    }
+
     this.onFileSelected(file, isReupload);
   }
 
@@ -129,9 +134,11 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
       )
       : this.bulkUploadService.executeImportStage('UPLOAD', employeeId, undefined, file, false, 1001, 'Compensation', parentJobId);
 
+    let uploadData: any;
     start$
       .pipe(
         switchMap((uploadRes: any) => {
+          uploadData = uploadRes?.data ?? uploadRes;
           const jobId = uploadRes?.data?.jobId ?? uploadRes?.jobId;
           if (!jobId) throw new Error('Upload failed: no job ID returned');
           const responseParentId = uploadRes?.data?.parentJobId ?? uploadRes?.parentJobId;
@@ -159,22 +166,7 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           const previewData = previewRes?.data;
           if (previewData) {
-            this.store.setResponse({
-              success: true,
-              statusCode: 200,
-              message: 'Preview loaded',
-              data: {
-                totalRows: previewData.totalRows,
-                validRows: previewData.validRows,
-                invalidRows: previewData.invalidRows,
-                insertCount: previewData.insertCount,
-                updateCount: previewData.updateCount,
-                skipCount: previewData.skipCount,
-                fileName: previewData.fileName,
-                filePath: previewData.filePath,
-                rows: previewData.rows ?? [],
-              }
-            } as any);
+            this.store.setPreview(previewData, uploadData);
             localStorage.setItem('bulkImportStep', '2');
             this.conformationPopup.openSuccessModal('File reuploaded successfully')
           }

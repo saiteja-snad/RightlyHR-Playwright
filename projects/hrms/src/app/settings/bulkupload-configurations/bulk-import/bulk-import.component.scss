@@ -257,6 +257,18 @@
    font-size: var(--fontsize16) !important;
    font-weight: 700;
    color: var(--primary-color);
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   max-width: 360px;
+   display: inline-block;
+   vertical-align: bottom;
+}
+
+.file-module-line {
+   font-size: var(--fontsize12);
+   color: #6b7280;
+   margin-top: 0.25rem;
 }
 
 .border-table {
@@ -264,30 +276,18 @@
    overflow: auto;
 }
 
-.custom-table-content {
-   width: 100%;
-   overflow: auto;
+.table-with-pagination {
+   border-bottom-left-radius: 0rem !important;
+   border-bottom-right-radius: 0rem !important;
+   border-bottom: none !important;
+}
 
-   table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-
-      thead {
-         position: sticky;
-         top: 0;
-         z-index: 10;
-
-         th {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background-color: #f8f9fa;
-            border-bottom: 1px solid var(--border-color);
-            box-shadow: inset 0 -1px 0 var(--border-color);
-         }
-      }
-   }
+.pagination-content {
+   border: 1px solid var(--content-border-color) !important;
+   border-top: 0px !important;
+   border-radius: 0.5rem !important;
+   border-top-left-radius: 0rem !important;
+   border-top-right-radius: 0rem !important;
 }
 
 .timesheet-chip {

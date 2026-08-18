@@ -9,7 +9,7 @@
                 <app-download-icon /> {{'Download Template'}}
                 }
             </button> -->
-            @if (store.response() && !isActiveRoute('/settings/bulkupload-configurations/historylog') ) {
+            @if (store.response() && store.currentStage() === 'VALIDATE' && !isActiveRoute('/settings/bulkupload-configurations/historylog')) {
             <div>
                 <button class="float-end custom-btn btn-secondary" (click)="reUploadInput.click()">
                     <i class="bi bi-arrow-clockwise me-2"></i>{{'Re-Upload'}}

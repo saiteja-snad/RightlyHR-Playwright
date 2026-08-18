@@ -323,23 +323,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           next: (previewRes: any) => {
             const previewData = previewRes?.data;
             if (previewData) {
-              this.store.setResponse({
-                success: true,
-                statusCode: 200,
-                message: 'Preview loaded',
-                data: {
-                  totalRows: previewData.totalRows,
-                  validRows: previewData.validRows,
-                  invalidRows: previewData.invalidRows,
-                  insertCount: previewData.insertCount,
-                  updateCount: previewData.updateCount,
-                  skipCount: previewData.skipCount,
-                  fileName: previewData.fileName,
-                  filePath: previewData.filePath,
-                  columns: previewData.columns ?? [],
-                  rows: previewData.rows ?? [],
-                }
-              } as any);
+              this.store.setPreview(previewData);
             }
             this.store.setLoading(false);
           },
@@ -463,6 +447,11 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (file.name.length > 255) {
+      this.conformationPopup.openErrorModal('File name must not exceed 255 characters.');
+      return;
+    }
+
     this.onFileSelected(file, undefined, isReupload);
   }
 
@@ -482,9 +471,11 @@ export class BulkImportComponent implements OnInit, OnDestroy {
       )
       : this.service.executeImportStage('UPLOAD', this.employeeId, undefined, file, false, modId, modName, parentJobId);
 
+    let uploadData: any;
     start$
       .pipe(
         switchMap((uploadRes: any) => {
+          uploadData = uploadRes?.data ?? uploadRes;
           const jobId = uploadRes?.data?.jobId ?? uploadRes?.jobId;
           if (!jobId) throw new Error('Upload failed: no job ID returned');
           const responseParentId = uploadRes?.data?.parentJobId ?? uploadRes?.parentJobId;
@@ -513,23 +504,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           const previewData = previewRes?.data;
           if (previewData) {
-            this.store.setResponse({
-              success: true,
-              statusCode: 200,
-              message: 'Preview loaded',
-              data: {
-                totalRows: previewData.totalRows,
-                validRows: previewData.validRows,
-                invalidRows: previewData.invalidRows,
-                insertCount: previewData.insertCount,
-                updateCount: previewData.updateCount,
-                skipCount: previewData.skipCount,
-                fileName: previewData.fileName,
-                filePath: previewData.filePath,
-                columns: previewData.columns ?? [],
-                rows: previewData.rows ?? [],
-              }
-            } as any);
+            this.store.setPreview(previewData, uploadData);
             this.setStep(3);
           }
           this.store.setLoading(false);
@@ -625,23 +600,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
         next: (previewRes: any) => {
           const previewData = previewRes?.data;
           if (previewData) {
-            this.store.setResponse({
-              success: true,
-              statusCode: 200,
-              message: 'Preview loaded',
-              data: {
-                totalRows: previewData.totalRows,
-                validRows: previewData.validRows,
-                invalidRows: previewData.invalidRows,
-                insertCount: previewData.insertCount,
-                updateCount: previewData.updateCount,
-                skipCount: previewData.skipCount,
-                fileName: previewData.fileName,
-                filePath: previewData.filePath,
-                columns: previewData.columns ?? [],
-                rows: previewData.rows ?? [],
-              }
-            } as any);
+            this.store.setPreview(previewData);
           }
           this.store.setLoading(false);
           this.applySubmissionPaging(this.store.validRows() ?? []);

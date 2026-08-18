@@ -46,13 +46,18 @@
                         <td class="text-center">{{item.parentModuleName || '-'}}</td>
                         <td class="text-center">{{item.subModuleName || '-'}}</td>
                         <td class="text-center">
-                            <span *ngIf="item.filePath; else noData" (click)="downloadFile(item.filePath!)">
-                                <img *ngIf="item.filePath.endsWith('.xlsx') || item.filePath.endsWith('.xls')"
-                                    src="/project-mangement-icons/excel-icon.png" alt="Excel" class="image-icon">
-                                <img *ngIf="item.filePath.endsWith('.csv')" src="/project-mangement-icons/csv-icon.png"
-                                    alt="CSV" class="image-icon">
-                            </span>
-                            <ng-template #noData>-</ng-template>
+                            <div class="d-flex align-items-center justify-content-center gap-2">
+                                <span class="source-file-name"
+                                    [title]="item.sourceFileName || item.displayFileName || ''">
+                                    {{ item.displayFileName || item.sourceFileName || '-' }}
+                                </span>
+                                <span *ngIf="item.filePath" (click)="downloadFile(item.filePath!, item.sourceFileName)">
+                                    <img *ngIf="item.filePath.endsWith('.xlsx') || item.filePath.endsWith('.xls')"
+                                        src="/project-mangement-icons/excel-icon.png" alt="Excel" class="image-icon">
+                                    <img *ngIf="item.filePath.endsWith('.csv')"
+                                        src="/project-mangement-icons/csv-icon.png" alt="CSV" class="image-icon">
+                                </span>
+                            </div>
                         </td>
                         <td class="text-center">{{item.totalRows || '-'}}</td>
                         <td class="text-center">
@@ -172,17 +177,21 @@
                                 <td>{{ job.jobReference || job.jobId || '-' }}</td>
                                 <td>{{ getJobType(job) }}</td>
                                 <td>
-                                    @if (job.filePath) {
-                                    <span (click)="downloadFile(job.filePath!)">
-                                        <img *ngIf="job.filePath.endsWith('.xlsx') || job.filePath.endsWith('.xls')"
-                                            src="/project-mangement-icons/excel-icon.png" alt="Excel"
-                                            class="image-icon">
-                                        <img *ngIf="job.filePath.endsWith('.csv')"
-                                            src="/project-mangement-icons/csv-icon.png" alt="CSV" class="image-icon">
-                                    </span>
-                                    } @else {
-                                    -
-                                    }
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <span class="source-file-name"
+                                            [title]="job.sourceFileName || job.displayFileName || ''">
+                                            {{ job.displayFileName || job.sourceFileName || '-' }}
+                                        </span>
+                                        @if (job.filePath) {
+                                        <span (click)="downloadFile(job.filePath!, job.sourceFileName)">
+                                            <img *ngIf="job.filePath.endsWith('.xlsx') || job.filePath.endsWith('.xls')"
+                                                src="/project-mangement-icons/excel-icon.png" alt="Excel"
+                                                class="image-icon">
+                                            <img *ngIf="job.filePath.endsWith('.csv')"
+                                                src="/project-mangement-icons/csv-icon.png" alt="CSV" class="image-icon">
+                                        </span>
+                                        }
+                                    </div>
                                 </td>
                                 <td>{{ job.totalRows || '-' }}</td>
                                 <td>

@@ -78,7 +78,11 @@ export interface BulkUploadSummary {
   columns?: string[];
   rows: BulkUploadRow[];
   fileName: string;
+  displayFileName?: string;
   filePath?: string;
+  moduleName?: string;
+  subModuleName?: string;
+  parentModuleName?: string;
 }
 
 export interface BulkUploadResponse {

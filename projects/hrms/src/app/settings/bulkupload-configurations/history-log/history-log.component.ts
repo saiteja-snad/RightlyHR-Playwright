@@ -93,7 +93,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
   ];
   filteredTabs: any[] = [];
   navTabs = [
-    { label: 'Import', link: '/settings/bulkupload-configurations/historylog', permission: { feature: 'View History', action: 'view' } },
+    { label: 'Imports History', link: '/settings/bulkupload-configurations/historylog', permission: { feature: 'View History', action: 'view' } },
     // { label: 'Export', link: '/settings/bulkupload-configurations/export-history', permission: { feature: 'View History', action: 'view' } },
   ];
   searchSubject = new Subject<string>();
@@ -116,6 +116,10 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (!this.rbac.allowedToAccess('View History.view') && !this.rbac.allowedToAccess('Bulk Import/Upload Configuration Module.view')) {
+      this.router.navigate(['/uservalidation']);
+      return;
+    }
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.filterTabsByRbac();
     this.updateModuleInfo();

@@ -21,6 +21,7 @@ import { DownloadIconComponent } from "../../../icons/download-icon/download-ico
 import { HttpResponse } from '@angular/common/http';
 import { Select } from 'primeng/select';
 import { environment } from '../../../../environments/environment';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-bulk-import',
@@ -68,6 +69,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   ];
 
   private fb = inject(FormBuilder);
+  public rbac = inject(RbacService);
   importForm: FormGroup = this.fb.group({
     moduleId: ['', Validators.required],
     submoduleId: ['', Validators.required]
@@ -279,6 +281,10 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    if (!this.rbac.allowedToAccess('Bulk Import/Upload.view') && !this.rbac.allowedToAccess('Bulk Import/Upload Configuration Module.view')) {
+      this.router.navigate(['/uservalidation']);
+      return;
+    }
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.employeeId = this.empdata?.employeeId;
     this.updateModuleInfo();

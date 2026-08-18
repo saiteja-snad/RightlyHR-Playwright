@@ -12,6 +12,7 @@ import { environment } from '../../../../environments/environment';
 import { HttpResponse } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { RbacService } from '../../../services/rbac.service';
 import { BulkuploadSidebarTabsComponent } from '../bulkupload-sidebar-tabs/bulkupload-sidebar-tabs.component';
 
 @Component({
@@ -31,10 +32,16 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
     private bulkUploadService: BulkUploadConfigService,
     private http: HttpService,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {
+    if (!this.rbac.allowedToAccess('Bulk Import/Upload Configuration Module.view') &&
+        !this.rbac.allowedToAccess('Bulk Import/Upload.view') &&
+        !this.rbac.allowedToAccess('View History.view')) {
+      this.router.navigate(['/uservalidation']);
+    }
   }
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);

@@ -2,3 +2,36 @@
   height: 60dvh;
   justify-content: center;
 }
+
+.view-modal-table.popup-table-wrapper {
+  border-radius: 0.5rem;
+
+  .popup-table-scroll-container {
+    border-bottom: 1px solid var(--accordian-table-border-color) !important;
+    border-radius: 0.5rem;
+  }
+
+  th:first-child {
+    border-top-left-radius: 0.325rem;
+  }
+
+  th:last-child {
+    border-top-right-radius: 0.325rem;
+  }
+
+  .popup-table {
+    table-layout: auto;
+    width: max-content;
+    min-width: 100%;
+
+    th,
+    td {
+      white-space: nowrap;
+    }
+
+    td:nth-child(2),
+    td:nth-child(3) {
+      white-space: normal;
+    }
+  }
+}

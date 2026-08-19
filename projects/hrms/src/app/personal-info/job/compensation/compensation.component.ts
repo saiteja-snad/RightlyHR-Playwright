@@ -52,8 +52,42 @@ export class CompensationComponent implements OnInit,OnDestroy {
   loading=false
   empinfo: any
   selectedid: any;
+  selectedViewItem: any = null;
   currentSortField: string = '';
   currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+
+  openViewMoreModal(content: any, data: any) {
+    this.selectedViewItem = data;
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
+    });
+  }
+
+  getAddedBy(item: any): string {
+    if (!item) return 'NA';
+    const val = item.addedBy ?? item.createdBy ?? item.createdby ?? item.addedByName ?? item.createdByName ?? item.performedBy;
+    if (!val) return 'NA';
+    if (typeof val === 'object') {
+      return val.name || val.fullName || val.employeeName || val.userName || JSON.stringify(val);
+    }
+    return String(val).trim() || 'NA';
+  }
+
+  getCreatedAt(item: any): any {
+    if (!item) return 'NA';
+    const val = item.createdAt ?? item.createdOn ?? item.createddate ?? item.createdDate ?? item.createdat;
+    if (!val) return 'NA';
+    return val;
+  }
+
+  getSource(item: any): string {
+    if (!item) return 'NA';
+    const val = item.source ?? item.creationSource ?? item.entrySource ?? item.sourceType ?? item.importSource;
+    if (!val) return 'NA';
+    return String(val).trim() || 'NA';
+  }
   constructor(
     private modalService: NgbModal,
     private authService: AuthService,

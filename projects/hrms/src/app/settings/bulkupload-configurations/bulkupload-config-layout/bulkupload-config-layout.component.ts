@@ -11,19 +11,21 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { environment } from '../../../../environments/environment';
 import { HttpResponse } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { RbacService } from '../../../services/rbac.service';
 import { BulkuploadSidebarTabsComponent } from '../bulkupload-sidebar-tabs/bulkupload-sidebar-tabs.component';
 
 @Component({
   selector: 'app-bulkupload-config-layout',
-  imports: [RouterModule, SettingsHeaderComponent, CommonModule, DownloadIconComponent, BulkuploadSidebarTabsComponent],
+  imports: [RouterModule, SettingsHeaderComponent, CommonModule, DownloadIconComponent, BulkuploadSidebarTabsComponent, TranslateModule],
   templateUrl: './bulkupload-config-layout.component.html',
   styleUrl: './bulkupload-config-layout.component.scss'
 })
 export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   isDownloadingTemplate = false;
+  isFilterIndicatorActive = false;
   destroy$ = new Subject<boolean>();
 
   constructor(
@@ -42,7 +44,17 @@ export class BulkuploadConfigLayoutComponent implements OnInit, OnDestroy {
         !this.rbac.allowedToAccess('View History.view')) {
       this.router.navigate(['/uservalidation']);
     }
+    this.bulkUploadService.filterIndicatorActive$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(active => {
+        this.isFilterIndicatorActive = active;
+      });
   }
+
+  toggleHistoryFilters(): void {
+    this.bulkUploadService.triggerHistoryFilterToggle();
+  }
+
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
   }

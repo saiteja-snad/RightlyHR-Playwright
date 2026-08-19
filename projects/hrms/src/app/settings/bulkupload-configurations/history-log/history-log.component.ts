@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import moment from 'moment';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
@@ -9,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
 import { Router, RouterModule } from '@angular/router';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { PaginatorModule } from 'primeng/paginator';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
@@ -17,6 +18,11 @@ import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
 import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { BulkUploadStore } from '../bulk-upload/models/bulk-upload.store';
+import { BulkUploadConfigService } from '../../../services/bulk-upload-config.service';
+import { DatePicker } from 'primeng/datepicker';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { SelectModule } from 'primeng/select';
+import { DropdownModule } from 'primeng/dropdown';
 
 interface ChildJob {
   jobId: number;
@@ -67,10 +73,11 @@ interface StageFile {
 
 @Component({
   selector: 'app-history-log',
-  imports: [CommonModule, FormsModule, RouterModule, PaginatorModule, TabsModule, DateformatPipe, DataLoaderContentComponent, NoDataFoundComponent,
-    TranslateModule, ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, DownloadIconComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, PaginatorModule, TabsModule, DateformatPipe, DataLoaderContentComponent, NoDataFoundComponent,
+    TranslateModule, ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, DownloadIconComponent, DatePicker, MultiSelectModule, SelectModule, DropdownModule],
   templateUrl: './history-log.component.html',
-  styleUrl: './history-log.component.scss'
+  styleUrl: './history-log.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class HistoryLogComponent implements OnInit, OnDestroy {
@@ -101,16 +108,38 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
   searchSubject = new Subject<string>();
   searchValue: any;
   @ViewChild('jobDetailsModal') jobDetailsModal!: TemplateRef<any>;
+  @ViewChild('filterContent') filterContent!: TemplateRef<any>;
   selectedParentJob: HistoryBatchItem | null = null;
   detailJobs: HistoryBatchItem[] = [];
   detailsLoading = false;
+
+  // Filter Form & Properties
+  historyLogFilterForm!: FormGroup;
+  isFilterIndicatorActive = false;
+  spinnerLoader1 = false;
+  today: Date = new Date();
+
+  modulesList: { label: string; value: string }[] = [];
+  subModulesList: { label: string; value: string; parentId?: string }[] = [];
+  filteredSubModulesList: { label: string; value: string; parentId?: string }[] = [];
+  employeeData: { id: number; name: string }[] = [];
+
+  statusOptions = [
+    { key: 'In_Progress', value: 'in_progress' },
+    { key: 'Completed', value: 'completed' },
+    { key: 'Failed', value: 'faild' },
+    { key: 'Archived', value: 'archived' },
+  ];
 
   constructor(
     private http: HttpService,
     private router: Router,
     public rbac: RbacService,
     private store: BulkUploadStore,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private offcanvasService: NgbOffcanvas,
+    private bulkUploadService: BulkUploadConfigService
   ) { }
 
   navigatetomy() {
@@ -123,9 +152,21 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       return;
     }
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.initializeForm();
     this.filterTabsByRbac();
     this.updateModuleInfo();
+    this.getModuleData();
+    this.getEmployeeData();
     this.loadHistory(this.page, this.pageSize);
+
+    this.bulkUploadService.toggleHistoryFilter$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.filterContent) {
+          this.toggleFilters(this.filterContent);
+        }
+      });
+
     this.searchSubject.pipe(
       debounceTime(500),
       distinctUntilChanged(),
@@ -134,6 +175,208 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       this.page = 1;
       this.first = 0;
       this.loadHistory(this.page, this.pageSize);
+    });
+  }
+
+  initializeForm() {
+    this.historyLogFilterForm = this.fb.group({
+      dateRange: [null],
+      moduleIds: [[]],
+      subModuleIds: [[]],
+      employeid: [[]],
+      status: [[]]
+    });
+  }
+
+  isSingleDateSelected(): boolean {
+    if (!this.historyLogFilterForm) return false;
+    const dateRange = this.historyLogFilterForm.get('dateRange')?.value;
+    return Array.isArray(dateRange) && dateRange.length > 0 && !!dateRange[0] && !dateRange[1];
+  }
+
+  isFilterApplied(): boolean {
+    if (!this.historyLogFilterForm) return false;
+    const { dateRange, moduleIds, subModuleIds, employeid, status } = this.historyLogFilterForm.value;
+    const hasDateRange = Array.isArray(dateRange) && dateRange.length > 0 && dateRange[0] && dateRange[1];
+    const hasModules = Array.isArray(moduleIds) && moduleIds.length > 0;
+    const hasSubModules = Array.isArray(subModuleIds) && subModuleIds.length > 0;
+    const hasEmployees = Array.isArray(employeid) && employeid.length > 0;
+    const hasStatus = Array.isArray(status) && status.length > 0;
+    return !!(hasDateRange || hasModules || hasSubModules || hasEmployees || hasStatus);
+  }
+
+  clearAllFilters(): void {
+    if (this.historyLogFilterForm) {
+      this.historyLogFilterForm.reset();
+      this.historyLogFilterForm.patchValue({
+        dateRange: null,
+        moduleIds: [],
+        subModuleIds: [],
+        employeid: [],
+        status: []
+      });
+    }
+    this.filteredSubModulesList = [...this.subModulesList];
+    this.isFilterIndicatorActive = false;
+    this.bulkUploadService.setFilterIndicatorState(false);
+    this.page = 1;
+    this.first = 0;
+    this.loadHistory(this.page, this.pageSize);
+  }
+
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
+  onGenerate() {
+    if (this.isSingleDateSelected()) return;
+    this.isFilterIndicatorActive = this.isFilterApplied();
+    this.bulkUploadService.setFilterIndicatorState(this.isFilterIndicatorActive);
+    this.page = 1;
+    this.first = 0;
+    this.loadHistory(this.page, this.pageSize);
+    this.closeCanvas();
+  }
+
+  onModuleChange(event: any) {
+    const selectedModuleIds = event.value || [];
+    if (!selectedModuleIds || selectedModuleIds.length === 0) {
+      this.filteredSubModulesList = [...this.subModulesList];
+    } else {
+      this.filteredSubModulesList = this.subModulesList.filter(sub =>
+        selectedModuleIds.includes(sub.parentId) || selectedModuleIds.includes(sub.value)
+      );
+    }
+    this.historyLogFilterForm.get('subModuleIds')?.setValue([]);
+  }
+
+  getModuleData() {
+    this.http.getData('BulkUploadConfiguration/GetAll').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        let rawList: any[] = [];
+        if (Array.isArray(res)) {
+          rawList = res;
+        } else if (Array.isArray(res?.data)) {
+          rawList = res.data;
+        } else if (Array.isArray(res?.items)) {
+          rawList = res.items;
+        } else if (Array.isArray(res?.result)) {
+          rawList = res.result;
+        }
+
+        if (rawList.length > 0) {
+          const modulesMap = new Map();
+          const subModulesList: any[] = [];
+
+          rawList.forEach((item: any) => {
+            const parentName = item.parentModuleName || item.moduleName || item.parentModule || item.module || item.category || item.name;
+            const subName = item.subModuleName || item.subModule || item.submoduleName || item.submodule;
+
+            if (parentName) {
+              const strParent = String(parentName).trim();
+              if (strParent) {
+                modulesMap.set(strParent, { label: strParent, value: strParent });
+              }
+            }
+            if (subName) {
+              const strSub = String(subName).trim();
+              const strParent = parentName ? String(parentName).trim() : undefined;
+              if (strSub && !subModulesList.some(s => s.value === strSub && s.parentId === strParent)) {
+                subModulesList.push({
+                  label: strSub,
+                  value: strSub,
+                  parentId: strParent
+                });
+              }
+            }
+          });
+
+          this.modulesList = Array.from(modulesMap.values());
+          this.subModulesList = subModulesList;
+          this.filteredSubModulesList = [...subModulesList];
+        }
+
+        if (!this.modulesList || this.modulesList.length === 0) {
+          this.setDefaultModules();
+        }
+      },
+      error: (err: any) => {
+        console.error('Error fetching modules:', err);
+        this.setDefaultModules();
+      }
+    });
+  }
+
+  private setDefaultModules() {
+    if (!this.modulesList || this.modulesList.length === 0) {
+      this.modulesList = [
+        { label: 'Employees', value: 'Employees' }
+      ];
+      const defaultSubModules = [
+        { label: 'Compensation', value: 'Compensation', parentId: 'Employees' }
+      ];
+      this.subModulesList = defaultSubModules;
+      this.filteredSubModulesList = [...defaultSubModules];
+    }
+  }
+
+  private populateModulesFromHistory(jobs: HistoryBatchItem[]) {
+    if (!jobs || jobs.length === 0) return;
+    const modulesMap = new Map(this.modulesList.map(m => [m.value, m]));
+    const subModulesMap = new Map(this.subModulesList.map(s => [`${s.value}_${s.parentId}`, s]));
+
+    jobs.forEach(job => {
+      if (job.parentModuleName) {
+        const parent = job.parentModuleName.trim();
+        if (parent && !modulesMap.has(parent)) {
+          modulesMap.set(parent, { label: parent, value: parent });
+        }
+      }
+      if (job.subModuleName) {
+        const sub = job.subModuleName.trim();
+        const parent = job.parentModuleName ? job.parentModuleName.trim() : undefined;
+        const key = `${sub}_${parent}`;
+        if (sub && !subModulesMap.has(key)) {
+          subModulesMap.set(key, { label: sub, value: sub, parentId: parent });
+        }
+      }
+    });
+
+    this.modulesList = Array.from(modulesMap.values());
+    this.subModulesList = Array.from(subModulesMap.values());
+    const selectedModuleIds = this.historyLogFilterForm?.get('moduleIds')?.value || [];
+    if (!selectedModuleIds || selectedModuleIds.length === 0) {
+      this.filteredSubModulesList = [...this.subModulesList];
+    }
+  }
+
+  getEmployeeData() {
+    this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        if (Array.isArray(data)) {
+          this.employeeData = data.map((e: any) => {
+            const firstName = e.firstName ? e.firstName.trim() : '';
+            const middleName = e.middleName ? e.middleName.trim() : '';
+            const lastName = e.lastName ? e.lastName.trim() : '';
+            const fullName = `${e.fusionEmpId ? e.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim();
+            return {
+              id: e.employeeId,
+              name: fullName
+            };
+          }).sort((a: any, b: any) => a.name.localeCompare(b.name));
+        }
+      },
+      error: (err: any) => {
+        console.error('Error fetching employees:', err);
+      }
     });
   }
 
@@ -158,16 +401,32 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       return;
     }
     this.dataload = true;
-    const payload = {
-      // employeeIds: String(employeeId),
-      moduleId: 1001,
-      jobIds: '',
-      jobType: 'IMPORT',
-      status: 'completed',
-      pageNumber: page,
-      pageSize: pageSize,
-      searchTerm: this.searchValue ? this.searchValue.trim() : ''
+
+    const formValue = this.historyLogFilterForm?.value || {};
+    const formatDate = (date: Date | null) => {
+      if (!date) return null;
+      return moment(date).format('YYYY-MM-DD');
     };
+
+    const fromDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
+    const toDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
+
+    const payload: any = {
+      employeeIds: formValue.employeid?.length ? formValue.employeid.join(',') : '',
+      jobIds: '',
+      status: 'completed',
+      jobType: 'IMPORT',
+      moduleId: 0,
+      parentModuleName: formValue.moduleIds?.length ? formValue.moduleIds.join(',') : '',
+      subModuleName: formValue.subModuleIds?.length ? formValue.subModuleIds.join(',') : '',
+      searchTerm: this.searchValue ? this.searchValue.trim() : '',
+      pageNumber: page,
+      pageSize: pageSize
+    };
+
+    if (fromDate) payload.fromDate = fromDate;
+    if (toDate) payload.toDate = toDate;
+
     this.http.postdata('jobs/query', payload)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
@@ -175,6 +434,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
           this.historylog = jobs.filter(job => !job.parentJobId);
           this.collectionSize = res?.paginatedData?.totalRecords ?? this.historylog.length;
           this.dataload = false;
+          this.populateModulesFromHistory(jobs);
         },
         error: () => {
           this.historylog = [];
@@ -329,9 +589,13 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
     this.modalService.open(this.jobDetailsModal, { centered: true, size: 'lg', backdrop: 'static' });
 
     this.http.postdata('jobs/query', {
-      moduleId: 1001,
+      employeeIds: '',
       jobIds: '',
+      status: '',
       jobType: 'IMPORT',
+      moduleId: 0,
+      parentModuleName: '',
+      subModuleName: '',
       parentJobId: item.jobId,
       pageNumber: 1,
       pageSize: 50,

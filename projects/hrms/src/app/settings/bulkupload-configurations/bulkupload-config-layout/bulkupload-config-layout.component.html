@@ -2,13 +2,12 @@
     <div class="component-header-content d-flex justify-content-between align-items-center">
         <app-settings-header />
         <div class="d-flex align-items-center gap-2">
-            <!-- <button class="custom-btn btn-secondary d-flex align-items-center gap-1" (click)="downloadTemplate()">
-                @if (isDownloadingTemplate) {
-                Downloading...
-                } @else {
-                <app-download-icon /> {{'Download Template'}}
-                }
-            </button> -->
+            @if (isActiveRoute('/settings/bulkupload-configurations/historylog')) {
+            <button type="button" class="custom-btn btn-secondary position-relative text-nowrap" (click)="toggleHistoryFilters()">
+                <i class="bi bi-funnel me-2"></i>{{ 'Filters' | translate }}
+                <span *ngIf="isFilterIndicatorActive" class="filter-indicator"></span>
+            </button>
+            }
             @if (store.response() && store.currentStage() === 'VALIDATE' && !isActiveRoute('/settings/bulkupload-configurations/historylog')) {
             <div>
                 <button class="float-end custom-btn btn-secondary" (click)="reUploadInput.click()">

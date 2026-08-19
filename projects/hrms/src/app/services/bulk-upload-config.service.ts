@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -10,6 +10,17 @@ export class BulkUploadConfigService {
   private http = inject(HttpClient);
   private apiUrl = environment.ApiUrl;
   private defaultModuleId = 1001;
+
+  toggleHistoryFilter$ = new Subject<void>();
+  filterIndicatorActive$ = new BehaviorSubject<boolean>(false);
+
+  triggerHistoryFilterToggle(): void {
+    this.toggleHistoryFilter$.next();
+  }
+
+  setFilterIndicatorState(active: boolean): void {
+    this.filterIndicatorActive$.next(active);
+  }
 
   executeImportStage(
     stage: string,

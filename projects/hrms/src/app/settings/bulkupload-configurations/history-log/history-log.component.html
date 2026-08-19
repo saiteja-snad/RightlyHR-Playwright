@@ -188,7 +188,8 @@
                                                 src="/project-mangement-icons/excel-icon.png" alt="Excel"
                                                 class="image-icon">
                                             <img *ngIf="job.filePath.endsWith('.csv')"
-                                                src="/project-mangement-icons/csv-icon.png" alt="CSV" class="image-icon">
+                                                src="/project-mangement-icons/csv-icon.png" alt="CSV"
+                                                class="image-icon">
                                         </span>
                                         }
                                     </div>
@@ -238,4 +239,98 @@
 
 <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">{{'Filters' | translate}}</p>
+            <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+
+        <div class="offcanvas-filter-content">
+            <form autocomplete="off" [formGroup]="historyLogFilterForm" (ngSubmit)="onGenerate()"
+                *ngIf="historyLogFilterForm">
+
+                <!-- Date Range -->
+                <div class="mb-3">
+                    <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Date Range' |
+                        translate}}</label>
+                    <div class="custom-date-range-picker">
+                        <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'"
+                            selectionMode="range" [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+                    </div>
+                </div>
+
+                <!-- Module Name -->
+                <div class="mb-3">
+                    <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Module' |
+                        translate}}</label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="modulesList" optionLabel="label" optionValue="value" [filter]="true"
+                            formControlName="moduleIds" placeholder="Please select module"
+                            class="form-select custom-select" filterPlaceHolder="Search module"
+                            [resetFilterOnHide]="true" [maxSelectedLabels]="1" (onChange)="onModuleChange($event)">
+                        </p-multiSelect>
+                    </div>
+                </div>
+
+                <!-- Submodule Name -->
+                <div class="mb-3">
+                    <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Submodule' |
+                        translate}}</label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="filteredSubModulesList" optionLabel="label" optionValue="value"
+                            [filter]="true" placeholder="Please select submodule" formControlName="subModuleIds"
+                            class="form-select custom-select" [maxSelectedLabels]="1"
+                            filterPlaceHolder="Search submodule" [resetFilterOnHide]="true">
+                        </p-multiSelect>
+                    </div>
+                </div>
+
+                <!-- Imported By (Employee) -->
+                <div class="mb-3">
+                    <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Imported By' |
+                        translate}}</label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
+                            [maxSelectedLabels]="1" placeholder="Please select employee" formControlName="employeid"
+                            class="form-select custom-select" filterPlaceHolder="Search employee"
+                            [resetFilterOnHide]="true">
+                        </p-multiSelect>
+                    </div>
+                </div>
+
+                <!-- Status
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Status' | translate}}</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="statusOptions" [filter]="true" optionLabel="key" optionValue="value"
+              formControlName="status" placeholder="Please select status" class="form-select custom-select"
+              filterPlaceHolder="Search status" [resetFilterOnHide]="true">
+            </p-multiSelect>
+          </div>
+        </div> -->
+
+                <div class="d-flex offcanvas-footer-content gap-3">
+                    @if(isFilterApplied()){
+                    <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()"
+                        [disabled]="spinnerLoader1">
+                        {{'Clear All' | translate}}</button>
+                    }
+
+                    <button type="button" class="custom-btn btn-primary w-100" (click)="onGenerate()"
+                        [disabled]="spinnerLoader1 || isSingleDateSelected()">
+                        @if(spinnerLoader1){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                        }@else {
+                        <span>{{'Apply'}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </ng-template>

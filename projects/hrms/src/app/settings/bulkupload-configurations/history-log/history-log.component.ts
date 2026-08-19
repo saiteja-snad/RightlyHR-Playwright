@@ -39,6 +39,7 @@ interface HistoryBatchItem {
   currentStage: string;
   jobType: string;
   filePath?: string;
+  fileName?: string;
   sourceFileName?: string;
   displayFileName?: string;
   totalRows: number;
@@ -119,6 +120,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
   spinnerLoader1 = false;
   today: Date = new Date();
 
+  private readonly historyModuleId = 1001;
   modulesList: { label: string; value: string }[] = [];
   subModulesList: { label: string; value: string; parentId?: string }[] = [];
   filteredSubModulesList: { label: string; value: string; parentId?: string }[] = [];
@@ -155,8 +157,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.filterTabsByRbac();
     this.updateModuleInfo();
-    this.getModuleData();
-    this.getEmployeeData();
+    this.loadFilterOptions();
     this.loadHistory(this.page, this.pageSize);
 
     this.bulkUploadService.toggleHistoryFilter$
@@ -258,126 +259,84 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
     this.historyLogFilterForm.get('subModuleIds')?.setValue([]);
   }
 
-  getModuleData() {
-    this.http.getData('BulkUploadConfiguration/GetAll').pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        let rawList: any[] = [];
-        if (Array.isArray(res)) {
-          rawList = res;
-        } else if (Array.isArray(res?.data)) {
-          rawList = res.data;
-        } else if (Array.isArray(res?.items)) {
-          rawList = res.items;
-        } else if (Array.isArray(res?.result)) {
-          rawList = res.result;
-        }
-
-        if (rawList.length > 0) {
-          const modulesMap = new Map();
-          const subModulesList: any[] = [];
-
-          rawList.forEach((item: any) => {
-            const parentName = item.parentModuleName || item.moduleName || item.parentModule || item.module || item.category || item.name;
-            const subName = item.subModuleName || item.subModule || item.submoduleName || item.submodule;
-
-            if (parentName) {
-              const strParent = String(parentName).trim();
-              if (strParent) {
-                modulesMap.set(strParent, { label: strParent, value: strParent });
-              }
-            }
-            if (subName) {
-              const strSub = String(subName).trim();
-              const strParent = parentName ? String(parentName).trim() : undefined;
-              if (strSub && !subModulesList.some(s => s.value === strSub && s.parentId === strParent)) {
-                subModulesList.push({
-                  label: strSub,
-                  value: strSub,
-                  parentId: strParent
-                });
-              }
-            }
-          });
-
-          this.modulesList = Array.from(modulesMap.values());
-          this.subModulesList = subModulesList;
-          this.filteredSubModulesList = [...subModulesList];
-        }
-
-        if (!this.modulesList || this.modulesList.length === 0) {
-          this.setDefaultModules();
-        }
-      },
-      error: (err: any) => {
-        console.error('Error fetching modules:', err);
-        this.setDefaultModules();
-      }
-    });
+  private loadFilterOptions() {
+    this.fetchAllJobsForFilters(1, 10000, []);
   }
 
-  private setDefaultModules() {
-    if (!this.modulesList || this.modulesList.length === 0) {
-      this.modulesList = [
-        { label: 'Employees', value: 'Employees' }
-      ];
-      const defaultSubModules = [
-        { label: 'Compensation', value: 'Compensation', parentId: 'Employees' }
-      ];
-      this.subModulesList = defaultSubModules;
-      this.filteredSubModulesList = [...defaultSubModules];
-    }
+  private fetchAllJobsForFilters(pageNumber: number, pageSize: number, accumulated: HistoryBatchItem[]) {
+    const payload = {
+      employeeIds: '',
+      jobIds: '',
+      status: 'completed',
+      jobType: 'IMPORT',
+      moduleId: this.historyModuleId,
+      parentModuleName: '',
+      subModuleName: '',
+      searchTerm: '',
+      pageNumber,
+      pageSize
+    };
+
+    this.http.postdata('jobs/query', payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          const jobs: HistoryBatchItem[] = Array.isArray(res?.data) ? res.data : [];
+          const allJobs = accumulated.concat(jobs);
+          const total = res?.paginatedData?.totalRecords ?? allJobs.length;
+          if (allJobs.length < total && jobs.length > 0) {
+            this.fetchAllJobsForFilters(pageNumber + 1, pageSize, allJobs);
+            return;
+          }
+          this.populateFilterOptionsFromJobs(allJobs);
+        },
+        error: () => {
+          this.modulesList = [];
+          this.subModulesList = [];
+          this.filteredSubModulesList = [];
+          this.employeeData = [];
+        }
+      });
   }
 
-  private populateModulesFromHistory(jobs: HistoryBatchItem[]) {
-    if (!jobs || jobs.length === 0) return;
-    const modulesMap = new Map(this.modulesList.map(m => [m.value, m]));
-    const subModulesMap = new Map(this.subModulesList.map(s => [`${s.value}_${s.parentId}`, s]));
+  private populateFilterOptionsFromJobs(jobs: HistoryBatchItem[]) {
+    const modulesMap = new Map<string, { label: string; value: string }>();
+    const subModulesMap = new Map<string, { label: string; value: string; parentId?: string }>();
+    const employeesMap = new Map<number, { id: number; name: string }>();
 
     jobs.forEach(job => {
-      if (job.parentModuleName) {
-        const parent = job.parentModuleName.trim();
-        if (parent && !modulesMap.has(parent)) {
-          modulesMap.set(parent, { label: parent, value: parent });
-        }
+      const parent = (job.parentModuleName || job.moduleName || '').trim();
+      if (parent) {
+        modulesMap.set(parent, { label: parent, value: parent });
       }
-      if (job.subModuleName) {
-        const sub = job.subModuleName.trim();
-        const parent = job.parentModuleName ? job.parentModuleName.trim() : undefined;
-        const key = `${sub}_${parent}`;
-        if (sub && !subModulesMap.has(key)) {
-          subModulesMap.set(key, { label: sub, value: sub, parentId: parent });
-        }
+
+      const sub = (job.subModuleName || '').trim();
+      if (sub) {
+        subModulesMap.set(`${sub}_${parent}`, { label: sub, value: sub, parentId: parent || undefined });
+      }
+
+      const createdBy = job.createdBy;
+      if (createdBy?.id) {
+        const name = createdBy.fusionEmpId
+          ? `${createdBy.fusionEmpId} - ${createdBy.name}`
+          : (createdBy.name || String(createdBy.id));
+        employeesMap.set(createdBy.id, { id: createdBy.id, name });
       }
     });
 
-    this.modulesList = Array.from(modulesMap.values());
-    this.subModulesList = Array.from(subModulesMap.values());
+    this.modulesList = Array.from(modulesMap.values()).sort((a, b) => a.label.localeCompare(b.label));
+    this.subModulesList = Array.from(subModulesMap.values()).sort((a, b) => a.label.localeCompare(b.label));
+
     const selectedModuleIds = this.historyLogFilterForm?.get('moduleIds')?.value || [];
     if (!selectedModuleIds || selectedModuleIds.length === 0) {
       this.filteredSubModulesList = [...this.subModulesList];
+    } else {
+      this.filteredSubModulesList = this.subModulesList.filter(sub =>
+        selectedModuleIds.includes(sub.parentId) || selectedModuleIds.includes(sub.value)
+      );
     }
-  }
 
-  getEmployeeData() {
-    this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        if (Array.isArray(data)) {
-          this.employeeData = data.map((e: any) => {
-            const firstName = e.firstName ? e.firstName.trim() : '';
-            const middleName = e.middleName ? e.middleName.trim() : '';
-            const lastName = e.lastName ? e.lastName.trim() : '';
-            const fullName = `${e.fusionEmpId ? e.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim();
-            return {
-              id: e.employeeId,
-              name: fullName
-            };
-          }).sort((a: any, b: any) => a.name.localeCompare(b.name));
-        }
-      },
-      error: (err: any) => {
-        console.error('Error fetching employees:', err);
-      }
-    });
+    this.employeeData = Array.from(employeesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   }
 
   filterTabsByRbac(): void {
@@ -416,7 +375,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       jobIds: '',
       status: 'completed',
       jobType: 'IMPORT',
-      moduleId: 0,
+      moduleId: this.historyModuleId,
       parentModuleName: formValue.moduleIds?.length ? formValue.moduleIds.join(',') : '',
       subModuleName: formValue.subModuleIds?.length ? formValue.subModuleIds.join(',') : '',
       searchTerm: this.searchValue ? this.searchValue.trim() : '',
@@ -430,11 +389,11 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
     this.http.postdata('jobs/query', payload)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          const jobs: HistoryBatchItem[] = Array.isArray(res?.data) ? res.data : [];
+          const jobs: HistoryBatchItem[] = (Array.isArray(res?.data) ? res.data : [])
+            .map((job: HistoryBatchItem) => this.mapHistoryItem(job));
           this.historylog = jobs.filter(job => !job.parentJobId);
           this.collectionSize = res?.paginatedData?.totalRecords ?? this.historylog.length;
           this.dataload = false;
-          this.populateModulesFromHistory(jobs);
         },
         error: () => {
           this.historylog = [];
@@ -458,6 +417,70 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
     this.page = 1;
     this.first = 0;
     this.loadHistory(this.page, this.pageSize);
+  }
+
+  private mapHistoryItem(job: HistoryBatchItem): HistoryBatchItem {
+    const sourceFileName = this.resolveSourceFileName(job);
+    return {
+      ...job,
+      sourceFileName,
+      displayFileName: sourceFileName
+    };
+  }
+
+  getDisplayFileName(item: HistoryBatchItem): string {
+    return this.resolveSourceFileName(item) || '-';
+  }
+
+  isExcelSource(item: HistoryBatchItem): boolean {
+    const ext = this.getSourceExtension(item);
+    return ext === 'xlsx' || ext === 'xls';
+  }
+
+  isCsvSource(item: HistoryBatchItem): boolean {
+    return this.getSourceExtension(item) === 'csv';
+  }
+
+  private getSourceExtension(item: HistoryBatchItem): string {
+    const name = (item.displayFileName || item.sourceFileName || item.filePath || '').toLowerCase().split('?')[0];
+    if (name.endsWith('.xlsx')) return 'xlsx';
+    if (name.endsWith('.xls')) return 'xls';
+    if (name.endsWith('.csv')) return 'csv';
+    return '';
+  }
+
+  private resolveSourceFileName(job: HistoryBatchItem): string {
+    const directName = (job.displayFileName || job.sourceFileName || job.fileName || '').trim();
+    if (directName) {
+      return this.extractFileNameFromPath(directName) || directName;
+    }
+
+    const inputFile = job.stageFiles?.find(f => f.fileType === 'INPUT');
+    const stageName = (inputFile?.fileName || '').trim();
+    if (stageName && !this.isGeneratedStageFileName(stageName)) {
+      return this.extractFileNameFromPath(stageName) || stageName;
+    }
+
+    return this.extractFileNameFromPath(job.filePath || inputFile?.filePath);
+  }
+
+  private extractFileNameFromPath(path?: string): string {
+    if (!path) return '';
+    const cleaned = String(path).split('?')[0].trim();
+    if (!cleaned) return '';
+    const parts = cleaned.split(/[/\\]/);
+    const fileName = parts[parts.length - 1] || '';
+    try {
+      return decodeURIComponent(fileName);
+    } catch {
+      return fileName;
+    }
+  }
+
+  private isGeneratedStageFileName(fileName: string): boolean {
+    const normalized = fileName.toLowerCase();
+    return ['success_rows', 'failed_rows', 'success_rows.csv', 'failed_rows.csv', 'success_details', 'error_details', 'summary']
+      .includes(normalized);
   }
 
   toTitleCase(value: any): string {
@@ -593,7 +616,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       jobIds: '',
       status: '',
       jobType: 'IMPORT',
-      moduleId: 0,
+      moduleId: this.historyModuleId,
       parentModuleName: '',
       subModuleName: '',
       parentJobId: item.jobId,
@@ -603,6 +626,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (childRes: any) => {
         const children: HistoryBatchItem[] = (Array.isArray(childRes?.data) ? childRes.data : [])
+          .map((child: HistoryBatchItem) => this.mapHistoryItem(child))
           .filter((child: HistoryBatchItem) => child.jobId !== item.jobId);
         this.detailJobs = [item, ...children];
         this.detailsLoading = false;

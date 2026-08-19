@@ -71,8 +71,8 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   public rbac = inject(RbacService);
   importForm: FormGroup = this.fb.group({
-    moduleId: ['', Validators.required],
-    submoduleId: ['', Validators.required]
+    moduleId: [null, Validators.required],
+    submoduleId: [null, Validators.required]
   });
 
   get selectedModuleId(): number | null {
@@ -98,26 +98,64 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     return sub ? sub.name : 'Submodule';
   }
 
+  get selectedModuleLabel(): string {
+    if (!this.canProceedFromModuleStep) {
+      return '';
+    }
+    return `Module: ${this.selectedModuleName} / Submodule: ${this.selectedSubmoduleName}`;
+  }
+
+  get canProceedFromModuleStep(): boolean {
+    const moduleId = this.selectedModuleId;
+    const submoduleId = this.selectedSubmoduleId;
+    if (!moduleId || !submoduleId) {
+      return false;
+    }
+    return this.currentSubmodules.some(sub => sub.id === Number(submoduleId));
+  }
+
+  isFieldInvalid(controlName: 'moduleId' | 'submoduleId'): boolean {
+    const control = this.importForm.get(controlName);
+    return !!(control && control.invalid && (control.touched || control.dirty));
+  }
+
   onModuleChange() {
     const modId = this.importForm.get('moduleId')?.value;
     if (modId) {
       localStorage.setItem('bulkImportModuleId', String(modId));
+    } else {
+      localStorage.removeItem('bulkImportModuleId');
     }
-    const subs = this.currentSubmodules;
-    const subId = (subs && subs.length > 0) ? subs[0].id : '';
-    this.importForm.patchValue({
-      submoduleId: subId
-    });
-    if (subId) {
-      localStorage.setItem('bulkImportSubmoduleId', String(subId));
-    }
+    this.importForm.patchValue({ submoduleId: null });
+    this.importForm.get('submoduleId')?.markAsPristine();
+    this.importForm.get('submoduleId')?.markAsUntouched();
+    localStorage.removeItem('bulkImportSubmoduleId');
+  }
+
+  onModuleClear() {
+    this.importForm.patchValue({ moduleId: null, submoduleId: null });
+    this.importForm.get('moduleId')?.markAsTouched();
+    this.importForm.get('moduleId')?.markAsDirty();
+    this.importForm.get('submoduleId')?.markAsPristine();
+    this.importForm.get('submoduleId')?.markAsUntouched();
+    localStorage.removeItem('bulkImportModuleId');
+    localStorage.removeItem('bulkImportSubmoduleId');
   }
 
   onSubmoduleChange() {
     const subId = this.importForm.get('submoduleId')?.value;
     if (subId) {
       localStorage.setItem('bulkImportSubmoduleId', String(subId));
+    } else {
+      localStorage.removeItem('bulkImportSubmoduleId');
     }
+  }
+
+  onSubmoduleClear() {
+    this.importForm.patchValue({ submoduleId: null });
+    this.importForm.get('submoduleId')?.markAsTouched();
+    this.importForm.get('submoduleId')?.markAsDirty();
+    localStorage.removeItem('bulkImportSubmoduleId');
   }
 
   downloadErrorReport() {
@@ -308,17 +346,9 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.employeeId = this.empdata?.employeeId;
     this.updateModuleInfo();
 
+    const savedStep = localStorage.getItem('bulkImportStep');
     const savedModuleId = localStorage.getItem('bulkImportModuleId');
     const savedSubmoduleId = localStorage.getItem('bulkImportSubmoduleId');
-    const initialModId = savedModuleId ? Number(savedModuleId) : 1001;
-    const initialSubId = savedSubmoduleId ? Number(savedSubmoduleId) : 10011;
-
-    this.importForm.patchValue({
-      moduleId: initialModId,
-      submoduleId: initialSubId
-    });
-
-    const savedStep = localStorage.getItem('bulkImportStep');
     this.progress = savedStep ? +savedStep : 1;
     const savedJobId = this.store.jobId();
     const savedStage = this.store.currentStage();
@@ -331,8 +361,8 @@ export class BulkImportComponent implements OnInit, OnDestroy {
         this.loadSubmittedDetails();
       } else {
         this.store.reset();
-        localStorage.removeItem('bulkImportStep');
         this.progress = 1;
+        localStorage.setItem('bulkImportStep', '1');
       }
     } else if (savedStep === '3' && savedJobId && savedStage === 'VALIDATE') {
       this.store.setLoading(true);
@@ -348,17 +378,31 @@ export class BulkImportComponent implements OnInit, OnDestroy {
           },
           error: () => {
             this.store.reset();
-            localStorage.removeItem('bulkImportStep');
             this.progress = 1;
+            localStorage.setItem('bulkImportStep', '1');
             this.store.setLoading(false);
           }
         });
-    } else if (savedStep === '2' && this.store.parentJobId()) {
+    } else if (savedStep === '2') {
       this.progress = 2;
+    } else if (savedStep === '1') {
+      this.progress = 1;
     } else {
       this.store.reset();
-      localStorage.removeItem('bulkImportStep');
       this.progress = 1;
+      localStorage.setItem('bulkImportStep', '1');
+    }
+
+    if (savedModuleId) {
+      this.importForm.patchValue({
+        moduleId: Number(savedModuleId),
+        submoduleId: savedSubmoduleId ? Number(savedSubmoduleId) : null
+      });
+    } else {
+      this.importForm.patchValue({
+        moduleId: null,
+        submoduleId: null
+      });
     }
     this.searchSubject.pipe(
       debounceTime(300),
@@ -677,8 +721,14 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   }
 
   downloadTemplate() {
+    if (!this.canProceedFromModuleStep) {
+      this.importForm.markAllAsTouched();
+      this.conformationPopup.openErrorModal(this.getModuleSelectionErrorMessage());
+      return;
+    }
+
     this.isDownloadingTemplate = true;
-    const targetModuleId = Number(this.selectedModuleId) || 1001;
+    const targetModuleId = Number(this.selectedSubmoduleId || this.selectedModuleId);
     const targetModuleName = this.selectedSubmoduleName || 'Import';
 
     this.service.downloadTemplate(targetModuleId, 'csv')
@@ -727,8 +777,11 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     this.submissionTotalCount = 0;
     this.collectionSize = 0;
     this.resetSubmissionPaging();
+    this.importForm.reset({ moduleId: null, submoduleId: null });
     this.setStep(1);
     localStorage.removeItem('bulkImportStep');
+    localStorage.removeItem('bulkImportModuleId');
+    localStorage.removeItem('bulkImportSubmoduleId');
   }
 
   navigateToHistoryView() {
@@ -744,14 +797,65 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   }
 
   nextStep() {
+    if (this.progress === 1 && !this.canProceedFromModuleStep) {
+      return;
+    }
+    if (this.progress === 2 && !this.store.response()) {
+      return;
+    }
     if (this.progress < 4) {
-      this.setStep(this.progress + 1);
+      const next = this.progress + 1;
+      if (next === 3) {
+        this.store.setCurrentStage('VALIDATE');
+      }
+      this.setStep(next);
+      this.persistWizardDetails();
     }
   }
 
+  private getModuleSelectionErrorMessage(): string {
+    if (!this.selectedModuleId && !this.selectedSubmoduleId) {
+      return 'Please select module and submodule';
+    }
+    if (!this.selectedModuleId) {
+      return 'Please select module';
+    }
+    return 'Please select submodule';
+  }
+
   prevStep() {
-    if (this.progress > 1) {
-      this.setStep(this.progress - 1);
+    if (this.progress <= 1) {
+      return;
+    }
+
+    if (this.progress === 3) {
+      this.store.setCurrentStage('UPLOAD');
+      this.setStep(2);
+      this.persistWizardDetails();
+      return;
+    }
+
+    if (this.progress === 2) {
+      this.store.reset();
+      this.searchValue = '';
+      this.searchTerm.set('');
+      this.setStep(1);
+      this.persistWizardDetails();
+    }
+  }
+
+  private persistWizardDetails() {
+    const moduleId = this.selectedModuleId;
+    const submoduleId = this.selectedSubmoduleId;
+    if (moduleId) {
+      localStorage.setItem('bulkImportModuleId', String(moduleId));
+    } else {
+      localStorage.removeItem('bulkImportModuleId');
+    }
+    if (submoduleId) {
+      localStorage.setItem('bulkImportSubmoduleId', String(submoduleId));
+    } else {
+      localStorage.removeItem('bulkImportSubmoduleId');
     }
   }
 

@@ -66,9 +66,13 @@
                                         class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
                                     <p-select [options]="modules" optionLabel="name" optionValue="id" [filter]="true"
-                                        [resetFilterOnHide]="true" filterBy="name" formControlName="moduleId"
-                                        (onChange)="onModuleChange()" placeholder="Please select module"
+                                        [resetFilterOnHide]="true" [showClear]="true" filterBy="name"
+                                        formControlName="moduleId" (onChange)="onModuleChange()"
+                                        (onClear)="onModuleClear()" placeholder="Please select module"
                                         class="form-select custom-select"></p-select>
+                                </div>
+                                <div *ngIf="isFieldInvalid('moduleId')" class="error-msg">
+                                    Module is required
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -76,10 +80,13 @@
                                         class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
                                     <p-select [options]="currentSubmodules" optionLabel="name" optionValue="id"
-                                        [filter]="true" [resetFilterOnHide]="true" filterBy="name"
+                                        [filter]="true" [resetFilterOnHide]="true" [showClear]="true" filterBy="name"
                                         formControlName="submoduleId" (onChange)="onSubmoduleChange()"
-                                        placeholder="Please select submodule"
+                                        (onClear)="onSubmoduleClear()" placeholder="Please select submodule"
                                         class="form-select custom-select"></p-select>
+                                </div>
+                                <div *ngIf="isFieldInvalid('submoduleId')" class="error-msg">
+                                    Submodule is required
                                 </div>
                             </div>
                         </div>
@@ -95,7 +102,11 @@
                             </div>
                             <div>
                                 <h6 class="fw-bold text-dark mb-1">
+                                    @if (canProceedFromModuleStep) {
                                     Download Template for {{ selectedModuleName }} ({{ selectedSubmoduleName }})
+                                    } @else {
+                                    Download Template
+                                    }
                                 </h6>
                                 <p class="text-muted small mb-0">
                                     Download the standard formatted file template, populate your records
@@ -133,8 +144,8 @@
 
                 <!-- Next Button -->
                 <div class="d-flex justify-content-end mt-4">
-                    <button class="custom-btn btn-primary px-4 py-2 d-flex align-items-center gap-2"
-                        [disabled]="importForm.invalid || !selectedSubmoduleId || !selectedModuleId"
+                    <button class="custom-btn btn-primary wizard-action-btn"
+                        [disabled]="!canProceedFromModuleStep"
                         (click)="nextStep()">
                         <span>Next</span>
                         <i class="bi bi-arrow-right"></i>
@@ -147,6 +158,9 @@
         <div *ngIf="progress === 2">
             <div class="upload-section">
                 <div class="file-upload-container py-4">
+                    @if (selectedModuleLabel) {
+                    <div class="upload-module-label w-75 mb-3">{{ selectedModuleLabel }}</div>
+                    }
                     <div class="drop-zone shadow-sm w-75 py-5" (dragover)="onDragOver($event)"
                         (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" [class.dragging]="isDragging"
                         (click)="fileInput.click()">
@@ -173,8 +187,8 @@
                     }
                 </div>
                 <div class="footer-content d-flex gap-2">
-                    <button class="custom-btn btn-secondary px-4" (click)="prevStep()">Back</button>
-                    <button class="custom-btn btn-primary px-5" (click)="nextStep()"
+                    <button class="custom-btn btn-secondary wizard-action-btn" (click)="prevStep()">Back</button>
+                    <button class="custom-btn btn-primary wizard-action-btn" (click)="nextStep()"
                         [disabled]="!store.response()">Next</button>
                 </div>
             </div>
@@ -262,8 +276,8 @@
                     </div>
                 </div>
                 <div class="footer-content d-flex gap-2">
-                    <!-- <button class="custom-btn btn-secondary px-4" (click)="prevStep()">Back</button> -->
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="isSubmitDisabled()"
+                    <button class="custom-btn btn-secondary wizard-action-btn" (click)="prevStep()">Back</button>
+                    <button type="submit" class="custom-btn btn-primary wizard-action-btn" [disabled]="isSubmitDisabled()"
                         (click)="confirmUpload(confirmModal, $event)">
                         @if (store.loading()) {
                         Loading...

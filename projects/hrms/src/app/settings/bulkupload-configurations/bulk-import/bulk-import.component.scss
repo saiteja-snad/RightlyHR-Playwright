@@ -9,6 +9,10 @@
 
 .custom-table-content {
    width: 100%;
+
+   thead {
+      z-index: 4;
+   }
 }
 
 .preview-table-height {
@@ -271,6 +275,19 @@
    margin-top: 0.25rem;
 }
 
+.upload-module-label {
+   font-size: var(--fontsize14);
+   font-weight: 500;
+   color: var(--primary-color);
+}
+
+.wizard-action-btn {
+   min-width: 6.5rem;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+}
+
 .border-table {
    border: 1px solid var(--border-color);
    overflow: auto;
@@ -432,6 +449,16 @@
 
 th.sticky-col-right-1,
 th.sticky-col-right-2 {
-   z-index: 3 !important;
+   top: 0 !important;
+   z-index: 5 !important;
    background-color: var(--table-header-bg-color) !important;
+}
+
+:host ::ng-deep .custom-p-select-content {
+   .p-select-label.p-placeholder,
+   .p-select.ng-invalid .p-select-label.p-placeholder,
+   .p-select.ng-invalid.ng-dirty .p-select-label.p-placeholder,
+   .p-select.p-invalid .p-select-label.p-placeholder {
+      color: var(--search-input-placeholder-color, #64748b) !important;
+   }
 }

@@ -58,13 +58,11 @@
     cursor: pointer;
 }
 
-.source-file-name {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 360px;
-    display: inline-block;
-    vertical-align: middle;
+.source-file-icon {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .failure-count {

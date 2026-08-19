@@ -167,7 +167,8 @@
                     @if (store.response()) {
                     <div class="my-3">
                         <span class="total-hrs">{{'Uploaded File Name:'}}</span>
-                        <span class="file-name total-duration ms-1" [title]="store.fileName() || ''">{{ store.displayFileName() ?? '-' }}</span>
+                        <span class="file-name total-duration ms-1" [title]="store.fileName() || ''">{{
+                            store.displayFileName() ?? '-' }}</span>
                     </div>
                     }
                 </div>
@@ -202,10 +203,10 @@
                             <thead>
                                 <tr>
                                     @for (col of displayColumns(); track col) {
-                                    <th class="text-center">{{ formatHeader(col) }}</th>
-                                    }
-                                    @if (!hasStatusColumn()) {
-                                    <th class="text-center">{{'Status'}}</th>
+                                    <th class="text-center" [ngClass]="{
+                                        'sticky-col-right-2': col === 'isValid' || col === 'status',
+                                        'sticky-col-right-1': col === 'errorMessage' || col === 'errors'
+                                    }">{{ formatHeader(col) }}</th>
                                     }
                                 </tr>
                             </thead>
@@ -214,14 +215,17 @@
                                 @for (row of filteredRows(); track (row.rowNumber || $index)) {
                                 <tr>
                                     @for (col of displayColumns(); track col) {
-                                    <td class="text-center">
+                                    <td class="text-center" [ngClass]="{
+                                        'sticky-col-right-2': col === 'isValid' || col === 'status',
+                                        'sticky-col-right-1': col === 'errorMessage' || col === 'errors'
+                                    }">
                                         @if (col === 'isValid' || col === 'status') {
                                         @if (row.isValid) {
                                         <img src="/icons/check-approve-icon.png" class="action-img" alt="Valid" />
                                         } @else {
                                         <img src="/icons/cancel-circle.png" class="action-img" alt="Invalid" />
                                         }
-                                        } @else if (col === 'errorMessage') {
+                                        } @else if (col === 'errorMessage' || col === 'errors') {
                                         @if (hasRowErrors(row)) {
                                         <a class="error-view-link" (click)="openErrorsModal(row, $event)">View</a>
                                         } @else {
@@ -243,20 +247,11 @@
                                         }
                                     </td>
                                     }
-                                    @if (!hasStatusColumn()) {
-                                    <td class="text-center">
-                                        @if (row.isValid) {
-                                        <img src="/icons/check-approve-icon.png" class="action-img" alt="Valid" />
-                                        } @else {
-                                        <img src="/icons/cancel-circle.png" class="action-img" alt="Invalid" />
-                                        }
-                                    </td>
-                                    }
                                 </tr>
                                 }
                                 } @else {
                                 <tr>
-                                    <td [attr.colspan]="displayColumns().length + (!hasStatusColumn() ? 1 : 0)">
+                                    <td [attr.colspan]="displayColumns().length">
                                         <app-no-data-found />
                                     </td>
                                 </tr>

@@ -207,33 +207,52 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   });
 
   readonly displayColumns = computed(() => {
-    const ignoreKeys = ['isValid', 'action', 'errorCode', 'errorField', 'suggestedFix', 'projectMeta', 'clientMeta', 'phaseMeta', 'compensationAmount', 'isVariablePay', 'errors', 'hasErrors'];
-    let cols = this.store.columns() ?? [];
-    if (cols.length > 0) {
-      cols = cols.filter(k => !ignoreKeys.includes(k) && !k.startsWith('parsed'));
+    const rawCols = this.store.columns() ?? [];
+    let cols: string[] = [];
+
+    if (rawCols.length > 0) {
+      cols = rawCols.filter((k: string) => k !== 'errors' && k !== 'errorMessage' && k !== 'isValid' && k !== 'status' && !k.startsWith('parsed') && !k.endsWith('Meta'));
     } else {
       const rows = this.store.filteredRows();
       if (rows && rows.length > 0) {
-        cols = Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k) && !k.startsWith('parsed'));
+        const ignore = ['isValid', 'status', 'action', 'errorCode', 'errorField', 'suggestedFix', 'errors', 'errorMessage', 'hasErrors'];
+        cols = Object.keys(rows[0]).filter((k: string) => !ignore.includes(k) && !k.startsWith('parsed') && !k.endsWith('Meta'));
       }
     }
-    if (cols.length > 0 && !cols.includes('errorMessage')) {
-      cols = [...cols, 'errorMessage'];
+
+    if (cols.includes('rowNumber')) {
+      cols = ['rowNumber', ...cols.filter((k: string) => k !== 'rowNumber')];
+    } else {
+      cols = ['rowNumber', ...cols];
     }
-    return cols;
+
+    return [
+      ...cols,
+      'isValid',
+      'errorMessage'
+    ];
   });
 
   readonly displaySubmissionColumns = computed(() => {
-    const cols = this.store.columns();
-    if (cols && cols.length > 0) {
-      return cols.filter(c => c !== 'errorMessage' && c !== 'errorCode' && c !== 'errorField' && c !== 'suggestedFix' && c !== 'errors' && c !== 'hasErrors');
+    const rawCols = this.store.columns() ?? [];
+    let cols: string[] = [];
+
+    if (rawCols.length > 0) {
+      const errorKeys = ['errors', 'errorMessage', 'errorCode', 'errorField', 'suggestedFix', 'hasErrors', 'isValid', 'status', 'action'];
+      cols = rawCols.filter((k: string) => !errorKeys.includes(k) && !k.startsWith('parsed') && !k.endsWith('Meta'));
+    } else {
+      const rows = this.submissionRows();
+      if (rows && rows.length > 0) {
+        const errorKeys = ['errors', 'errorMessage', 'errorCode', 'errorField', 'suggestedFix', 'hasErrors', 'isValid', 'status', 'action', 'id'];
+        cols = Object.keys(rows[0]).filter((k: string) => !errorKeys.includes(k) && !k.startsWith('parsed') && !k.endsWith('Meta'));
+      }
     }
-    const rows = this.submissionRows();
-    if (rows && rows.length > 0) {
-      const ignoreKeys = ['timesheetEntryId', 'projectMeta', 'clientMeta', 'phaseMeta', 'employeeId', 'employeeMeta', 'id', 'isValid', 'action', 'errorCode', 'errorField', 'errorMessage', 'suggestedFix', 'compensationAmount', 'isVariablePay', 'errors', 'hasErrors'];
-      return Object.keys(rows[0]).filter(k => !ignoreKeys.includes(k) && !k.startsWith('parsed'));
+
+    if (cols.includes('rowNumber')) {
+      cols = ['rowNumber', ...cols.filter((k: string) => k !== 'rowNumber')];
     }
-    return [];
+
+    return cols;
   });
 
   readonly validRowsCount = computed(() => {
@@ -773,42 +792,19 @@ export class BulkImportComponent implements OnInit, OnDestroy {
 
   formatHeader(col: string): string {
     if (!col) return '';
-    const customHeaders: { [key: string]: string } = {
-      rowNumber: 'S.No',
-      employeeId: 'Employee ID',
-      employeeName: 'Employee Name',
-      workEmail: 'Work Email',
-      effectiveDate: 'Effective Date',
-      reason: 'Reason',
-      payType: 'Pay Type',
-      overtimeEligibility: 'Overtime Eligibility',
-      frequency: 'Frequency',
-      amountYearlyCtc: 'Amount / Yearly CTC',
-      variablePay: 'Variable Pay',
-      variablePayAmount: 'Variable Pay Amount',
-      nextCompensationReviewDate: 'Next Compensation Review Date',
-      errorMessage: 'Validation Errors',
-      isValid: 'Status',
-      action: 'Action',
-      clientName: 'Client',
-      projectName: 'Project',
-      projectCode: 'Project Code',
-      phaseName: 'Phase',
-      duration: 'Duration (HH:MM)',
-      billable: 'Billable (Yes/No)',
-      taskName: 'Task Type',
-      createdAt: 'Submitted Date'
-    };
-    if (customHeaders[col]) {
-      return customHeaders[col];
-    }
-    const result = col
+    if (col === 'rowNumber' || col.toLowerCase() === 'rownumber') return 'S.No';
+    if (col === 'errorMessage' || col === 'errors') return 'Validation Errors';
+    if (col === 'isValid' || col === 'status') return 'Status';
+
+    let result = col
       .replace(/([A-Z])/g, ' $1')
       .replace(/_/g, ' ')
+      .replace(/\s+/g, ' ')
       .trim();
-    return result.charAt(0).toUpperCase() + result.slice(1);
-  }
 
+    result = result.charAt(0).toUpperCase() + result.slice(1);
+    return result.replace(/\bI d\b/gi, 'ID').replace(/\bC t c\b/gi, 'CTC').replace(/\bI D\b/g, 'ID');
+  }
   formatCellValue(row: any, col: string): string {
     if (!row) return '-';
     let value = row[col];

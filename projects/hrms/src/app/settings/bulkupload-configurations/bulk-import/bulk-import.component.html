@@ -132,8 +132,8 @@
                         <ul class="guidelines-list mb-0 ps-3">
                             <li class="small text-muted mb-1">Do not modify or remove column header titles in
                                 the downloaded sheet.</li>
-                            <li class="small text-muted mb-1">Dates must follow the format <b>MM-DD-YYYY</b>
-                                (e.g. 08-15-2026).</li>
+                            <li class="small text-muted mb-1">Dates must follow the format <b>{{ dateFormat }}</b>
+                                (e.g. {{ sampleGuidelineDate | dateformat }}).</li>
                             <li class="small text-muted mb-1">Mandatory fields marked with red asterisks must
                                 not be left blank.</li>
                             <li class="small text-muted">Maximum file size allowed is 5 MB (.xlsx, .csv format).

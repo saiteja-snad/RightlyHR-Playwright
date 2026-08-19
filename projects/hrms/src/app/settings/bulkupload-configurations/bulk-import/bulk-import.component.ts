@@ -218,6 +218,8 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   @ViewChild('stagingLoadingModal') stagingLoadingModal!: TemplateRef<any>;
   private searchSubject = new Subject<string>();
   isDownloadingTemplate = false;
+  readonly dateFormat = environment.dateformat;
+  readonly sampleGuidelineDate = new Date(2026, 7, 15);
   readonly filteredRows = computed(() => {
     const rows = this.store.filteredRows();
     const term = this.searchTerm().trim().toLowerCase();

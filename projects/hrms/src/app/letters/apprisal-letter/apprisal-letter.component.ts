@@ -518,7 +518,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       jobRole: data.jobRole || this.employeeJobDetails?.jobRole || '',
       letterDate: data.dateofAppraisal || new Date().toISOString(),
       compEffectiveDate: data.compeffectivedate || '',
-      totalCTC: data.salary || 0,
+      totalCTC: (+(data.salary || 0)) + (+(data.variablePayAmount || 0)),
       isPromotion: this.employeeForm.get('isPromotion')?.value || false,
       newJobRole: this.employeeForm.get('JobRole')?.value?.value || '',
       reviewDate: data.reviewdate || '',

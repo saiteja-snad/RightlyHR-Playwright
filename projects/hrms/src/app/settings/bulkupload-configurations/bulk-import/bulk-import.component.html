@@ -1,0 +1,484 @@
+<div class="timesheet-right-content w-100">
+    <div class="d-flex justify-content-center py-3">
+        <div class="client-progress-bar-container w-75">
+            <div class="progress" role="progress" [ngClass]="{'active': progress}" aria-valuenow="33" aria-valuemin="0"
+                aria-valuemax="100" [style.width.%]="(progress - 1) * 33.33"></div>
+            <div class="progress" role="progress" [ngClass]="{'inactive': progress}" aria-valuemin="0"
+                aria-valuemax="100" [style.width.%]="100"></div>
+            <!-- Steps -->
+            <div class="progress-content d-flex justify-content-between">
+                <div *ngFor="let step of steps" class="d-flex gap-2 step"
+                    [ngClass]="{ 'inactive-step': progress < step.id }">
+                    <div class="progress-number" [ngClass]="{ 'active-circle': progress >= step.id }">{{ step.id
+                        }}</div>
+                    <div class="progress-name">{{ step.name }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if(progress === 3 || progress === 4){
+    @if (store.response()) {
+    <div class="d-flex align-items-center justify-content-between px-4">
+        <div>
+            <span class="total-hrs border-0 px-0">{{'Uploaded File Name:'}}</span>
+            <span class="file-name" [title]="store.fileName() || ''">{{ store.displayFileName() ?? '-' }}</span>
+            @if (store.moduleLabel()) {
+            <div class="file-module-line">{{ store.moduleLabel() }}</div>
+            }
+        </div>
+        @if (progress === 3) {
+        <div class="d-flex align-items-center gap-3">
+            <div class="total-hrs cursor-pointer badge-total"
+                [class.active-filter-badge]="store.activeFilter() === 'ALL'" (click)="store.setFilter('ALL')">
+                {{"Total" }} : <span class="total-duration ms-1">{{formatCount(store.stats().total)}}</span>
+            </div>
+            <div class="total-hrs cursor-pointer badge-valid"
+                [class.active-filter-badge]="store.activeFilter() === 'VALID'" (click)="store.setFilter('VALID')">
+                <i class="bi bi-check-circle me-1"></i>{{"Valid" }} :
+                <span class="total-duration ms-1">{{formatCount(store.stats().valid)}}</span>
+            </div>
+            <div class="total-hrs cursor-pointer badge-invalid"
+                [class.active-filter-badge]="store.activeFilter() === 'INVALID'" (click)="store.setFilter('INVALID')">
+                <i class="bi bi-x-circle me-1"></i>{{"Invalid" }} :
+                <span class="total-duration ms-1">{{formatCount(store.stats().invalid)}}</span>
+            </div>
+        </div>
+        }
+    </div>
+    }
+    }
+
+    <div class="step-content p-3">
+        <!-- STEP 1: Select & Template -->
+        <div *ngIf="progress === 1" class="w-100 d-flex flex-column align-items-center py-2">
+            <div class="w-75">
+                <!-- Card 1: Select Module & Submodule -->
+                <form [formGroup]="importForm">
+                    <div class="card border border-light-subtle rounded-3 p-4 mb-4 shadow-sm bg-white">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="progress-number active-circle">1</div>
+                            <h6 class="fw-bold mb-0 text-dark">Select Module & Submodule</h6>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary fw-semibold small">MODULE <span
+                                        class="text-danger">*</span></label>
+                                <div class="custom-p-select-content">
+                                    <p-select [options]="modules" optionLabel="name" optionValue="id" [filter]="true"
+                                        [resetFilterOnHide]="true" [showClear]="true" filterBy="name"
+                                        formControlName="moduleId" (onChange)="onModuleChange()"
+                                        (onClear)="onModuleClear()" placeholder="Please select module"
+                                        class="form-select custom-select"></p-select>
+                                </div>
+                                <div *ngIf="isFieldInvalid('moduleId')" class="error-msg">
+                                    Module is required
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary fw-semibold small">SUBMODULE <span
+                                        class="text-danger">*</span></label>
+                                <div class="custom-p-select-content">
+                                    <p-select [options]="currentSubmodules" optionLabel="name" optionValue="id"
+                                        [filter]="true" [resetFilterOnHide]="true" [showClear]="true" filterBy="name"
+                                        formControlName="submoduleId" (onChange)="onSubmoduleChange()"
+                                        (onClear)="onSubmoduleClear()" placeholder="Please select submodule"
+                                        class="form-select custom-select"></p-select>
+                                </div>
+                                <div *ngIf="isFieldInvalid('submoduleId')" class="error-msg">
+                                    Submodule is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Card 2: Template Download & Guidelines Banner -->
+                <div class="template-download-card rounded-3 p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap flex-md-nowrap">
+                        <div class="d-flex gap-3">
+                            <div class="template-info-icon-wrapper flex-shrink-0">
+                                <i class="bi bi-info-circle-fill fs-5 text-warning"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">
+                                    @if (canProceedFromModuleStep) {
+                                    Download Template for {{ selectedModuleName }} ({{ selectedSubmoduleName }})
+                                    } @else {
+                                    Download Template
+                                    }
+                                </h6>
+                                <p class="text-muted small mb-0">
+                                    Download the standard formatted file template, populate your records
+                                    according to the rules below, and proceed to upload.
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            class="btn btn-outline-secondary bg-white text-dark d-flex align-items-center gap-2 px-3 py-2 text-nowrap rounded-2 border-secondary-subtle"
+                            (click)="downloadTemplate()">
+                            @if (isDownloadingTemplate) {
+                            <span>Downloading...</span>
+                            } @else {
+                            <app-download-icon /> <span>Download Template (.XLSX)</span>
+                            }
+                        </button>
+                    </div>
+
+                    <hr class="my-3 border-warning opacity-25">
+
+                    <div class="guidelines-section">
+                        <p class="fw-bold text-warning-emphasis mb-2 small">Important Guidelines:</p>
+                        <ul class="guidelines-list mb-0 ps-3">
+                            <li class="small text-muted mb-1">Do not modify or remove column header titles in
+                                the downloaded sheet.</li>
+                            <li class="small text-muted mb-1">Dates must follow the format <b>{{ dateFormat }}</b>
+                                (e.g. {{ sampleGuidelineDate | dateformat }}).</li>
+                            <li class="small text-muted mb-1">Mandatory fields marked with red asterisks must
+                                not be left blank.</li>
+                            <li class="small text-muted">Maximum file size allowed is 5 MB (.xlsx, .csv format).
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Next Button -->
+                <div class="d-flex justify-content-end mt-4">
+                    <button class="custom-btn btn-primary wizard-action-btn"
+                        [disabled]="!canProceedFromModuleStep"
+                        (click)="nextStep()">
+                        <span>Next</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Upload File -->
+        <div *ngIf="progress === 2">
+            <div class="upload-section">
+                <div class="file-upload-container py-4">
+                    @if (selectedModuleLabel) {
+                    <div class="upload-module-label w-75 mb-3">{{ selectedModuleLabel }}</div>
+                    }
+                    <div class="drop-zone shadow-sm w-75 py-5" (dragover)="onDragOver($event)"
+                        (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" [class.dragging]="isDragging"
+                        (click)="fileInput.click()">
+                        <div class="upload-content py-4">
+                            <img src="icons/file-upload-icon.png" alt="file upload Icon" class="file-upload-icon">
+                            <p class="popup-heading mb-3"> <b> {{'Click to upload or drag and drop your file
+                                    here'}}</b></p>
+                            <p class="small mb-0">{{'Supported formats: '}} <b>{{'Excel or CSV files (.xlsx,
+                                    .xls, .csv) up to 5 MB'}}</b></p>
+                        </div>
+                        <input #fileInput type="file" hidden accept=".xlsx, .xls, .csv"
+                            (change)="onModalFileSelected($event)">
+                    </div>
+                    @if (store.parentJobId()) {
+                    <p class="small text-muted mt-3 mb-0">Upload the corrected failed-rows file to retry remaining
+                        errors.</p>
+                    }
+                    @if (store.response()) {
+                    <div class="my-3">
+                        <span class="total-hrs">{{'Uploaded File Name:'}}</span>
+                        <span class="file-name total-duration ms-1" [title]="store.fileName() || ''">{{
+                            store.displayFileName() ?? '-' }}</span>
+                    </div>
+                    }
+                </div>
+                <div class="footer-content d-flex gap-2">
+                    <button class="custom-btn btn-secondary wizard-action-btn" (click)="prevStep()">Back</button>
+                    <button class="custom-btn btn-primary wizard-action-btn" (click)="nextStep()"
+                        [disabled]="!store.response()">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Validation -->
+        <div *ngIf="progress === 3">
+            <div class="validate-section">
+                <div class="d-flex flex-column">
+                    @if(store.response()){
+                    <div class="input-group custom-search mb-3">
+                        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                                class="bi bi-search"></i></span>
+                        <input type="search" #search="ngModel" [(ngModel)]="searchValue"
+                            (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
+                            placeholder="Search by employee id, employee name, work mail, frequency, amount"
+                            aria-label="Search" aria-describedby="basic-addon1">
+                    </div>
+                    }
+                    <div class="custom-table-content border-table"
+                        [ngClass]="{ 'preview-table-height': progress === 3}">
+                        @if (store.loading()) {
+                        <app-data-loader-content />
+                        }@else {
+                        <table class="w-100">
+                            <thead>
+                                <tr>
+                                    @for (col of displayColumns(); track col) {
+                                    <th class="text-center" [ngClass]="{
+                                        'sticky-col-right-2': col === 'isValid' || col === 'status',
+                                        'sticky-col-right-1': col === 'errorMessage' || col === 'errors'
+                                    }">{{ formatHeader(col) }}</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (filteredRows().length > 0) {
+                                @for (row of filteredRows(); track (row.rowNumber || $index)) {
+                                <tr>
+                                    @for (col of displayColumns(); track col) {
+                                    <td class="text-center" [ngClass]="{
+                                        'sticky-col-right-2': col === 'isValid' || col === 'status',
+                                        'sticky-col-right-1': col === 'errorMessage' || col === 'errors'
+                                    }">
+                                        @if (col === 'isValid' || col === 'status') {
+                                        @if (row.isValid) {
+                                        <img src="/icons/check-approve-icon.png" class="action-img" alt="Valid" />
+                                        } @else {
+                                        <img src="/icons/cancel-circle.png" class="action-img" alt="Invalid" />
+                                        }
+                                        } @else if (col === 'errorMessage' || col === 'errors') {
+                                        @if (hasRowErrors(row)) {
+                                        <a class="error-view-link" (click)="openErrorsModal(row, $event)">View</a>
+                                        } @else {
+                                        <span>-</span>
+                                        }
+                                        } @else if (col === 'description' || col === 'reason') {
+                                        <div *ngIf="row[col]; else noTextPop" type="button" [ngbPopover]="textPopover"
+                                            container="body">
+                                            <app-info-icon />
+                                        </div>
+                                        <ng-template #textPopover>
+                                            <p class="mb-0">{{ row[col] }}</p>
+                                        </ng-template>
+                                        <ng-template #noTextPop><span>-</span></ng-template>
+                                        } @else if (isDateColumn(col)) {
+                                        {{ row[col] ? (row[col] | dateformat) : '-' }}
+                                        } @else {
+                                        {{ formatCellValue(row, col) }}
+                                        }
+                                    </td>
+                                    }
+                                </tr>
+                                }
+                                } @else {
+                                <tr>
+                                    <td [attr.colspan]="displayColumns().length">
+                                        <app-no-data-found />
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                        }
+                    </div>
+                </div>
+                <div class="footer-content d-flex gap-2">
+                    <button class="custom-btn btn-secondary wizard-action-btn" (click)="prevStep()">Back</button>
+                    <button type="submit" class="custom-btn btn-primary wizard-action-btn" [disabled]="isSubmitDisabled()"
+                        (click)="confirmUpload(confirmModal, $event)">
+                        @if (store.loading()) {
+                        Loading...
+                        } @else {
+                        {{'Submit'}}
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: Submission -->
+        <div *ngIf="progress === 4">
+            <div class="success-alert-card mb-3">
+                <img src="/icons/check-approve-icon.png" class="success-img" alt="Valid" />
+                <span class="success-message">
+                    Data validation successful. Reviewing {{submissionTotalCount }} successful
+                    records.
+                </span>
+            </div>
+            <div class="submission-records-section">
+                <div class="input-group custom-search mb-3">
+                    <span class="input-group-text custom-input-group-search" id="submission-search"><i
+                            class="bi bi-search"></i></span>
+                    <input type="search" [(ngModel)]="submissionSearchValue"
+                        (ngModelChange)="onSubmissionSearchChange()" class="form-control custom-search-input"
+                        placeholder="Search by employee id, employee name, work mail, frequency, amount"
+                        aria-label="Search" aria-describedby="submission-search">
+                </div>
+                <div class="custom-table-content border-table"
+                    [ngClass]="{'preview-table-height': progress === 4, 'table-with-pagination': submissionRows().length > 0 && collectionSize > 0}">
+                    @if (store.loading()) {
+                    <app-data-loader-content />
+                    }@else {
+                    <table class="w-100">
+                        <thead>
+                            <tr>
+                                @for (col of displaySubmissionColumns(); track col) {
+                                <th class="text-center">{{ formatHeader(col) }}</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (submissionRows().length > 0) {
+                            @for (row of submissionRows(); track ($index)) {
+                            <tr>
+                                @for (col of displaySubmissionColumns(); track col) {
+                                <td class="text-center">
+                                    @if (isDateColumn(col)) {
+                                    {{ row[col] ? (row[col] | dateformat) : '-' }}
+                                    } @else if (col === 'description' || col === 'errorMessage' || col ===
+                                    'reason') {
+                                    <div *ngIf="row[col]; else noTextPop" type="button" [ngbPopover]="textPopover"
+                                        container="body">
+                                        <app-info-icon />
+                                    </div>
+                                    <ng-template #textPopover>
+                                        <p class="mb-0">{{ row[col] }}</p>
+                                    </ng-template>
+                                    <ng-template #noTextPop><span>-</span></ng-template>
+                                    } @else {
+                                    {{ formatCellValue(row, col) }}
+                                    }
+                                </td>
+                                }
+                            </tr>
+                            }
+                            } @else {
+                            <tr>
+                                <td [attr.colspan]="displaySubmissionColumns().length || 1">
+                                    <app-no-data-found />
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    }
+                </div>
+                <div class="pagination-content" *ngIf="submissionRows().length > 0 && collectionSize > 0">
+                    <div class="d-flex justify-content-between align-items-center w-100 flex-nowrap gap-2">
+                        <div class="d-flex align-items-center gap-3 p-2">
+                            <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                                (ngModelChange)="onPageSizeChange($event)">
+                                <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                                </option>
+                            </select>
+                            <span class="pagination-label text-nowrap">
+                                Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize
+                                : (+first + +rows) }} of {{ collectionSize }}
+                            </span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3 pe-3">
+                            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                                (onPageChange)="onPageChange($event)" />
+                            <button type="button" class="custom-btn btn-primary"
+                                (click)="navigateToHistoryView()">{{'Close'}}</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="submission-close-only" *ngIf="!(submissionRows().length > 0 && collectionSize > 0)">
+                    <button type="button" class="custom-btn btn-primary"
+                        (click)="navigateToHistoryView()">{{'Close'}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #confirmModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text mb-4 mt-1">
+                @if (store.stats().invalid > 0) {
+                {{'Some records have validation errors. Do you want to continue with the valid records?'}}
+                } @else {
+                {{'Are you sure you want to submit valid records?'}}
+                }
+            </p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="store.loading()"
+                (click)="onConfirmUpload()">
+                @if (store.loading()) {
+                Submitting...
+                } @else {
+                Yes
+                }
+            </button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #backnavigation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/project-mangement-icons/alert.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text mb-4 mt-1">{{'Are you sure you want to exit?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="navigatetomy()">
+                Yes
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #stagingLoadingModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div class="loading-content">
+            <img src="/gifs/dot-loader.gif" alt="" class="loading-gif">
+        </div>
+        <p class="confirmation-text pt-4">{{'Submitting your records. Please wait…'}}</p>
+    </div>
+</ng-template>
+
+<ng-template #errorsModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Validation Errors</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper errors-modal-table">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Error Message</th>
+                                <th>Suggested Fix</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (selectedRowErrors.length > 0) {
+                            @for (err of selectedRowErrors; track $index) {
+                            <tr>
+                                <td>{{ err.field || '-' }}</td>
+                                <td>{{ err.message || '-' }}</td>
+                                <td>{{ err.suggestedFix || '-' }}</td>
+                            </tr>
+                            }
+                            } @else {
+                            <tr>
+                                <td colspan="3">-</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>

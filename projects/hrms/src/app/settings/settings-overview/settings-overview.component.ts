@@ -44,6 +44,7 @@ export class SettingsOverviewComponent implements AfterViewInit {
   settingLockingsystemnModule = MODULE_INFOS.SETTINGS_LOCKINGSYSTEM_MODULE_INFO;
   settingrateCardModule = MODULE_INFOS.SETTINGS_RATE_CARD_MODULE_INFO;
   settinghelpdeskConfigurationModule = MODULE_INFOS.SETTINGS_HELPDESK_CONFIGURATION_MODULE_INFO;
+  settingbulkUploadConfigurationModule = MODULE_INFOS.SETTINGS_BULK_UPLOAD_CONFIGURATION_MODULE_INFO;
 
   activeAccordionValue: string = settingsSavedAccordion ?? '';
 

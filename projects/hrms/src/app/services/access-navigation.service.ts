@@ -46,6 +46,7 @@ import {
   SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS,
   ATTENDANCE_ELIGIBILITY_CRITERIA_TABS,
   SETTINGS_RATECARD_TABS,
+  SETTINGS_BULKUPLOAD_TABS,
   SETTINGS_EMPLOYEE_FIELDS_JOB_TABS,
   PMS_CONFIGURATION_TABS,
   TEAM_PERFORMANCE_TABS,
@@ -311,6 +312,14 @@ export class AccessNavigationService {
 
         if (this.rbac.allowedToAccess('Rate Card Configuration Module.view')) {
           for (const item of SETTINGS_RATECARD_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+        if (this.rbac.allowedToAccess('Bulk Import/Upload Configuration Module.view') || this.rbac.allowedToAccess('Bulk Import/Upload.view') || this.rbac.allowedToAccess('View History.view')) {
+          for (const item of SETTINGS_BULKUPLOAD_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1133,7 +1142,7 @@ export class AccessNavigationService {
         }
         break;
 
-              case '/project-management/timesheet':
+      case '/project-management/timesheet':
         if (this.rbac.allowedToAccess('Time Sheet.view') || this.rbac.allowedToAccess('Team Time Sheet.view') || this.rbac.allowedToAccess('My Summary.view')) {
           const preferred = this.getPreferredRouteFromPermissionTabs(
             'project-management-timesheets-tabs',
@@ -1400,6 +1409,19 @@ export class AccessNavigationService {
           }
         }
         break;
+
+      case '/settings/bulkupload-configurations':
+      case '/settings/bulkupload-configurations/bulk-import':
+      case '/settings/bulkupload-configurations/historylog':
+        if (this.rbac.allowedToAccess('Bulk Import/Upload Configuration Module.view')) {
+          for (const item of SETTINGS_BULKUPLOAD_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return actualRoute === '/settings/bulkupload-configurations' ? item.route : actualRoute;
+            }
+          }
+        }
+        break;
+
 
       case '/settings/employee-fields/documents':
         if (this.rbac.allowedToAccess('Document Tab.view')) {
@@ -2053,7 +2075,7 @@ export class AccessNavigationService {
           }
         }
         break;
-      
+
       case '/pending-approvals/project-management':
         if (this.rbac.allowedToAccess('project management approvals main Tab.view')) {
           for (const item of PROJECT_MANAGEMENT_APPROVALS_TABS) {

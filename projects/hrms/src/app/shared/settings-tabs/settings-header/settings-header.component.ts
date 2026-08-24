@@ -29,7 +29,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
   routeToInfoMap!: { [key: string]: string };
   @ViewChild('discardConfirmModal') discardConfirmModal: any;
 
-  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute, 
+  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute,
     private http: HttpService, private location: Location, private modalService: NgbModal) { }
 
   ngOnInit(): void {
@@ -277,7 +277,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Task Type';
     }
-     else if (url.startsWith('/settings/project-management-config/timesheet-configurations')) {
+    else if (url.startsWith('/settings/project-management-config/timesheet-configurations')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Timesheet Configurations';
     }
@@ -352,6 +352,18 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.moduleName = 'Rate Card Configuration';
       this.componentName = 'Rate Card';
     }
+    else if (url.startsWith('/settings/bulkupload-configurations/bulk-import')) {
+      this.moduleName = 'Bulk Import / Upload Configurations';
+      this.componentName = 'Bulk Import / Upload';
+    }
+    else if (url.startsWith('/settings/bulkupload-configurations/historylog')) {
+      this.moduleName = 'Bulk Import / Upload Configurations';
+      this.componentName = 'View History';
+    }
+    else if (url.startsWith('/settings/bulkupload-configurations')) {
+      this.moduleName = 'Bulk Import / Upload Configurations';
+      this.componentName = 'Bulk Import / Upload';
+    }
   }
 
   getdatacarryforword() {
@@ -419,11 +431,11 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  navigateTocarryforword(){
+  navigateTocarryforword() {
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/carry-forward'])
     localStorage.removeItem('carryForwardJobId'),
-    localStorage.removeItem('loadEntitlement')
-}
+      localStorage.removeItem('loadEntitlement')
+  }
 
   navigateTointialloadentiments() {
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
@@ -434,7 +446,7 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
   navigateToloadentiments() {
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
     localStorage.removeItem('carryForwardJobId'),
-    localStorage.removeItem('intialloadEntitlement')
+      localStorage.removeItem('intialloadEntitlement')
   }
 
   onSettingsClick(): void {

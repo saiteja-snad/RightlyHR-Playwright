@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
@@ -52,10 +52,50 @@ export class CompensationComponent implements OnInit,OnDestroy {
   loading=false
   empinfo: any
   selectedid: any;
+  selectedCompensation: any = null;
+  selectedViewItem: any = null;
   currentSortField: string = '';
   currentSortOrder: number = 0; // 0 = no sort, 1 = asc, -1 = desc
+
+  openViewMoreModal(content: any, data: any) {
+    this.selectedViewItem = data;
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  closeViewMore() {
+    this.offcanvasService.dismiss();
+  }
+
+  getAddedBy(item: any): string {
+    if (!item) return 'NA';
+    const val = item.addedBy ?? item.createdBy ?? item.createdby ?? item.addedByName ?? item.createdByName ?? item.performedBy;
+    if (!val) return 'NA';
+    if (typeof val === 'object') {
+      return val.name || val.fullName || val.employeeName || val.userName || JSON.stringify(val);
+    }
+    return String(val).trim() || 'NA';
+  }
+
+  getCreatedAt(item: any): any {
+    if (!item) return 'NA';
+    const val = item.createdAt ?? item.createdOn ?? item.createddate ?? item.createdDate ?? item.createdat;
+    if (!val) return 'NA';
+    return val;
+  }
+
+  getSource(item: any): string {
+    if (!item) return 'NA';
+    const val = item.source ?? item.creationSource ?? item.entrySource ?? item.sourceType ?? item.importSource;
+    if (!val) return 'NA';
+    return String(val).trim() || 'NA';
+  }
   constructor(
     private modalService: NgbModal,
+    private offcanvasService: NgbOffcanvas,
     private authService: AuthService,
     private fb: FormBuilder,
     private conformationPopup: OpenModalService,
@@ -227,8 +267,9 @@ onVariablePayChange() {
     const formattedEffectiveDate = formdata.value.compeffectivedate
       ? new Date(formdata.value.compeffectivedate).toISOString().split('T')[0]
       : null;
+    const loggedInEmployeeId = this.getLoggedInEmployeeId();
+    const now = new Date().toISOString();
     const playload = {
-
       employeeId: this.empinfo.employeeId,
       compeffectivedate: formattedEffectiveDate,
       overtimeeligibility: formdata.value?.overtimeeligibility?.overtimeeligibility1,
@@ -239,7 +280,12 @@ onVariablePayChange() {
       status: "Active",
       isVariablePay: formdata.value?.isVariablePay,
       variablePayAmount: formdata.value?.variablePayAmount || null,
-      nextCompReviewDate: formdata.value?.nextcompeffectivedate ? new Date(formdata.value.nextcompeffectivedate).toISOString().split('T')[0] : null
+      nextCompReviewDate: formdata.value?.nextcompeffectivedate ? new Date(formdata.value.nextcompeffectivedate).toISOString().split('T')[0] : null,
+      source: 'manual',
+      createdBy: loggedInEmployeeId,
+      updatedBy: loggedInEmployeeId,
+      createdOn: now,
+      updatedOn: now
     }
     console.log(playload)
     this.subscription = this.http.postdata("Compensationdata", playload).subscribe({
@@ -268,9 +314,14 @@ onVariablePayChange() {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
+
+  private getLoggedInEmployeeId(): number {
+    return parseInt(this.authService.getToken()?.employeeId, 10) || 0;
+  }
   openModalupdate(content: any, data: any) {
     console.log(data)
     this.selectedid = data.id
+    this.selectedCompensation = data
     const effectiveDate = this.formatDateToLocal(data.compeffectivedate);
       
     this.compupdateForm.patchValue({
@@ -305,6 +356,9 @@ onVariablePayChange() {
     const formattedEffectiveDate = formdata.value.compeffectivedate
       ? new Date(formdata.value.compeffectivedate).toISOString().split('T')[0]
       : null;
+    const existing = this.selectedCompensation || {};
+    const loggedInEmployeeId = this.getLoggedInEmployeeId();
+    const now = new Date().toISOString();
     const playload = {
       id: this.selectedid,
       employeeId: this.empinfo.employeeId,
@@ -317,7 +371,12 @@ onVariablePayChange() {
       status: "Active",
       isVariablePay: formdata.value?.isVariablePay,
       variablePayAmount: formdata.value?.variablePayAmount || null,
-      nextCompReviewDate: formdata.value?.nextcompeffectivedate ? this.formatDateToLocal(formdata.value.nextcompeffectivedate) : null
+      nextCompReviewDate: formdata.value?.nextcompeffectivedate ? this.formatDateToLocal(formdata.value.nextcompeffectivedate) : null,
+      source: existing.source || 'manual',
+      createdBy: existing.createdBy ?? loggedInEmployeeId,
+      updatedBy: loggedInEmployeeId,
+      createdOn: existing.createdOn || now,
+      updatedOn: now
     }
     console.log(playload)
     this.subscription = this.http.postdata("Compensationdata/UPDATER", playload).subscribe({
@@ -350,17 +409,24 @@ onVariablePayChange() {
 
   }
   compentiondelete() {
+    const existing = this.selectedid || {};
+    const loggedInEmployeeId = this.getLoggedInEmployeeId();
+    const now = new Date().toISOString();
     const playload = {
-      "status": "Void",
-      "employeeId": this.empinfo.employeeId,
-      "id": this.selectedid.id,
-      "compeffectivedate": this.selectedid.compeffectivedate,
-      "overtimeeligibility": this.selectedid.overtimeeligibility,
-      "reason": this.selectedid.reason,
-      "frequency": this.selectedid.frequency,
-      "paytype": this.selectedid.paytype,
-      "compensationamount": this.selectedid.compensationamount,
-
+      status: "Void",
+      employeeId: this.empinfo.employeeId,
+      id: existing.id,
+      compeffectivedate: existing.compeffectivedate,
+      overtimeeligibility: existing.overtimeeligibility,
+      reason: existing.reason,
+      frequency: existing.frequency,
+      paytype: existing.paytype,
+      compensationamount: existing.compensationamount,
+      source: existing.source || 'manual',
+      createdBy: existing.createdBy ?? loggedInEmployeeId,
+      updatedBy: loggedInEmployeeId,
+      createdOn: existing.createdOn || now,
+      updatedOn: now
     }
     this.subscription = this.http.postdata("Compensationdata/UPDATER", playload).subscribe({
       next: (data: any) => {

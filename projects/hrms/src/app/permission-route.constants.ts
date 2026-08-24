@@ -223,6 +223,11 @@ export const SETTINGS_RATECARD_TABS = [
   { route: '/settings/employee-rate-card/rate-card/rate-card-inactive', permission: 'Rate Card Inactive Tab.view' },
 ]
 
+export const SETTINGS_BULKUPLOAD_TABS = [
+  { route: '/settings/bulkupload-configurations/bulk-import', permission: 'Bulk Import/Upload.view' },
+  { route: '/settings/bulkupload-configurations/historylog', permission: 'View History.view' },
+]
+
 export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/leave-report', permission: 'Leave Report.view' },
   { route: '/reports/attendence-reports/leave-summary-report', permission: 'Leave Summary Report.view' },
@@ -804,14 +809,14 @@ export const PERFORMANCE_REVIEW_TABS = [
 
 export const RECRUITMENT_JOBS_ROUTES = [
   { route: '/recruitment/jobs/active', permission: 'Active Jobs.view' },
-  { route: '/recruitment/jobs/inactive', permission: 'Inactive Jobs.view'}
+  { route: '/recruitment/jobs/inactive', permission: 'Inactive Jobs.view' }
 ];
 
 export const RECRUITMENT_MAIN_ROUTES = [
   { route: '/recruitment/jobs', permission: 'Job Openings.view' },
   { route: '/recruitment/interview-process', permission: 'Interview Review.view' },
-  { route: '/recruitment/recruiter-dashboard', permission: 'Recruiter Dashboard.view'},
-  { route: '/recruitment/recruitment-dashboard', permission: 'Recruitment Dashboard.view'}
+  { route: '/recruitment/recruiter-dashboard', permission: 'Recruiter Dashboard.view' },
+  { route: '/recruitment/recruitment-dashboard', permission: 'Recruitment Dashboard.view' }
 ];
 
 export const INTERVIEW_PROCESS_TABS = [

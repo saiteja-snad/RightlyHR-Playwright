@@ -525,7 +525,7 @@ export class ApprisalLetterAcknowedgementComponent {
       jobRole: data.jobRole ?? '',
       letterDate: data.dateofAppraisal,
       compEffectiveDate: data.compeffectivedate,
-      totalCTC: data.salary,
+      totalCTC: (+(data.salary || 0)) + (+(data.variablePayAmount || 0)),
       isPromotion: this.letterdata?.isPromotion,
       newJobRole: this.letterdata?.newJobRole ?? this.latestjobRole,
       reviewDate: data.reviewdate,

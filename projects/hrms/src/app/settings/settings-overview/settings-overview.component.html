@@ -136,7 +136,8 @@
                                     <div class="d-flex align-items-center gap-2 mb-2">
                                         <img src="/main-menu-icons/project-management-configuration.png" alt="Icon"
                                             class="list-icon">
-                                        <div class="list-label-name">{{ 'Project Management Configurations' | translate }}</div>
+                                        <div class="list-label-name">{{ 'Project Management Configurations' | translate
+                                            }}</div>
                                     </div>
                                     <p class="list-description m-0">{{settingAttendanceConfigurationModule}}</p>
                                 </div>
@@ -159,7 +160,7 @@
                                 </div>
                             </p-accordion-header>
                             <p-accordion-content>
-                                <app-settings-locking-system-tabs/>
+                                <app-settings-locking-system-tabs />
                             </p-accordion-content>
                         </p-accordion-panel>
                     </li>
@@ -172,8 +173,10 @@
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/Asset-configuration-icon.png" alt="Icon" class="list-icon">
-                                        <div class="list-label-name">{{ 'IT Support Configurations' | translate }} </div>
+                                        <img src="/main-menu-icons/Asset-configuration-icon.png" alt="Icon"
+                                            class="list-icon">
+                                        <div class="list-label-name">{{ 'IT Support Configurations' | translate }}
+                                        </div>
                                     </div>
                                     <p class="list-description m-0">{{settingItConfigurationModule}}</p>
                                 </div>
@@ -193,7 +196,8 @@
                                     <div class="d-flex align-items-center gap-2 mb-2">
                                         <img src="/main-menu-icons/Employee-fields-update-config.png" alt="Icon"
                                             class="list-icon">
-                                        <div class="list-label-name">{{ 'Employee Field Update Configuration' | translate }}</div>
+                                        <div class="list-label-name">{{ 'Employee Field Update Configuration' |
+                                            translate }}</div>
                                     </div>
                                     <p class="list-description m-0">{{settingsEmployeefieldupdateconfigModule}}</p>
                                 </div>
@@ -204,7 +208,7 @@
                         </p-accordion-panel>
                     </li>
                     }
-                     @if(rbac.allowedToAccess('Rate Card Configuration Module.view')){
+                    @if(rbac.allowedToAccess('Rate Card Configuration Module.view')){
                     <li class="accordian-list-item"
                         (click)="navigateToAccessedRoute('/settings/employee-rate-card/rate-card', 'settings-panel-10')"
                         id="settings-panel-10">
@@ -212,8 +216,7 @@
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="settings-icon/Rate Card.png" alt="Icon"
-                                            class="list-icon">
+                                        <img src="settings-icon/Rate Card.png" alt="Icon" class="list-icon">
                                         <div class="list-label-name">{{ 'Rate Card Configuration' | translate }}</div>
                                     </div>
                                     <p class="list-description m-0">{{settingrateCardModule}}</p>
@@ -231,11 +234,32 @@
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/help desk.png" alt="Icon"
-                                            class="list-icon">
+                                        <img src="/main-menu-icons/help desk.png" alt="Icon" class="list-icon">
                                         <div class="list-label-name">Help Desk Configuration</div>
                                     </div>
                                     <p class="list-description m-0">{{settinghelpdeskConfigurationModule}}</p>
+                                </div>
+                            </p-accordion-header>
+                        </p-accordion-panel>
+                    </li>
+                    }
+                    @if(rbac.allowedToAccess('Bulk Import/Upload Configuration Module.view') ||
+                    rbac.allowedToAccess('Bulk
+                    Upload.view') || rbac.allowedToAccess('View History.view')){
+                    <!--Bulk Import/Upload Configurations-->
+                    <li class="accordian-list-item"
+                        (click)="navigateToAccessedRoute('/settings/bulkupload-configurations', 'settings-panel-12')"
+                        id="settings-panel-12">
+                        <p-accordion-panel value="12">
+                            <p-accordion-header>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <img src="icons/file-upload-icon.png" alt="Icon" class="list-icon">
+                                        <div class="list-label-name">{{ 'Bulk Import / Upload Configurations' |
+                                            translate }}
+                                        </div>
+                                    </div>
+                                    <p class="list-description m-0">{{settingbulkUploadConfigurationModule}}</p>
                                 </div>
                             </p-accordion-header>
                         </p-accordion-panel>

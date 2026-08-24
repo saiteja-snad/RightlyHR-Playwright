@@ -2,3 +2,48 @@
   height: 60dvh;
   justify-content: center;
 }
+
+.custom-offcanvas-body {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 90dvh;
+}
+
+.compensation-detail-list {
+  border: 1px solid var(--table-data-border-color, var(--content-border-color));
+  border-radius: 0.5rem;
+  background-color: var(--white-color, #fff);
+  overflow: hidden;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--table-data-border-color, var(--content-border-color));
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.detail-key {
+  font-size: var(--fontsize14);
+  font-weight: 600;
+  color: var(--table-header-color);
+  text-transform: capitalize;
+  flex-shrink: 0;
+  min-width: 6.5rem;
+}
+
+.detail-value {
+  font-size: var(--fontsize14);
+  font-weight: 400;
+  color: var(--table-data-color);
+  text-align: right;
+  word-break: break-word;
+}

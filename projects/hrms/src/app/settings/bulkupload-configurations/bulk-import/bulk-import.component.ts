@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
@@ -220,6 +220,7 @@ export class BulkImportComponent implements OnInit, OnDestroy {
   isDownloadingTemplate = false;
   readonly dateFormat = environment.dateformat;
   readonly sampleGuidelineDate = new Date(2026, 7, 15);
+  private readonly datePipe = new DatePipe('en-US');
   readonly filteredRows = computed(() => {
     const rows = this.store.filteredRows();
     const term = this.searchTerm().trim().toLowerCase();
@@ -894,6 +895,22 @@ export class BulkImportComponent implements OnInit, OnDestroy {
     if (!col) return false;
     const dateCols = ['effectiveDate', 'entryDate', 'createdAt', 'nextCompensationReviewDate', 'submittedDate'];
     return dateCols.includes(col) || col.toLowerCase().includes('date');
+  }
+
+  formatDateCellValue(value: any): string {
+    if (value === null || value === undefined || value === '') {
+      return '-';
+    }
+    const raw = String(value);
+    const parsed = new Date(value);
+    if (isNaN(parsed.getTime())) {
+      return raw;
+    }
+    try {
+      return this.datePipe.transform(parsed, this.dateFormat) || raw;
+    } catch {
+      return raw;
+    }
   }
 
   formatHeader(col: string): string {

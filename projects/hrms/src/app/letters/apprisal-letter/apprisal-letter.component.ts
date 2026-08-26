@@ -506,57 +506,59 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     }
     const fileName = `${data.firstName}_${data.lastName}_${Date.now()}_AppraisalLetter.pdf`;
     const isSoftCopy = data.Documenttype === true;
-    const [assets, pm] = await Promise.all([
-      fetchLetterAssets(isSoftCopy),
-      setupLetterPdfMake(),
-    ]);
-    const docDef = buildAppraisalLetterDoc({
-      firstName: data.firstName || '',
-      middleName: data.middleName || '',
-      lastName: data.lastName || '',
-      gender: this.gender || '',
-      jobRole: data.jobRole || this.employeeJobDetails?.jobRole || '',
-      letterDate: data.dateofAppraisal || new Date().toISOString(),
-      compEffectiveDate: data.compeffectivedate || '',
-      totalCTC: (+(data.salary || 0)) + (+(data.variablePayAmount || 0)),
-      isPromotion: this.employeeForm.get('isPromotion')?.value || false,
-      newJobRole: this.employeeForm.get('JobRole')?.value?.value || '',
-      reviewDate: data.reviewdate || '',
-      variablePayAmount: data.variablePayAmount || 0,
-      note: this.employeeForm.get('note')?.value || '',
-      basicSalary: data.basicSalary,
-      basicPerannum: data.basicPerannum,
-      hraSalary: data.hraSalary,
-      hraPerAnnum: data.hraPerAnnum,
-      otherAllowances: data.otherAllowances,
-      otherAllowancesPerAnnum: data.otherAllowancesPerAnnum,
-      totalGrossSalary: data.totalGrossSalary,
-      totalGrossPerAnnum: data.totalGrossPerAnnum,
-      pfContribution: data.pfContribution,
-      pfPreAnuum: data.pfPreAnuum,
-      employeeEsi: data.employeeEsi,
-      esiPerAnnumemployee: data.esiPerAnnumemployee,
-      professionalTax: data.professionalTax,
-      professionalPerAnnum: data.professionalPerAnnum,
-      educationAllowances: data.educationAllowances,
-      educationallowancesPerAnnum: data.educationallowancesPerAnnum,
-      totalDeduction: data.totalDeduction,
-      totalDeductionsPerAnnum: data.totalDeductionsPerAnnum,
-      netSalary: data.netSalary,
-      netSalaryPerAnnum: data.netSalaryPerAnnum,
-      esicContribution: data.esicContribution,
-      esiPerAnnum: data.esiPerAnnum,
-      grossSalary: data.grossSalary || this.grossSalary,
-      salary: data.salary,
-      authorityFullName: data.authorityName || '',
-      authorityDesignation: this.authorityDesignation || '',
-      backgroundImageBase64: assets.backgroundImageBase64,
-      headerLogoBase64: assets.headerLogoBase64,
-      useVerdanaFont: true,
-      useAutographyFont: true,
-    });
+    const isPromotion = this.employeeForm.get('isPromotion')?.value === true;
 
     try {
+      const [assets, pm] = await Promise.all([
+        fetchLetterAssets(isSoftCopy),
+        setupLetterPdfMake(),
+      ]);
+      const docDef = buildAppraisalLetterDoc({
+        firstName: data.firstName || '',
+        middleName: data.middleName || '',
+        lastName: data.lastName || '',
+        gender: this.gender || '',
+        jobRole: data.jobRole || this.employeeJobDetails?.jobRole || '',
+        letterDate: data.dateofAppraisal || new Date().toISOString(),
+        compEffectiveDate: data.compeffectivedate || '',
+        totalCTC: (+(data.salary || 0)) + (+(data.variablePayAmount || 0)),
+        isPromotion,
+        newJobRole: this.employeeForm.get('JobRole')?.value?.value || '',
+        reviewDate: data.reviewdate || '',
+        variablePayAmount: data.variablePayAmount || 0,
+        note: this.employeeForm.get('note')?.value || '',
+        basicSalary: data.basicSalary,
+        basicPerannum: data.basicPerannum,
+        hraSalary: data.hraSalary,
+        hraPerAnnum: data.hraPerAnnum,
+        otherAllowances: data.otherAllowances,
+        otherAllowancesPerAnnum: data.otherAllowancesPerAnnum,
+        totalGrossSalary: data.totalGrossSalary,
+        totalGrossPerAnnum: data.totalGrossPerAnnum,
+        pfContribution: data.pfContribution,
+        pfPreAnuum: data.pfPreAnuum,
+        employeeEsi: data.employeeEsi,
+        esiPerAnnumemployee: data.esiPerAnnumemployee,
+        professionalTax: data.professionalTax,
+        professionalPerAnnum: data.professionalPerAnnum,
+        educationAllowances: data.educationAllowances,
+        educationallowancesPerAnnum: data.educationallowancesPerAnnum,
+        totalDeduction: data.totalDeduction,
+        totalDeductionsPerAnnum: data.totalDeductionsPerAnnum,
+        netSalary: data.netSalary,
+        netSalaryPerAnnum: data.netSalaryPerAnnum,
+        esicContribution: data.esicContribution,
+        esiPerAnnum: data.esiPerAnnum,
+        grossSalary: data.grossSalary || this.grossSalary,
+        salary: data.salary,
+        authorityFullName: data.authorityName || '',
+        authorityDesignation: this.authorityDesignation || '',
+        backgroundImageBase64: assets.backgroundImageBase64,
+        headerLogoBase64: assets.headerLogoBase64,
+        useVerdanaFont: true,
+        useAutographyFont: true,
+      });
+
       const blob: Blob = await pm.createPdf(docDef).getBlob();
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -566,14 +568,18 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       this.AppraisalFile = new File([blob], fileName, { type: 'application/pdf' });
       this.documentGenerated = true;
       this.spinnerLoader = false;
-      this.uploadAppraisalLetter();
-      this.updateJobDetails();
-      this.updateCompensationDetails();
     } catch (err) {
       console.error('PDF generation failed:', err);
       this.spinnerLoader = false;
       this.conformationPopup.openErrorModal('Failed to generate Appraisal Letter');
+      return;
     }
+
+    this.uploadAppraisalLetter();
+    if (isPromotion) {
+      this.updateJobDetails();
+    }
+    this.updateCompensationDetails();
   }
 
 
@@ -589,7 +595,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       status: 'Active',
       subdeptId: data.subdeptId,
       createddate: data.createddate,
-      gradeId: this.gradeIdValue.gradeId ? this.gradeIdValue.gradeId : data.gradeId,
+      gradeId: this.gradeIdValue?.gradeId ? this.gradeIdValue.gradeId : data.gradeId,
       reportsto: data.reportsto,
       shiftId: data.shiftId,
       jobTypeId: data.jobTypeId,
@@ -725,14 +731,16 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
 
   postAppraisalLetter() {
     const loggedInUser = this.authService.getToken();
-    // const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
-    // const issuedDate = new Date(`${year}-${month}-${day}`).toISOString();
-    const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
-    const originalDate = new Date(`${year}-${month}-${day}`);
-    // Add one day (in milliseconds)
+    const dateofAppraisal = this.appraisalData.dateofAppraisal;
+    let originalDate: Date;
+    if (typeof dateofAppraisal === 'string' && dateofAppraisal.includes('/')) {
+      const [day, month, year] = dateofAppraisal.split('/');
+      originalDate = new Date(`${year}-${month}-${day}`);
+    } else {
+      originalDate = new Date(dateofAppraisal);
+    }
     originalDate.setDate(originalDate.getDate() + 1);
-    // Convert to ISO format
-    const issuedDate = originalDate.toISOString();
+    const issuedDate = isNaN(originalDate.getTime()) ? new Date().toISOString() : originalDate.toISOString();
     const payload = {
       employeeId: this.appraisalData.employeeId,
       status: 'Released',

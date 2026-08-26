@@ -255,7 +255,7 @@
                                         </ng-template>
                                         <ng-template #noTextPop><span>-</span></ng-template>
                                         } @else if (isDateColumn(col)) {
-                                        {{ row[col] ? (row[col] | dateformat) : '-' }}
+                                        {{ formatDateCellValue(row[col]) }}
                                         } @else {
                                         {{ formatCellValue(row, col) }}
                                         }
@@ -327,7 +327,7 @@
                                 @for (col of displaySubmissionColumns(); track col) {
                                 <td class="text-center">
                                     @if (isDateColumn(col)) {
-                                    {{ row[col] ? (row[col] | dateformat) : '-' }}
+                                    {{ formatDateCellValue(row[col]) }}
                                     } @else if (col === 'description' || col === 'errorMessage' || col ===
                                     'reason') {
                                     <div *ngIf="row[col]; else noTextPop" type="button" [ngbPopover]="textPopover"

@@ -34,11 +34,11 @@
             contributions to the organization. Your hard work and commitment have made a significant impact on our
             success.</p>
 
-          <p *ngIf="letterdata?.isPromotion">We are happy with your performance and are equally pleased to
-            share that you have been promoted to <u><b><span>{{letterdata?.newJobRole || latestjobRole}}</span></b></u>.
+          <p *ngIf="promotion && letterdata?.newJobRole">We are happy with your performance and are equally pleased to
+            share that you have been promoted to <u><b><span>{{letterdata?.newJobRole}}</span></b></u>.
           </p>
 
-          <p *ngIf="!letterdata?.isPromotion">Based on your excellent performance, we have revised your compensation and
+          <p *ngIf="!promotion">Based on your excellent performance, we have revised your compensation and
             benefits, effective from <u>
               <span *ngIf="!employeeCompensationDetails.compeffectivedate">DD/MM/YYYY</span>
               {{employeeCompensationDetails.compeffectivedate | dateformat}}</u>.

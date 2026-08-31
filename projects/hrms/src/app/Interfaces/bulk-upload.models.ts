@@ -1,14 +1,21 @@
+export interface BulkUploadRowError {
+  field?: string;
+  code?: string;
+  message?: string;
+  suggestedFix?: string;
+}
+
 export interface BulkUploadRow {
-  rowNumber: number;
-  employeeId: string;
-  entryDate: string;
-  clientName: string;
-  projectCode: string;
-  projectName: string;
-  phaseName: string;
-  duration: string;
-  description: string;
-  billable: string;
+  rowNumber?: number;
+  employeeId?: string;
+  entryDate?: string;
+  clientName?: string;
+  projectCode?: string;
+  projectName?: string;
+  phaseName?: string;
+  duration?: string;
+  description?: string;
+  billable?: string;
   
   // Parsed fields
   parsedEmployeeId?: number;
@@ -21,29 +28,29 @@ export interface BulkUploadRow {
   durationSource?: string;
   
   // Validation flags
-  isResourceAssigned: boolean;
-  isDateInAssignmentRange: boolean;
-  hasExistingEntry: boolean;
-  hasOverlap: boolean;
+  isResourceAssigned?: boolean;
+  isDateInAssignmentRange?: boolean;
+  hasExistingEntry?: boolean;
+  hasOverlap?: boolean;
   isValid: boolean;
-    projectMeta: {
+  projectMeta?: {
     graphData: {
       color: string;
       code: string;
     }
   } | null;
-  clientMeta: {
+  clientMeta?: {
     graphData: {
       color: string;
     }
   } | null;
-  phaseMeta: {
+  phaseMeta?: {
     graphData: {
       color: string;
     }
   } | null;
   // Action & Status
-  action: 'INSERT' | 'UPDATE' | 'SKIP';
+  action?: 'INSERT' | 'UPDATE' | 'SKIP' | string;
   weekStartDate?: string;
   normalizedEntryDate?: string;
   normalizedDuration?: string;
@@ -51,21 +58,31 @@ export interface BulkUploadRow {
   
   // Errors
   errorCode?: string;
+  errorField?: string;
   errorMessage?: string;
+  suggestedFix?: string;
+  hasErrors?: boolean;
+  errors?: BulkUploadRowError[];
   existingEntryStatus?: string;
-  taskName?:string
+  taskName?: string;
+  [key: string]: any;
 }
 
 export interface BulkUploadSummary {
   totalRows: number;
   validRows: number;
   invalidRows: number;
-  insertCount: number;
-  updateCount: number;
-  skipCount: number;
+  insertCount?: number;
+  updateCount?: number;
+  skipCount?: number;
+  columns?: string[];
   rows: BulkUploadRow[];
   fileName: string;
+  displayFileName?: string;
   filePath?: string;
+  moduleName?: string;
+  subModuleName?: string;
+  parentModuleName?: string;
 }
 
 export interface BulkUploadResponse {

@@ -696,7 +696,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'My Info Onboarding Details', 'My Info Card Details', 'Employee Info Onboarding Details', 'Employee Info Job Details',
       'Employee Info Previous Experience Details', 'Employee Info Certification Details',
       'My Info Personal Approval History',
-      'My Info Job Approval History','Rate Card Active Tab',
+      'My Info Job Approval History', 'Rate Card Active Tab',
       'My Info Documents Approval History',
       'Employee Info Compensation Details', 'Draft Tab', 'Expenses Module', 'Job Shortlisted',
       'Letter Acknowledgment Configuration', 'Ats Configuration Module', 'Closed Jobs', 'Inactive Jobs', 'Active Jobs', 'Active Applicants', 'Screening Completed Applicants',
@@ -790,28 +790,28 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     if (action === 'Delete') return !this.isActionEnabled(per.fields, 'Delete') || !this.roleToFilter?.id;
     return false;
   };
- israteCardCheckboxDisabled = (
-  per: PermissionRow,
-  action: 'View' | 'Update' | 'Create' | 'Delete'
-) => {
+  israteCardCheckboxDisabled = (
+    per: PermissionRow,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ) => {
 
-  if (!this.roleToFilter?.id) return true;
+    if (!this.roleToFilter?.id) return true;
 
-  const isActive = per.fields === 'Rate Card Active Tab';
-  const isInactive = per.fields === 'Rate Card In-active Tab';
+    const isActive = per.fields === 'Rate Card Active Tab';
+    const isInactive = per.fields === 'Rate Card In-active Tab';
 
-  // Active tab → allow everything
-  if (isActive) return false;
+    // Active tab → allow everything
+    if (isActive) return false;
 
-  // In-active tab → only View + Update allowed
-  if (isInactive) {
-    if (action === 'View') return false;
-    if (action === 'Update') return false;
-    return true; // Create + Delete disabled
-  }
+    // In-active tab → only View + Update allowed
+    if (isInactive) {
+      if (action === 'View') return false;
+      if (action === 'Update') return false;
+      return true; // Create + Delete disabled
+    }
 
-  return false;
-};
+    return false;
+  };
   isonlyviewfunction = (_: PermissionRow, action: 'View' | 'Update' | 'Create' | 'Delete') =>
     action === 'View' ? !this.roleToFilter?.id : true;
 
@@ -827,43 +827,43 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 
   isSettingsEmployeeJobCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
   isSettingsProjectManagementConfig = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
- isProjectManagementTabsCheckboxDisabled = (
-  per: PermissionRow,
-  action: 'View' | 'Update' | 'Create' | 'Delete'
-) => {
+  isProjectManagementTabsCheckboxDisabled = (
+    per: PermissionRow,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ) => {
 
-  if (!this.roleToFilter?.id) return true;
+    if (!this.roleToFilter?.id) return true;
 
-  const viewOnlyFields = [
-    'View Assigned Projects',
-    'View All Projects'
-  ];
+    const viewOnlyFields = [
+      'View Assigned Projects',
+      'View All Projects'
+    ];
 
-  if (viewOnlyFields.includes(per.fields)) {
-    return action !== 'View'; // Disable Update, Create, Delete
-  }
+    if (viewOnlyFields.includes(per.fields)) {
+      return action !== 'View'; // Disable Update, Create, Delete
+    }
 
-  return false;
-};
+    return false;
+  };
 
-isProjectManagementClientsTabsCheckboxDisabled = (
-  per: PermissionRow,
-  action: 'View' | 'Update' | 'Create' | 'Delete'
-) => {
+  isProjectManagementClientsTabsCheckboxDisabled = (
+    per: PermissionRow,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ) => {
 
-  if (!this.roleToFilter?.id) return true;
+    if (!this.roleToFilter?.id) return true;
 
-  const viewOnlyFields = [
-    'View Assigned Clients',
-    'View All Clients'
-  ];
+    const viewOnlyFields = [
+      'View Assigned Clients',
+      'View All Clients'
+    ];
 
-  if (viewOnlyFields.includes(per.fields)) {
-    return action !== 'View'; // Disable Update, Create, Delete
-  }
+    if (viewOnlyFields.includes(per.fields)) {
+      return action !== 'View'; // Disable Update, Create, Delete
+    }
 
-  return false;
-};
+    return false;
+  };
   isAttendanceLockingCheckboxDisabled = (_: PermissionRow, __: any) => !this.roleToFilter?.id;
 
   isSettingsManageShiftsCheckboxDisabled = (
@@ -1228,7 +1228,8 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
       'Rate Card Configuration Module',
       'Recruitment Configuration Module',
       'Helpdesk Configuration Module',
-      'Employee Fields Config Update Module'
+      'Employee Fields Config Update Module',
+      'Bulk Import/Upload Configuration Module'
     ]
   }, {
     title: 'Dashboard Widgets',
@@ -1262,10 +1263,11 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
     ]
   },
   { title: 'Rate Card Configuration Module', disableFn: 'israteCardCheckboxDisabled', fieldNames: ['Rate Card Active Tab', 'Rate Card In-active Tab'] },
+  { title: 'Bulk Import/Upload Configuration Module', disableFn: 'isonlyviewfunction', fieldNames: ['Bulk Import/Upload', 'View History'] },
   { title: 'Employee Fields', disableFn: 'isemployeeCheckboxDisabled', fieldNames: ['Personal Tab', 'Job Tab', 'Document Tab', 'Manage Shifts Tab', 'Manage Policies Tab', 'Manage Holidays Tab', 'Manage Weekends Tab', 'Manage DST Tab', 'Manage Benefits Tab', 'Expense Tab', 'NoDue Clearance Tab'] },
   { title: 'Employee Fields Config Update', disableFn: 'isemployeeCheckboxDisabled', fieldNames: ['Personal Config Update Tab', 'Job Config Update Tab', 'Document Config Update Tab'] },
   {
-    title: 'Settings Employee Field Update Personal Tabs', disableFn: 'isSettingsEmployeeJobCheckboxDisabled', fieldNames: ['Basic Info','Contact Info','Addresses','Emergency Contacts','Identity Info','Bank Info','Academics']
+    title: 'Settings Employee Field Update Personal Tabs', disableFn: 'isSettingsEmployeeJobCheckboxDisabled', fieldNames: ['Basic Info', 'Contact Info', 'Addresses', 'Emergency Contacts', 'Identity Info', 'Bank Info', 'Academics']
   },
   {
     title: 'Settings Employee Field Update Job Tabs',
@@ -1380,7 +1382,7 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
     ]
   },
   { title: 'Expenses Module', disableFn: 'isSidebarCheckboxDisabled', fieldNames: ['Expenses Module', 'My Team (Expenses)', 'All Employees (Expenses)'] },
-  { title: 'Expenses Module Tabs', disableFn: 'isCheckboxDisabledforupdateandview', fieldNames: ['Draft Tab', 'Approved Tab', 'Pending Tab', 'Processed Tab', 'Rejected Tab','Expense Clarifications Tab'] },
+  { title: 'Expenses Module Tabs', disableFn: 'isCheckboxDisabledforupdateandview', fieldNames: ['Draft Tab', 'Approved Tab', 'Pending Tab', 'Processed Tab', 'Rejected Tab', 'Expense Clarifications Tab'] },
   { title: 'IT Support Module', disableFn: 'isHelpDeskModuleCheckboxDisabled', fieldNames: ['My Tickets Tab', 'Team Tickets Tab'] },
   { title: 'Team Tickets Tabs', disableFn: 'isCheckboxDisabledforupdateandview', fieldNames: ['All Tickets Tab', 'Open Tickets Tab', 'Await On User Tickets Tab', 'Solved Tickets Tab', 'Rejected Tickets Tab'] },
   { title: 'HelpDesk Module', disableFn: 'isHelpDeskModuleCheckboxDisabled', fieldNames: ['Employee Helpdesk Queries Tab', 'Support Helpdesk Queries Tab'] },
@@ -1431,11 +1433,12 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   {
     title: 'Remote Login Module Sub Tabs',
     disableFn: 'isonlyviewfunction',
-    fieldNames: ['Request Remote Login Button','Waiting For Approval (Remote Login)','Approved (Remote Login)','Processed (Remote Login)','Rejected (Remote Login)','My Team (Remote Login)','All Employees (Remote Login)']
+    fieldNames: ['Request Remote Login Button', 'Waiting For Approval (Remote Login)', 'Approved (Remote Login)', 'Processed (Remote Login)', 'Rejected (Remote Login)', 'My Team (Remote Login)', 'All Employees (Remote Login)']
   }, { title: 'Comp Off Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (Comp Off)', 'Approved (Comp Off)', 'Processed (Comp Off)', 'Rejected (Comp Off)', 'Request Comp Off Button', 'My Team (Comp Off)', 'All Employees (Comp Off)'] },
   { title: 'Permissions Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (Permissions)', 'Processed (Permissions)', 'Cancel (Permissions)', 'Rejected (Permissions)', 'Request Permission Button', 'My Team (Permissions)', 'All Employees (Permissions)'] },
   { title: 'Regularization Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (Regularization)', 'Approved (Regularization)', 'Processed (Regularization)', 'Rejected (Regularization)', 'My Team (Regularization)', 'All Employees (Regularization)'] },
-  {title: 'Extra Hours Module Sub Tabs',disableFn: 'isonlyviewfunction',fieldNames: [  'Waiting For Approval (Extra Hours)',  'Processed (Extra Hours)',  'Rejected (Extra Hours)',  'My Team (Extra Hours)',  'All Employees (Extra Hours)']
+  {
+    title: 'Extra Hours Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (Extra Hours)', 'Processed (Extra Hours)', 'Rejected (Extra Hours)', 'My Team (Extra Hours)', 'All Employees (Extra Hours)']
   },
   { title: 'On Behalf Of Module Sub Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (On Behalf Of)', 'Approved (On Behalf Of)', 'Request On Behalf Button', 'Rejected (On Behalf Of)', 'Processed (On Behalf Of)', 'Cancelled (On Behalf Of)', 'My Team On Behalf Of', 'On Behalf Of All Employees', 'Entitlement Summary (On Behalf Of)'] },
   { title: 'Attendance', disableFn: 'isonlyviewfunction', fieldNames: ['Request Regularization', 'Request Leave', 'Attendance Select Employee For Manager', 'Attendance Select Employee For HR'] },
@@ -1449,155 +1452,156 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   { title: 'Pending Approval Comp Off', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Comp Off)', 'For Role (Comp Off)'] },
   { title: 'Pending Approval Permission', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Permission)', 'For Role (Permission)'] },
   { title: 'Pending Approval Regularization', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Regularization)', 'For Role (Regularization)'] },
-  {title: 'Pending Approval Extra Hours',disableFn: 'isonlycreatfunction',fieldNames: [  'For You (Extra Hours)',  'For Role (Extra Hours)']},
+  { title: 'Pending Approval Extra Hours', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Extra Hours)', 'For Role (Extra Hours)'] },
   { title: 'Pending Approval Separation Requests', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Separation Requests)', 'For Role (Separation Requests)'] },
   { title: 'Pending Approval Recall Requests', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Recall Requests)', 'For Role (Recall Requests)'] },
   { title: 'Pending Approval Trainee Details', disableFn: 'isonlycreatfunction', fieldNames: ['Trainee Details'] },
   { title: 'Pending Approval No Due Clearance Request', disableFn: 'isonlycreatfunction', fieldNames: ['No Due Clearance Request'] },
   { title: 'Pending Approval Claims and Expenses', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Claims and Expenses)', 'For Role (Claims and Expenses)'] },
-  {title: 'Pending Approval Employee Info',disableFn: 'isonlycreatfunction',fieldNames: [  'For You Employee Info',  'For Role Employee Info']},
+  { title: 'Pending Approval Employee Info', disableFn: 'isonlycreatfunction', fieldNames: ['For You Employee Info', 'For Role Employee Info'] },
   { title: 'Pending Approval Desk Requests', disableFn: 'isonlycreatfunction', fieldNames: ['For You (Desk Requests)', 'For Role (Desk Requests)'] },
   { title: 'Pending Approval Probation Details', disableFn: 'isonlycreatfunction', fieldNames: ['Probation Details'] },
   { title: 'Pending Approval Timesheets', disableFn: 'isonlycreatfunction', fieldNames: ['Timesheet Approvals'] },
-  {title: 'On Behalf Of Approvals',disableFn: 'isonlycreatfunction',fieldNames: [  'Time Off (On Behalf Of Approvals)',  'Comp Off (On Behalf Of Approvals)',  'WFH (On Behalf Of Approvals)',  'Remote Login (On Behalf Of Approvals)',  'Employee Info (On Behalf Of Approvals)',  'Extra Hours (On Behalf Of Approvals)',  'Timesheet (On Behalf Of Approvals)',  'Permission (On Behalf Of Approvals)',  'Separations (On Behalf Of Approvals)',  'Recalls (On Behalf Of Approvals)',  'Regularization (On Behalf Of Approvals)',  'Trainee Requests (On Behalf Of Approvals)',  'Probation (On Behalf Of Approvals)',  'My Team On Behalf Of Approvals',  'On Behalf Of Approvals All Employees',  'Expenses (On Behalf Of Approvals)']},
-   {title: 'Reports',disableFn: 'isonlyviewfunction',fieldNames: [  'Standard Reports',  'Custom Reports',  'Attendance reports',  'Monthly Attendance Reports',  'Policy Reports',  'Team Leave Balance',  'Team Leave Balance Summary',  'Org Leave Balance',  'Timesheet Reports',  'Expense Reports',  'Asset Report',  'IT Support Reports',  'Help Desk Reports']},
+  { title: 'On Behalf Of Approvals', disableFn: 'isonlycreatfunction', fieldNames: ['Time Off (On Behalf Of Approvals)', 'Comp Off (On Behalf Of Approvals)', 'WFH (On Behalf Of Approvals)', 'Remote Login (On Behalf Of Approvals)', 'Employee Info (On Behalf Of Approvals)', 'Extra Hours (On Behalf Of Approvals)', 'Timesheet (On Behalf Of Approvals)', 'Permission (On Behalf Of Approvals)', 'Separations (On Behalf Of Approvals)', 'Recalls (On Behalf Of Approvals)', 'Regularization (On Behalf Of Approvals)', 'Trainee Requests (On Behalf Of Approvals)', 'Probation (On Behalf Of Approvals)', 'My Team On Behalf Of Approvals', 'On Behalf Of Approvals All Employees', 'Expenses (On Behalf Of Approvals)'] },
+  { title: 'Reports', disableFn: 'isonlyviewfunction', fieldNames: ['Standard Reports', 'Custom Reports', 'Attendance reports', 'Monthly Attendance Reports', 'Policy Reports', 'Team Leave Balance', 'Team Leave Balance Summary', 'Org Leave Balance', 'Timesheet Reports', 'Expense Reports', 'Asset Report', 'IT Support Reports', 'Help Desk Reports'] },
   {
-  title: 'Standard Reports',
-  disableFn: 'isonlyviewfunction',
-  fieldNames: [
-    'Employee Overview Report',
-    'Employee Overview Report - Generate',
-    'Employee Overview Report - Export',
-    'Job Location Report',
-    'Job Location Report - Generate',
-    'Job Location Report - Export',
-    'Branch-Wise Employee Report',
-    'Branch-Wise Employee Report - Generate',
-    'Branch-Wise Employee Report - Export',
-    'Family Details Report',
-    'Family Details Report - Generate',
-    'Family Details Report - Export'
-  ]
+    title: 'Standard Reports',
+    disableFn: 'isonlyviewfunction',
+    fieldNames: [
+      'Employee Overview Report',
+      'Employee Overview Report - Generate',
+      'Employee Overview Report - Export',
+      'Job Location Report',
+      'Job Location Report - Generate',
+      'Job Location Report - Export',
+      'Branch-Wise Employee Report',
+      'Branch-Wise Employee Report - Generate',
+      'Branch-Wise Employee Report - Export',
+      'Family Details Report',
+      'Family Details Report - Generate',
+      'Family Details Report - Export'
+    ]
   }, { title: 'Custom Reports', disableFn: 'isonlyviewfunction', fieldNames: ['Custom Reports - Generate', 'Custom Reports - Export'] },
- {
-  title: 'Attendance Reports',
-  disableFn: 'isonlyviewfunction',
-  fieldNames: [
-    'Leave Report',
-    'Leave Report - Generate',
-    'Leave Report - Export',
+  {
+    title: 'Attendance Reports',
+    disableFn: 'isonlyviewfunction',
+    fieldNames: [
+      'Leave Report',
+      'Leave Report - Generate',
+      'Leave Report - Export',
 
-    'Leave Summary Report',
-    'Leave Summary Report - Generate',
-    'Leave Summary Report - Export',
+      'Leave Summary Report',
+      'Leave Summary Report - Generate',
+      'Leave Summary Report - Export',
 
-    'Comp Off Report',
-    'Comp Off Report - Generate',
-    'Comp Off Report - Export',
+      'Comp Off Report',
+      'Comp Off Report - Generate',
+      'Comp Off Report - Export',
 
-    'WFH Report',
-    'WFH Report - Generate',
-    'WFH Report - Export',
+      'WFH Report',
+      'WFH Report - Generate',
+      'WFH Report - Export',
 
-    'Inactive Employee Leave Summary Report',
-    'Inactive Employee Leave Summary Report - Generate',
-    'Inactive Employee Leave Summary Report - Export',
+      'Inactive Employee Leave Summary Report',
+      'Inactive Employee Leave Summary Report - Generate',
+      'Inactive Employee Leave Summary Report - Export',
 
-    'Yearly Summary Report',
-    'Yearly Summary Report - Generate',
-    'Yearly Summary Report - Export',
+      'Yearly Summary Report',
+      'Yearly Summary Report - Generate',
+      'Yearly Summary Report - Export',
 
-    'Permission Report',
-    'Permission Report - Generate',
-    'Permission Report - Export',
+      'Permission Report',
+      'Permission Report - Generate',
+      'Permission Report - Export',
 
-    'Employee Exit Report',
-    'Employee Exit Report - Generate',
-    'Employee Exit Report - Export',
+      'Employee Exit Report',
+      'Employee Exit Report - Generate',
+      'Employee Exit Report - Export',
 
-    'Regularization Report',
-    'Regularization Report - Generate',
-    'Regularization Report - Export',
+      'Regularization Report',
+      'Regularization Report - Generate',
+      'Regularization Report - Export',
 
-    'Leave Carry Forward & Encashment Report',
-    'Leave Carry Forward & Encashment Report - Generate',
-    'Leave Carry Forward & Encashment Report - Export',
+      'Leave Carry Forward & Encashment Report',
+      'Leave Carry Forward & Encashment Report - Generate',
+      'Leave Carry Forward & Encashment Report - Export',
 
-    'Late Login Report',
-    'Late Login Report - Generate',
-    'Late Login Report - Export',
+      'Late Login Report',
+      'Late Login Report - Generate',
+      'Late Login Report - Export',
 
-    'Exceeded Break Hours Report',
-    'Exceeded Break Hours Report - Generate',
-    'Exceeded Break Hours Report - Export',
+      'Exceeded Break Hours Report',
+      'Exceeded Break Hours Report - Generate',
+      'Exceeded Break Hours Report - Export',
 
-    'Remote Login Report',
-    'Remote Login Report - Generate',
-    'Remote Login Report - Export',
+      'Remote Login Report',
+      'Remote Login Report - Generate',
+      'Remote Login Report - Export',
 
-    'Extra Log Hours Report',
-    'Extra Log Hours Report - Generate',
-    'Extra Log Hours Report - Export'
-  ]
-},
+      'Extra Log Hours Report',
+      'Extra Log Hours Report - Generate',
+      'Extra Log Hours Report - Export'
+    ]
+  },
   { title: 'Monthly Attendance Reports', disableFn: 'isonlyviewfunction', fieldNames: ['Monthly Attendance Reports - Generate'] },
   { title: 'Policy Reports', disableFn: 'isonlyviewfunction', fieldNames: ['Policy Acknowledgement Report'] },
-  {title: 'Attendance Reports (Employee/Team)',disableFn: 'isonlyviewfunction',fieldNames: [  'Attendance All Employees List(Leaves)',  'Attendance Team Manager List(Leaves)',  'My Team Report(Leave)','Attendance All Employees List(Leave Summary)','Attendance Team Manager List(Leave Summary)','My Team Report(Leave Summary)','Attendance All Employees List(Compoff)','Attendance Team Manager List(Compoff)','My Team Report(Compoff)','Attendance All Employees List(WFH)','Attendance Team Manager List(WFH)','My Team Report(WFH)','Attendance All Employees List(RemoteLogin)','Attendance Team Manager List(RemoteLogin)','My Team Report(RemoteLogin)','Attendance All Employees List(ExtraLogHour)','Attendance Team Manager List(ExtraLogHour)','My Team Report(ExtraLogHour)','Attendance All Employees List(Permission)','Attendance Team Manager List(Permission)','My Team Report(Permission)','Attendance All Employees List(Employee Exit)','Attendance Team Manager List(Employee Exit)','My Team Report(Employee Exit)','Attendance All Employees List(Regularization)','Attendance Team Manager List(Regularization)','My Team Report(Regularization)'
-  ,'Attendance All Employees List(Leave Carry Forward & Encashment)',  'Attendance Team Manager List(Leave Carry Forward & Encashment)',  'My Team Report(Leave Carry Forward & Encashment)']
+  {
+    title: 'Attendance Reports (Employee/Team)', disableFn: 'isonlyviewfunction', fieldNames: ['Attendance All Employees List(Leaves)', 'Attendance Team Manager List(Leaves)', 'My Team Report(Leave)', 'Attendance All Employees List(Leave Summary)', 'Attendance Team Manager List(Leave Summary)', 'My Team Report(Leave Summary)', 'Attendance All Employees List(Compoff)', 'Attendance Team Manager List(Compoff)', 'My Team Report(Compoff)', 'Attendance All Employees List(WFH)', 'Attendance Team Manager List(WFH)', 'My Team Report(WFH)', 'Attendance All Employees List(RemoteLogin)', 'Attendance Team Manager List(RemoteLogin)', 'My Team Report(RemoteLogin)', 'Attendance All Employees List(ExtraLogHour)', 'Attendance Team Manager List(ExtraLogHour)', 'My Team Report(ExtraLogHour)', 'Attendance All Employees List(Permission)', 'Attendance Team Manager List(Permission)', 'My Team Report(Permission)', 'Attendance All Employees List(Employee Exit)', 'Attendance Team Manager List(Employee Exit)', 'My Team Report(Employee Exit)', 'Attendance All Employees List(Regularization)', 'Attendance Team Manager List(Regularization)', 'My Team Report(Regularization)'
+      , 'Attendance All Employees List(Leave Carry Forward & Encashment)', 'Attendance Team Manager List(Leave Carry Forward & Encashment)', 'My Team Report(Leave Carry Forward & Encashment)']
   },
   { title: 'Timesheet Reports', disableFn: 'isonlyviewfunction', fieldNames: ['My Timesheet Report', 'My Timesheet Report - Generate', 'My Timesheet Report - Export', 'Timesheet Summary Monthly Report', 'Timesheet Summary Monthly Report - Generate', 'Timesheet Summary Monthly Report - Export', 'Team Timesheet Report', 'Team Timesheet Report - Generate', 'Team Timesheet Report - Export', 'Team Timesheet Report - Admin-Approval', 'Pending Approval Status Report', 'Pending Approval Status Report - Generate', 'Pending Approval Status Report - Export', 'Project Effort Report', 'Project Effort Report - Generate', 'Project Effort Report - Export', 'Utilization Report', 'Utilization Report - Generate', 'Utilization Report - Export', 'Resource Availability Report', 'Resource Availability Report - Generate', 'Resource Availability Report - Export', 'Consolidated Timesheet Summary Report', 'Consolidated Timesheet Summary Report - Generate', 'Consolidated Timesheet Summary Report - Export', 'Attendance vs Timesheet Report', 'Attendance vs Timesheet Report - Generate', 'Attendance vs Timesheet Report - Export'] },
   { title: 'Expense Reports', disableFn: 'isonlyviewfunction', fieldNames: ['Expense Report - Generate', 'Expense Report All Employees List', 'Expense Report Manager List', 'My Team Report(Expenses)', 'Expenses All Employees List', 'Expenses Team Manager List', 'Expense Report - Export'] },
-  {title: 'Asset Reports',disableFn: 'isonlyviewfunction',fieldNames: [  'Asset Report - Generate',  'Asset Report - Export']},
-  { title: 'Asset Management', disableFn: 'isonlyviewfunction', fieldNames: ['Asset Management - Create', 'Asset Management - All', 'Asset Management - Available', 'Asset Management - Allocated', 'Asset Management - Under Maintenance', 'Asset Management - Inactive','Asset Management - Block'] },
+  { title: 'Asset Reports', disableFn: 'isonlyviewfunction', fieldNames: ['Asset Report - Generate', 'Asset Report - Export'] },
+  { title: 'Asset Management', disableFn: 'isonlyviewfunction', fieldNames: ['Asset Management - Create', 'Asset Management - All', 'Asset Management - Available', 'Asset Management - Allocated', 'Asset Management - Under Maintenance', 'Asset Management - Inactive', 'Asset Management - Block'] },
   { title: 'Asset Management All Tab Actions', disableFn: 'isonlyviewfunction', fieldNames: ['All Allocate Asset', 'All Inactive Asset', 'All Mark as Maintenance', 'All Transfer Asset', 'All Reallocate Asset', 'All Release Asset', 'All Mark as Available Asset', 'All Mark as Active Asset', 'All View Asset Details', 'All Update Asset Details'] },
-  { title: 'Asset Management Available Tab Actions', disableFn: 'isonlyviewfunction', fieldNames: ['Available Allocate Asset', 'Available Inactive Asset', 'Available Mark as Maintenance Asset', 'Available Transfer Asset', 'Available View Asset Details', 'Available Update Asset Details','Available Block Asset'] },
+  { title: 'Asset Management Available Tab Actions', disableFn: 'isonlyviewfunction', fieldNames: ['Available Allocate Asset', 'Available Inactive Asset', 'Available Mark as Maintenance Asset', 'Available Transfer Asset', 'Available View Asset Details', 'Available Update Asset Details', 'Available Block Asset'] },
   { title: 'Asset Management Allocated Tab Actions', disableFn: 'isonlyviewfunction', fieldNames: ['Allocated Reallocate Asset', 'Allocated Release Asset', 'Allocated View Asset Details', 'Allocated Update Asset Details',] },
   { title: 'Asset Management Under Maintenance Tab Actions', disableFn: 'isonlyviewfunction', fieldNames: ['Under Maintenance Mark as Available Asset', 'Under Maintenance View Asset Details', 'Under Maintenance Update'] },
   { title: 'Asset Management Inactive Tab Actions', disableFn: 'isonlyviewfunction', fieldNames: ['Inactive Mark as Active Asset', 'Inactive View Asset Details', 'Inactive Update Asset Details'] },
-    {
-  title: 'Asset Management Block Tab Actions',
-  disableFn: 'isonlyviewfunction',
-  fieldNames: [
-    'Block View Asset Details',
-    'Block Update Asset Details',
-    'Block Mark as Available Asset'
-  ]
-},
-  { title: 'My Info Sub Tabs', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['My Info Personal Tab', 'My Info Job Tab', 'My Info Documents Tab', 'My Info Team Members Tab','My Info My Team Members Tab', 'My Info Onboard Request Tab', 'My Info Separation Request Details', 'My Info Exit Feedback Details'] },
+  {
+    title: 'Asset Management Block Tab Actions',
+    disableFn: 'isonlyviewfunction',
+    fieldNames: [
+      'Block View Asset Details',
+      'Block Update Asset Details',
+      'Block Mark as Available Asset'
+    ]
+  },
+  { title: 'My Info Sub Tabs', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['My Info Personal Tab', 'My Info Job Tab', 'My Info Documents Tab', 'My Info Team Members Tab', 'My Info My Team Members Tab', 'My Info Onboard Request Tab', 'My Info Separation Request Details', 'My Info Exit Feedback Details'] },
   { title: 'My Info Personal Sub tabs', disableFn: 'isMyInfoPersonalActionDisabled', fieldNames: ['My Info Basic Information', 'My Info Address Details', 'My Info Contact Details', 'My Info Emergency Contact Details', 'My Info Education Details', 'My Info Identity Details', 'My Info Family Details', 'My Info Bank Details', 'My Info Visa Details', 'My Skills'] },
   { title: 'My Info Documents', disableFn: 'isonlyviewfunction', fieldNames: ['My Info Documents Upload File', 'My Info Documents Dowload File', 'My Info Documents Acknowledgment'] },
   { title: 'My Info Letter Acknowledgement', disableFn: 'isonlyviewfunction', fieldNames: ['My Info Letter Acknowledgement'] },
-  {title: 'My Info Job Module',disableFn: 'isMyInfoJobActionDisabled',fieldNames: [  'My Info Pre-Onboarding Details',  'My Info Onboarding Details',  'My Info Job Details',  'My Info No Due Clearance Details',  'My Info Probation Details',  'My Info Previous Experience Details',  'My Info Certification Details',  'My Info Compensation Details',  'My Info Desk Details',  'My Info Asset Details',  'My Info Separation Request Button',  'My Info Contract Details',  'My Info Project Details',  'My Info Card Details',  'My Info Separation Request Details']},
+  { title: 'My Info Job Module', disableFn: 'isMyInfoJobActionDisabled', fieldNames: ['My Info Pre-Onboarding Details', 'My Info Onboarding Details', 'My Info Job Details', 'My Info No Due Clearance Details', 'My Info Probation Details', 'My Info Previous Experience Details', 'My Info Certification Details', 'My Info Compensation Details', 'My Info Desk Details', 'My Info Asset Details', 'My Info Separation Request Button', 'My Info Contract Details', 'My Info Project Details', 'My Info Card Details', 'My Info Separation Request Details'] },
   { title: 'My Info Separation Request Details', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Raise No Due', 'Recall', 'Early relieving'] },
   { title: 'My Info No Due Clearance Details', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Submission Of No Due Clearance', 'Re-request for no due'] },
-  {title: 'My Info Exit Feedback',disableFn: 'isonlyviewfunction',fieldNames: [  'My Info Exit Feedback Details',  'My Info Exit Feedback Submit']},
-  {title: 'My Info Approvals',disableFn: 'isonlyviewanddeletefunction',fieldNames: [  'My Info Personal Approval History',  'My Info Job Approval History',  'My Info Documents Approval History']},
-    {
-  title: 'Employee Approvals',
-  disableFn: 'isonlyviewfunction',
-  fieldNames: [
-    'Employee Personal Approval History',
-    'Employee Job Approval History',
-    'Employee Documents Approval History'
-  ]
-},
-  {title: 'Employee Info Sub tabs',disableFn: 'isPmsConfigurationCheckboxDisabled',fieldNames: [  'Employee Info Personal Tab',  'Employee Info Job Tab',  'Employee Info Documents Tab',  'Employee Info Team Members Tab',  'Reset Password Button',  'Generate Credentials Button',  'Employee Info Project Details',  'Employee Info My Team Members Tab']},
-  {title: 'Employee Info Job Module',disableFn: 'isEmployeeInfoJobActionDisabled',fieldNames: [  'Employee Info Documents Verification',  'Employee Info Contract Details',  'Employee Info Pre-Onboarding Details',  'Employee Info Onboarding Details',  'Employee Info Offboarding Details',  'Employee Info Job Details',  'Employee Info Separation Request Details',  'Employee Info Exit Feedback Details',  'Employee Info No Due Clearance Details',  'Employee Info Probation Details',  'Employee Info Previous Experience Details',  'Employee Info Certification Details',  'Employee Info Onboarding Request Details',  'Employee Info Compensation Details',  'Employee Info Desk Details',  'Employee Info Asset Details',  'Employee Info Separation Request',  'No Due Form',  'Employee Info Contract Conversion Request',  'Employee Info Card Details']},
+  { title: 'My Info Exit Feedback', disableFn: 'isonlyviewfunction', fieldNames: ['My Info Exit Feedback Details', 'My Info Exit Feedback Submit'] },
+  { title: 'My Info Approvals', disableFn: 'isonlyviewanddeletefunction', fieldNames: ['My Info Personal Approval History', 'My Info Job Approval History', 'My Info Documents Approval History'] },
+  {
+    title: 'Employee Approvals',
+    disableFn: 'isonlyviewfunction',
+    fieldNames: [
+      'Employee Personal Approval History',
+      'Employee Job Approval History',
+      'Employee Documents Approval History'
+    ]
+  },
+  { title: 'Employee Info Sub tabs', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Employee Info Personal Tab', 'Employee Info Job Tab', 'Employee Info Documents Tab', 'Employee Info Team Members Tab', 'Reset Password Button', 'Generate Credentials Button', 'Employee Info Project Details', 'Employee Info My Team Members Tab'] },
+  { title: 'Employee Info Job Module', disableFn: 'isEmployeeInfoJobActionDisabled', fieldNames: ['Employee Info Documents Verification', 'Employee Info Contract Details', 'Employee Info Pre-Onboarding Details', 'Employee Info Onboarding Details', 'Employee Info Offboarding Details', 'Employee Info Job Details', 'Employee Info Separation Request Details', 'Employee Info Exit Feedback Details', 'Employee Info No Due Clearance Details', 'Employee Info Probation Details', 'Employee Info Previous Experience Details', 'Employee Info Certification Details', 'Employee Info Onboarding Request Details', 'Employee Info Compensation Details', 'Employee Info Desk Details', 'Employee Info Asset Details', 'Employee Info Separation Request', 'No Due Form', 'Employee Info Contract Conversion Request', 'Employee Info Card Details'] },
   { title: 'Employee Info Separation Request Details', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Employee Raise No Due', 'Employee Recall', 'Employee Early relieving'] },
   { title: 'Employee Info Onboard Request Details', disableFn: 'isonlyviewfunction', fieldNames: ['Request for Onboard Button', 'Request for Contract Extension Button', 'Inactive Button'] },
   { title: 'Employee Info No Due Clearance Details', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Employee Submission Of No Due Clearance', 'Employee Re-request for no due'] },
-  {title: 'Employee Info Exit Feedback',disableFn: 'isonlyviewfunction',fieldNames: ['Employee Info Exit Feedback Form']},
+  { title: 'Employee Info Exit Feedback', disableFn: 'isonlyviewfunction', fieldNames: ['Employee Info Exit Feedback Form'] },
   { title: 'Employee Info Probation Details', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Employee Request for Probation Confirmation', 'Employee Re-Request for Probation Confirmation'] },
-  {title: 'Employee Info Letter Acknowledgement',disableFn: 'isPmsConfigurationCheckboxDisabled',fieldNames: [  'Employee Info Letter Acknowledgement']},
+  { title: 'Employee Info Letter Acknowledgement', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Employee Info Letter Acknowledgement'] },
   { title: 'Dashboard Module', disableFn: 'isonlyviewfunction', fieldNames: ['Dashboard Current Openings'] },
-  {title: 'Dashboard Module Card Items',disableFn: 'isPmsConfigurationCheckboxDisabled',fieldNames: ['Dashboard Prospective Employees Card','Dashboard Contract Employees Card','Dashboard Active Employees Card','Dashboard Inactive Employees Card','Dashboard Prospective Trainee Card','Dashboard Active Trainees Card','Dashboard Inactive Trainees Card','Dashboard Job Openings Card','Dashboard Probation Employees Card','Add Prospective Employee','Add Prospective Trainee','Dashboard Active Contract employees Card','Add Contract Employee','Invite New User','Dashboard Active Invite New User','Dashboard Trainee Active Invite New User','Dashboard Active Contract Invite New User']},
+  { title: 'Dashboard Module Card Items', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Dashboard Prospective Employees Card', 'Dashboard Contract Employees Card', 'Dashboard Active Employees Card', 'Dashboard Inactive Employees Card', 'Dashboard Prospective Trainee Card', 'Dashboard Active Trainees Card', 'Dashboard Inactive Trainees Card', 'Dashboard Job Openings Card', 'Dashboard Probation Employees Card', 'Add Prospective Employee', 'Add Prospective Trainee', 'Dashboard Active Contract employees Card', 'Add Contract Employee', 'Invite New User', 'Dashboard Active Invite New User', 'Dashboard Trainee Active Invite New User', 'Dashboard Active Contract Invite New User'] },
   { title: 'Dashboard Documents Historys', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Documents History Offer Letter', 'Documents History Contract Offer Letter', 'Documents History Appointment Letter', 'Documents History Trainee Offer Letter', 'Documents History Trainee Appointment Letter', 'Documents History Non-Disclosure Agreement Letter'] },
-  {title: 'Active Letters',disableFn: 'isPmsConfigurationCheckboxDisabled',fieldNames: ['Address Proof Letter','Bank Loan Letter','Apprisal Letter','Salary Revision Letter','Promotion Letter','Contract Offer Letter','NDA Letter','Work Order Letter']}, { title: 'Inactive Letters', disableFn: 'isonlyviewfunction', fieldNames: ['Relieving Letter'] },
+  { title: 'Active Letters', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Address Proof Letter', 'Bank Loan Letter', 'Apprisal Letter', 'Salary Revision Letter', 'Promotion Letter', 'Contract Offer Letter', 'NDA Letter', 'Work Order Letter'] }, { title: 'Inactive Letters', disableFn: 'isonlyviewfunction', fieldNames: ['Relieving Letter'] },
   { title: 'Probation Generate Documents', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Probation Confirmation Letter', 'Probation Extension Letter'] },
   { title: 'Dashboard Document History Actions', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Offer Letter Download', 'Offer Letter Release Offer', 'Offer Letter Approve', 'Offer Letter Reject', 'Appointment Letter Download', 'Trainee Offer Letter Download', 'Trainee Offer Letter Release Offer', 'Trainee Offer Letter Approve', 'Trainee Offer Letter Reject', 'Trainee Appointment Letter Download'] },
-  {title: 'Dashboard Documents History',disableFn: 'isPmsConfigurationCheckboxDisabled',fieldNames: ['Dashboard Generate Documents Offer Letter','Dashboard Generate Documents Appointment Letter','Dashboard Generate Documents Trainee Offer Letter','Dashboard Generate Documents Trainee Appointment Letter','Dashboard Generate Documents Offer Letter','Dashboard Generate Documents Appointment Letter','Dashboard Generate Documents Trainee Relieving Letter','Dashboard Generate Documents Trainee Offer Letter','Dashboard Generate Documents Trainee Appointment Letter']}, { title: 'Employee Info Personal Sub tabs', disableFn: 'isEmployeeInfoPersonalActionDisabled', fieldNames: ['Employee Info Basic Information', 'Employee Info Address Details', 'Employee Info Contact Details', 'Employee Info Emergency Contact Details', 'Employee Info Education Details', 'Employee Info Identity Details', 'Employee Info Family Details', 'Employee Info Bank Details', 'Employee Info Visa Details', 'Employee My Skills'] },
+  { title: 'Dashboard Documents History', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Dashboard Generate Documents Offer Letter', 'Dashboard Generate Documents Appointment Letter', 'Dashboard Generate Documents Trainee Offer Letter', 'Dashboard Generate Documents Trainee Appointment Letter', 'Dashboard Generate Documents Offer Letter', 'Dashboard Generate Documents Appointment Letter', 'Dashboard Generate Documents Trainee Relieving Letter', 'Dashboard Generate Documents Trainee Offer Letter', 'Dashboard Generate Documents Trainee Appointment Letter'] }, { title: 'Employee Info Personal Sub tabs', disableFn: 'isEmployeeInfoPersonalActionDisabled', fieldNames: ['Employee Info Basic Information', 'Employee Info Address Details', 'Employee Info Contact Details', 'Employee Info Emergency Contact Details', 'Employee Info Education Details', 'Employee Info Identity Details', 'Employee Info Family Details', 'Employee Info Bank Details', 'Employee Info Visa Details', 'Employee My Skills'] },
   { title: 'Employee Info Documents', disableFn: 'isonlyviewfunction', fieldNames: ['Employee Info Documents Upload File', 'Employee Info Documents Dowload File', 'Employee Info Documents Acknowledgment'] },
-  { title: 'Employee Info Team Members', disableFn: 'isemployeeinfoteamActionDisabled', fieldNames: ['Employee Info Reporting Manager Tab', 'Employee Info Change RM Button', 'Employee Info Team Managers Tab', 'Employee Info Change TM Button', 'Employee Info Team Members','Employee Info Location Change Tab'] },
+  { title: 'Employee Info Team Members', disableFn: 'isemployeeinfoteamActionDisabled', fieldNames: ['Employee Info Reporting Manager Tab', 'Employee Info Change RM Button', 'Employee Info Team Managers Tab', 'Employee Info Change TM Button', 'Employee Info Team Members', 'Employee Info Location Change Tab'] },
   { title: 'PMS Module', disableFn: 'isPmsModuleCheckboxDisabled', fieldNames: ['Review Cycle List', 'Review Cycle Employee List', 'My Performance Review', 'My Team Performance Review', 'KRA', 'KPI', 'Assign KRA KPI', 'My KRA KPI', 'Team KRA KPI', 'Dashboard KRA KPI', 'My Team (KRA)', 'All Employees (KRA)', 'My Team (KRA KPI Dashboard)', 'All Employees (KRA KPI Dashboard)'] },
   { title: 'Review Cycle List Actions', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Create Review Cycle', 'Hold', 'Resume', 'Update', 'View', 'Initiate'] },
   { title: 'Review Cycle Employee List Actions', disableFn: 'isPmsConfigurationCheckboxDisabled', fieldNames: ['Assign Review Template', 'Employee List Add Employee', 'Download Appraisal Report', 'Generate Appraisal Letters', 'Send Appraisal Letters', 'Generate Promotion Letters', 'Send Promotion Letters', 'Employee List Hold', 'Assign Review Template(Employee)', 'Assign Review Template(Review on Hold)', 'Update Review Template', 'Employee List Resume', 'Promotion Letter Download', 'Appraisal Letter Download', 'Generate Appraisal Letter(Status - Completed)', 'Send Appraisal Letter(Appraisal Letter Generated)', 'Re-Generate Appraisal Letter', 'Re-Send Appraisal Letter', 'Re-Generate Appraisal Letter(Promotion Letter Generated)', 'Re-Send Appraisal Letter(Promotion Letter Sent)', 'Generate Promotion Letter(Status - Completed)', 'Re-Generate Promotion Letter', 'Send Promotion Letter', 'Re-Send Promotion Letter', 'Re-Generate Promotion Letter(Appraisal Letter Generated)', 'Re-Send Promotion Letter(Appraisal Letter Sent)'] },
@@ -1613,24 +1617,24 @@ export const SECTION_DEFINITIONS: SectionDef[] = [
   { title: 'Kra Configuration Actions', disableFn: 'isAssetCheckboxDisabled', fieldNames: ['Kra Create', 'Kra Update(Status - Created)', 'Kra Delete(Status - Created)', 'Kra Update(Status - Initialted)', 'Kra Update(Status - Review On Hold)'] },
   { title: 'Events Tabs', disableFn: 'isProjectManagementTabsCheckboxDisabled', fieldNames: ['Events(Upcoming Events)'] },
   { title: 'Settings Header Icon', disableFn: 'isonlyviewfunction', fieldNames: ['Settings Icon'] },
-  { title: 'Project Management Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Project Type', 'Industry Type', 'Project Document Type', 'Client Document Type', 'Letter Configurations', 'Project Management Authority', 'Letter Frequency Configurations', 'Project Role','Task', 'Task Type','Timesheet Configurations'] },
+  { title: 'Project Management Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Project Type', 'Industry Type', 'Project Document Type', 'Client Document Type', 'Letter Configurations', 'Project Management Authority', 'Letter Frequency Configurations', 'Project Role', 'Task', 'Task Type', 'Timesheet Configurations'] },
   { title: 'Helpdesk Configuration Fields', disableFn: 'isSettingsProjectManagementConfig', fieldNames: ['Category', 'Subcategory'] },
-  { title: 'Project Management Projects Tabs', disableFn: 'isProjectManagementTabsCheckboxDisabled', fieldNames: ['Project Details Tab', 'Contact Info Tab', 'Documents Tab', 'Resources Tab', 'Project Timesheets Tab', 'Project Phases Tab', 'Project Detailed Tab','View All Projects', 'View Assigned Projects'] }, { title: 'Project Management Clients Tabs', disableFn: 'isProjectManagementClientsTabsCheckboxDisabled', fieldNames: ['Client Information', 'Contact Information', 'Client Projects', 'Client Resources', 'Client Timesheets', 'Client Documents', 'Client Detailed Tab','View All Clients', 'View Assigned Clients'] },
+  { title: 'Project Management Projects Tabs', disableFn: 'isProjectManagementTabsCheckboxDisabled', fieldNames: ['Project Details Tab', 'Contact Info Tab', 'Documents Tab', 'Resources Tab', 'Project Timesheets Tab', 'Project Phases Tab', 'Project Detailed Tab', 'View All Projects', 'View Assigned Projects'] }, { title: 'Project Management Clients Tabs', disableFn: 'isProjectManagementClientsTabsCheckboxDisabled', fieldNames: ['Client Information', 'Contact Information', 'Client Projects', 'Client Resources', 'Client Timesheets', 'Client Documents', 'Client Detailed Tab', 'View All Clients', 'View Assigned Clients'] },
   { title: 'Project Management Documents', disableFn: 'isonlyviewfunction', fieldNames: ['MSA Document', 'NDA Document'] },
-  {title: 'Recruitment Jobs',disableFn: 'isapplicationscreeningfunction',fieldNames: ['Active Jobs','Inactive Jobs','Closed Jobs']},
-   {title: 'Job View Permissions',disableFn: 'isapplicationscreeningfunction',fieldNames: ['Job Shortlisted','Job Interview Review','Job Rejected','Job On Hold','Job Request Onboarding','Job Onboarded','Job Archive','Job Revoke']},
-  {title: 'Job View Action Permissions',disableFn: 'isonlyviewfunction',fieldNames: ['Job View Initiate Interview Round','Job View On Hold','Job View Rejected','Job View Schedule Next Round','Job View Reschedule Interview','Job View Request to Onboard','Job View View Reject Reason','Job View View On Hold Reason']},
-  {title: 'On Behalf Of Tabs',disableFn: 'isonlyviewfunction',fieldNames: ['On Behalf Of','On Behalf Of WFH','On Behalf Of RemoteLogin','On Behalf Of Expenses']}, {title: 'On Behlaf Of WFH Tabs',disableFn: 'isonlyviewfunction',fieldNames: ['Waiting For Approval (On Behalf Of WFH)','Approved (On Behalf Of WFH)','Processed (On Behalf Of WFH)','Rejected (On Behalf Of WFH)','Cancelled (On Behalf Of WFH)','On Behalf Of WFH All Employees','On Behalf Of WFH Team','Request On Behalf Of WFH Button']},
-   {title: 'On Behalf Of Remote Login Tabs',disableFn: 'isonlyviewfunction',fieldNames: ['Waiting For Approval (On Behalf Of RemoteLogin)','Approved (On Behalf Of RemoteLogin)','Processed (On Behalf Of RemoteLogin)','Rejected (On Behalf Of RemoteLogin)','Cancelled (On Behalf Of RemoteLogin)','On Behalf Of RemoteLogin All Employees','On Behalf Of RemoteLogin Team','Request On Behalf Of RemoteLogin Button']}, {title: 'On Behalf Of Expenses Tabs',disableFn: 'isonlyviewfunction',fieldNames: ['Waiting For Approval (On Behalf Of Expenses)','Approved (On Behalf Of Expenses)','Processed (On Behalf Of Expenses)','Rejected (On Behalf Of Expenses)','On Behalf Of Expenses All Employees','On Behalf Of Expenses Team','Request On Behalf Of Expenses Button']},
-  { title: 'Timesheet Module', disableFn: 'isonlyviewfunction', fieldNames: ['Team Time Sheet', 'My Summary', 'Team Time Sheet Detailed Tab', 'Team Time Sheet Summary Tab', 'Team Time Sheet Filters Tab', 'Team Time Sheet Department Filter', 'Team Time Sheet RM/TM Filter', 'My Team (Timesheet)', 'All Employees (Timesheet)', 'Timesheet Bulk Import', 'Timesheet Bulk Export', 'View History Export Tab', 'View History Import Tab', 'Timesheet Clone'] }, {title: 'Locking System Tabs',disableFn: 'isonlyviewfunction',fieldNames: [  'Attendance Configuration Module',  'Timesheet Configuration Module', ]},
-   { title: 'Attendance Locking Type Tabs', disableFn: 'isDynamicFormsDisabled', fieldNames: ['Attendance Pending Tab', 'Attendance Published Tab'] },
-  {title: 'IT Support Configuration Fields',disableFn: 'isonlyviewfunction',fieldNames: [  'IT Support Configuration']},
-   {title: 'IT Support Fields',disableFn: 'isSettingsEmployeeJobCheckboxDisabled',fieldNames: [  'IT Support Category',  'IT Support Sub-Category']},
-  {title: 'Timesheet Locking Type Tabs',disableFn: 'isDynamicFormsDisabled',fieldNames: [  'Timesheet Locking Pending Tab',  'Timesheet Locking Published Tab']},
+  { title: 'Recruitment Jobs', disableFn: 'isapplicationscreeningfunction', fieldNames: ['Active Jobs', 'Inactive Jobs', 'Closed Jobs'] },
+  { title: 'Job View Permissions', disableFn: 'isapplicationscreeningfunction', fieldNames: ['Job Shortlisted', 'Job Interview Review', 'Job Rejected', 'Job On Hold', 'Job Request Onboarding', 'Job Onboarded', 'Job Archive', 'Job Revoke'] },
+  { title: 'Job View Action Permissions', disableFn: 'isonlyviewfunction', fieldNames: ['Job View Initiate Interview Round', 'Job View On Hold', 'Job View Rejected', 'Job View Schedule Next Round', 'Job View Reschedule Interview', 'Job View Request to Onboard', 'Job View View Reject Reason', 'Job View View On Hold Reason'] },
+  { title: 'On Behalf Of Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['On Behalf Of', 'On Behalf Of WFH', 'On Behalf Of RemoteLogin', 'On Behalf Of Expenses'] }, { title: 'On Behlaf Of WFH Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)', 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'On Behalf Of WFH Team', 'Request On Behalf Of WFH Button'] },
+  { title: 'On Behalf Of Remote Login Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (On Behalf Of RemoteLogin)', 'Approved (On Behalf Of RemoteLogin)', 'Processed (On Behalf Of RemoteLogin)', 'Rejected (On Behalf Of RemoteLogin)', 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'On Behalf Of RemoteLogin Team', 'Request On Behalf Of RemoteLogin Button'] }, { title: 'On Behalf Of Expenses Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Waiting For Approval (On Behalf Of Expenses)', 'Approved (On Behalf Of Expenses)', 'Processed (On Behalf Of Expenses)', 'Rejected (On Behalf Of Expenses)', 'On Behalf Of Expenses All Employees', 'On Behalf Of Expenses Team', 'Request On Behalf Of Expenses Button'] },
+  { title: 'Timesheet Module', disableFn: 'isonlyviewfunction', fieldNames: ['Team Time Sheet', 'My Summary', 'Team Time Sheet Detailed Tab', 'Team Time Sheet Summary Tab', 'Team Time Sheet Filters Tab', 'Team Time Sheet Department Filter', 'Team Time Sheet RM/TM Filter', 'My Team (Timesheet)', 'All Employees (Timesheet)', 'Timesheet Bulk Import', 'Timesheet Bulk Export', 'View History Export Tab', 'View History Import Tab', 'Timesheet Clone'] }, { title: 'Locking System Tabs', disableFn: 'isonlyviewfunction', fieldNames: ['Attendance Configuration Module', 'Timesheet Configuration Module',] },
+  { title: 'Attendance Locking Type Tabs', disableFn: 'isDynamicFormsDisabled', fieldNames: ['Attendance Pending Tab', 'Attendance Published Tab'] },
+  { title: 'IT Support Configuration Fields', disableFn: 'isonlyviewfunction', fieldNames: ['IT Support Configuration'] },
+  { title: 'IT Support Fields', disableFn: 'isSettingsEmployeeJobCheckboxDisabled', fieldNames: ['IT Support Category', 'IT Support Sub-Category'] },
+  { title: 'Timesheet Locking Type Tabs', disableFn: 'isDynamicFormsDisabled', fieldNames: ['Timesheet Locking Pending Tab', 'Timesheet Locking Published Tab'] },
   { title: 'Skill Set Module', disableFn: 'isonlyviewfunction', fieldNames: ['Skills Dashboard', 'Skills Directory'] },
-  {title: 'Applicant Screening',disableFn: 'isapplicationscreeningfunction',fieldNames: [  'Active Applicants',  'Screening Completed Applicants']},
+  { title: 'Applicant Screening', disableFn: 'isapplicationscreeningfunction', fieldNames: ['Active Applicants', 'Screening Completed Applicants'] },
   { title: 'Help Desk Reports', disableFn: 'isonlyviewfunction', fieldNames: ['Help Desk Query Detailed Report', 'Help Desk Query Detailed Report - Generate', 'Help Desk Query Detailed Report - Export', 'Help Desk Query Summary Report', 'Help Desk Query Summary Report - Generate', 'Help Desk Query Summary Report - Export'] },
-  {title: 'IT Support Reports',disableFn: 'isonlyviewfunction',fieldNames: [  'IT Support Detailed Report',  'IT Support Detailed Report - Generate',  'IT Support Detailed Report - Export',  'IT Support Summary Report',  'IT Support Summary Report - Generate',  'IT Support Summary Report - Export']},
+  { title: 'IT Support Reports', disableFn: 'isonlyviewfunction', fieldNames: ['IT Support Detailed Report', 'IT Support Detailed Report - Generate', 'IT Support Detailed Report - Export', 'IT Support Summary Report', 'IT Support Summary Report - Generate', 'IT Support Summary Report - Export'] },
 
 
 ];

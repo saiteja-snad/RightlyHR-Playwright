@@ -66,8 +66,7 @@ export class ApprisalLetterAcknowedgementComponent {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUserData') || '{}');
     this.employeeName = `${this.empdata.firstName ?? ''} ${this.empdata.middleName ?? ''} ${this.empdata.lastName ?? ''}`;
     this.appraisalData = this.empdata;
-    this.promotion = !!this.letterdata?.isPromotion;
-    this.nopromotion = !this.letterdata?.isPromotion;
+    this.setPromotionFlag(this.letterdata?.isPromotion);
     this.getEmployeeId();
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.pattern(/^(?!\s).*/)]]
@@ -101,11 +100,23 @@ export class ApprisalLetterAcknowedgementComponent {
     });
   }
 
+  private isTrue(value: unknown): boolean {
+    return value === true || value === 1 || value === 'true' || value === 'True';
+  }
+
+  private setPromotionFlag(value: unknown): void {
+    this.promotion = this.isTrue(value);
+    this.nopromotion = !this.promotion;
+    if (this.letterdata) {
+      this.letterdata = { ...this.letterdata, isPromotion: this.promotion };
+    }
+  }
+
   getJobdetails(Employee: any) {
     this.subscription = this.http.getData(`JobDetails/Empname/${Employee.employeeId}`).subscribe({
       next: (data: any) => {
         const res = data.sort((a: any, b: any) => b.id - a.id);
-        if (this.letterdata?.isPromotion) {
+        if (this.promotion) {
           this.latestjobRole = res[0]?.jobRole;
         }
         Employee.workLocation = res[0]?.lopcation;
@@ -144,9 +155,12 @@ export class ApprisalLetterAcknowedgementComponent {
         this.appraisalData.Documenttype = data.docType;
         this.appraisalData.dateofAppraisal = data.issuedDate;
         this.appraisalData.note = data.note;
-        if (data.newJobRole && !this.letterdata?.newJobRole) {
-          this.letterdata = { ...this.letterdata, newJobRole: data.newJobRole };
-        }
+        this.setPromotionFlag(data.isPromotion);
+        this.letterdata = {
+          ...this.letterdata,
+          isPromotion: this.promotion,
+          newJobRole: this.promotion ? (data.newJobRole || this.letterdata?.newJobRole || '') : '',
+        };
         const authorityId = data.authoritySignature;
         // Now get all authority signatures and find the matching one
         this.getAuthorityDetails(authorityId);
@@ -525,9 +539,9 @@ export class ApprisalLetterAcknowedgementComponent {
       jobRole: data.jobRole ?? '',
       letterDate: data.dateofAppraisal,
       compEffectiveDate: data.compeffectivedate,
-      totalCTC: data.salary,
-      isPromotion: this.letterdata?.isPromotion,
-      newJobRole: this.letterdata?.newJobRole ?? this.latestjobRole,
+      totalCTC: (+(data.salary || 0)) + (+(data.variablePayAmount || 0)),
+      isPromotion: this.promotion,
+      newJobRole: this.promotion ? (this.letterdata?.newJobRole || this.latestjobRole || '') : '',
       reviewDate: data.reviewdate,
       variablePayAmount: data.variablePayAmount,
       note: data.note,

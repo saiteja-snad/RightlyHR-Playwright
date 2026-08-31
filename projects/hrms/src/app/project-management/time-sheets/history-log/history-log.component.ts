@@ -35,7 +35,7 @@ interface HistoryBatchItem {
   startedAt: string;
   completedAt?: string;
   stageFiles: StageFile[]
-  subStatus:string;
+  subStatus: string;
 
 }
 type FileType = 'ERROR_DETAILS' | 'SUCCESS_DETAILS' | 'SUMMARY';
@@ -65,7 +65,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
   dataload: boolean = false;
   // Pagination
 
-    totalRecords = 0;
+  totalRecords = 0;
   page = 1;
   pageSize = 50;
   rows = 50;
@@ -115,7 +115,7 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       return this.rbac.allowedToAccess(permissionString);
     });
   }
-    onSearchChange() {
+  onSearchChange() {
     this.searchSubject.next(this.searchValue || '');
   }
   loadHistory(page: number, pageSize: number) {
@@ -234,43 +234,43 @@ export class HistoryLogComponent implements OnInit, OnDestroy {
       });
   }
 
-downloadErrorFile(item: HistoryBatchItem) {
+  downloadErrorFile(item: HistoryBatchItem) {
 
-  // 1. Get ERROR_DETAILS file
-  const errorFile = item.stageFiles?.find(
-    f => f.fileType === 'ERROR_DETAILS' && f.stageName =='VALIDATE'
-  );
+    // 1. Get ERROR_DETAILS file
+    const errorFile = item.stageFiles?.find(
+      f => f.fileType === 'ERROR_DETAILS' && f.stageName == 'VALIDATE'
+    );
 
-  if (!errorFile?.filePath) {
-    console.warn('No error file available');
-    return;
+    if (!errorFile?.filePath) {
+      console.warn('No error file available');
+      return;
+    }
+
+    const filepath = errorFile.filePath;
+
+    // 2. Build filename: jobId_Failed_records.csv
+    const fileName = `${item.jobReference}_Failed_Records.csv`;
+
+    this.http.DownloadDataWithQuery('FileSystem/Downloadfile', filepath)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+
+          const blob: Blob = res.body as Blob;
+
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+
+          // 🔥 override filename here
+          a.download = fileName;
+
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (reason) => console.log(reason),
+      });
   }
-
-  const filepath = errorFile.filePath;
-
-  // 2. Build filename: jobId_Failed_records.csv
-  const fileName = `${item.jobReference}_Failed_Records.csv`;
-
-  this.http.DownloadDataWithQuery('FileSystem/Downloadfile', filepath)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (res: any) => {
-
-        const blob: Blob = res.body as Blob;
-
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-
-        // 🔥 override filename here
-        a.download = fileName;
-
-        a.click();
-        window.URL.revokeObjectURL(url);
-      },
-      error: (reason) => console.log(reason),
-    });
-}
 
   isActiveRoute(link: string): boolean {
     const currentUrl = this.router.url;

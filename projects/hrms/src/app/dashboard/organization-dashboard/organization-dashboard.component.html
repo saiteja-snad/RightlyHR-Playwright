@@ -1395,7 +1395,10 @@
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
                     <div class="designation">{{ emp.designation }} - {{ emp.departmentName }}</div>
-                    <div class="designation">{{ emp.empStatus }}</div>
+                    <!-- <div class="designation">{{ emp.empStatus }}</div> -->
+                     <div class="d-flex justify-content-between align-items-center mt-1"><div class="designation">{{ emp.empStatus }}</div>
+                       <div class="leave-chip" [ngStyle]="getLeaveChipStyle(emp.totalYearsOfExperience)">{{ emp.totalYearsOfExperience }}</div>
+    </div>
                 </div>
             </div>
             <div *ngIf="getFilteredExperienceEmployees().length === 0" class="text-center text-muted py-3">

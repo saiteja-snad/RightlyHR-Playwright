@@ -45,7 +45,7 @@ export class BulkUploadService {
     );
   }
 
-  confirmUpload(rows: any[], employeeId: number, uploadedByEmployeeId?: number,filePath?:string): Observable<any> {
+  confirmUpload(rows: any[], employeeId: number, uploadedByEmployeeId?: number, filePath?: string): Observable<any> {
     const payload = {
       rows,
       employeeId,
@@ -59,10 +59,10 @@ export class BulkUploadService {
     );
   }
 
-  downloadTemplate(moduleId:number,format:string): Observable<HttpResponse<Blob>> {
+  downloadTemplate(moduleId: number, format: string): Observable<HttpResponse<Blob>> {
     return this.http.get(
       `${this.apiUrl}Import/template/download?moduleId=${moduleId}&format=${format}`,
-      { responseType: 'blob',observe: 'response'  }
+      { responseType: 'blob', observe: 'response' }
     );
 
   }

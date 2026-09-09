@@ -1,4 +1,20 @@
 <div class="themes-container">
+    <!-- Appearance -->
+    <div class="component-header mb-3">{{'Appearance' | translate}}</div>
+    <div class="themes-grid mb-4">
+        <div class="theme-content appearance-content" [class.confirmedTheme]="confirmedAppearance === appearance.value"
+            *ngFor="let appearance of appearances" [class.selected]="selectedAppearance === appearance.value"
+            (click)="selectedAppearanceMode(appearance.value)">
+            <div class="check-icon" *ngIf="selectedAppearance === appearance.value">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="theme-preview" [ngClass]="appearance.class">
+                <i class="bi" [ngClass]="appearance.icon"></i>
+            </div>
+            <div class="theme-name">{{ appearance.name | translate }}</div>
+        </div>
+    </div>
+
     <!-- Colors -->
     <div class="component-header mb-3">{{'Theme Colors' | translate}}</div>
     <div class="themes-grid mb-4">

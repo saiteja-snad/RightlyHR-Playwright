@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 // Font styles
 @import './new-theme-style-sheets/new-themes.scss';
+@import './new-theme-style-sheets/dark-theme.scss';
 @import './new-theme-style-sheets/font-styles.scss';
 @import 'driver.js/dist/driver.css';
 
@@ -36,6 +37,12 @@
 
 /* You can add global styles to this file, and also import other style files */
 :root {
+    color-scheme: light;
+    // surface semantic tokens
+    --surface-card: #FFFFFF;
+    --card-gradient-top: #FFFFFF;
+    --card-border-color: #FFFFFF;
+
     // body colors
     --body-bg-color: #ECF1F5;
     // body colors ends
@@ -754,14 +761,14 @@ body {
     background-color: var(--module-info-bg);
     padding: 0.625rem;
     border-radius: 0.5rem;
-    border: 0.25rem solid #FFFFFF;
-    box-shadow: 0px 0px 10px 0px #0B3A8380;
+    border: 1px solid var(--module-info-border, #FFFFFF);
+    box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5);
 
     .info-text {
         font-weight: 400;
         font-size: var(--fontsize13);
         letter-spacing: 0%;
-        color: #424242;
+        color: var(--module-info-text-color, #424242);
     }
 }
 
@@ -1874,6 +1881,7 @@ input[type="file"] {
     .close-icon {
         width: 2rem;
         height: 2rem;
+        cursor: pointer;
     }
 
     .btn-primary {
@@ -2954,7 +2962,7 @@ input[type=number]::-webkit-outer-spin-button {
             font-weight: 400;
             font-size: var(--fontsize12);
             letter-spacing: 0%;
-            color: #424242;
+            color: var(--module-info-text-color, #424242);
         }
 
         .bs-popover-bottom>.popover-arrow::after {

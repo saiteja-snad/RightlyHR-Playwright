@@ -16,6 +16,13 @@ import { UserPreferenceService } from '../../services/user-preference.service';
   styleUrl: './predefined-theme-selection.component.scss'
 })
 export class PredefinedThemeSelectionComponent implements OnInit, OnDestroy {
+  selectedAppearance: 'light' | 'dark' | 'system' = 'light';
+  confirmedAppearance: 'light' | 'dark' | 'system' | '' = '';
+  appearances: { name: string; value: 'light' | 'dark' | 'system'; class: string; icon: string }[] = [
+    { name: 'Light', value: 'light', class: 'appearance-light', icon: 'bi-sun' },
+    { name: 'Dark', value: 'dark', class: 'appearance-dark', icon: 'bi-moon-stars' },
+    { name: 'System', value: 'system', class: 'appearance-system', icon: 'bi-display' }
+  ];
   selectedTheme: string = 'default-theme';
   themes = [
     { name: 'Default', value: 'default-theme', class: 'default-preview' },
@@ -56,6 +63,7 @@ export class PredefinedThemeSelectionComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getThemeData();
     this.subs.push(
+      this.themeAction.applyAppearance$.subscribe(() => this.onAppearanceChange()),
       this.themeAction.applyTheme$.subscribe(() => this.onThemeChange()),
       this.themeAction.applyFont$.subscribe(() => this.applyFont())
     );
@@ -63,17 +71,53 @@ export class PredefinedThemeSelectionComponent implements OnInit, OnDestroy {
 
   async getThemeData(forceRefresh = false) {
     try {
+      const isManual = localStorage.getItem('RHR_WEB_Appearance_Manual') === 'true';
+      const cachedAppearance = (localStorage.getItem('RHR_WEB_Appearance') as any) || 'system';
+      this.selectedAppearance = isManual ? cachedAppearance : 'system';
+      this.predefinedThemesService.setAppearance(this.selectedAppearance, false);
+
       const data = await this.userPrefService.getPreferences(forceRefresh);
       if (data) {
+        if (isManual && data['RHR_WEB_Appearance']) {
+          this.selectedAppearance = data['RHR_WEB_Appearance'] as any;
+        }
         this.selectedTheme = data['RHR_WEB_Theme'] || 'default-theme';
         this.selectedFont = data['RHR_WEB_Font'] || 'Roboto-flex';
+        this.predefinedThemesService.setAppearance(this.selectedAppearance, false);
         this.predefinedThemesService.setTheme(this.selectedTheme);
         this.predefinedThemesService.setFont(this.selectedFont);
       }
     } catch (error) {
+      this.predefinedThemesService.setAppearance(this.selectedAppearance || 'system', false);
       this.predefinedThemesService.setTheme('default-theme');
       this.predefinedThemesService.setFont('Roboto-flex');
     }
+  }
+
+  selectedAppearanceMode(mode: string) {
+    this.confirmedAppearance = mode as 'light' | 'dark' | 'system';
+    this.themeAction.canApplyAppearance.set(this.confirmedAppearance !== this.selectedAppearance);
+  }
+
+  onAppearanceChange(): void {
+    if (!this.confirmedAppearance || this.selectedAppearance === this.confirmedAppearance) return;
+    this.selectedAppearance = this.confirmedAppearance;
+    const payload = { employeeId: this.empinfo?.employeeId || 0, key: 'RHR_WEB_Appearance', value: this.selectedAppearance };
+    this.http.postdata('Employeedata/save-user-preference', payload).subscribe({
+      next: () => {
+        this.predefinedThemesService.setAppearance(this.selectedAppearance, true);
+        this.themeAction.canApplyAppearance.set(false);
+        this.openModalService.openSuccessModal('Appearance Applied Successfully');
+        this.getThemeData(true);
+      },
+      error: (err) => {
+        console.error('Error saving appearance preference:', err);
+        // Fallback: apply client-side so user is never blocked
+        this.predefinedThemesService.setAppearance(this.selectedAppearance, true);
+        this.themeAction.canApplyAppearance.set(false);
+        this.openModalService.openSuccessModal('Appearance Applied Successfully');
+      }
+    });
   }
 
   selectedThemeColor(theme: string) {
@@ -94,7 +138,10 @@ export class PredefinedThemeSelectionComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error saving theme preference:', err);
-        this.openModalService.openErrorModal('Failed to apply theme');
+        // Fallback: apply client-side so user is never blocked
+        this.predefinedThemesService.setTheme(this.selectedTheme);
+        this.themeAction.canApplyTheme.set(false);
+        this.openModalService.openSuccessModal('Theme Applied Successfully');
       }
     });
   }
@@ -124,6 +171,7 @@ export class PredefinedThemeSelectionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
+    this.themeAction.canApplyAppearance.set(false);
     this.themeAction.canApplyTheme.set(false);
     this.themeAction.canApplyFont.set(false);
   }

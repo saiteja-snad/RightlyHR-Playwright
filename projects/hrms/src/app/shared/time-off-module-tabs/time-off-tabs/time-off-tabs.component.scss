@@ -1,3 +1,16 @@
 .active-nav-link {
     background: linear-gradient(360deg, #FFFFFF 0%, var(--custom-component-tabs-bg-color) 100%);
 }
+
+:host-context([data-theme="dark"]) .active-nav-link,
+:host-context(body.dark-theme) .active-nav-link {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%), var(--custom-component-tabs-bg-color, #1e293b) !important;
+    border: 1px solid var(--primary-color, rgba(255, 255, 255, 0.25)) !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+
+    .dropdown-menu-text {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+}

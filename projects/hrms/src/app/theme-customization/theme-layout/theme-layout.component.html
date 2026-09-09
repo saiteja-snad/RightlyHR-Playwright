@@ -8,12 +8,15 @@
       </div>
     </div>
     <div class="d-flex align-items-center gap-3" *ngIf="isColorThemesActive()">
-      <button class="custom-btn btn-primary px-5"
+      <button class="custom-btn btn-primary px-4"
+        [disabled]="!themeAction.canApplyAppearance()"
+        (click)="themeAction.applyAppearance$.next()">{{'Apply Appearance' | translate}}</button>
+      <button class="custom-btn btn-primary px-4"
         [disabled]="!themeAction.canApplyTheme()"
-        (click)="themeAction.applyTheme$.next()">Apply Theme</button>
-      <button class="custom-btn btn-primary px-5"
+        (click)="themeAction.applyTheme$.next()">{{'Apply Theme' | translate}}</button>
+      <button class="custom-btn btn-primary px-4"
         [disabled]="!themeAction.canApplyFont()"
-        (click)="themeAction.applyFont$.next()">Apply Font</button>
+        (click)="themeAction.applyFont$.next()">{{'Apply Font' | translate}}</button>
     </div>
     <div class="d-flex align-items-center gap-3" *ngIf="isMenusActive()">
       <button class="custom-btn btn-secondary px-4"

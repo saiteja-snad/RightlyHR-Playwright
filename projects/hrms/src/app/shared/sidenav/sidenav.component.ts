@@ -177,7 +177,8 @@ export class SidenavComponent implements OnInit, OnDestroy {
       overflow-y: auto;
       border-radius: 0.625rem;
       box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.4);
-      background: #fff;
+      background: var(--surface-card, #fff);
+      border: 1px solid var(--border-color, rgba(0,0,0,0.1));
       padding: 0.75rem;
     `;
     document.body.appendChild(wrapper);

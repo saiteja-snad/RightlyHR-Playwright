@@ -44,6 +44,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('currentUser') || '{}');
     this.employeeName = this.empinfo.name;
      this.getUserPreference(this.empinfo.employeeId);
+    await this.predefinedThemesService.initAppearance();
     await this.predefinedThemesService.initTheme();
     await this.predefinedThemesService.initFont();
     await this.menuOrderService.initMenuOrder();

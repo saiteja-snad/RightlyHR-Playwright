@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+    await this.predefinedThemesService.initAppearance();
     await this.predefinedThemesService.initTheme();
     await this.predefinedThemesService.initFont();
     await this.menuOrderService.initMenuOrder();

@@ -1399,3 +1399,250 @@
     -webkit-text-stroke: 0.5px var(--primary-color);
     cursor: pointer;
 }
+
+/* ==========================================================================
+   Dark Theme Overrides for Timesheet View & Time Entry Details
+   ========================================================================== */
+:host-context([data-theme="dark"]),
+:host-context(body.dark-theme) {
+    .custom-table-content {
+        background-color: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+
+        th {
+            background-color: var(--table-header-bg-color, #1e293b) !important;
+            color: var(--table-header-color, #f1f5f9) !important;
+            border: 1px solid var(--border-color, #334155) !important;
+            border-top: 0 !important;
+        }
+
+        td {
+            border: 1px solid var(--border-color, #334155) !important;
+        }
+
+        tbody {
+            td {
+                background-color: var(--surface-card, #1e293b) !important;
+                color: #f1f5f9 !important;
+
+                .custom-input {
+                    background-color: #0f172a !important;
+                    color: #f1f5f9 !important;
+
+                    &::placeholder {
+                        color: #64748b !important;
+                    }
+                }
+
+                .custom-input:read-only {
+                    background-color: #1e293b !important;
+                    color: #94a3b8 !important;
+                }
+            }
+
+            td:first-child,
+            td:last-child {
+                background-color: var(--surface-card, #1e293b) !important;
+            }
+        }
+
+        tfoot {
+            td {
+                color: #f1f5f9 !important;
+                background-color: var(--surface-card, #1e293b) !important;
+                border: 1px solid var(--border-color, #334155) !important;
+            }
+        }
+    }
+
+    .custom-input-group {
+        background-color: #0f172a !important;
+        border-color: var(--border-color, #334155) !important;
+
+        .input-group-text {
+            background-color: #0f172a !important;
+            color: #94a3b8 !important;
+            border-color: transparent !important;
+
+            .bi-info-circle {
+                color: #38bdf8 !important;
+            }
+
+            .bi-three-dots-vertical {
+                color: #94a3b8 !important;
+
+                &:hover {
+                    color: #ffffff !important;
+                }
+            }
+        }
+
+        &.approved {
+            border-color: #10b981 !important;
+        }
+
+        &.rejected {
+            border-color: #ef4444 !important;
+        }
+
+        &.waiting {
+            border-color: #f59e0b !important;
+        }
+
+        &.draft {
+            border-color: #3b82f6 !important;
+        }
+
+        &.holiday {
+            border-color: #a855f7 !important;
+            background-color: rgba(168, 85, 247, 0.12) !important;
+        }
+
+        &.leave {
+            border-color: #f97316 !important;
+            background-color: rgba(249, 115, 22, 0.12) !important;
+        }
+
+        &.phase-restricted {
+            border-color: #f43f5e !important;
+            background-color: rgba(244, 63, 94, 0.12) !important;
+        }
+    }
+
+    .timesheet-chip {
+        background: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .custom-select-btn {
+        color: #f1f5f9 !important;
+    }
+
+    .status-text {
+        color: #cbd5e1 !important;
+    }
+
+    .custom-dropdown-menu {
+        background-color: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+
+        .custom-search-input {
+            background-color: #0f172a !important;
+            color: #f1f5f9 !important;
+            border: 1px solid var(--border-color, #334155) !important;
+
+            &::placeholder {
+                color: #64748b !important;
+            }
+        }
+    }
+
+    .custom-accordian-data-content {
+        .p-accordionpanel {
+            border: 1px solid var(--border-color, #334155) !important;
+            background-color: var(--surface-card, #1e293b) !important;
+        }
+
+        .p-accordionheader {
+            background-color: var(--surface-card, #1e293b) !important;
+            color: var(--primary-color) !important;
+            border-bottom: 1px solid var(--border-color, #334155) !important;
+        }
+
+        .p-accordioncontent-content {
+            background-color: var(--surface-card, #1e293b) !important;
+        }
+
+        .list-project {
+            background-color: #0f172a !important;
+            color: #cbd5e1 !important;
+        }
+
+        .phase-name {
+            color: #f1f5f9 !important;
+        }
+
+        label {
+            color: #cbd5e1 !important;
+        }
+    }
+
+    .approval-popup {
+        border: 1px solid var(--border-color, #334155) !important;
+
+        .approval-body {
+            background-color: var(--surface-card, #1e293b) !important;
+            color: #f1f5f9 !important;
+        }
+
+        .approval-row {
+            .ap-label {
+                color: #94a3b8 !important;
+            }
+
+            .ap-colon {
+                color: #64748b !important;
+            }
+
+            .ap-value {
+                color: #f1f5f9 !important;
+            }
+        }
+
+        .approval-description {
+            background: #0f172a !important;
+            border: 1px solid var(--border-color, #334155) !important;
+
+            .desc-title {
+                color: #94a3b8 !important;
+            }
+
+            .desc-box {
+                color: #f1f5f9 !important;
+            }
+        }
+    }
+
+    .description-content {
+        .day {
+            color: #94a3b8 !important;
+        }
+
+        .project-name {
+            color: var(--primary-color) !important;
+        }
+
+        .custom-label {
+            color: #f1f5f9 !important;
+        }
+
+        textarea.custom-input,
+        input[type="time"].custom-input,
+        input[formControlName="duration"].custom-input {
+            background-color: #0f172a !important;
+            color: #f1f5f9 !important;
+            border: 1px solid var(--border-color, #334155) !important;
+        }
+
+        .textarea-count-text {
+            color: #94a3b8 !important;
+        }
+
+        .clock-icon {
+            filter: brightness(0) invert(1) !important;
+        }
+
+        .custom-toggle-label {
+            color: #f1f5f9 !important;
+        }
+    }
+
+    .delete-icon {
+        filter: brightness(0) invert(1) opacity(0.85);
+        cursor: pointer;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}

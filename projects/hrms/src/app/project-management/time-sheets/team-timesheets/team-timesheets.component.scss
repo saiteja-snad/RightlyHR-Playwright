@@ -349,3 +349,30 @@
 .chip-btn.active {
     border: 2px solid var(--primary-color) !important;
 }
+
+:host-context([data-theme="dark"]),
+:host-context(body.dark-theme) {
+    .custom-table-content {
+        background-color: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+
+        th {
+            background-color: var(--table-header-bg-color, #1e293b) !important;
+            color: var(--table-header-color, #f1f5f9) !important;
+            border: 1px solid var(--border-color, #334155) !important;
+            border-top: 0 !important;
+        }
+
+        td {
+            border: 1px solid var(--border-color, #334155) !important;
+            background-color: var(--surface-card, #1e293b) !important;
+            color: #f1f5f9 !important;
+        }
+
+        td:first-child {
+            background-color: var(--surface-card, #1e293b) !important;
+            border-left: 0 !important;
+        }
+    }
+}
+

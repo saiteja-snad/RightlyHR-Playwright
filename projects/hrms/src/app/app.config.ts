@@ -39,7 +39,7 @@ export const appConfig: ApplicationConfig = {
         preset: Aura, // Set the default theme
         options: {
           prefix: 'p', // Optional: Prefix for CSS classes
-          darkModeSelector: false, // Optional: Dark mode selector
+          darkModeSelector: '[data-theme="dark"]', // Enable PrimeNG Aura dark mode when data-theme="dark"
           cssLayer: false, // Optional: Disable CSS layers
         },
       },

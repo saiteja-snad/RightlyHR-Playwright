@@ -141,7 +141,7 @@ export class ManagerDashboardComponent {
           ctx.save();
           ctx.font = 'bold 12px sans-serif';
           const textWidth = ctx.measureText(String(value)).width;
-          ctx.strokeStyle = '#000';
+          ctx.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#000';
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(element.x + 8, element.y + 7);
@@ -568,7 +568,7 @@ export class ManagerDashboardComponent {
             datalabels: {
               anchor: 'end',
               align: 'right',
-              color: '#000',
+              color: () => document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#1e293b',
               font: { weight: 'bold', size: 12 },
               formatter: (value: number) => value,
               cursor: hasViewPermission ? 'pointer' : 'default',

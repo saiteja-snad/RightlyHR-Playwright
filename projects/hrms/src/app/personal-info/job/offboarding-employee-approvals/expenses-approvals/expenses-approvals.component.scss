@@ -3,7 +3,7 @@
     min-height: max-content !important;
 }
 .component-header-content{
-    background-color: #ffffff !important;
+    background-color: var(--surface-card, #ffffff) !important;
 }
 .popup-table-wrapper .popup-table-scroll-container {
   max-height: 30vh;

@@ -74,6 +74,41 @@ export class PredefinedThemesService {
       this.renderer.addClass(body, 'light-theme');
       this.renderer.removeClass(body, 'dark-theme');
     }
+
+    this.updateChartTheme(effective === 'dark');
+  }
+
+  private updateChartTheme(isDark: boolean): void {
+    if (typeof window === 'undefined') return;
+    try {
+      import('chart.js').then(({ Chart }) => {
+        if (Chart && Chart.defaults) {
+          Chart.defaults.color = isDark ? '#cbd5e1' : '#64748b';
+          Chart.defaults.borderColor = isDark ? '#334155' : '#e2e8f0';
+          if (Chart.defaults.plugins) {
+            if (Chart.defaults.plugins.legend?.labels) {
+              Chart.defaults.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#64748b';
+            }
+            if (Chart.defaults.plugins.tooltip) {
+              Chart.defaults.plugins.tooltip.backgroundColor = isDark ? '#0f172a' : '#ffffff';
+              Chart.defaults.plugins.tooltip.titleColor = isDark ? '#f8fafc' : '#1e293b';
+              Chart.defaults.plugins.tooltip.bodyColor = isDark ? '#cbd5e1' : '#475569';
+              Chart.defaults.plugins.tooltip.borderColor = isDark ? '#334155' : '#cbd5e1';
+              Chart.defaults.plugins.tooltip.borderWidth = 1;
+            }
+          }
+          if (Chart.defaults.scales) {
+            ['category', 'linear', 'time', 'radialLinear'].forEach(scaleType => {
+              const scale = (Chart.defaults.scales as any)[scaleType];
+              if (scale) {
+                if (scale.ticks) scale.ticks.color = isDark ? '#cbd5e1' : '#64748b';
+                if (scale.grid) scale.grid.color = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+              }
+            });
+          }
+        }
+      }).catch(() => {});
+    } catch (e) {}
   }
 
   async initAppearance(): Promise<void> {

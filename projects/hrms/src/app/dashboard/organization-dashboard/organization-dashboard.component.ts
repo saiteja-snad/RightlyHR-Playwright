@@ -140,7 +140,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
             ctx.save();
             ctx.font = 'bold 12px sans-serif';
             const textWidth = ctx.measureText(String(value)).width;
-            ctx.strokeStyle = '#000';
+            ctx.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#000';
             ctx.lineWidth = 1;
             ctx.beginPath();
             // text starts at element.x + offset(4) + padding.left(4) = element.x + 8
@@ -176,7 +176,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
           ctx.save();
           ctx.font = 'bold 10px sans-serif';
           const textWidth = ctx.measureText(String(total)).width;
-          ctx.strokeStyle = '#000';
+          ctx.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#000';
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(element.x - textWidth / 2, element.y - 8);
@@ -202,7 +202,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
             ctx.save();
             ctx.font = 'bold 10px sans-serif';
             const textWidth = ctx.measureText(String(value)).width;
-            ctx.strokeStyle = '#000';
+            ctx.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#000';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(element.x - textWidth / 2, element.y - 8);
@@ -793,7 +793,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
         datalabels: {
           anchor: 'end',
           align: 'end',
-          color: '#000',
+          color: () => document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#1e293b',
           cursor: 'pointer',
           font: {
             weight: 'bold',
@@ -1037,7 +1037,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
             datalabels: {
               anchor: 'end',
               align: 'right',
-              color: '#000',
+              color: () => document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#1e293b',
               font: { weight: 'bold', size: 12 },
               formatter: (value: number) => value,
               cursor: this.rbac.allowedToAccess('Headcount by Gender View Employee List.view') ? 'pointer' : 'default',
@@ -1704,7 +1704,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
           },
           anchor: 'end',
           align: 'end',
-          color: '#000',
+          color: () => document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#1e293b',
           font: {
             weight: 'bold',
             size: 10
@@ -2169,7 +2169,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
         datalabels: {
           anchor: 'end',
           align: 'end',
-          color: '#000',
+          color: () => document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#1e293b',
           cursor: 'pointer',
           font: {
             weight: 'bold',
@@ -2328,7 +2328,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
         datalabels: {
           anchor: 'end',
           align: 'end',
-          color: '#000',
+          color: () => document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#1e293b',
           font: {
             weight: 'bold',
             size: 10
@@ -2430,7 +2430,7 @@ export class OrganizationDashboardComponent implements AfterViewInit {
         datalabels: {
           anchor: 'end',
           align: 'right',
-          color: '#000',
+          color: () => document.documentElement.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#1e293b',
           font: { weight: 'bold', size: 12 },
           formatter: (value: number) => value,
           listeners: {

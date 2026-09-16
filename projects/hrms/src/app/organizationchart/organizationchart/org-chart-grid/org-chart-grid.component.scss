@@ -103,3 +103,102 @@
     height: 1.75rem;
     cursor: pointer;
 }
+
+:host-context([data-theme="dark"]),
+:host-context(body.dark-theme) {
+    // Connector links
+    :host ::ng-deep {
+        path.link {
+            stroke: #475569 !important;
+            stroke-width: 2px !important;
+        }
+
+        .node-button-foreign-object .node-button-div > div {
+            background-color: #1e293b !important;
+            border: 1px solid #475569 !important;
+            color: #f8fafc !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+
+            svg path {
+                fill: #94a3b8 !important;
+                stroke: #94a3b8 !important;
+            }
+
+            span {
+                color: #f8fafc !important;
+            }
+        }
+
+        .org-node-card {
+            background: #162235 !important;
+            border: 1px solid #334155 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+
+            &:hover {
+                border-color: var(--primary-color) !important;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5) !important;
+            }
+
+            .org-node-name {
+                color: #f8fafc !important;
+
+                u {
+                    color: #f8fafc !important;
+                }
+            }
+
+            .org-node-title,
+            .org-node-doj {
+                color: #94a3b8 !important;
+            }
+
+            .org-node-dept {
+                color: #60a5fa !important;
+            }
+        }
+    }
+
+    // Employee Detail Modal
+    .name {
+        color: #f8fafc !important;
+    }
+
+    .job-role {
+        color: #94a3b8 !important;
+    }
+
+    .department {
+        color: #60a5fa !important;
+    }
+
+    .custom-card {
+        background: #162235 !important;
+        border: 1px solid #334155 !important;
+
+        .label-text {
+            color: #cbd5e1 !important;
+        }
+
+        .link-text {
+            color: #93c5fd !important;
+        }
+    }
+
+    .manager-card {
+        background-color: #162235 !important;
+        border: 1px solid #334155 !important;
+
+        .label-name {
+            color: #cbd5e1 !important;
+        }
+
+        .count-text {
+            color: #f8fafc !important;
+        }
+    }
+
+    .dashed-border {
+        border-bottom: 2px dashed #334155 !important;
+    }
+}
+

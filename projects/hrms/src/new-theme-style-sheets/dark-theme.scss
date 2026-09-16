@@ -485,6 +485,7 @@ body.dark-theme[class*="-theme"] {
     .custom-graph-content,
     .employees-category-card,
     .holidays-container,
+    .organization-chart-container,
     .pagination-content {
         background-color: var(--surface-card, #1e293b) !important;
         border-color: var(--border-color, #334155) !important;
@@ -4245,12 +4246,14 @@ body.dark-theme .blood-bank-card,
 [data-theme="dark"] .employees-category-card,
 body.dark-theme .employees-category-card,
 [data-theme="dark"] .holidays-container,
-body.dark-theme .holidays-container {
-    background-color: #1e293b !important;
-    background: #1e293b !important;
+body.dark-theme .holidays-container,
+[data-theme="dark"] .organization-chart-container,
+body.dark-theme .organization-chart-container {
+    background-color: #0b1120 !important;
     border-color: #334155 !important;
     color: #cbd5e1 !important;
 }
+
 
 /* ==========================================================================
    Skillset Dashboard, Contacts Directory, and Blood Bank Dark Mode Enhancements
@@ -4568,5 +4571,77 @@ body.dark-theme,
             }
         }
     }
+
+    /* --- Organization Hierarchy Chart --- */
+    .organization-chart-container {
+        background-color: #0b1120 !important;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px) !important;
+        background-size: 24px 24px !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+
+        .feature-btn {
+            background-color: #1e293b !important;
+            border: 1px solid #334155 !important;
+            color: #f8fafc !important;
+
+            &:hover {
+                background-color: #24344d !important;
+                border-color: var(--primary-color) !important;
+            }
+        }
+
+        path.link {
+            stroke: #475569 !important;
+            stroke-width: 2px !important;
+        }
+
+        .node-button-foreign-object .node-button-div > div {
+            background-color: #1e293b !important;
+            border: 1px solid #475569 !important;
+            color: #f8fafc !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+
+            svg path {
+                fill: #94a3b8 !important;
+                stroke: #94a3b8 !important;
+            }
+
+            span {
+                color: #f8fafc !important;
+                font-weight: 600 !important;
+            }
+        }
+
+        .org-node-card {
+            background: #162235 !important;
+            background-color: #162235 !important;
+            border: 1px solid #334155 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+
+            &:hover {
+                border-color: var(--primary-color) !important;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6) !important;
+            }
+
+            .org-node-name {
+                color: #f8fafc !important;
+
+                u {
+                    color: #f8fafc !important;
+                }
+            }
+
+            .org-node-title,
+            .org-node-doj {
+                color: #94a3b8 !important;
+            }
+
+            .org-node-dept {
+                color: #60a5fa !important;
+            }
+        }
+    }
 }
+
 

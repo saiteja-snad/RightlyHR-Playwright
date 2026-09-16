@@ -232,3 +232,165 @@
     width: max-content !important;
     padding: 0.5rem 3rem !important;
 }
+
+/* ==========================================================================
+   Dark Theme Styling for Login Page
+   ========================================================================== */
+html[data-theme="dark"],
+html[data-bs-theme="dark"],
+html.dark-theme,
+body.dark-theme,
+[data-theme="dark"] {
+    .login-container {
+        background: #0b1120 !important;
+
+        .login-right-content {
+            background: radial-gradient(circle at 50% 45%, #151f32 0%, #0b1120 70%) !important;
+
+            .login-card {
+                background: linear-gradient(180deg, #1e293b 0%, #172234 100%) !important;
+                border: 1px solid #334155 !important;
+                box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
+
+                .company-logo {
+                    background: #ffffff;
+                    padding: 0.5rem 0.85rem;
+                    border-radius: 0.625rem;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+                }
+
+                .custom-label {
+                    color: #e2e8f0 !important;
+                    font-weight: 500;
+
+                    .text-danger {
+                        color: #f87171 !important;
+                    }
+                }
+
+                .custom-input {
+                    background-color: #0f172a !important;
+                    border: 1px solid #334155 !important;
+                    color: #f8fafc !important;
+
+                    &::placeholder {
+                        color: #64748b !important;
+                        opacity: 1;
+                    }
+
+                    &:focus {
+                        background-color: #0f172a !important;
+                        border-color: #3b82f6 !important;
+                        color: #f8fafc !important;
+                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+                    }
+                }
+
+                .input-group {
+                    .input-group-text {
+                        background-color: #0f172a !important;
+                        border: 1px solid #334155 !important;
+                        border-left: none !important;
+                        color: #94a3b8 !important;
+                        cursor: pointer;
+
+                        i {
+                            color: #94a3b8 !important;
+                            font-size: 1.05rem;
+                            transition: color 0.15s ease;
+                        }
+
+                        &:hover i {
+                            color: #f8fafc !important;
+                        }
+                    }
+
+                    &:focus-within {
+                        .custom-input,
+                        .input-group-text {
+                            border-color: #3b82f6 !important;
+                        }
+                    }
+                }
+
+                .forget-text {
+                    color: #60a5fa !important;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: color 0.15s ease;
+
+                    &:hover {
+                        color: #93c5fd !important;
+                        text-decoration: underline;
+                    }
+                }
+
+                .custom-btn.btn-primary {
+                    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+                    border: 1px solid #3b82f6 !important;
+                    color: #ffffff !important;
+                    font-weight: 600 !important;
+                    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+
+                    &:hover:not(:disabled) {
+                        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+                        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45) !important;
+                        transform: translateY(-1px);
+                    }
+
+                    &:disabled,
+                    &[disabled] {
+                        background: #1e293b !important;
+                        border-color: #334155 !important;
+                        color: #64748b !important;
+                        opacity: 0.7 !important;
+                        box-shadow: none !important;
+                        cursor: not-allowed !important;
+                    }
+                }
+
+                .or-content {
+                    hr {
+                        border-color: #334155 !important;
+                        opacity: 0.5;
+                    }
+
+                    .or-text {
+                        background: #172234 !important;
+                        color: #94a3b8 !important;
+                    }
+                }
+
+                .microsoft-login-btn,
+                .custom-google-btn {
+                    background-color: #0f172a !important;
+                    border: 1px solid #334155 !important;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+                    transition: all 0.18s ease;
+
+                    &:hover:not(:disabled) {
+                        background-color: #1e293b !important;
+                        border-color: #475569 !important;
+                        transform: translateY(-1px);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                    }
+
+                    &:disabled {
+                        opacity: 0.5 !important;
+                        cursor: not-allowed !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .result-popup-content {
+        background-color: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: #f1f5f9 !important;
+
+        .confirmation-text {
+            color: #f1f5f9 !important;
+        }
+    }
+}

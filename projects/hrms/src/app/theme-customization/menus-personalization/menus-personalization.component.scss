@@ -197,3 +197,99 @@
 .drag-list.cdk-drop-list-dragging .drag-item:not(.cdk-drag-placeholder) {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
+
+/* ==========================================================================
+   Dark Theme for Menu Personalization
+   ========================================================================== */
+:host-context(body.dark-theme),
+:host-context([data-theme="dark"]),
+:host-context(html[data-bs-theme="dark"]) {
+    .section-card {
+        background: #0f172a;
+        border-color: #334155;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-header {
+        background: #1e293b;
+        border-bottom-color: #334155;
+    }
+
+    .section-title {
+        color: #f8fafc;
+    }
+
+    .drag-list {
+        background: #0f172a;
+
+        &.list-receiving {
+            background: rgba(59, 130, 246, 0.08);
+            outline-color: var(--primary-color, #3b82f6);
+        }
+    }
+
+    .drag-item {
+        background: #1e293b;
+        border-color: #334155;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+
+        &:hover {
+            background: #24344d;
+            border-color: var(--primary-color, #3b82f6);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+        }
+
+        &:active {
+            background: #1e293b;
+        }
+    }
+
+    .pinned-item {
+        background: rgba(15, 23, 42, 0.7) !important;
+        border: 1px dashed #334155 !important;
+        opacity: 0.9;
+    }
+
+    .pin-badge {
+        color: #60a5fa;
+        background: rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .menu-label {
+        color: #f1f5f9;
+    }
+
+    .grip-handle {
+        color: #64748b;
+    }
+
+    .drag-item:hover .grip-handle {
+        color: #94a3b8;
+    }
+
+    .drag-placeholder {
+        background: rgba(59, 130, 246, 0.08);
+        border-color: var(--primary-color, #3b82f6);
+    }
+
+    .empty-state {
+        color: #64748b;
+
+        i {
+            color: #475569;
+        }
+
+        span {
+            color: #94a3b8;
+        }
+    }
+
+    .cdk-drag-preview {
+        background: #1e293b;
+        border: 1.5px solid var(--primary-color, #3b82f6);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+        color: #f8fafc;
+    }
+}
+

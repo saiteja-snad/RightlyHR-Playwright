@@ -5251,4 +5251,104 @@ body.dark-theme {
             }
         }
     }
+
+    /* Menu Personalization Dark Mode */
+    .menus-personalization-wrapper {
+        .section-card {
+            background: #0f172a !important;
+            border-color: #334155 !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .section-header {
+            background: #1e293b !important;
+            border-bottom-color: #334155 !important;
+        }
+
+        .section-title {
+            color: #f8fafc !important;
+        }
+
+        .drag-list {
+            background: #0f172a !important;
+
+            &.list-receiving {
+                background: rgba(59, 130, 246, 0.08) !important;
+                outline-color: var(--primary-color, #3b82f6) !important;
+            }
+        }
+
+        .drag-item {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) !important;
+
+            &:hover {
+                background: #24344d !important;
+                border-color: var(--primary-color, #3b82f6) !important;
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+            }
+
+            &:active {
+                background: #1e293b !important;
+            }
+        }
+
+        .pinned-item {
+            background: rgba(15, 23, 42, 0.7) !important;
+            border: 1px dashed #334155 !important;
+            opacity: 0.9 !important;
+        }
+
+        .pin-badge {
+            color: #60a5fa !important;
+            background: rgba(59, 130, 246, 0.15) !important;
+            border-color: rgba(59, 130, 246, 0.3) !important;
+        }
+
+        .menu-label {
+            color: #f1f5f9 !important;
+        }
+
+        .grip-handle {
+            color: #64748b !important;
+        }
+
+        .drag-item:hover .grip-handle {
+            color: #94a3b8 !important;
+        }
+
+        .drag-placeholder {
+            background: rgba(59, 130, 246, 0.08) !important;
+            border-color: var(--primary-color, #3b82f6) !important;
+        }
+
+        .empty-state {
+            color: #64748b !important;
+
+            i {
+                color: #475569 !important;
+            }
+
+            span {
+                color: #94a3b8 !important;
+            }
+        }
+    }
+
+    // Global CDK Drag Preview for Menu Personalization
+    .cdk-drag-preview {
+        background: #1e293b !important;
+        border: 1.5px solid var(--primary-color, #3b82f6) !important;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6) !important;
+        color: #f8fafc !important;
+
+        .menu-label {
+            color: #f8fafc !important;
+        }
+
+        .grip-handle {
+            color: #94a3b8 !important;
+        }
+    }
 }

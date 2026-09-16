@@ -2,15 +2,15 @@
     width: 100%;
     height: calc(100dvh - 10rem);
     overflow: auto;
-    background-color: #FFFFFF;
+    background-color: var(--card-bg-color, #FFFFFF);
     border-radius: 1.2rem;
-    border: 1px solid rgba(204, 218, 236, 1);
+    border: 1px solid var(--border-color, rgba(204, 218, 236, 1));
 
     input:focus {
         outline: none !important;
         box-shadow: none !important;
-        border: 1px solid #DEE8F3 !important;
-        background-color: #F8FBFF !important;
+        border: 1px solid var(--border-color, #DEE8F3) !important;
+        background-color: var(--surface-card, #F8FBFF) !important;
     }
 }
 
@@ -20,8 +20,8 @@
 }
 
 .custom-expense-item-card {
-    background: rgba(248, 251, 255, 1);
-    border: 1px solid rgba(222, 232, 243, 1);
+    background: var(--surface-card-hover, rgba(248, 251, 255, 1));
+    border: 1px solid var(--border-color, rgba(222, 232, 243, 1));
     border-radius: 1rem;
     max-height: 30dvh;
     overflow-y: auto;
@@ -29,5 +29,23 @@
     .custom-icon {
         font-size: var(--fontsize14);
         border: none;
+    }
+}
+
+:host-context([data-theme="dark"]),
+:host-context(body.dark-theme) {
+    .custom-card {
+        background-color: #111827 !important;
+        border-color: #334155 !important;
+    }
+
+    .custom-expense-item-card {
+        background: #162235 !important;
+        border-color: #334155 !important;
+    }
+
+    .p-select-option.p-select-option-selected {
+        background: #1e293b !important;
+        color: #f8fafc !important;
     }
 }

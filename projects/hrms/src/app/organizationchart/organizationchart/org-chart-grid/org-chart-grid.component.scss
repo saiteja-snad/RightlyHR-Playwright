@@ -43,14 +43,14 @@
 .custom-card {
     border-radius: 0.5rem;
     padding: 0.75rem;
-    background: rgba(255, 255, 255, 1);
-    border: 0.75px solid rgba(220, 227, 233, 1);
+    background: var(--surface-card, var(--card-bg-color, #ffffff));
+    border: 1px solid var(--border-color, rgba(220, 227, 233, 1));
 
     .label-text {
         font-weight: 400;
         font-size: 12px;
         vertical-align: middle;
-        color: #989898;
+        color: var(--text-secondary-color, #989898);
     }
 
     .custom-icon {
@@ -69,7 +69,8 @@
     gap: 0.75rem;
     padding: 0.5rem;
     border-radius: 0.5rem;
-    background-color: var(--body-bg-color);
+    background-color: var(--card-bg-color, var(--body-bg-color));
+    border: 1px solid var(--border-color, transparent);
 
     .accent-bar {
         width: 0.25rem;
@@ -88,14 +89,19 @@
         font-size: 11.2px;
         line-height: 17.32px;
         letter-spacing: 0%;
-        color: #686868;
+        color: var(--text-secondary-color, #686868);
+    }
+
+    .count-text {
+        color: var(--text-color, #333333);
+        font-weight: 600;
     }
 }
 
 .dashed-border {
     width: 100%;
     height: 2px;
-    border-bottom: 2px dashed #CBCBCB;
+    border-bottom: 2px dashed var(--border-color, #CBCBCB);
 }
 
 .shared-icons {
@@ -172,8 +178,9 @@
     }
 
     .custom-card {
-        background: #162235 !important;
+        background: #111827 !important;
         border: 1px solid #334155 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
 
         .label-text {
             color: #cbd5e1 !important;
@@ -182,14 +189,18 @@
         .link-text {
             color: #93c5fd !important;
         }
+
+        .custom-icon {
+            filter: brightness(0) invert(0.85) !important;
+        }
     }
 
     .manager-card {
-        background-color: #162235 !important;
+        background-color: #111827 !important;
         border: 1px solid #334155 !important;
 
         .label-name {
-            color: #cbd5e1 !important;
+            color: #94a3b8 !important;
         }
 
         .count-text {
@@ -202,3 +213,89 @@
     }
 }
 
+// Support for NgbModal popup which is appended outside component host directly to <body>
+:host ::ng-deep,
+::ng-deep {
+    [data-theme="dark"],
+    body.dark-theme {
+        .custom-main-popup-container {
+            .custom-card {
+                background: #111827 !important;
+                background-color: #111827 !important;
+                border: 1px solid #334155 !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+
+                .label-text {
+                    color: #cbd5e1 !important;
+                }
+
+                .link-text,
+                a .link-text,
+                a u {
+                    color: #93c5fd !important;
+                }
+
+                .custom-icon {
+                    filter: brightness(0) invert(0.85) !important;
+                }
+            }
+
+            .manager-card {
+                background-color: #111827 !important;
+                background: #111827 !important;
+                border: 1px solid #334155 !important;
+
+                .label-name {
+                    color: #94a3b8 !important;
+                }
+
+                .count-text {
+                    color: #f8fafc !important;
+                    font-weight: 600 !important;
+                }
+            }
+
+            .dashed-border {
+                border-bottom: 2px dashed #334155 !important;
+            }
+
+            .name {
+                color: #f8fafc !important;
+            }
+
+            .job-role {
+                color: #94a3b8 !important;
+            }
+
+            .department {
+                color: #60a5fa !important;
+            }
+
+            .profile-image {
+                border: 2px solid #334155 !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+            }
+
+            .cross-btn a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #24344d;
+                border: 1px solid #334155;
+                border-radius: 8px;
+                padding: 6px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #334155;
+                }
+
+                .close-icon {
+                    filter: brightness(0) invert(1) !important;
+                    width: 1.25rem !important;
+                    height: 1.25rem !important;
+                }
+            }
+        }
+    }
+}

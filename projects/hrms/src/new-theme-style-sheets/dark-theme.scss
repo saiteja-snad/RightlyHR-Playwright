@@ -830,29 +830,30 @@ body.dark-theme[class*="-theme"] {
     /* Modals & Popups */
     .modal-content,
     .modal-body {
-        background-color: var(--surface-card) !important;
-        border: 1px solid var(--border-color) !important;
+        background-color: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
         color: #f1f5f9 !important;
     }
 
     .modal-header,
     .modal-footer,
     .custom-modal-footer {
-        background-color: var(--surface-card) !important;
-        border-color: var(--border-color) !important;
+        background-color: var(--surface-card, #1e293b) !important;
+        border-color: var(--border-color, #334155) !important;
         color: #f1f5f9 !important;
     }
 
     .custom-main-popup-container,
-    .popup-container {
-        background-color: var(--surface-card) !important;
+    .popup-container,
+    .modal-content {
+        background-color: var(--surface-card, #1e293b) !important;
         color: #f1f5f9 !important;
-        border: 1px solid var(--border-color) !important;
+        border: 1px solid var(--border-color, #334155) !important;
 
         .custom-poup-header-content,
         .modal-header {
-            background-color: var(--surface-card) !important;
-            border-bottom: 1px solid var(--border-color) !important;
+            background-color: var(--surface-card, #1e293b) !important;
+            border-bottom: 1px solid var(--border-color, #334155) !important;
         }
 
         .custom-main-popup-content,
@@ -862,13 +863,151 @@ body.dark-theme[class*="-theme"] {
         }
 
         .popup-header-border {
-            border-bottom: 1px solid var(--border-color) !important;
+            border-bottom: 1px solid var(--border-color, #334155) !important;
             border-image-source: none !important;
         }
 
         .popup-heading,
         .modal-title {
             color: var(--primary-color) !important;
+        }
+
+        // Inner Cards & Containers in Popups (Org-chart, Comment popups, Approval dialogs)
+        .card,
+        .custom-card,
+        .manager-card,
+        .custom-background-card,
+        .profile-card,
+        .custom-expense-item-card {
+            background-color: #111827 !important;
+            background: #111827 !important;
+            border: 1px solid #334155 !important;
+            color: #f1f5f9 !important;
+
+            p, span, div, b, strong {
+                color: #e2e8f0;
+            }
+
+            b, strong {
+                color: #f8fafc !important;
+            }
+
+            .label-text,
+            .label-name {
+                color: #94a3b8 !important;
+            }
+
+            .count-text {
+                color: #f8fafc !important;
+                font-weight: 600 !important;
+            }
+
+            .link-text,
+            a .link-text,
+            a u {
+                color: #60a5fa !important;
+            }
+
+            .custom-icon,
+            img.custom-icon {
+                filter: brightness(0) invert(0.85) !important;
+            }
+        }
+
+        .custom-card {
+            background: #111827 !important;
+            background-color: #111827 !important;
+            border: 1px solid #334155 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+
+            .label-text {
+                color: #cbd5e1 !important;
+
+                .link-text {
+                    color: #93c5fd !important;
+
+                    u {
+                        color: #93c5fd !important;
+                    }
+                }
+            }
+
+            .custom-icon {
+                filter: brightness(0) invert(0.85) !important;
+            }
+        }
+
+        .manager-card {
+            background-color: #111827 !important;
+            background: #111827 !important;
+            border: 1px solid #334155 !important;
+
+            .label-name {
+                color: #94a3b8 !important;
+            }
+
+            .count-text {
+                color: #f8fafc !important;
+                font-weight: 600 !important;
+            }
+        }
+
+        .dashed-border {
+            border-bottom: 2px dashed #334155 !important;
+        }
+
+        .name {
+            color: #f8fafc !important;
+        }
+
+        .job-role {
+            color: #94a3b8 !important;
+        }
+
+        .department {
+            color: #60a5fa !important;
+        }
+
+        .profile-image {
+            border: 2px solid #334155 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .cross-btn a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #24344d;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 6px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #334155;
+            }
+
+            .close-icon {
+                filter: brightness(0) invert(1) !important;
+                width: 1.25rem !important;
+                height: 1.25rem !important;
+            }
+        }
+
+        // Approver comments card
+        .card.p-3 {
+            background-color: #111827 !important;
+            border: 1px solid #334155 !important;
+            color: #f1f5f9 !important;
+
+            p {
+                color: #cbd5e1 !important;
+                margin-bottom: 0.5rem;
+
+                b {
+                    color: #f8fafc !important;
+                }
+            }
         }
 
         // Popup Input & Form Control Styling
@@ -4643,5 +4782,211 @@ body.dark-theme,
         }
     }
 }
+
+/* ==========================================================================
+   Universal High-Specificity Dark Overrides for Popups, Modals, Cards & Offcanvas
+   ========================================================================== */
+[data-theme="dark"],
+body.dark-theme {
+    .modal-content,
+    .custom-main-popup-container,
+    .popup-container,
+    .ngb-modal-window .modal-content {
+        background-color: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: #f1f5f9 !important;
+        border-radius: 1rem !important;
+
+        .custom-card {
+            background-color: #111827 !important;
+            background: #111827 !important;
+            border: 1px solid #334155 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+
+            .label-text {
+                color: #cbd5e1 !important;
+            }
+
+            .link-text,
+            a .link-text,
+            a u {
+                color: #60a5fa !important;
+            }
+
+            .custom-icon,
+            img.custom-icon {
+                filter: brightness(0) invert(0.85) !important;
+            }
+        }
+
+        .manager-card {
+            background-color: #111827 !important;
+            background: #111827 !important;
+            border: 1px solid #334155 !important;
+
+            .label-name {
+                color: #94a3b8 !important;
+            }
+
+            .count-text {
+                color: #f8fafc !important;
+                font-weight: 600 !important;
+            }
+        }
+
+        .card {
+            background-color: #111827 !important;
+            background: #111827 !important;
+            border: 1px solid #334155 !important;
+            color: #f1f5f9 !important;
+
+            p, span, div, b, strong {
+                color: #e2e8f0;
+            }
+
+            b, strong {
+                color: #f8fafc !important;
+            }
+        }
+
+        .dashed-border {
+            border-bottom: 2px dashed #334155 !important;
+        }
+
+        .cross-btn a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #24344d;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 6px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #334155;
+            }
+
+            .close-icon,
+            img {
+                filter: brightness(0) invert(1) !important;
+                width: 1.25rem !important;
+                height: 1.25rem !important;
+            }
+        }
+    }
+
+    // Direct universal targeting for .custom-card across entire app
+    .custom-card {
+        background-color: #111827 !important;
+        border-color: #334155 !important;
+
+        .label-text {
+            color: #cbd5e1 !important;
+        }
+
+        .link-text,
+        a .link-text,
+        a u {
+            color: #60a5fa !important;
+        }
+
+        .custom-icon {
+            filter: brightness(0) invert(0.85) !important;
+        }
+    }
+
+    // Offcanvas & Drawer Panels (e.g. Skill Directory, Details Drawers)
+    .custom-offcanvas-skill,
+    .employee-offcanvas-body,
+    .offcanvas {
+        background-color: #1e293b !important;
+        color: #f1f5f9 !important;
+
+        .profile-content {
+            background: #111827 !important;
+            border: 1px solid #334155 !important;
+
+            .name {
+                color: #f8fafc !important;
+            }
+
+            .designation {
+                color: #94a3b8 !important;
+            }
+
+            .status-badge {
+                background: #1e293b !important;
+                border: 1px solid #334155 !important;
+                color: #60a5fa !important;
+            }
+        }
+
+        .skill-set-display-card {
+            background: #111827 !important;
+            border: 1px solid #334155 !important;
+
+            p-chip,
+            .p-chip {
+                background: #1e293b !important;
+                border: 1px solid #334155 !important;
+                color: #60a5fa !important;
+            }
+        }
+
+        .offcanvas-chips {
+            .p-chip {
+                background: #1e293b !important;
+                border: 1px solid #334155 !important;
+                color: #60a5fa !important;
+            }
+        }
+
+        .projects-container .project-card {
+            background: #111827 !important;
+            border: 1px solid #334155 !important;
+            border-left: 3px solid #60a5fa !important;
+
+            .project-name {
+                color: #60a5fa !important;
+            }
+
+            .project-role,
+            .project-dates {
+                color: #94a3b8 !important;
+            }
+        }
+    }
+
+    // Welcome & Feature Popups
+    .welcome-pop-content {
+        background: radial-gradient(102.54% 130.09% at 100% 101.48%, #1e293b 0%, #0f172a 47.32%, #1e293b 100%) !important;
+        border: 2px solid #334155 !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+
+        .welcome-text {
+            color: #f8fafc !important;
+        }
+    }
+
+    .feature-confirmation-popup {
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+        border: 1px solid #334155 !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+
+        .unleash-text {
+            color: #94a3b8 !important;
+        }
+
+        .welcome-text {
+            color: #60a5fa !important;
+        }
+
+        .content-header {
+            color: #f8fafc !important;
+        }
+    }
+}
+
 
 

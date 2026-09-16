@@ -91,7 +91,7 @@
     line-height: 100%;
     padding: 0.25rem;
     text-decoration: underline;
-    background: #FFF !important;
+    background: var(--surface-card, #FFF) !important;
   }
 
   .Phase-link {
@@ -134,7 +134,7 @@
       height: 3.625rem;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #fff;
+      border: 2px solid var(--border-color, #fff);
       box-shadow: 0 0 10px rgba(11, 58, 131, 0.2);
     }
 
@@ -152,7 +152,8 @@
 
     .status-badge {
       display: inline-block;
-      background: #FFF;
+      background: var(--surface-card, #FFF);
+      border: 1px solid var(--border-color, transparent);
       border-radius: 2rem;
       font-size: var(--fontsize12);
       padding: 0.35rem 1rem;
@@ -161,7 +162,7 @@
   }
 
   .dashed-border {
-    border-bottom: 1px dashed #d6d6d6;
+    border-bottom: 1px dashed var(--border-color, #d6d6d6);
   }
 
   /* Tabs */
@@ -225,8 +226,8 @@
       background: var(--card-bg-color);
 
       p-chip {
-        background: #FFF !important;
-        border: none !important;
+        background: var(--surface-card, #FFF) !important;
+        border: 1px solid var(--border-color, transparent) !important;
         border-radius: 1.25rem !important;
         font-size: var(--fontsize12) !important;
         padding: 0.325rem 1rem !important;

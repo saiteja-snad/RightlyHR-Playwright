@@ -3700,3 +3700,27 @@ input[type=number]::-webkit-outer-spin-button {
         border: none !important;
     }
 }
+
+// Global empty message & tbody wrapper normalization for tables
+.p-datatable-tbody > .wrapper,
+tbody > .wrapper {
+    display: contents !important;
+}
+
+.p-datatable-empty-message,
+.p-datatable-emptymessage,
+tr.p-datatable-empty-message,
+tr.p-datatable-emptymessage,
+.p-datatable-tbody > tr:has(app-no-data-found),
+tbody > tr:has(app-no-data-found) {
+    border: none !important;
+    border-bottom: none !important;
+    background: transparent !important;
+
+    > td,
+    td {
+        border: none !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+}

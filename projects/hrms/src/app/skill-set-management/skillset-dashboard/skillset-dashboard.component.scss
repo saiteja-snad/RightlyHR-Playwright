@@ -643,3 +643,178 @@
 .status-in-progress {
   color: #FF9500;
 }
+
+:host-context([data-theme="dark"]),
+:host-context(body.dark-theme) {
+  .clear-all-btn {
+    color: #93c5fd !important;
+
+    &:hover {
+      color: #bfdbfe !important;
+    }
+  }
+
+  .cards-grid-container .summary-card {
+    background-color: var(--surface-card, #1e293b) !important;
+    border: 1px solid var(--border-color, #334155) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+
+    .summary-title {
+      color: #94a3b8 !important;
+    }
+
+    .summary-value {
+      color: #60a5fa !important;
+    }
+
+    .view-link a {
+      color: #60a5fa !important;
+    }
+  }
+
+  .graph-card {
+    background: var(--surface-card, #1e293b) !important;
+    border: 1px solid var(--border-color, #334155) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+
+    .graph-header {
+      color: #93c5fd !important;
+    }
+  }
+
+  .legend-label {
+    color: #94a3b8 !important;
+  }
+
+  .legend-value {
+    color: #f8fafc !important;
+  }
+
+  .skill-overview-table {
+    border-color: var(--border-color, #334155) !important;
+
+    th {
+      background: var(--table-header-bg-color, #1a2638) !important;
+      color: #f8fafc !important;
+      border-color: var(--border-color, #334155) !important;
+    }
+
+    td {
+      background: transparent !important;
+      color: #cbd5e1 !important;
+      border-color: var(--border-color, #293548) !important;
+    }
+
+    .view-link {
+      color: #60a5fa !important;
+    }
+
+    .p-chip {
+      background: #162235 !important;
+      border: 1px solid var(--border-color, #334155) !important;
+
+      .skill-name {
+        color: #93c5fd !important;
+      }
+
+      .count {
+        color: #94a3b8 !important;
+      }
+    }
+  }
+
+  // Offcanvas & Resource Modals
+  .custom-offcanvas-header {
+    border-bottom: 1px solid #334155 !important;
+
+    .custom-offcanvas-title {
+      color: #f8fafc !important;
+    }
+  }
+
+  .profile-content {
+    background: #162235 !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+
+    .name {
+      color: #f8fafc !important;
+    }
+
+    .designation {
+      color: #94a3b8 !important;
+    }
+  }
+
+  .resources-list-model {
+    .profile-view-content {
+      background: #162235 !important;
+      border: 1px solid #334155 !important;
+      color: #f8fafc !important;
+
+      .name {
+        color: #f8fafc !important;
+      }
+
+      .designation {
+        color: #94a3b8 !important;
+      }
+
+      .status-badge {
+        background: rgba(14, 165, 233, 0.15) !important;
+        color: #38bdf8 !important;
+        border: 1px solid rgba(56, 189, 248, 0.3) !important;
+      }
+    }
+
+    .custom-skill-set-tabs {
+      .p-tablist,
+      .p-tablist-tab-list {
+        background: #162235 !important;
+        border: 1px solid #334155 !important;
+      }
+
+      .p-tab {
+        color: #94a3b8 !important;
+      }
+
+      .p-tab-active {
+        color: var(--primary-color) !important;
+        border-bottom-color: var(--primary-color) !important;
+      }
+    }
+
+    .skills-group {
+      .skill-set-display-card {
+        background: #162235 !important;
+        border: 1px solid #334155 !important;
+
+        p-chip {
+          background: #1e293b !important;
+          color: #93c5fd !important;
+          border: 1px solid #334155 !important;
+        }
+      }
+    }
+
+    .projects-container {
+      .project-card {
+        background: #162235 !important;
+        border: 1px solid #334155 !important;
+        border-left: 3px solid var(--primary-color) !important;
+
+        .project-name {
+          color: #f8fafc !important;
+        }
+
+        .project-role {
+          color: #94a3b8 !important;
+        }
+
+        .project-dates {
+          color: #64748b !important;
+        }
+      }
+    }
+  }
+}

@@ -24,10 +24,11 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 0.625rem;
-  background: #FFF;
+  background: var(--card-bg-color, #FFF);
   padding: 1rem;
+  transition: all 0.2s ease-in-out;
 }
 
 /* ================= BADGE ================= */

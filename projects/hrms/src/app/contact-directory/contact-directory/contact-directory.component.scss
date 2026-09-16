@@ -14,7 +14,7 @@
 .department-card {
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, #FFFFFF 0%, var(--module-accordian-bg-color) 100%);
+    background: var(--card-bg-gradient, linear-gradient(180deg, #FFFFFF 0%, var(--module-accordian-bg-color) 100%));
     border-radius: 1.5rem;
     box-shadow: 0px 0px 11.62px 0px #0B3A830D;
     border: 1px solid var(--content-border-color);
@@ -30,6 +30,7 @@
         font-size: var(--fontsize20);
         line-height: 18px;
         letter-spacing: 0%;
+        color: var(--text-color, #181817);
     }
 
     .contact-card {
@@ -37,7 +38,8 @@
         padding: 0.75rem;
         border-radius: 0.75rem;
         border: 1px solid var(--content-border-color);
-        background: linear-gradient(180deg, #FFFFFF 0%, var(--module-accordian-bg-color) 100%);
+        background: var(--card-bg-gradient, linear-gradient(180deg, #FFFFFF 0%, var(--module-accordian-bg-color) 100%));
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 
         .profile-icon {
             width: 2.5rem;
@@ -50,13 +52,18 @@
             font-weight: 500;
             font-size: var(--fontsize12);
             text-transform: capitalize;
-            color: #181817;
+            color: var(--text-color, #181817);
         }
 
         .label-text {
             font-weight: 400;
             font-size: var(--fontsize10);
             text-wrap: nowrap;
+            color: var(--secondary-color, #64748b);
+
+            .bi {
+                color: var(--icon-color, #94a3b8);
+            }
         }
 
         .link-text {
@@ -64,3 +71,45 @@
         }
     }
 }
+
+:host-context([data-theme="dark"]),
+:host-context(body.dark-theme) {
+    .department-card {
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+
+        .department-name {
+            color: #f8fafc !important;
+        }
+
+        .contact-card {
+            background: #162235 !important;
+            border: 1px solid var(--border-color, #293548) !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+
+            &:hover {
+                background: #1e293b !important;
+                border-color: var(--primary-color) !important;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3) !important;
+            }
+
+            .name {
+                color: #f8fafc !important;
+            }
+
+            .label-text {
+                color: #94a3b8 !important;
+
+                .bi {
+                    color: #64748b !important;
+                }
+            }
+
+            .link-text {
+                color: #93c5fd !important;
+            }
+        }
+    }
+}

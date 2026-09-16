@@ -15,7 +15,9 @@
         height: max-content;
         padding: 0.75rem;
         border-radius: 0.75rem;
-        background: var(--card-bg-color);
+        background: var(--card-bg-color, #FFFFFF);
+        border: 1px solid var(--content-border-color, transparent);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
 
         .blood-group {
             background: #EA362C1A;
@@ -29,7 +31,7 @@
         .name {
             font-weight: 600;
             font-size: var(--fontsize13);
-            color: #181817;
+            color: var(--text-color, #181817);
         }
 
         .email {
@@ -45,7 +47,8 @@
         height: max-content;
         padding: 0.75rem;
         border-radius: 0.75rem;
-        background: var(--card-bg-color);
+        background: var(--card-bg-color, #FFFFFF);
+        border: 1px solid var(--content-border-color, transparent);
 
         .blood-group {
             background: var(--content-border-color);
@@ -73,13 +76,15 @@
             width: 100%;
             height: 100%;
             padding: 0.75rem 1rem;
-            background: #FFFFFF;
+            background: var(--card-bg-color, #FFFFFF);
+            border: 1px solid var(--content-border-color, transparent);
             border-radius: 0.625rem;
             margin: 0rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            transition: all 0.2s ease;
 
             .blood-group {
                 display: flex;
@@ -95,7 +100,7 @@
             .count-text {
                 font-weight: 600;
                 font-size: var(--fontsize20);
-                color: #222222;
+                color: var(--text-color, #222222);
             }
         }
     }
@@ -105,3 +110,50 @@
         background: linear-gradient(180deg, #FFFFFF 0%, var(--card-tabs-active-bg-color) 100%) !important;
     }
 }
+
+:host-context([data-theme="dark"]),
+:host-context(body.dark-theme) {
+    .blood-bank-card {
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+
+        .name {
+            color: #f8fafc !important;
+        }
+
+        .email {
+            color: #93c5fd !important;
+        }
+    }
+
+    .blood-bank-card-shimerr {
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+    }
+
+    .custom-graph-grid {
+        .cards-grid-container {
+            .employees-category-card {
+                background: var(--surface-card, #1e293b) !important;
+                border: 1px solid var(--border-color, #334155) !important;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+
+                .count-text {
+                    color: #f8fafc !important;
+                }
+
+                &:hover {
+                    background: var(--surface-card-hover, #24344d) !important;
+                    border-color: var(--primary-color) !important;
+                }
+            }
+
+            .bloodGroupTab {
+                background: linear-gradient(180deg, #24344d 0%, #1a2538 100%) !important;
+                border: 1.5px solid var(--primary-color) !important;
+                box-shadow: 0 0 12px rgba(14, 165, 233, 0.25) !important;
+            }
+        }
+    }
+}

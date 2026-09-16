@@ -125,6 +125,13 @@ export class SkillsetDashboardComponent {
     });
   }
 
+  isDarkMode(): boolean {
+    return (
+      document.documentElement.getAttribute('data-theme') === 'dark' ||
+      document.body.classList.contains('dark-theme')
+    );
+  }
+
   isOptionDisabled(option: any): boolean {
     return (
       this.selectedStatus.includes('All Proficiencies') &&
@@ -298,7 +305,7 @@ export class SkillsetDashboardComponent {
               {
                 data: [expertCount, intermediateCount, beginnerCount],
                 backgroundColor: colors,
-                borderColor: '#fff',
+                borderColor: this.isDarkMode() ? '#1e293b' : '#fff',
                 borderWidth: 2,
               },
             ],
@@ -356,7 +363,7 @@ export class SkillsetDashboardComponent {
               {
                 data: counts,
                 backgroundColor: colors,
-                borderColor: '#fff',
+                borderColor: this.isDarkMode() ? '#1e293b' : '#fff',
                 borderWidth: 3,
               }
             ]
@@ -447,10 +454,7 @@ export class SkillsetDashboardComponent {
             plugins: {
               legend: { display: false },
               title: {
-                display: true,
-                align: 'start',
-                color: '#1F2937',
-                font: { size: 16, weight: 'bold' },
+                display: false,
               },
               tooltip: {
                 backgroundColor: '#111827',
@@ -464,7 +468,7 @@ export class SkillsetDashboardComponent {
                 beginAtZero: true,
                 grid: { display: false },
                 ticks: {
-                  color: '#6B7280',
+                  color: () => this.isDarkMode() ? '#94a3b8' : '#6B7280',
                   font: { size: 12 },
                   callback: function (value: any) {
                     if (Number.isInteger(value)) {
@@ -476,14 +480,14 @@ export class SkillsetDashboardComponent {
                 title: {
                   display: true,
                   text: 'Resources Count',
-                  color: '#6B7280',
+                  color: () => this.isDarkMode() ? '#94a3b8' : '#6B7280',
                   font: { size: 13 },
                 },
               },
               y: {
                 grid: { display: false },
                 ticks: {
-                  color: '#111827',
+                  color: () => this.isDarkMode() ? '#f8fafc' : '#111827',
                   font: { size: 13, weight: '500' },
                   lineHeight: 3,
                   autoSkip: false,
@@ -491,7 +495,7 @@ export class SkillsetDashboardComponent {
                 title: {
                   display: true,
                   text: 'Skills',
-                  color: '#6B7280',
+                  color: () => this.isDarkMode() ? '#94a3b8' : '#6B7280',
                   font: { size: 13 },
                 },
               },

@@ -467,7 +467,25 @@ body.dark-theme[class*="-theme"] {
     .leaves,
     .on-be-half-of,
     .on-be-half-of-entitlement-summary,
-    .entitlement-frequency {
+    .entitlement-frequency,
+    .resource-row,
+    .timesheet-right-content,
+    .document-card,
+    .department-card,
+    .contact-card,
+    .summary-card,
+    .graph-card,
+    .blood-bank-card,
+    .skill-set-display-card,
+    .project-card,
+    .profile-view-content,
+    .time-sheet-graph-card,
+    .timesheet-graph-content,
+    .backgroup-colour,
+    .custom-graph-content,
+    .employees-category-card,
+    .holidays-container,
+    .pagination-content {
         background-color: var(--surface-card, #1e293b) !important;
         border-color: var(--border-color, #334155) !important;
     }
@@ -2711,36 +2729,440 @@ body.dark-theme[class*="-theme"] {
         border-color: var(--border-color, #334155) !important;
     }
 
-    /* Letters & Document Acknowledgments */
-    .salary-details-table {
-        table, th, td {
-            border-color: var(--border-color, #334155) !important;
-            color: #f8fafc !important;
+    /* ==========================================================================
+       Letters: Right-Side Document Preview & Paper (Must Remain Crisp White Paper)
+       ========================================================================== */
+    .letter-data-content,
+    .card.letter-data-content,
+    .main-letter-content .letter-data-content,
+    .main-letter-content .card.letter-data-content {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        color: #000000 !important;
+
+        .letter-sub-data-content {
+            background-color: transparent !important;
         }
 
-        th {
-            background: #1a2638 !important;
-            color: #f8fafc !important;
+        .letter-page-content {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+            box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 20px 0px !important;
+
+            .letter-page-sub-content {
+                color: #000000 !important;
+            }
+
+            // Document typography must be black / dark
+            h1, h2, h3, h4, h5, h6,
+            p, span, div, label,
+            li, ol, ul,
+            b, strong, u, i, em,
+            td, th,
+            .letter-header,
+            .letter-sub-header,
+            .letter-signature,
+            .company-name:not(.letter-footer .company-name),
+            .company-address:not(.letter-footer .company-address) {
+                color: #000000 !important;
+            }
+
+            .border-box,
+            .box {
+                border: 1px solid #000000 !important;
+            }
+
+            // Tables inside letter preview
+            table {
+                border-color: #474747 !important;
+                color: #000000 !important;
+
+                th, td {
+                    border-color: #474747 !important;
+                    color: #000000 !important;
+                    background-color: transparent !important;
+                }
+            }
+
+            // Salary Details Table inside letter
+            .salary-details-table {
+                table, th, td {
+                    border: 1px solid #474747 !important;
+                    border-collapse: collapse !important;
+                    color: #000000 !important;
+                    background-color: transparent !important;
+                }
+
+                th {
+                    background: #f1f5f9 !important;
+                    color: #000000 !important;
+                }
+
+                .mytable, .secondtable {
+                    th {
+                        background: #f1f5f9 !important;
+                        color: #000000 !important;
+                    }
+                }
+
+                tr:nth-child(4),
+                tr:nth-child(9),
+                .mytable tr:nth-child(4),
+                .mytable tr:nth-child(9),
+                .mytable tr:nth-child(10) {
+                    background: rgba(255, 255, 204, 255) !important;
+                    color: #000000 !important;
+                }
+
+                tr:nth-child(8) {
+                    background: #fff2cc !important;
+                    color: #000000 !important;
+                }
+
+                .secondtable tr:nth-child(4) td:nth-last-child(-n + 2) {
+                    background: #fee2e2 !important;
+                    color: #991b1b !important;
+                }
+            }
+
+            // Branded letter footer
+            .letter-footer {
+                background-color: #0B3A83 !important;
+                color: #ffffff !important;
+
+                * {
+                    color: #ffffff !important;
+                }
+            }
+        }
+    }
+
+    // Direct / Standalone letter-page-content safeguard (e.g. acknowledgements)
+    .letter-page-content {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+
+        .letter-page-sub-content {
+            color: #000000 !important;
         }
 
-        .mytable, .secondtable {
-            th {
-                background: #1a2638 !important;
-                color: #f8fafc !important;
+        h1, h2, h3, h4, h5, h6,
+        p, span, div, label,
+        li, ol, ul,
+        b, strong, u, i, em,
+        td, th,
+        .letter-header,
+        .letter-sub-header,
+        .letter-signature,
+        .company-name:not(.letter-footer .company-name),
+        .company-address:not(.letter-footer .company-address) {
+            color: #000000 !important;
+        }
+
+        .border-box,
+        .box {
+            border: 1px solid #000000 !important;
+        }
+
+        table {
+            border-color: #474747 !important;
+            color: #000000 !important;
+
+            th, td {
+                border-color: #474747 !important;
+                color: #000000 !important;
+                background-color: transparent !important;
             }
         }
 
-        .mytable tr:nth-child(4),
-        .mytable tr:nth-child(9),
-        .mytable tr:nth-child(10) {
-            background: rgba(245, 158, 11, 0.15) !important;
-            color: #fbbf24 !important;
+        .salary-details-table {
+            table, th, td {
+                border: 1px solid #474747 !important;
+                border-collapse: collapse !important;
+                color: #000000 !important;
+                background-color: transparent !important;
+            }
+
+            th {
+                background: #f1f5f9 !important;
+                color: #000000 !important;
+            }
+
+            .mytable, .secondtable {
+                th {
+                    background: #f1f5f9 !important;
+                    color: #000000 !important;
+                }
+            }
+
+            tr:nth-child(4),
+            tr:nth-child(9),
+            .mytable tr:nth-child(4),
+            .mytable tr:nth-child(9),
+            .mytable tr:nth-child(10) {
+                background: rgba(255, 255, 204, 255) !important;
+                color: #000000 !important;
+            }
+
+            tr:nth-child(8) {
+                background: #fff2cc !important;
+                color: #000000 !important;
+            }
+
+            .secondtable tr:nth-child(4) td:nth-last-child(-n + 2) {
+                background: #fee2e2 !important;
+                color: #991b1b !important;
+            }
         }
 
-        .secondtable tr:nth-child(4) td:nth-last-child(-n + 2) {
-            background: rgba(239, 68, 68, 0.15) !important;
+        .letter-footer {
+            background-color: #0B3A83 !important;
+            color: #ffffff !important;
+
+            * {
+                color: #ffffff !important;
+            }
+        }
+    }
+
+    /* ==========================================================================
+       Letter List View (Generate Documents) & Phonebook Cards in Dark Mode
+       ========================================================================== */
+    .documents-grid-container,
+    .phone-book-content {
+        .phone-book-card {
+            background: var(--surface-card, #1e293b) !important;
+            border: 1px solid var(--border-color, #334155) !important;
+            color: #cbd5e1 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background: var(--surface-card-hover, #24344d) !important;
+                border-color: var(--primary-color) !important;
+                transform: translateY(-2px);
+            }
+
+            .profile-content {
+                border-bottom: 1px solid var(--border-color, #334155) !important;
+            }
+
+            .name {
+                color: #f8fafc !important;
+            }
+
+            .subject-text {
+                color: #94a3b8 !important;
+            }
+
+            .employe-number {
+                color: #94a3b8 !important;
+            }
+
+            .data-content {
+                .label-text {
+                    color: #94a3b8 !important;
+                }
+            }
+        }
+    }
+
+    .phone-book-card {
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        color: #cbd5e1 !important;
+
+        &:hover {
+            background: var(--surface-card-hover, #24344d) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        .profile-content {
+            border-bottom: 1px solid var(--border-color, #334155) !important;
+        }
+
+        .name {
+            color: #f8fafc !important;
+        }
+
+        .subject-text {
+            color: #94a3b8 !important;
+        }
+
+        .employe-number {
+            color: #94a3b8 !important;
+        }
+
+        .data-content {
+            .label-text {
+                color: #94a3b8 !important;
+            }
+        }
+    }
+
+    /* ==========================================================================
+       Project Management, Resources & Timesheets Dark Theme Patch Fixes
+       ========================================================================== */
+    .resource-row {
+        background-color: var(--surface-card, #1e293b) !important;
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        color: #cbd5e1 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+
+        &.active {
+            border-color: var(--primary-color) !important;
+        }
+
+        label,
+        .custom-label,
+        .form-label {
+            color: #cbd5e1 !important;
+        }
+
+        .text-danger {
             color: #f87171 !important;
         }
+
+        .project-badge {
+            background: rgba(59, 130, 246, 0.15) !important;
+            color: #93c5fd !important;
+        }
+    }
+
+    .resource-header-wrapper {
+        background-color: #162235 !important;
+        border: 2px solid var(--border-color, #334155) !important;
+
+        .p-avatar,
+        p-avatar {
+            border-color: var(--border-color, #334155) !important;
+        }
+    }
+
+    .popover-employee-details {
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        color: #cbd5e1 !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+
+        .employee-name {
+            color: #f8fafc !important;
+        }
+
+        .project-card {
+            background: #162235 !important;
+            border: 1px solid var(--border-color, #334155) !important;
+            color: #cbd5e1 !important;
+
+            .project-name {
+                color: #f8fafc !important;
+            }
+
+            .project-role,
+            .project-dates {
+                color: #94a3b8 !important;
+            }
+        }
+    }
+
+    .timesheet-right-content {
+        background-color: var(--surface-card, #1e293b) !important;
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        color: #cbd5e1 !important;
+    }
+
+    .document-card {
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        color: #cbd5e1 !important;
+
+        &:hover {
+            background: var(--surface-card-hover, #24344d) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        .profile-content {
+            border-bottom: 1px solid var(--border-color, #334155) !important;
+        }
+
+        .name {
+            color: #f8fafc !important;
+        }
+
+        .subject-text {
+            color: #94a3b8 !important;
+        }
+    }
+
+    .time-sheet-graph-card,
+    .timesheet-graph-content {
+        background: var(--surface-card, #1e293b) !important;
+        border-color: var(--border-color, #334155) !important;
+    }
+
+    .progress-labels .label {
+        background: #334155 !important;
+        color: #f8fafc !important;
+    }
+
+    .backgroup-colour {
+        background-color: var(--surface-card, #1e293b) !important;
+        border-color: var(--border-color, #334155) !important;
+    }
+
+    .clone-offcanvas-panel .offcanvas,
+    .clone-footer,
+    .clone-strategy-card,
+    .section-block,
+    .read-only-input {
+        background: var(--surface-card, #1e293b) !important;
+        border-color: var(--border-color, #334155) !important;
+        color: #cbd5e1 !important;
+    }
+
+    .status-badge {
+        background: rgba(59, 130, 246, 0.15) !important;
+        border: 1px solid rgba(59, 130, 246, 0.3) !important;
+        color: #60a5fa !important;
+    }
+
+    .timesheet-chip,
+    .p-chip,
+    p-chip {
+        background: #162235 !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        color: #93c5fd !important;
+    }
+
+    .custom-graph-content {
+        background: var(--surface-card, #1e293b) !important;
+        border-color: var(--border-color, #334155) !important;
+    }
+
+    .employees-category-card {
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        color: #cbd5e1 !important;
+
+        &:hover {
+            background: var(--surface-card-hover, #24344d) !important;
+        }
+    }
+
+    .content-header,
+    .client-progress-bar-container,
+    .action-buttons {
+        background: transparent !important;
+    }
+
+    .quick-action-custom-checkbox {
+        background: #1e293b !important;
+        border-color: #475569 !important;
     }
 }
 
@@ -3802,3 +4224,349 @@ body.dark-theme,
         }
     }
 }
+
+/* Standalone / Detached Surface Safeguards */
+[data-theme="dark"] .resource-row,
+body.dark-theme .resource-row,
+[data-theme="dark"] .document-card,
+body.dark-theme .document-card,
+[data-theme="dark"] .timesheet-right-content,
+body.dark-theme .timesheet-right-content,
+[data-theme="dark"] .department-card,
+body.dark-theme .department-card,
+[data-theme="dark"] .contact-card,
+body.dark-theme .contact-card,
+[data-theme="dark"] .summary-card,
+body.dark-theme .summary-card,
+[data-theme="dark"] .graph-card,
+body.dark-theme .graph-card,
+[data-theme="dark"] .blood-bank-card,
+body.dark-theme .blood-bank-card,
+[data-theme="dark"] .employees-category-card,
+body.dark-theme .employees-category-card,
+[data-theme="dark"] .holidays-container,
+body.dark-theme .holidays-container {
+    background-color: #1e293b !important;
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+/* ==========================================================================
+   Skillset Dashboard, Contacts Directory, and Blood Bank Dark Mode Enhancements
+   ========================================================================== */
+[data-theme="dark"],
+body.dark-theme,
+[data-bs-theme="dark"] {
+
+    /* --- Blood Bank Module --- */
+    .employees-category-card {
+        background-color: var(--surface-card, #1e293b) !important;
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+        transition: all 0.2s ease !important;
+
+        .count-text {
+            color: #f8fafc !important;
+        }
+
+        &:hover {
+            background-color: var(--surface-card-hover, #24344d) !important;
+            background: var(--surface-card-hover, #24344d) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        &.bloodGroupTab {
+            background: linear-gradient(180deg, #24344d 0%, #1a2538 100%) !important;
+            border: 1.5px solid var(--primary-color) !important;
+            box-shadow: 0 0 12px rgba(14, 165, 233, 0.3) !important;
+        }
+    }
+
+    .blood-bank-card {
+        background-color: var(--surface-card, #1e293b) !important;
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+
+        .name {
+            color: #f8fafc !important;
+        }
+
+        .email {
+            color: #93c5fd !important;
+        }
+    }
+
+    .blood-bank-card-shimerr {
+        background-color: var(--surface-card, #1e293b) !important;
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+    }
+
+    /* --- Contacts Directory Module --- */
+    .contact-directory-content {
+        .department-card {
+            background: var(--surface-card, #1e293b) !important;
+            background-color: var(--surface-card, #1e293b) !important;
+            border: 1px solid var(--border-color, #334155) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+
+            .department-name {
+                color: #f8fafc !important;
+            }
+        }
+
+        .contact-card {
+            background: #162235 !important;
+            background-color: #162235 !important;
+            border: 1px solid var(--border-color, #293548) !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+            transition: all 0.2s ease !important;
+
+            &:hover {
+                background: #1e293b !important;
+                border-color: var(--primary-color) !important;
+                box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3) !important;
+            }
+
+            .name {
+                color: #f8fafc !important;
+            }
+
+            .label-text {
+                color: #94a3b8 !important;
+
+                .bi {
+                    color: #64748b !important;
+                }
+            }
+
+            .link-text {
+                color: #93c5fd !important;
+            }
+        }
+    }
+
+    /* --- Skill Set Management Dashboard --- */
+    .clear-all-btn {
+        color: #93c5fd !important;
+
+        &:hover {
+            color: #bfdbfe !important;
+        }
+    }
+
+    .cards-grid-container {
+        .summary-card {
+            background-color: var(--surface-card, #1e293b) !important;
+            background: var(--surface-card, #1e293b) !important;
+            border: 1px solid var(--border-color, #334155) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+
+            .summary-title {
+                color: #94a3b8 !important;
+            }
+
+            .summary-value {
+                color: #60a5fa !important;
+            }
+
+            .view-link a {
+                color: #60a5fa !important;
+            }
+        }
+    }
+
+    .graph-card {
+        background: var(--surface-card, #1e293b) !important;
+        background-color: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+
+        .graph-header {
+            color: #93c5fd !important;
+        }
+
+        .legend-label {
+            color: #94a3b8 !important;
+        }
+
+        .legend-value {
+            color: #f8fafc !important;
+        }
+    }
+
+    .skill-overview-table {
+        border: 1px solid var(--border-color, #334155) !important;
+
+        th {
+            background: var(--table-header-bg-color, #1a2638) !important;
+            color: #f8fafc !important;
+            border: 1px solid var(--border-color, #334155) !important;
+        }
+
+        td {
+            background: transparent !important;
+            color: #cbd5e1 !important;
+            border: 1px solid var(--border-color, #293548) !important;
+        }
+
+        .view-link {
+            color: #60a5fa !important;
+        }
+
+        .p-chip {
+            background: #162235 !important;
+            border: 1px solid var(--border-color, #334155) !important;
+
+            .skill-name {
+                color: #93c5fd !important;
+            }
+
+            .count {
+                color: #94a3b8 !important;
+            }
+        }
+    }
+
+    /* Left Nav Sub Tabs active state */
+    .custom-sub-tabs-container {
+        .active-nav-link {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%), var(--custom-component-tabs-bg-color, #1e293b) !important;
+            border: 1px solid var(--primary-color, rgba(255, 255, 255, 0.25)) !important;
+            border-radius: 0.5rem !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+        }
+    }
+
+    /* Skillset Dashboard Offcanvas & Dialogs */
+    .custom-offcanvas-header {
+        border-bottom: 1px solid #334155 !important;
+
+        .custom-offcanvas-title {
+            color: #f8fafc !important;
+        }
+    }
+
+    .profile-content {
+        background: #162235 !important;
+        border: 1px solid #334155 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+
+        .name {
+            color: #f8fafc !important;
+        }
+
+        .designation {
+            color: #94a3b8 !important;
+        }
+    }
+
+    .resources-list-model {
+        .profile-view-content {
+            background: #162235 !important;
+            border: 1px solid #334155 !important;
+            color: #f8fafc !important;
+
+            .name {
+                color: #f8fafc !important;
+            }
+
+            .designation {
+                color: #94a3b8 !important;
+            }
+
+            .status-badge {
+                background: rgba(14, 165, 233, 0.15) !important;
+                color: #38bdf8 !important;
+                border: 1px solid rgba(56, 189, 248, 0.3) !important;
+            }
+        }
+
+        .custom-skill-set-tabs {
+            .p-tablist,
+            .p-tablist-tab-list {
+                background: #162235 !important;
+                border: 1px solid #334155 !important;
+            }
+
+            .p-tab {
+                color: #94a3b8 !important;
+            }
+
+            .p-tab-active {
+                color: var(--primary-color) !important;
+                border-bottom-color: var(--primary-color) !important;
+            }
+        }
+
+        .skills-group {
+            .skill-set-display-card {
+                background: #162235 !important;
+                border: 1px solid #334155 !important;
+
+                p-chip {
+                    background: #1e293b !important;
+                    color: #93c5fd !important;
+                    border: 1px solid #334155 !important;
+                }
+            }
+        }
+
+        .projects-container {
+            .project-card {
+                background: #162235 !important;
+                border: 1px solid #334155 !important;
+                border-left: 3px solid var(--primary-color) !important;
+
+                .project-name {
+                    color: #f8fafc !important;
+                }
+
+                .project-role {
+                    color: #94a3b8 !important;
+                }
+
+                .project-dates {
+                    color: #64748b !important;
+                }
+            }
+        }
+    }
+
+    /* --- Holidays Module --- */
+    .holidays-container {
+        background-color: var(--surface-card, #1e293b) !important;
+        background: var(--surface-card, #1e293b) !important;
+        border: 1px solid var(--border-color, #334155) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+
+        .holidays-content {
+            .holiday-card {
+                background-image: url('/images/curved-card-dark.png') !important;
+                filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35)) !important;
+                transition: transform 0.2s ease, filter 0.2s ease !important;
+
+                &:hover {
+                    transform: translateY(-2px);
+                    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45)) brightness(1.06) !important;
+                }
+
+                .holiday-name {
+                    color: #93c5fd !important;
+                }
+
+                .date {
+                    color: #94a3b8 !important;
+
+                    p {
+                        color: #94a3b8 !important;
+                    }
+                }
+            }
+        }
+    }
+}
+

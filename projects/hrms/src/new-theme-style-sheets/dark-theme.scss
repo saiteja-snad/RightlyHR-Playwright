@@ -1578,8 +1578,8 @@ body.dark-theme[class*="-theme"] {
             }
         }
 
-        .p-datatable-tbody > tr,
-        tbody > tr {
+        .p-datatable-tbody > tr:not(:has(app-no-data-found)):not(:has(.no-data-placeholder-container)):not(.p-datatable-empty-message):not(.p-datatable-emptymessage),
+        tbody > tr:not(:has(app-no-data-found)):not(:has(.no-data-placeholder-container)):not(.p-datatable-empty-message):not(.p-datatable-emptymessage) {
             background-color: var(--surface-card, #1e293b) !important;
             color: var(--table-data-color, #cbd5e1) !important;
             border-bottom: 1px solid var(--table-data-border-color, #293548) !important;
@@ -1604,31 +1604,54 @@ body.dark-theme[class*="-theme"] {
         .p-datatable-emptymessage,
         tr.p-datatable-empty-message,
         tr.p-datatable-emptymessage,
-        .p-datatable-tbody>tr:has(app-no-data-found),
-        tbody>tr:has(app-no-data-found) {
+        tr:has(app-no-data-found),
+        tr:has(.no-data-placeholder-container) {
             border: none !important;
+            border-top: none !important;
             border-bottom: none !important;
+            border-left: none !important;
+            border-right: none !important;
             background: transparent !important;
             background-color: transparent !important;
+            height: 0 !important;
+            min-height: 0 !important;
+            max-height: 0 !important;
+            line-height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-shadow: none !important;
 
-            >td,
+            > td,
             td {
                 border: none !important;
+                border-top: none !important;
                 border-bottom: none !important;
+                border-left: none !important;
+                border-right: none !important;
                 background: transparent !important;
                 background-color: transparent !important;
                 color: #94a3b8 !important;
                 text-align: center;
+                height: 0 !important;
+                min-height: 0 !important;
+                max-height: 0 !important;
+                line-height: 0 !important;
                 padding: 0 !important;
+                margin: 0 !important;
                 box-shadow: none !important;
                 outline: none !important;
             }
 
             .wrapper {
                 border: none !important;
+                border-bottom: none !important;
                 box-shadow: none !important;
                 outline: none !important;
                 background: transparent !important;
+                height: 0 !important;
+                min-height: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
             }
         }
     }
@@ -1671,7 +1694,8 @@ body.dark-theme[class*="-theme"] {
 
     /* Prevent invalid div.wrapper in tbody from breaking layout and creating ghost cells */
     .p-datatable-tbody>.wrapper,
-    tbody>.wrapper {
+    tbody>.wrapper,
+    .wrapper:has(app-no-data-found) {
         display: contents !important;
     }
 
@@ -1697,8 +1721,34 @@ body.dark-theme[class*="-theme"] {
             color: var(--table-data-color, #cbd5e1) !important;
         }
 
-        tr {
+        tr:not(:has(app-no-data-found)):not(:has(.no-data-placeholder-container)):not(.p-datatable-empty-message):not(.p-datatable-emptymessage) {
             border-bottom: 1px solid var(--table-data-border-color, #293548) !important;
+        }
+
+        tr:has(app-no-data-found),
+        tr:has(.no-data-placeholder-container),
+        tr.p-datatable-empty-message,
+        tr.p-datatable-emptymessage {
+            border: none !important;
+            border-bottom: none !important;
+            border-top: none !important;
+            height: 0 !important;
+            min-height: 0 !important;
+            line-height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+
+            > td,
+            td {
+                border: none !important;
+                border-bottom: none !important;
+                border-top: none !important;
+                height: 0 !important;
+                min-height: 0 !important;
+                line-height: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
         }
 
         /* Action icons and dropdowns inside tables */

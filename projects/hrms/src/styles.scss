@@ -3703,24 +3703,53 @@ input[type=number]::-webkit-outer-spin-button {
 
 // Global empty message & tbody wrapper normalization for tables
 .p-datatable-tbody > .wrapper,
-tbody > .wrapper {
+tbody > .wrapper,
+.wrapper:has(app-no-data-found) {
     display: contents !important;
 }
 
-.p-datatable-empty-message,
-.p-datatable-emptymessage,
+tr:has(app-no-data-found),
+tr:has(.no-data-placeholder-container),
 tr.p-datatable-empty-message,
 tr.p-datatable-emptymessage,
-.p-datatable-tbody > tr:has(app-no-data-found),
-tbody > tr:has(app-no-data-found) {
+.p-datatable-empty-message,
+.p-datatable-emptymessage,
+.custom-table-content tr:has(app-no-data-found),
+.custom-table-content tr:has(.no-data-placeholder-container) {
     border: none !important;
+    border-top: none !important;
     border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
     background: transparent !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    line-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
 
     > td,
     td {
         border: none !important;
+        border-top: none !important;
         border-bottom: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        background: transparent !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        line-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
         box-shadow: none !important;
+    }
+
+    .wrapper {
+        border: none !important;
+        border-bottom: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 }

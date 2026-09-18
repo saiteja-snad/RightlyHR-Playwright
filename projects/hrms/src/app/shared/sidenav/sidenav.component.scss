@@ -63,7 +63,13 @@
     padding: 0.625rem 0.3rem;
     margin-bottom: 0.25rem;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     user-select: none;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    text-align: center;
+    line-height: 1.15;
 
     &:active {
         cursor: pointer;
@@ -72,6 +78,19 @@
     &.active-nav-link {
         background-color: var(--side-nav-active-bg-color);
     }
+}
+
+.module-label-text {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    text-align: center;
+    line-height: 1.15;
+    font-size: var(--fontsize10, 10px);
 }
 
 // Drag preview for sidenav items

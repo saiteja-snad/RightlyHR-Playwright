@@ -12,6 +12,11 @@
     &.has-data {
         height: calc(100dvh - 15.25rem) !important;
     }
+    
+    border: 1px solid var(--table-main-content-border-color, #13243f) !important;
+    border-radius: 0.5rem !important;
+    background-color: var(--table-data-bg-color, #060d1b) !important;
+    overflow: hidden;
 
     .p-datatable-table-container {
         height: 100%;
@@ -22,11 +27,12 @@
     .p-datatable-thead > tr > th {
         background-color: var(--table-header-bg-color) !important;
         color: var(--table-header-color) !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         font-size: var(--fontsize14) !important;
         padding: 1rem !important;
         text-wrap: nowrap !important;
         border: none !important;
+        border-bottom: 1px solid #162a4d !important;
         vertical-align: middle !important;
         text-transform: capitalize !important;
         position: sticky;
@@ -61,6 +67,24 @@
     .p-datatable-table,
     .p-datatable-thead,
     .p-datatable-tbody { border: none !important; }
+}
+
+.data-nav-btn {
+    font-size: var(--fontsize13);
+    font-weight: 500;
+    color: #38bdf8 !important;
+    cursor: pointer;
+    text-decoration: underline !important;
+
+    &:hover {
+        text-decoration: underline !important;
+        color: #60a5fa !important;
+    }
+}
+
+.bi-three-dots-vertical {
+    color: var(--table-data-color, #ffffff) !important;
+    cursor: pointer;
 }
 
 .primary-link {

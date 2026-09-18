@@ -46,6 +46,35 @@
     }
 }
 
+:host-context([data-theme="dark"]),
+:host-context(body.dark-theme),
+:host-context(.dark-theme) {
+    .content-header {
+        background: var(--body-bg-color, #060d1b) !important;
+    }
+
+    .form-check-input,
+    input[type="checkbox"] {
+        border: 1px solid #ffffff !important;
+        background-color: transparent !important;
+
+        &:checked {
+            background-color: var(--primary-color) !important;
+            border-color: #ffffff !important;
+        }
+
+        &:focus {
+            border-color: #ffffff !important;
+            box-shadow: 0 0 0 0.15rem rgba(255, 255, 255, 0.25) !important;
+        }
+
+        &:disabled {
+            opacity: 0.65 !important;
+            border-color: rgba(255, 255, 255, 0.65) !important;
+        }
+    }
+}
+
 .custom-data-table {
     height: calc(100dvh - 14rem) !important;
     border: 1px solid var(--border-color);

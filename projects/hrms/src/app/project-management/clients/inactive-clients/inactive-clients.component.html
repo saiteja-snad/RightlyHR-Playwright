@@ -46,7 +46,11 @@
                             <td>{{client?.contact?.email || '-'}}</td>
                             <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber || '-'}}</td>
                             <td>{{client?.contact?.role || '-'}}</td>
-                            <td>{{client.status}}</td>
+                            <td>
+                                <span class="status-pill" [ngClass]="(client?.status || '').toLowerCase() === 'active' ? 'status-active' : 'status-inactive'">
+                                    <span class="status-dot"></span>{{client?.status || '-'}}
+                                </span>
+                            </td>
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">

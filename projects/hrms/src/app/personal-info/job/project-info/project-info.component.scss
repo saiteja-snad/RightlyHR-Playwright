@@ -1,6 +1,6 @@
 .clickable {
   cursor: pointer;
-  color: #0b3a83;
+  color: var(--primary-color);
   text-decoration: underline;
   font-weight: bold;
 }

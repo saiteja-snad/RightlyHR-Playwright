@@ -194,7 +194,7 @@ export class OrgChartGridComponent implements OnInit, AfterViewInit, OnChanges, 
           const primarytextColor = bodyStyles.getPropertyValue('--primary-color').trim();
           const nameColor = isDark ? '#f8fafc' : '#3C3C3C';
           const mutedColor = isDark ? '#94a3b8' : '#909090';
-          const deptColor = isDark ? '#60a5fa' : (primarytextColor || '#0B3A83');
+          const deptColor = primarytextColor || (isDark ? '#38bdf8' : '#0B3A83');
           const imageUrl = this.getImageUrl(data.image);
           const safeData = encodeURIComponent(JSON.stringify(data));
           return `

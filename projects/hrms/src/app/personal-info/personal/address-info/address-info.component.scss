@@ -18,7 +18,7 @@ input[type="text"] {
     text-transform: capitalize;
 }
 .info-pending {
-  color: #0b3a83 !important;
+  color: var(--primary-color) !important;
   padding-left: 0.25rem;
   cursor: pointer;
 }

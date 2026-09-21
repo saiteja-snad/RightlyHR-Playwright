@@ -75,7 +75,7 @@
     .accent-bar {
         width: 0.25rem;
         border-radius: 0.5rem;
-        background-color: #1064CA;
+        background-color: var(--primary-color, #1064CA);
     }
 
     .accent-bar1 {
@@ -159,7 +159,7 @@
             }
 
             .org-node-dept {
-                color: #60a5fa !important;
+                color: var(--primary-color) !important;
             }
         }
     }
@@ -174,7 +174,7 @@
     }
 
     .department {
-        color: #60a5fa !important;
+        color: var(--primary-color) !important;
     }
 
     .custom-card {
@@ -187,7 +187,7 @@
         }
 
         .link-text {
-            color: #93c5fd !important;
+            color: var(--primary-color) !important;
         }
 
         .custom-icon {
@@ -232,7 +232,7 @@
                 .link-text,
                 a .link-text,
                 a u {
-                    color: #93c5fd !important;
+                    color: var(--primary-color) !important;
                 }
 
                 .custom-icon {

@@ -251,9 +251,9 @@
     }
 
     .pin-badge {
-        color: #60a5fa;
-        background: rgba(59, 130, 246, 0.15);
-        border-color: rgba(59, 130, 246, 0.3);
+        color: var(--primary-color);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--primary-color);
     }
 
     .menu-label {
@@ -269,8 +269,8 @@
     }
 
     .drag-placeholder {
-        background: rgba(59, 130, 246, 0.08);
-        border-color: var(--primary-color, #3b82f6);
+        background: rgba(255, 255, 255, 0.05);
+        border-color: var(--primary-color);
     }
 
     .empty-state {

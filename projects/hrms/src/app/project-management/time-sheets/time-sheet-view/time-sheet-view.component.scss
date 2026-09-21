@@ -437,7 +437,7 @@
 
 
 .p-datepicker-input:focus {
-    border-color: #0B3A83 !important;
+    border-color: var(--primary-color) !important;
     box-shadow: none !important;
 }
 
@@ -453,35 +453,35 @@
 
 ::ng-deep .p-datepicker-prev-button,
 ::ng-deep .p-datepicker-next-button {
-    color: #0B3A83 !important;
+    color: var(--primary-color) !important;
 }
 
 ::ng-deep .p-datepicker-prev-button svg,
 ::ng-deep .p-datepicker-next-button svg {
-    color: #0B3A83 !important;
-    fill: #0B3A83 !important;
+    color: var(--primary-color) !important;
+    fill: var(--primary-color) !important;
 }
 
 ::ng-deep .p-datepicker-prev-button:hover,
 ::ng-deep .p-datepicker-next-button:hover {
     background: transparent !important;
-    color: #0B3A83 !important;
+    color: var(--primary-color) !important;
 }
 
 ::ng-deep .p-datepicker-prev-button:hover svg,
 ::ng-deep .p-datepicker-next-button:hover svg {
-    color: #0B3A83 !important;
-    fill: #0B3A83 !important;
+    color: var(--primary-color) !important;
+    fill: var(--primary-color) !important;
 }
 
 .p-datepicker-day-selected {
-    background: #0B3A83 !important;
+    background: var(--primary-color) !important;
 }
 
 ::ng-deep .p-datepicker-day-selected-range-start,
 ::ng-deep .p-datepicker-day-selected-range-end,
 ::ng-deep .p-datepicker-day-selected {
-    background: #0B3A83 !important;
+    background: var(--primary-color) !important;
     color: #fff !important;
 }
 
@@ -504,7 +504,7 @@
 }
 
 .custom-checkbox input[type="checkbox"] {
-    accent-color: #0B3A83;
+    accent-color: var(--primary-color);
 }
 
 
@@ -629,7 +629,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #0b3a83;
+    color: var(--primary-color);
     cursor: pointer;
 }
 

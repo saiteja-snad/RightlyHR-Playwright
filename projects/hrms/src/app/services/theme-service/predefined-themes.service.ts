@@ -149,9 +149,14 @@ export class PredefinedThemesService {
 
   // THEMES (Accent Color)
   setTheme(themeName: string): void {
+    const root = document.documentElement;
     const body = document.body;
-    this.allThemes.forEach(t => this.renderer.removeClass(body, t));
+    this.allThemes.forEach(t => {
+      this.renderer.removeClass(body, t);
+      this.renderer.removeClass(root, t);
+    });
     this.renderer.addClass(body, themeName);
+    this.renderer.addClass(root, themeName);
     this.currentTheme = themeName;
     try {
       localStorage.setItem('RHR_WEB_Theme', themeName);

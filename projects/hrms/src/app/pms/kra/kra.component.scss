@@ -45,16 +45,17 @@
 }
 
 .kpi-count-pill {
-  background: var(--card-tabs-bg-color, #dce5f5);
-  color: var(--primary-color, #0B3A83);
+  background: #dce5f5;
+  color: #0B3A83;
   padding: 6px 14px;
   border-radius: 8px;
   font-weight: 600;
   display: inline-block;
   cursor: pointer;
-  border: 1px solid var(--border-color, #b8c8e6);
+  border: 1px solid #b8c8e6;
   transition: 0.2s ease-in-out;
   text-decoration: underline;
+
 }
 
 

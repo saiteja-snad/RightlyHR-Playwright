@@ -647,10 +647,10 @@
 :host-context([data-theme="dark"]),
 :host-context(body.dark-theme) {
   .clear-all-btn {
-    color: var(--primary-color) !important;
+    color: #93c5fd !important;
 
     &:hover {
-      filter: brightness(1.2) !important;
+      color: #bfdbfe !important;
     }
   }
 
@@ -664,11 +664,11 @@
     }
 
     .summary-value {
-      color: var(--primary-color) !important;
+      color: #60a5fa !important;
     }
 
     .view-link a {
-      color: var(--primary-color) !important;
+      color: #60a5fa !important;
     }
   }
 
@@ -678,7 +678,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
 
     .graph-header {
-      color: var(--text-primary, #f8fafc) !important;
+      color: #93c5fd !important;
     }
   }
 
@@ -706,7 +706,7 @@
     }
 
     .view-link {
-      color: var(--primary-color) !important;
+      color: #60a5fa !important;
     }
 
     .p-chip {
@@ -714,7 +714,7 @@
       border: 1px solid var(--border-color, #334155) !important;
 
       .skill-name {
-        color: var(--text-secondary, #cbd5e1) !important;
+        color: #93c5fd !important;
       }
 
       .count {
@@ -761,9 +761,9 @@
       }
 
       .status-badge {
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: var(--primary-color) !important;
-        border: 1px solid var(--primary-color) !important;
+        background: rgba(14, 165, 233, 0.15) !important;
+        color: #38bdf8 !important;
+        border: 1px solid rgba(56, 189, 248, 0.3) !important;
       }
     }
 
@@ -791,7 +791,7 @@
 
         p-chip {
           background: #1e293b !important;
-          color: var(--text-secondary, #cbd5e1) !important;
+          color: #93c5fd !important;
           border: 1px solid #334155 !important;
         }
       }

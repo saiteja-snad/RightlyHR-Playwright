@@ -175,11 +175,12 @@ export class SidenavComponent implements OnInit, OnDestroy {
       min-height: 225px;
       max-height: 325px;
       overflow-y: auto;
+      overflow-x: hidden;
       border-radius: 0.625rem;
       box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.4);
       background: var(--surface-card, #fff);
       border: 1px solid var(--border-color, rgba(0,0,0,0.1));
-      padding: 0.75rem;
+      padding: 0.75rem 0.5rem;
     `;
     document.body.appendChild(wrapper);
     this.overlayEl = wrapper;

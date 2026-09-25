@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
+import { getBaseUrl } from './config/environment';
 
 dotenv.config({
   path: path.resolve(process.cwd(), '.env'),
@@ -13,7 +14,7 @@ if (!baseURL) {
 }
 
 /**
- * See https://playwright.dev/docs/test-configuration.
+ * Playwright configuration
  */
 export default defineConfig({
   testDir: './tests',
@@ -40,11 +41,20 @@ export default defineConfig({
     '**/codegen-onbehalfofapprovalspermissions*',
   ],
   timeout: 120000,
+
   fullyParallel: false,
+
   forbidOnly: !!process.env.CI,
+
   retries: process.env.CI ? 2 : 0,
+
   workers: 1,
-  reporter: [['list'], ['html', { open: 'never' }]],
+
+  reporter: [
+    ['list'],
+    ['html', { open: 'never' }],
+  ],
+
   use: {
     baseURL,
     headless: process.env.HEADLESS === 'true',
@@ -56,34 +66,59 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     actionTimeout: 15000,
+
     navigationTimeout: 45000,
   },
 
   projects: [
     {
       name: '01-login',
+
       testMatch: /(?:^|[\\/])login\.spec\.ts$/,
-      use: { ...devices['Desktop Chrome'] },
+
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
+
     {
       name: '02-allocation',
+
       testMatch: /job-info-allocation\.spec\.ts$/,
-      use: { ...devices['Desktop Chrome'] },
+
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
+
     {
       name: '03-remote-login',
+
       testMatch: /remote-login\.spec\.ts$/,
-      use: { ...devices['Desktop Chrome'] },
+
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
+
     {
       name: '04-wfh',
+
       testMatch: /work-from-home\.spec\.ts$/,
-      use: { ...devices['Desktop Chrome'] },
+
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
+
     {
       name: '05-wfh-settings',
+
       testMatch: /wfh-entitlement-criteria\.spec\.ts$/,
-      use: { ...devices['Desktop Chrome'] },
+
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
     {
       name: '06-onbehalf-remote-login',
@@ -206,15 +241,44 @@ export default defineConfig({
       testMatch: /(?:^|[\\/])Contract\.spec\.ts$/,
       use: { ...devices['Desktop Chrome'] },
     },
-     /*{
-       name:'30-my-info',
-       testMatch: /MyInfo\.spec\.ts$/,
-       use: { ...devices['Desktop Chrome'] },
-     },*/
+    /*{
+      name:'30-my-info',
+      testMatch: /MyInfo\.spec\.ts$/,
+      use: { ...devices['Desktop Chrome'] },
+    },*/
+
+    {
+      name: '30-weekends',
+
+      testMatch: /manage-weekends\.spec\.ts$/,
+
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: '31-employee-info',
+
+      testMatch: /Employee-info\.spec\.ts$/,
+
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
+      name: '32-my-info',
+      testMatch: /my-info\.spec\.ts$/,
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+
+    // Uncomment when needed
     // {
     //   name: 'firefox',
     //   use: { ...devices['Desktop Firefox'] },
     // },
+
     // {
     //   name: 'webkit',
     //   use: { ...devices['Desktop Safari'] },
